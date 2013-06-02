@@ -64,11 +64,12 @@ buildOthers = ( ) ->
 				path = result.split('\\')
 				path.shift()
 				path.pop()
-				path = path.join('\\');
+				path = path.join('\\') + '\\';
 				ext = result.split('.').pop()
 				name = result.split('\\').pop()
 				if ext isnt 'coffee'
-					exec("mkdir lib\\#{path} && cp #{result} lib\\#{path}\\#{name}")
+					console.log "mkdir lib\\#{path} && cp #{result} lib\\#{path}#{name}"
+					exec("mkdir lib\\#{path} && cp #{result} lib\\#{path}#{name}")
 	else
 		exec("cd #{source} && find . -type f -not -iname '*.coffee' -exec cp --parents -f '{}' '#{__dirname}/#{target}' \\;", (stdin, stdout, stderr) -> console.log stderr, stdout)
 
