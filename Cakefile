@@ -1,7 +1,7 @@
 fs = require('fs')
 exec = require('child_process').exec;
 spawn = require('child_process').spawn
-
+os = require('os')
 source = 'src'
 target = 'lib'
 keep = ['src', 'package.json', 'README.md', 'Cakefile']
@@ -56,18 +56,21 @@ buildCoffee = ( ) ->
 	exec("coffee -c -o #{__dirname}/#{target} #{source}", (stdin, stdout, stderr) -> console.log stderr, stdout)
 
 buildOthers = ( ) ->
-	walk "#{source}", (err, results) ->
-		throw 'Unexpected build error' if err?
-		for result in results
-			path = result.split('/')
-			path.shift()
-			path.pop()
-			path = path.join('/');
-			ext = result.split('.').pop()
-			name = result.split('/').pop()
-			if ext isnt 'coffee'
-				console.log "mkdir -p ./lib/#{path} && cp #{result} ./lib/#{path}/#{name}"
-				exec("mkdir -p ./lib/#{path} && cp #{result} ./lib/#{path}/#{name}")
+	# Windows sucks so try harder
+	if (os.platform() is "win32")
+		walk "#{source}", (err, results) ->
+			throw 'Unexpected build error' if err?
+			for result in results
+				path = result.split('\\')
+				path.shift()
+				path.pop()
+				path = path.join('\\');
+				ext = result.split('.').pop()
+				name = result.split('\\').pop()
+				if ext isnt 'coffee'
+					exec("mkdir lib\\#{path} && cp #{result} lib\\#{path}\\#{name}")
+	else
+		exec("cd #{source} && find . -type f -not -iname '*.coffee' -exec cp --parents -f '{}' '#{__dirname}/#{target}' \\;", (stdin, stdout, stderr) -> console.log stderr, stdout)
 
 copy = ( file, destination ) ->
 	exec("cp -f '#{file}' '#{destination}'", ->
@@ -96,7 +99,7 @@ walk = (dir, done) ->
 		if (!pending)
 			return done(null, results)
 		list.forEach((file) ->
-			file = dir + '/' + file
+			file = dir + '\\' + file
 			fs.stat(file, (err, stat) ->
 				if (stat && stat.isDirectory())
 					walk(file, (err, res) ->
