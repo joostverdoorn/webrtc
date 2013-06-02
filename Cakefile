@@ -17,7 +17,6 @@ task 'deploy', ->
 	ps = exec('npm install')
 	ps.stdout.setEncoding('utf8')
 	ps.stdout.on('data', ( data ) -> console.log(data))
-	ps
 	build()
 
 # Clears root directory of all built files
@@ -30,10 +29,11 @@ task 'clean', ->
 # Watches for file changes and compiles accordingly
 task 'watch', ->
 	# Watch for changes in coffee files ...
-	coffeeWatcher = spawn('coffee', ['-wco', "./#{target}", "./#{source}"])
+	console.log("coffee -wco" + "./#{target}" + " ./#{source}")
+	coffeeWatcher = exec("coffee -wco " + "./#{target}" + " ./#{source}")
+	
 	coffeeWatcher.stdout.setEncoding('utf8')
 	coffeeWatcher.stdout.on('data', ( data ) -> console.log(data))
-
 	# ... and other files too! Let's build them first ...
 	buildOthers()
 

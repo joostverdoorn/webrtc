@@ -8,6 +8,7 @@
 		"backbone": "*",
 		"requirejs": "*",
 		"fs-watch-tree": "*"
+		"mk-dirp":"*"
 	}
 
 }
