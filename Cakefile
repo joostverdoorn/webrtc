@@ -56,7 +56,18 @@ buildCoffee = ( ) ->
 	exec("coffee -c -o #{__dirname}/#{target} #{source}", (stdin, stdout, stderr) -> console.log stderr, stdout)
 
 buildOthers = ( ) ->
-	exec("cd #{source} && find . -type f -not -iname '*.coffee' -exec cp --parents -f '{}' '#{__dirname}/#{target}' \\;", (stdin, stdout, stderr) -> console.log stderr, stdout)
+	walk "#{source}", (err, results) ->
+		throw 'Unexpected build error' if err?
+		for result in results
+			path = result.split('/')
+			path.shift()
+			path.pop()
+			path = path.join('/');
+			ext = result.split('.').pop()
+			name = result.split('/').pop()
+			if ext isnt 'coffee'
+				console.log "mkdir -p ./lib/#{path} && cp #{result} ./lib/#{path}/#{name}"
+				exec("mkdir -p ./lib/#{path} && cp #{result} ./lib/#{path}/#{name}")
 
 copy = ( file, destination ) ->
 	exec("cp -f '#{file}' '#{destination}'", ->
@@ -74,4 +85,29 @@ makeDir = ( dir ) ->
 	exec("mkdir '#{dir}'", ->
 		date = new Date()
 		console.log "#{date.toLocaleTimeString()} - created #{dir}"
+	)
+
+walk = (dir, done) ->
+	results = []
+	fs.readdir(dir, (err, list) ->
+		if (err)
+			return done(err)
+		pending = list.length
+		if (!pending)
+			return done(null, results)
+		list.forEach((file) ->
+			file = dir + '/' + file
+			fs.stat(file, (err, stat) ->
+				if (stat && stat.isDirectory())
+					walk(file, (err, res) ->
+						results = results.concat(res)
+						if (!--pending)
+							done(null, results)
+					)
+				else
+					results.push(file)
+					if (!--pending)
+						done(null, results)
+			)
+		)
 	)
