@@ -64,7 +64,8 @@ buildOthers = ( ) ->
 				path = result.split('\\')
 				path.shift()
 				path.pop()
-				path = path.join('\\') + '\\';
+				if path.length isnt 0
+					path = path.join('\\') + '\\';
 				ext = result.split('.').pop()
 				name = result.split('\\').pop()
 				if ext isnt 'coffee'
