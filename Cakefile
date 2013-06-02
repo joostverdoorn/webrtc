@@ -22,7 +22,10 @@ task 'deploy', ->
 
 # Clears root directory of all built files
 task 'clean', ->
-	exec("ls | grep -v '#{keep.join('\\|')}' | xargs rm -r")
+	if os.platform() is "win32"
+		exec("rd /s /q lib");
+	else
+		exec("ls | grep -v '#{keep.join('\\|')}' | xargs rm -r")
 
 # Watches for file changes and compiles accordingly
 task 'watch', ->
@@ -72,7 +75,7 @@ buildOthers = ( ) ->
 				ext = result.split('.').pop()
 				name = result.split('\\').pop()
 				if ext isnt 'coffee'
-					mkdirp("lib\\#{path}") 
+					mkdirp.sync("lib\\#{path}") 
 					exec("cp #{result} lib\\#{path}#{name}")
 	else
 		exec("cd #{source} && find . -type f -not -iname '*.coffee' -exec cp --parents -f '{}' '#{__dirname}/#{target}' \\;", (stdin, stdout, stderr) -> console.log stderr, stdout)
