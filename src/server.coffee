@@ -15,6 +15,3 @@ class Server
 		@_server.listen(8080)		
 		
 module.exports = new Server()
-
-
-alert "jasdasdoasso"

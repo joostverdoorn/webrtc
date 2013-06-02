@@ -22,7 +22,7 @@ task 'deploy', ->
 # Clears root directory of all built files
 task 'clean', ->
 	if os.platform() is "win32"
-		exec("rd /s /q lib");
+		exec("rd /s /q #{target}");
 	else
 		exec("ls | grep -v '#{keep.join('\\|')}' | xargs rm -r")
 
