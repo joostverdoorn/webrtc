@@ -2,6 +2,8 @@ fs = require('fs')
 exec = require('child_process').exec;
 spawn = require('child_process').spawn
 os = require('os')
+mkdirp = require('mkdirp');
+
 source = 'src'
 target = 'lib'
 keep = ['src', 'package.json', 'README.md', 'Cakefile']
@@ -12,9 +14,10 @@ task 'build', ->
 
 # Installs all dependencies and builds all files
 task 'deploy', ->
-	ps = spawn('npm', ['install'])
+	ps = exec('npm install')
 	ps.stdout.setEncoding('utf8')
 	ps.stdout.on('data', ( data ) -> console.log(data))
+	ps
 	build()
 
 # Clears root directory of all built files
@@ -69,8 +72,8 @@ buildOthers = ( ) ->
 				ext = result.split('.').pop()
 				name = result.split('\\').pop()
 				if ext isnt 'coffee'
-					console.log "mkdir lib\\#{path} && cp #{result} lib\\#{path}#{name}"
-					exec("mkdir lib\\#{path} && cp #{result} lib\\#{path}#{name}")
+					mkdirp("lib\\#{path}") 
+					exec("cp #{result} lib\\#{path}#{name}")
 	else
 		exec("cd #{source} && find . -type f -not -iname '*.coffee' -exec cp --parents -f '{}' '#{__dirname}/#{target}' \\;", (stdin, stdout, stderr) -> console.log stderr, stdout)
 
