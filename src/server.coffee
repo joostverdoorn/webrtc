@@ -51,4 +51,4 @@ class Server
 	time: ( ) ->
 		return Date.now() - @_initTime
 		
-module.exports = new Server()
+global.Server = new Server()
