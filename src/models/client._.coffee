@@ -5,9 +5,25 @@ Backbone = require('backbone')
 #
 
 class Client
-	constructor: ( @socket, attributes, options ) ->
+	constructor: ( @_socket, attributes, options ) ->
 		@defaults = _.extend({}, @_defaults, @defaults ? {})
 
+		@_socket.on('pong', @onPong)
+
 		@initialize(attributes, options)
+
+	ping: ( callback ) ->
+		@_pingStart = App.time()
+		@_pingCallback = callback
+		@_socket.emit('ping')	
+
+	pong: ( ) ->
+		@_socket.emit('pong')
+
+	onPong: ( ) ->
+		@_latency = App.time() - @_pingStart
+		@_pingCallback(@_latency, packet)
+		@_pingStart = undefined
+
 
 module.exports = Client

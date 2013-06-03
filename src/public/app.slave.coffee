@@ -1,12 +1,14 @@
 require [
 	'app._'
 	'models/peer.master'
-	], ( App, MasterPeer ) =>
+	], ( App, Master ) =>
 
 	# Slave app class
 	#
 
-	class SlaveApp extends App
+	class App.Slave extends App
+		type: 'slave'
+
 		initialize: ( ) ->
 
-	window.SlaveApp = new SlaveApp
+	window.App = new App.Slave

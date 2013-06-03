@@ -5,5 +5,5 @@ define [
 	# This class provides an implementation of Peer to represent master
 	#
 
-	class MasterPeer extends Peer
+	class Peer.Master extends Peer
 		initialize: ( ) ->

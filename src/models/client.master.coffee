@@ -1,9 +1,10 @@
-Model = require('./')
+Client = require('./client._')
 
 # This class is a server side representation of a master client
 #
 
-class MasterClient extends Model.Client
+class Client.Master extends Client
 	initialize: ( attributes, options ) ->
+		console.log 'new master'
 
-module.exports = MasterClient
+module.exports = Client.Master

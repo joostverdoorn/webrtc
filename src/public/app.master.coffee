@@ -1,13 +1,18 @@
 require [
 	'app._'
 	'models/peer.slave'
-	], ( App, SlavePeer ) =>
+	], ( App, Slave ) =>
 
 	# Master app class
 	#
 
-	class MasterApp extends App
+	class App.Master extends App
+		type: 'master'
+
 		initialize: ( ) ->
 			@_slaves = []
 
-	window.MasterApp = new MasterApp()
+			@_slaves.push(new Slave)
+			console.log @_slaves
+
+	window.App = new App.Master

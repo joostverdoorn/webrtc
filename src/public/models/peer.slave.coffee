@@ -5,5 +5,5 @@ define [
 	# This class provides an implementation of Peer to represent slave
 	#
 
-	class SlavePeer extends Peer
+	class Peer.Slave extends Peer
 		initialize: ( ) ->
