@@ -21,38 +21,42 @@ task 'deploy', ->
 
 # Clears root directory of all built files
 task 'clean', ->
-	if os.platform() is "win32"
-		exec("rd /s /q #{target}");
-	else
-		exec("ls | grep -v '#{keep.join('\\|')}' | xargs rm -r")
+	clean()
 
 # Watches for file changes and compiles accordingly
 task 'watch', ->
-	# Watch for changes in coffee files ...
-	console.log("coffee -wco" + "./#{target}" + " ./#{source}")
-	coffeeWatcher = exec("coffee -wco " + "./#{target}" + " ./#{source}")
-	
-	coffeeWatcher.stdout.setEncoding('utf8')
-	coffeeWatcher.stdout.on('data', ( data ) -> console.log(data))
-	# ... and other files too! Let's build them first ...
-	buildOthers()
+	if os.platform() is "win32"
+		watchTree = require('fs-watch-tree').watchTree
+		watchTree source, ( event ) ->
+			clean()
+			build()
+	else
+		# Watch for changes in coffee files ...
+		console.log("coffee -wco" + "./#{target}" + " ./#{source}")
+		coffeeWatcher = exec("coffee -wco " + "./#{target}" + " ./#{source}")
+		
+		coffeeWatcher.stdout.setEncoding('utf8')
+		coffeeWatcher.stdout.on('data', ( data ) -> console.log(data))
+		# ... and other files too! Let's build them first ...
+		buildOthers()
 
-	# ... and now at the watcher.
-	watchTree = require('fs-watch-tree').watchTree
-	watchTree source, ( event ) ->
-		file = event.name
-		if file.indexOf('.coffee') is -1
-			destination = file.replace(source, __dirname + '/' + target)
+		# ... and now at the watcher.
+		watchTree = require('fs-watch-tree').watchTree
+		watchTree source, ( event ) ->
+			file = event.name
+			if file.indexOf('.coffee') is -1
+				
+				destination = file.replace(source, __dirname + '/' + target)
 
-			if event.isDelete()
-				remove(destination)
+				if event.isDelete()
+					remove(destination)
 
-			else 
-				if not event.isDirectory()
-					copy(file, destination)
+				else 
+					if not event.isDirectory()
+						copy(file, destination)
 
-				if event.isMkdir()
-					makeDir(destination)
+					if event.isMkdir()
+						makeDir(destination)
 
 build = ( ) ->
 	buildCoffee()
@@ -80,7 +84,15 @@ buildOthers = ( ) ->
 	else
 		exec("cd #{source} && find . -type f -not -iname '*.coffee' -exec cp --parents -f '{}' '#{__dirname}/#{target}' \\;", (stdin, stdout, stderr) -> console.log stderr, stdout)
 
+
+clean = () ->
+	if os.platform() is "win32"
+		exec("rd /s /q #{target}");
+	else
+		exec("ls | grep -v '#{keep.join('\\|')}' | xargs rm -r")
+		
 copy = ( file, destination ) ->
+	console.log("cp -f '#{file}' '#{destination}'")
 	exec("cp -f '#{file}' '#{destination}'", ->
 		date = new Date()
 		console.log "#{date.toLocaleTimeString()} - created #{file}"
