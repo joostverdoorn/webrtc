@@ -1,7 +1,7 @@
 require [
 	'app._'
 	'models/peer.slave'
-	], ( App, Slave ) =>
+	], ( App, Slave ) ->
 
 	# Master app class
 	#

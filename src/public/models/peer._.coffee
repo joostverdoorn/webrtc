@@ -10,7 +10,7 @@ define [
 		constructor: ( ) ->
 			@_connection = new RTCPeerConnection(null)
 
-			_.defer @initialize
+			@initialize()
 
 		# This method is called from the constructor and should be overridden by subclasses
 		#

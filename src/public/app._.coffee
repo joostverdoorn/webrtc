@@ -15,7 +15,7 @@ define [
 
 			@_server = new Server('localhost')
 
-			_.defer @initialize
+			@initialize()
 
 		# Is called when the app has been constructed. Should be overridden by
 		# subclasses.

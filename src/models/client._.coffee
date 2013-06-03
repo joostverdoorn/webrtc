@@ -16,7 +16,7 @@ class Client
 		@_socket.on('ping', @onPing)
 		@_socket.on('pong', @onPong)
 
-		_.defer @initialize
+		@initialize()
 
 	# This method is called when the constructor has finished running. It should be
 	# overridden by any subclass.
