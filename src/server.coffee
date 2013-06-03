@@ -4,8 +4,14 @@ io = require('socket.io')
 
 Model = require('./models')
 
+
+# Server class. This is run on the server and maintains connections to 
+# any client: masters or slaves.
+
 class Server
 
+	# Constructs a new server.
+	#
 	constructor: ( ) ->
 		@_initTime = Date.now()
 
@@ -23,6 +29,12 @@ class Server
 			
 		@_server.listen(8080)
 
+	# Defines a login process for a socket. Further input from the client
+	# is required to finalize this process, and so we bind a function on
+	# the event 'type.set' so we can create a new Master or Slave client.
+	#
+	# @param socket [WebSocket] the socket for which to start the login.
+	#
 	login: ( socket ) =>
 		socket.on('type.set', ( type ) => 
 			switch type
@@ -32,6 +44,10 @@ class Server
 					@_slaves.push(new Model.Client.Slave(socket))
 		)
 
+	# Returns the time that has passed since the starting of the server.
+	#
+	# @return [Integer] the amount of milliseconds that has elapsed.
+	#
 	time: ( ) ->
 		return Date.now() - @_initTime
 		

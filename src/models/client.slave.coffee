@@ -4,7 +4,10 @@ Client = require('./client._')
 #
 
 class Client.Slave extends Client
-	initialize: ( attributes, options ) ->
+
+	# This method will be called from the baseclass when it has been constructed.
+	#
+	initialize: ( ) ->
 		console.log 'new slave'
 
 module.exports = Client.Slave

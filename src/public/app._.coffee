@@ -22,5 +22,7 @@ define [
 		#
 		initialize: ( ) ->
 
+		# Returns the time that has passed since the starting of the app.
+		#
 		time: ( ) ->
 			return performance.now() - @_initTime
