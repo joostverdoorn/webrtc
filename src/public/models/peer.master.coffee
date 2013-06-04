@@ -11,6 +11,10 @@ define [
 		# 
 		initialize: ( ) ->
 			App.server.sendTo(@remote, 'slave.add', App.id)
+
+			channel = @_connection.createDataChannel('a', @_channelConfiguration)
+			@_addChannel(channel)
+			
 			@_connection.createOffer(@onLocalDescription)
 
 		# Is called when a local description has been added. Will send this description
