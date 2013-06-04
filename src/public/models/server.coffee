@@ -15,9 +15,9 @@ define [
 		constructor: ( @_address ) ->
 			@_socket = io.connect(@_address)
 
-			@on('connect', @onConnect)
-			@on('ping', @onPing)
-			@on('pong', @onPong)	
+			@on('connect', @_onConnect)
+			@on('ping', @_onPing)
+			@on('pong', @_onPong)	
 
 		# Sends a message to the server.
 		#
@@ -66,20 +66,20 @@ define [
 
 		# Is called when a ping is received. We just emit 'pong' back to the server.
 		#
-		onPing: ( ) =>
+		_onPing: ( ) =>
 			@emit('pong')
 
 		# Is called when a pong is received. We call the callback function defined in 
 		# ping with the amount of time that has elapsed.
 		#
-		onPong: ( ) =>
+		_onPong: ( ) =>
 			@_latency = App.time() - @_pingStart
 			@_pingCallback?(@_latency)
 			@_pingStart = undefined
 
 		# Is called when a connection is made. We emit our type to the server.
 		# 
-		onConnect: ( ) =>
+		_onConnect: ( ) =>
 			console.log 'connected to server'
 			@_socket.emit('type.set', App.type)
 			App.id = @_socket.socket.sessionid

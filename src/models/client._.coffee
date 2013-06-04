@@ -15,9 +15,9 @@ class Client
 
 		@defaults = _.extend({}, @_defaults, @defaults ? {})
 
-		@_socket.on('ping', @onPing)
-		@_socket.on('pong', @onPong)
-		@_socket.on('sendTo', @onSendTo)
+		@_socket.on('ping', @_onPing)
+		@_socket.on('pong', @_onPong)
+		@_socket.on('sendTo', @_onSendTo)
 
 		@initialize()
 
@@ -35,19 +35,6 @@ class Client
 		args = [event].concat(args)
 		@_socket.emit.apply(@_socket, args)
 
-	# Is called when a sendTo event is received. Will forward the event and arguments
-	# to the intended receiver.
-	#
-	# @param receiver [String] a string representing the receiver
-	# @param event [String] the event to be emitted
-	# @param args... [Any] the arguments to be emitted
-	#
-	onSendTo: ( receiver, event, args... ) ->
-		args = [event, @id].concat(args)
-
-		client = Server.getClient(receiver)
-		client?.emit.apply(client, args)
-
 	# Pings the client. A callback function should be provided to do anything
 	# with the ping.
 	#
@@ -60,16 +47,29 @@ class Client
 
 	# Is called when a ping is received. We just emit 'pong' back to the client.
 	#
-	onPing: ( ) ->
+	_onPing: ( ) =>
 		@_socket.emit('pong')
 
 	# Is called when a pong is received. We call the callback function defined in 
 	# ping with the amount of time that has elapsed.
 	#
-	onPong: ( ) ->
+	_onPong: ( ) =>
 		@_latency = App.time() - @_pingStart
 		@_pingCallback(@_latency)
 		@_pingStart = undefined
+
+	# Is called when a sendTo event is received. Will forward the event and arguments
+	# to the intended receiver.
+	#
+	# @param receiver [String] a string representing the receiver
+	# @param event [String] the event to be emitted
+	# @param args... [Any] the arguments to be emitted
+	#
+	_onSendTo: ( receiver, event, args... ) ->
+		args = [event, @id].concat(args)
+
+		client = Server.getClient(receiver)
+		client?.emit.apply(client, args)
 
 
 module.exports = Client

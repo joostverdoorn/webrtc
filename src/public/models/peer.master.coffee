@@ -12,17 +12,30 @@ define [
 		initialize: ( ) ->
 			App.server.sendTo(@remote, 'slave.add', App.id)
 
+			@on('channel.open', @onChannelOpen)
+			@on('channel.close', @onChannelClose)
+
 			channel = @_connection.createDataChannel('a', @_channelConfiguration)
 			@_addChannel(channel)
 			
-			@_connection.createOffer(@onLocalDescription)
+			@_connection.createOffer(@_onLocalDescription)
+
+		# Is called when the channel has opened.
+		#
+		onChannelOpen: ( ) ->
+			console.log 'opened channel to master'
+
+		# Is called when the channel has closed.
+		#
+		onChannelClose: ( ) ->
+			console.log 'closed channel to master'
 
 		# Is called when a local description has been added. Will send this description
 		# to the remote.
 		#
 		# @param description [RTCSessionDescription] the local session description
 		#
-		onLocalDescription: ( description ) =>
+		_onLocalDescription: ( description ) =>
 			@_connection.setLocalDescription(description)
 			App.server.sendTo(@remote, 'description.set', description)
 
@@ -31,7 +44,7 @@ define [
 		# @param remote [String] a string representing the remote peer
 		# @param description [Object] an object representing the remote session description
 		#
-		onRemoteDescription: ( remote, description ) =>
+		_onRemoteDescription: ( remote, description ) =>
 			if remote is @remote
 				description = new RTCSessionDescription(description)
 				@_connection.setRemoteDescription(description)

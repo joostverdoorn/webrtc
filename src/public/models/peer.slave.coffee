@@ -10,13 +10,25 @@ define [
 		# This method will be called from the baseclass when it has been constructed.
 		# 
 		initialize: ( ) ->
+			@on('channel.open', @onChannelOpen)
+			@on('channel.close', @onChannelClose)
+
+		# Is called when the channel has opened.
+		#
+		onChannelOpen: ( ) ->
+			console.log 'opened channel to slave'
+
+		# Is called when the channel has closed.
+		#
+		onChannelClose: ( ) ->
+			console.log 'closed channel to slave'
 
 		# Is called when a local description has been added. Will send this description
 		# to the remote.
 		#
 		# @param description [RTCSessionDescription] the local session description
 		#
-		onLocalDescription: ( description ) =>
+		_onLocalDescription: ( description ) =>
 			@_connection.setLocalDescription(description)
 			App.server.sendTo(@remote, 'description.set', description)
 
@@ -25,8 +37,8 @@ define [
 		# @param remote [String] a string representing the remote peer
 		# @param description [Object] an object representing the remote session description
 		#
-		onRemoteDescription: ( remote, description ) =>
+		_onRemoteDescription: ( remote, description ) =>
 			if remote is @remote
 				description = new RTCSessionDescription(description)
 				@_connection.setRemoteDescription(description)
-				@_connection.createAnswer(@onLocalDescription, null, {})
+				@_connection.createAnswer(@_onLocalDescription, null, {})
