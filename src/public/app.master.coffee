@@ -7,6 +7,7 @@ require [
 	#
 
 	class App.Master extends App
+		
 		type: 'master'
 
 		# This method will be called from the baseclass when it has been constructed.

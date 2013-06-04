@@ -32,18 +32,59 @@ define [
 		# @param remote [String] the string representing the remote peer
 		#
 		constructor: ( @remote ) ->
+			@_open = false
+			@_bindings = []
+
 			@_connection = new RTCPeerConnection(@_serverConfiguration, @_connectionConfiguration)
+			
 			@_connection.onicecandidate = @onIceCandidate
 			@_connection.ondatachannel = @onDataChannel
 			
 			App.server.on('description.set', @onRemoteDescription)
 			App.server.on('candidate.add', @onCandidateAdd)
 
+			@on('ping', @onPing)
+			@on('pong', @onPong)
+
 			@initialize()
 
 		# This method is called from the constructor and should be overridden by subclasses
 		#
 		initialize: ( ) ->
+
+		# Sends a message to the remote.
+		#
+		# @param event [String] the event to send
+		# @param args... [Any] any paramters you may want to pass
+		#
+		emit: ( event, args... ) ->
+			unless @_open
+				return false
+			
+			data = 
+				name: event
+				args: args
+
+			@_channel.send(JSON.stringify(data))
+
+		# Binds an event to a callback.
+		#
+		# @param event [String] the event to bind
+		# @param callback [Function] the callback to call
+		#
+		on: ( event, callback ) ->
+			unless @_bindings[event]?
+				@_bindings[event] = []
+
+			@_bindings[event].push(callback)
+
+		# Unbinds an event from a callback.
+		#
+		# @param event [String] the event the unbind from
+		# @param callback [Function] the callback to unbind
+		#
+		off: ( event, callback ) ->
+			@_bindings[event] = _(@_bindings[event]).without callback
 
 		# Adds a new data channel, and adds event bindings to it.
 		#
@@ -88,31 +129,54 @@ define [
 		# @param event [Event] the message event
 		#
 		onChannelMessage: ( event ) =>
-			console.log event
+			data = JSON.parse(event.data)
+			args = [data.name].concat(data.args)
+
+			for binding in @_bindings[data.name]
+				binding.apply(@, args) 
 
 		# Is called when the data channel is opened.
 		#
 		# @param event [Event] the channel open event
 		#
 		onChannelOpen: ( event ) =>
-			console.log event
+			@_open = true
+			console.log 'opened connection to peer'
 
 		# Is called when the data channel is closed.
 		#
 		# @param event [Event] the channel close event
 		#
 		onChannelClose: ( event ) =>
-			console.log event
+			@_open is false
+			console.log 'closed connection to peer'
 
 		# Is called when the data channel has errored.
 		#
 		# @param event [Event] the channel open event
 		#
 		onChannelError: ( event ) =>
-			console.log event			
+			console.log event	
 
+		# Pings the peer. A callback function should be provided to do anything
+		# with the ping.
+		#
+		# @param callback [Function] the callback to be called when a pong was received.
+		#
 		ping: ( callback ) ->
+			@_pingStart = App.time()
+			@_pingCallback = callback
+			@emit('ping')
 
-		pong: ( ) ->
+		# Is called when a ping is received. We just emit 'pong' back to the peer.
+		#
+		onPing: ( ) =>
+			@emit('pong')
 
-		onPong: ( ) ->
+		# Is called when a pong is received. We call the callback function defined in 
+		# ping with the amount of time that has elapsed.
+		#
+		onPong: ( ) =>
+			@_latency = App.time() - @_pingStart
+			@_pingCallback(@_latency)
+			@_pingStart = undefined

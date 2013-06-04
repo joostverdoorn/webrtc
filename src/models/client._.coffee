@@ -68,7 +68,7 @@ class Client
 	#
 	onPong: ( ) ->
 		@_latency = App.time() - @_pingStart
-		@_pingCallback(@_latency, packet)
+		@_pingCallback(@_latency)
 		@_pingStart = undefined
 
 
