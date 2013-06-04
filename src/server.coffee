@@ -1,6 +1,7 @@
 express = require('express')
 http = require('http')
 io = require('socket.io')
+_ = require('underscore')._
 
 Model = require('./models')
 
@@ -15,8 +16,8 @@ class Server
 	constructor: ( ) ->
 		@_initTime = Date.now()
 
-		@_masters = []
-		@_slaves = []
+		@_masters = {}
+		@_slaves = {}
 
 		@_app = express()
 		@_server = http.createServer(@_app)
@@ -39,9 +40,12 @@ class Server
 		socket.on('type.set', ( type ) => 
 			switch type
 				when 'master'
-					@_masters.push(new Model.Client.Master(socket))
+					@_master = new Model.Client.Master(socket)					
+					@_masters[socket.id] = @_master
 				when 'slave'
-					@_slaves.push(new Model.Client.Slave(socket))
+					@_slave = new Model.Client.Slave(socket)
+					@_slaves[socket.id] = @_slave
+					if @_master then @_slave.emit('master.add', @_master.id)
 		)
 
 	# Returns the time that has passed since the starting of the server.
@@ -50,5 +54,12 @@ class Server
 	#
 	time: ( ) ->
 		return Date.now() - @_initTime
+
+	# Returns a certain client
+	#
+	# @param id [String] the id of the client
+	#
+	getClient: ( id ) ->
+		return _.extend({}, @_masters, @_slaves)[id]
 		
 global.Server = new Server()

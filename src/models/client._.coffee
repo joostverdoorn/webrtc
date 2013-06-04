@@ -11,10 +11,13 @@ class Client
 	# @param _socket [WebSocket] the socket that represents the client
 	#
 	constructor: ( @_socket ) ->
+		@id = @_socket.id
+
 		@defaults = _.extend({}, @_defaults, @defaults ? {})
 
 		@_socket.on('ping', @onPing)
 		@_socket.on('pong', @onPong)
+		@_socket.on('sendTo', @onSendTo)
 
 		@initialize()
 
@@ -22,6 +25,28 @@ class Client
 	# overridden by any subclass.
 	#
 	initialize: ( ) ->
+
+	# Emits to the client.
+	#
+	# @param event [String] the event to be emitted
+	# @param args... [Any] the arguments to be emitted
+	#
+	emit: ( event, args... ) ->
+		args = [event].concat(args)
+		@_socket.emit.apply(@_socket, args)
+
+	# Is called when a sendTo event is received. Will forward the event and arguments
+	# to the intended receiver.
+	#
+	# @param receiver [String] a string representing the receiver
+	# @param event [String] the event to be emitted
+	# @param args... [Any] the arguments to be emitted
+	#
+	onSendTo: ( receiver, event, args... ) ->
+		args = [event, @id].concat(args)
+
+		client = Server.getClient(receiver)
+		client?.emit.apply(client, args)
 
 	# Pings the client. A callback function should be provided to do anything
 	# with the ping.

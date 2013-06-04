@@ -1,6 +1,7 @@
 define [
 	'models/server'
 	'vendor/underscore'
+	'vendor/jquery'
 	], ( Server ) -> 
 	
 	# Application base class
@@ -8,12 +9,14 @@ define [
 
 	class App
 
+		id: null
+		
 		# Constructs a new app.
 		#
 		constructor: ( ) ->
 			@_initTime = performance.now()
 
-			@_server = new Server('localhost')
+			@server = new Server('localhost')
 
 			@initialize()
 

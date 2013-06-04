@@ -8,6 +8,5 @@ class Client.Master extends Client
 	# This method will be called from the baseclass when it has been constructed.
 	#
 	initialize: ( ) ->
-		console.log 'new master'
 
 module.exports = Client.Master

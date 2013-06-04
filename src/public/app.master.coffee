@@ -14,7 +14,8 @@ require [
 		initialize: ( ) ->
 			@_slaves = []
 
-			@_slaves.push(new Slave)
-			console.log @_slaves
+			@server.on('slave.add', ( id ) =>
+				@_slaves.push(new Slave(id))
+			)		
 
 	window.App = new App.Master
