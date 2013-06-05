@@ -83,6 +83,6 @@ define [
 			console.log 'connected to server'
 			@_socket.emit('type.set', App.type)
 			App.id = @_socket.socket.sessionid
-			$('body').append(App.id)
+			$('.id').html(App.id)
 
 		

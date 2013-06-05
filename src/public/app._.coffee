@@ -10,13 +10,14 @@ define [
 	class App
 
 		id: null
+		serverAddress: '192.168.1.30'
 		
 		# Constructs a new app.
 		#
 		constructor: ( ) ->
 			@_initTime = performance.now()
 
-			@server = new Server('localhost')
+			@server = new Server(@serverAddress)
 
 			@initialize()
 

@@ -10,7 +10,7 @@ define [
 		# This method will be called from the baseclass when it has been constructed.
 		# 
 		initialize: ( ) ->
-			App.server.sendTo(@remote, 'slave.add', App.id)
+			App.server.sendTo(@id, 'slave.add', App.id)
 
 			@on('channel.open', @onChannelOpen)
 			@on('channel.close', @onChannelClose)
@@ -37,14 +37,14 @@ define [
 		#
 		_onLocalDescription: ( description ) =>
 			@_connection.setLocalDescription(description)
-			App.server.sendTo(@remote, 'description.set', description)
+			App.server.sendTo(@id, 'description.set', description)
 
 		# Is called when a remote description has been received.
 		#
-		# @param remote [String] a string representing the remote peer
+		# @param id [String] a string representing the remote peer
 		# @param description [Object] an object representing the remote session description
 		#
 		_onRemoteDescription: ( remote, description ) =>
-			if remote is @remote
+			if remote is @id
 				description = new RTCSessionDescription(description)
 				@_connection.setRemoteDescription(description)

@@ -29,9 +29,9 @@ define [
 
 		# Constructs a new peer. 
 		#
-		# @param remote [String] the string representing the remote peer
+		# @param id [String] the string representing the remote peer
 		#
-		constructor: ( @remote ) ->
+		constructor: ( @id ) ->
 			@_open = false
 			@_bindings = []
 
@@ -92,7 +92,7 @@ define [
 		# @param args... [Any] any arguments to pass on to the binding
 		#
 		_trigger: ( event, args... ) ->
-			for binding in @_bindings[event]?
+			for binding in @_bindings[event]
 				binding.apply(@, args) 
 
 		# Adds a new data channel, and adds event bindings to it.
@@ -137,15 +137,15 @@ define [
 		#
 		_onIceCandidate: ( event ) =>
 			if event.candidate?
-				App.server.sendTo(@remote, 'candidate.add', event.candidate)
+				App.server.sendTo(@id, 'candidate.add', event.candidate)
 
 		# Is called when the remote wants to add an ice candidate.
 		#
-		# @param remote [String] the id of the remote
+		# @param id [String] the id of the remote
 		# @param candidate [Object] an object representing the ice candidate
 		#
 		_onCandidateAdd: ( remote, candidate ) =>
-			if remote is @remote
+			if remote is @id
 				candidate = new RTCIceCandidate(candidate)
 				@_connection.addIceCandidate(candidate)
 

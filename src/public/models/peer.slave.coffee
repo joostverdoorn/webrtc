@@ -30,15 +30,15 @@ define [
 		#
 		_onLocalDescription: ( description ) =>
 			@_connection.setLocalDescription(description)
-			App.server.sendTo(@remote, 'description.set', description)
+			App.server.sendTo(@id, 'description.set', description)
 
 		# Is called when a remote description has been received. It will create an answer.
 		#
-		# @param remote [String] a string representing the remote peer
+		# @param id [String] a string representing the remote peer
 		# @param description [Object] an object representing the remote session description
 		#
 		_onRemoteDescription: ( remote, description ) =>
-			if remote is @remote
+			if remote is @id
 				description = new RTCSessionDescription(description)
 				@_connection.setRemoteDescription(description)
 				@_connection.createAnswer(@_onLocalDescription, null, {})
