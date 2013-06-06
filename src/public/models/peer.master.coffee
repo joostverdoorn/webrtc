@@ -10,34 +10,37 @@ define [
 		# This method will be called from the baseclass when it has been constructed.
 		# 
 		initialize: ( ) ->
-			App.server.sendTo(@id, 'slave.add', App.id)
+			@on('peer.connected', @onConnected)
+			@on('peer.disconnected', @onDisconnected)
+			@on('peer.channel.opened', @onChannelOpened)
+			@on('peer.channel.closed', @onChannelClosed)
 
-			@on('channel.open', @onChannelOpen)
-			@on('channel.close', @onChannelClose)
+			App.server.sendTo(@id, 'slave.add', App.id)
 
 			channel = @_connection.createDataChannel('a', @_channelConfiguration)
 			@_addChannel(channel)
 			
 			@_connection.createOffer(@_onLocalDescription)
 
+		# Is called when a connection has been established.
+		#
+		onConnected: ( ) ->
+			console.log "connected to master #{@id}"
+
+		# Is called when a connection has been broken.
+		#
+		onDisconnected: ( ) ->
+			console.log "disconnected from master #{@id}"
+
 		# Is called when the channel has opened.
 		#
-		onChannelOpen: ( ) ->
-			console.log 'opened channel to master'
+		onChannelOpened: ( ) ->
+			console.log "opened channel to master #{@id}"
 
 		# Is called when the channel has closed.
 		#
-		onChannelClose: ( ) ->
-			console.log 'closed channel to master'
-
-		# Is called when a local description has been added. Will send this description
-		# to the remote.
-		#
-		# @param description [RTCSessionDescription] the local session description
-		#
-		_onLocalDescription: ( description ) =>
-			@_connection.setLocalDescription(description)
-			App.server.sendTo(@id, 'description.set', description)
+		onChannelClosed: ( ) ->
+			console.log "closed channel to master #{@id}"
 
 		# Is called when a remote description has been received.
 		#

@@ -16,7 +16,7 @@ require [
 			@server.on('master.add', ( id ) =>
 				@_master = new Master(id)
 
-				@_master.on('channel.open', ( ) =>
+				@_master.on('peer.channel.opened', ( ) =>
 					_pingInterval = setInterval(( ) =>
 						@_master.ping( ( latency ) =>
 							$('.latency').html(latency)
