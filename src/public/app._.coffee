@@ -10,7 +10,7 @@ define [
 	class App
 
 		id: null
-		serverAddress: '192.168.1.30'
+		serverAddress: ''
 		
 		# Constructs a new app.
 		#
