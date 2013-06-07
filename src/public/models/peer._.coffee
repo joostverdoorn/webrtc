@@ -70,6 +70,13 @@ define [
 		#
 		initialize: ( ) ->
 
+		# Returns the connection state of the connection.
+		#
+		# @return [RTCIceConnectionState] the connection state
+		#
+		getConnectionState: ( ) ->
+			return @_connection.iceConnectionState
+
 		# Sends a message to the remote.
 		#
 		# @param event [String] the event to send
