@@ -2,7 +2,7 @@ define [
 	'./peer._'
 	], ( Peer ) ->
 
-	# This class provides an implementation of Peer to represent slave
+	# This class provides an implementation of Peer to represent master.
 	#
 
 	class Peer.Master extends Peer
@@ -17,9 +17,7 @@ define [
 
 			App.server.sendTo(@id, 'slave.add', App.id)
 
-			channel = @_connection.createDataChannel('a', @_channelConfiguration)
-			@_addChannel(channel)
-			
+			@_channel = @_connection.createDataChannel('a', @_channelConfiguration)			
 			@_connection.createOffer(@_onLocalDescription)
 
 		# Is called when a connection has been established.
@@ -51,3 +49,4 @@ define [
 			if remote is @id
 				description = new RTCSessionDescription(description)
 				@_connection.setRemoteDescription(description)
+				@_addChannel(@_channel)
