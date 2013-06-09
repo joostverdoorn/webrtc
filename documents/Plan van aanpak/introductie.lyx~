@@ -79,6 +79,12 @@ Het plan van aanpak zal het opzet van het project beschrijven.
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Schets-van-het-bedrijf"
+
+\end_inset
+
 Schets van het 
 \lang dutch
 bedrijf
@@ -122,10 +128,10 @@ Na onze eerste gesprek als een groep, zijn wij al snel achtergekomen dat
  maar aan de slag te gaan met een nieuwe technologie.
  Zo kwamen wij al snel bij TNO, een bedrijf die in Delft bekend staat om
  het verbinden van wetenschap en het bedrijfsleven.
- Wij hebben een gesprek gehad met TNO waar de nieuwste technologieen aan
+ Wij hebben een gesprek gehad met TNO waar de nieuwste technologieën aan
  bod kwamen.
- Na een eigen research naar al die technologien hebben wij besloten om aan
- de slag te gaan met WebRTC.
+ Na een eigen research naar al die technologieën hebben wij besloten om
+ aan de slag te gaan met WebRTC.
  Wij hebben verschillende projectvoorstellen voorbereid en tijdens nog een
  gesprek met meerdere werknemers van TNO zijn wij met elkaar tot overeenstemming
  gekomen bij het formuleren van het projectopdracht.

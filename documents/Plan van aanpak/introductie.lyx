@@ -69,7 +69,8 @@ Het
 
 \begin_layout Standard
 Het plan van aanpak zal het opzet van het project beschrijven.
- Zowel inhoudelijke als organisatorische aspecten komen aan bod in dit document.
+ Zowel inhoudelijke als de organisatorische aspecten komen aan bod in dit
+ document.
  Gezien het feit dat ons project afwijkt van het standaard vorm van een
  bachelorproject waar vooral geprogrammeerd wordt, kan ons plan van aanpak
  ook afwijken van een standaard plan van aanpak.
@@ -79,6 +80,12 @@ Het plan van aanpak zal het opzet van het project beschrijven.
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Schets-van-het-bedrijf"
+
+\end_inset
+
 Schets van het 
 \lang dutch
 bedrijf
@@ -130,7 +137,7 @@ Na onze eerste gesprek als een groep, zijn wij al snel achtergekomen dat
  gesprek met meerdere werknemers van TNO zijn wij met elkaar tot overeenstemming
  gekomen bij het formuleren van het projectopdracht.
  Zo zijn wij blij met de uitdaging die wij aangaan en het bedrijf blij met
- de bijdrage die wij zullen gaan leveren aan het bedrijf.
+ de bijdrage die wij zullen gaan leveren.
 \end_layout
 
 \end_body
