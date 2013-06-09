@@ -41,7 +41,7 @@ class Client
 	# @param callback [Function] the callback to be called when a pong was received.
 	#
 	ping: ( callback ) ->
-		@_pingStart = App.time()
+		@_pingStart = Server.time()
 		@_pingCallback = callback
 		@_socket.emit('ping')	
 
@@ -54,7 +54,7 @@ class Client
 	# ping with the amount of time that has elapsed.
 	#
 	_onPong: ( ) =>
-		@_latency = App.time() - @_pingStart
+		@_latency = Server.time() - @_pingStart
 		@_pingCallback(@_latency)
 		@_pingStart = undefined
 
