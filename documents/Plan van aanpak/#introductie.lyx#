@@ -1,0 +1,134 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Subsection
+
+\lang dutch
+Het
+\lang english
+ plan van aanpak
+\end_layout
+
+\begin_layout Standard
+Het plan van aanpak zal het opzet van het project beschrijven.
+ Zowel inhoudelijke als organisatoische aspecten komen aan bod in dit document.
+ Gezien het feit dat ons project afwijkt van het standaard vorm van een
+ bachelorproject waar vooral geprogrammeerd wordt, kan ons plan van aanpak
+ ook afwijken
+\end_layout
+
+\begin_layout Subsection
+Schets van het 
+\lang dutch
+bedrijf
+\end_layout
+
+\begin_layout Standard
+De missie van TNO luidt: TNO verbindt mensen en kennis om innovaties te
+ cre-eren die de concurrentiekracht van bedrijven en het welzijn van de
+ samenleving duurzaam versterken.
+ TNO is een onafhankelijke onderzoeksorganisatie die op basis van haar expertise
+ en onderzoek een 
+\lang dutch
+belangrijke
+\lang english
+ 
+\lang dutch
+bijdrage
+\lang english
+ levert aan de concurrentiekracht van be-drijven en organisaties, aan de
+ economie en aan de kwaliteit van de samenleving als geheel.
+ Door haar veelzijdigheid en capaciteit tot integratie van deze kennis neemt
+ TNO een unieke positie in.
+\end_layout
+
+\begin_layout Standard
+Doelgericht innoveren, dat is waar TNO voor staat.
+ We ontwikkelen kennis niet om de kennis, maar om de praktische toepassing.
+ Om nieuwe producten te cre-eren die het leven aangenamer en waardevoller
+ maken, en die bedrijven helpen te innoveren.
+ Om creatieve antwoorden te vinden op de vragen die de samenle-ving stelt.
+\end_layout
+
+\begin_layout Subsection
+Achtergrond en aanleiding van de opdracht
+\end_layout
+
+\begin_layout Standard
+Na onze eerste gesprek als een groep, zijn wij al snel achtergekomen dat
+ wij iets innovatiefs wilden gaan doen op het gebied van web.
+ Geen administratiesysteem in elkaar zetten voor een winkelier uit Zoetermeer
+ maar aan de slag te gaan met een nieuwe technologie.
+ Zo kwamen wij al snel bij TNO, een bedrijf die in Delft bekend staat om
+ het verbinden van wetenschap en het bedrijfsleven.
+ Wij hebben een gesprek gehad met TNO waar de nieuwste technologieen aan
+ bod kwamen.
+ Na een eigen research naar al die technologien hebben wij besloten om aan
+ de slag te gaan met WebRTC.
+ Wij hebben verschillende projectvoorstellen voorbereid en tijdens nog een
+ gesprek met meerdere werknemers van TNO zijn wij met elkaar tot overeenstemming
+ gekomen bij het formuleren van het projectopdracht.
+ Zo zijn wij blij met de uitdaging die wij aangaan en het bedrijf blij met
+ de bijdrage die wij zullen gaan leveren aan het bedrijf.
+\end_layout
+
+\end_body
+\end_document
