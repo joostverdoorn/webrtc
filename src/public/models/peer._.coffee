@@ -1,7 +1,11 @@
 define [
+	'helpers/mixable'
+	'helpers/mixin.eventbindings'
+
 	'vendor/underscore'
 	'vendor/adapter'
-	], ( ) ->
+
+	], ( Mixable, EventBindings ) ->
 
 	# This abstract base class provides webrtc connections to masters and slaves
 	#
@@ -22,8 +26,11 @@ define [
 	#		
 	#		@param id [String] a string representing the remote peer
 	#		@param description [Object] an object representing the remote session description
-	#				
-	class Peer
+	#
+
+	class Peer extends Mixable
+
+		@concern EventBindings
 
 		# Provides default server configuration for RTCPeerConnection.
 		_serverConfiguration:
@@ -70,6 +77,15 @@ define [
 		#
 		initialize: ( ) ->
 
+		# Completely removes the peer.
+		#
+		die: ( ) ->
+
+		# Disconnects the peer.
+		#
+		disconnect: ( ) ->
+			@_connection.close()
+
 		# Returns the connection state of the connection.
 		#
 		# @return [RTCIceConnectionState] the connection state
@@ -91,34 +107,6 @@ define [
 				args: args
 
 			@_channel.send(JSON.stringify(data))
-
-		# Binds an event to a callback.
-		#
-		# @param event [String] the event to bind
-		# @param callback [Function] the callback to call
-		#
-		on: ( event, callback ) ->
-			unless @_bindings[event]?
-				@_bindings[event] = []
-
-			@_bindings[event].push(callback)
-
-		# Unbinds an event from a callback.
-		#
-		# @param event [String] the event the unbind from
-		# @param callback [Function] the callback to unbind
-		#
-		off: ( event, callback ) ->
-			@_bindings[event] = _(@_bindings[event]).without callback
-
-		# Triggers an event on all bindings bound to that event.
-		#
-		# @param event [String] the event that is called
-		# @param args... [Any] any arguments to pass on to the binding
-		#
-		_trigger: ( event, args... ) ->
-			for binding in @_bindings[event] ? []
-				binding.apply(@, args) 
 
 		# Adds a new data channel, and adds event bindings to it.
 		#
@@ -198,7 +186,7 @@ define [
 		#
 		_onIceConnectionStateChange: ( event ) =>
 			connectionState = @_connection.iceConnectionState
-			@_trigger("peer.#{connectionState}", @, event)
+			@trigger("peer.#{connectionState}", @, event)
 
 		# Is called when a data channel is added to the connection.
 		#
@@ -215,7 +203,7 @@ define [
 			data = JSON.parse(event.data)
 			args = [data.name, @].concat(data.args)
 
-			@_trigger.apply(@, args)
+			@trigger.apply(@, args)
 
 		# Is called when the data channel is opened.
 		#
@@ -223,7 +211,7 @@ define [
 		#
 		_onChannelOpen: ( event ) =>
 			@_open = true
-			@_trigger('peer.channel.opened', @, event)
+			@trigger('peer.channel.opened', @, event)
 
 		# Is called when the data channel is closed.
 		#
@@ -231,13 +219,13 @@ define [
 		#
 		_onChannelClose: ( event ) =>
 			@_open is false
-			@_trigger('peer.channel.closed', @, event)
+			@trigger('peer.channel.closed', @, event)
 
 		# Is called when the data channel has errored.
 		#
 		# @param event [Event] the channel open event
 		#
 		_onChannelError: ( event ) =>
-			@_trigger('peer.channel.errorer', @, event)
+			@trigger('peer.channel.errorer', @, event)
 
 		

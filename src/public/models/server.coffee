@@ -1,12 +1,16 @@
 define [
+	'helpers/mixable'
+	'helpers/mixin.eventbindings'
 	'socket.io/socket.io'
-	], ( ) ->
+	], ( Mixable, EventBindings ) ->
 
 	# This class is a model for the server, and provides all interaction with 
 	# the actual server.
 	#
 
-	class Server
+	class Server extends Mixable
+
+		@concern EventBindings
 
 		# Constructs a new server model. 
 		#
@@ -15,18 +19,31 @@ define [
 		constructor: ( @_address ) ->
 			@_socket = io.connect(@_address)
 
+			@on('event.bind', ( name ) =>
+				if @_socket.listeners(name).length > 0
+					return
+
+				@_socket.on(name, ( args... ) =>
+					args = [name].concat(args)
+					@trigger.apply(@, args)
+				)
+			)
+
+			@on('event.unbind', ( name ) ->
+				@_socket.removeAllListeners(name)
+			)
+			
 			@on('connect', @_onConnect)
 			@on('ping', @_onPing)
-			@on('pong', @_onPong)	
+			@on('pong', @_onPong)
 
-		# Sends a message to the server.
+		# Emits to the server.
 		#
-		# @param event [String] the event to send
-		# @param args... [Any] any paramters you may want to pass
+		# @param event [String] the event to be emitted
+		# @param args... [Any] the arguments to be emitted
 		#
 		emit: ( event, args... ) ->
-			args = [event].concat(args)
-			@_socket.emit.apply(@_socket, args)
+			@_socket.emit.apply(@_socket, arguments)
 
 		# Sends a message to a peer, via the server.
 		#
@@ -38,23 +55,7 @@ define [
 			args = ['sendTo', receiver, event].concat(args)
 			@emit.apply(@, args)
 
-		# Binds an event to a callback.
-		#
-		# @param event [String] the event to bind
-		# @param callback [Function] the callback to call
-		#
-		on: ( event, callback ) ->
-			@_socket.on(event, callback)
-
-		# Unbinds an event from a callback.
-		#
-		# @param event [String] the event the unbind from
-		# @param callback [Function] the callback to unbind
-		#
-		off: ( event, callback ) ->
-			@_socket.removeListener(event, callback)
-
-		# Pings the server. A callback function should be provided to do anything
+			# Pings the server. A callback function should be provided to do anything
 		# with the ping.
 		#
 		# @param callback [Function] the callback to be called when a pong was received.
