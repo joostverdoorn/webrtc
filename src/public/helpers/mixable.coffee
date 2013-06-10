@@ -1,6 +1,7 @@
 define ->
 
 	# Mixable class. Will aid in multiple inheritance by applying mixins.
+	# Based on code originally written by Derk-Jan Karrenbeld. Licensed MIT.
 
 	class Mixable
 		
@@ -36,8 +37,7 @@ define ->
 		#
 		# @param  concerns [Object*] the mixins to add
 		#
-		@concern: ( concerns... ) ->
-		
+		@concern: ( concerns... ) ->		
 			for concern in concerns
 				@include concern.InstanceMethods
 				@extend concern.ClassMethods

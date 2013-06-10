@@ -1,7 +1,12 @@
+requirejs.config
+	shim:
+		'vendor/js/bootstrap': [ 'vendor/js/jquery' ]
+
 define [
 	'models/server'
-	'vendor/underscore'
-	'vendor/jquery'
+	'vendor/js/underscore'
+	'vendor/js/jquery'
+	'vendor/js/bootstrap'
 	], ( Server ) -> 
 	
 	# Application base class

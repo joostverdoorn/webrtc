@@ -1,5 +1,5 @@
 define [
-	'vendor/jquery' 
+	'vendor/js/jquery' 
 	], ( ) ->	
 
 	# Master app class

@@ -14,7 +14,7 @@ define [
 			@on('peer.disconnected', @onDisconnected)
 			@on('peer.channel.opened', @onChannelOpened)
 			@on('peer.channel.closed', @onChannelClosed)
-
+			
 		# Is called when a connection has been established.
 		#
 		onConnected: ( ) ->

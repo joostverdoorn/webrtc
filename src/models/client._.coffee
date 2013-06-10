@@ -55,7 +55,7 @@ class Client
 	#
 	_onPong: ( ) =>
 		@_latency = Server.time() - @_pingStart
-		@_pingCallback(@_latency)
+		@_pingCallback?(@_latency)
 		@_pingStart = undefined
 
 	# Is called when a sendTo event is received. Will forward the event and arguments

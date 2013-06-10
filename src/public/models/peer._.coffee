@@ -2,8 +2,8 @@ define [
 	'helpers/mixable'
 	'helpers/mixin.eventbindings'
 
-	'vendor/underscore'
-	'vendor/adapter'
+	'vendor/js/underscore'
+	'vendor/js/adapter'
 
 	], ( Mixable, EventBindings ) ->
 
@@ -201,7 +201,7 @@ define [
 		#
 		_onChannelMessage: ( event ) =>
 			data = JSON.parse(event.data)
-			args = [data.name, @].concat(data.args)
+			args = [data.name].concat(data.args)
 
 			@trigger.apply(@, args)
 
