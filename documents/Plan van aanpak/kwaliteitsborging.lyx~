@@ -5,7 +5,7 @@
 \textclass article
 \use_default_options true
 \maintain_unincluded_children false
-\language english
+\language dutch
 \language_package default
 \inputencoding auto
 \fontencoding global
@@ -25,6 +25,7 @@
 \bibtex_command default
 \index_command default
 \paperfontsize default
+\spacing single
 \use_hyperref false
 \papersize default
 \use_geometry false
@@ -59,8 +60,32 @@
 
 \begin_body
 
+\begin_layout Subsection
+Inleiding
+\end_layout
+
+\begin_layout Subsection
+De kwaliteit
+\end_layout
+
+\begin_layout Subsubsection
+Documentatie
+\end_layout
+
+\begin_layout Subsubsection
+Versiebeheer
+\end_layout
+
+\begin_layout Subsubsection
+Evaluatie
+\end_layout
+
+\begin_layout Subsection
+De pilots
+\end_layout
+
 \begin_layout Standard
-kwaliteit
+
 \end_layout
 
 \end_body

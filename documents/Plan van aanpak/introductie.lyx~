@@ -5,7 +5,7 @@
 \textclass article
 \use_default_options true
 \maintain_unincluded_children false
-\language english
+\language dutch
 \language_package default
 \inputencoding auto
 \fontencoding global
@@ -25,6 +25,7 @@
 \bibtex_command default
 \index_command default
 \paperfontsize default
+\spacing single
 \use_hyperref false
 \papersize default
 \use_geometry false
@@ -60,11 +61,7 @@
 \begin_body
 
 \begin_layout Subsection
-
-\lang dutch
-Het
-\lang english
- plan van aanpak
+Het plan van aanpak
 \end_layout
 
 \begin_layout Standard
@@ -80,11 +77,7 @@ Het plan van aanpak zal het opzet van het project beschrijven.
 \end_layout
 
 \begin_layout Subsection
-Schets van het 
-\lang dutch
-bedrijf
-\lang english
-
+Schets van het bedrijf
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Schets-van-het-bedrijf"
@@ -99,16 +92,9 @@ De missie van TNO luidt: TNO verbindt mensen en kennis om innovaties te
  creëren die de concurrentiekracht van bedrijven en het welzijn van de samenlevi
 ng duurzaam versterken.
  TNO is een onafhankelijke onderzoeksorganisatie die op basis van haar expertise
- en onderzoek een 
-\lang dutch
-belangrijke
-\lang english
- 
-\lang dutch
-bijdrage
-\lang english
- levert aan de concurrentiekracht van bedrijven en organisaties, aan de
- economie en aan de kwaliteit van de samenleving als geheel.
+ en onderzoek een belangrijke bijdrage levert aan de concurrentiekracht
+ van bedrijven en organisaties, aan de economie en aan de kwaliteit van
+ de samenleving als geheel.
  Door haar veelzijdigheid en capaciteit tot integratie van deze kennis neemt
  TNO een unieke positie in.
 \end_layout
@@ -141,13 +127,6 @@ Na onze eerste gesprek als een groep, zijn wij al snel achtergekomen dat
  gekomen bij het formuleren van het projectopdracht.
  Zo zijn wij blij met de uitdaging die wij aangaan en het bedrijf blij met
  de bijdrage die wij zullen gaan leveren.
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "sub:Schets-van-het-bedrijf"
-
-\end_inset
-
-
 \end_layout
 
 \end_body
