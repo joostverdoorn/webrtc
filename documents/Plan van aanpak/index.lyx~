@@ -83,7 +83,27 @@ Joost Verdoorn
 
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section*
+Inhoudsopgave
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
 Voorwoord
 \end_layout
 
@@ -111,6 +131,13 @@ filename "introductie.lyx"
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 Opdrachtomschrijving
 \end_layout
@@ -120,6 +147,13 @@ Opdrachtomschrijving
 LatexCommand input
 filename "opdracht-omschrijving.lyx"
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
 \end_inset
 
 
@@ -139,6 +173,13 @@ filename "aanpak.lyx"
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 Projectinrichting
 \end_layout
@@ -148,6 +189,13 @@ Projectinrichting
 LatexCommand input
 filename "projectinrichting.lyx"
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
 \end_inset
 
 

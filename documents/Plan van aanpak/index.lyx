@@ -83,7 +83,27 @@ Joost Verdoorn
 
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section*
+Inhoudsopgave
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
 Voorwoord
 \end_layout
 

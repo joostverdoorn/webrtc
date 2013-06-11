@@ -97,17 +97,34 @@ Wij hebben twee contactpersonen die ons zullen begeleiden tijdens het project:
 \end_layout
 
 \begin_layout Enumerate
+
+\noun on
 V.
  B.
- Klos - Senior Innovator Multimedia Technology, TNO
+ Klos
+\noun default
+ - Senior Innovator Multimedia Technology, TNO
 \end_layout
 
 \begin_layout Enumerate
+
+\noun on
 A.
  J.
  H.
- Hidders - Assistant professor at the group of Web Information Systems,
- TUDelft
+ Hidders
+\noun default
+ - Assistant professor at the group of Web Information Systems, TUDelft
+\begin_inset Marginal
+status open
+
+\begin_layout Plain Layout
+baas
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -115,7 +132,7 @@ Probleemstelling
 \end_layout
 
 \begin_layout Standard
-TNO heeft heel veel kennis huis zodat zij hun klanten breed kunnen adviseren
+TNO heeft heel veel kennis in huis zodat zij hun klanten breed kunnen adviseren
  op alle gebieden.
  Daarom is het voor TNO altijd belangrijk om de kennis in huis goed op niveau
  te houden en op de hoogte te blijven van de kennis die elders ontwikkeld
@@ -226,7 +243,7 @@ Gezien het feit dat wij vanuit nul aan het project beginnen zijn er geen
  inhoudelijke randvoorwaarden die gedefinieerd dienen te worden dan de doelstell
 ingen die al gespecifieerd zijn.
  Wel vindt TNO het belangrijk dat de library goed getest wordt en de codekwalite
-it goed is.
+it goed is wat ons vanzelfsprekend lijkt.
 \end_layout
 
 \begin_layout Standard
@@ -245,11 +262,11 @@ Risicofactoren
 \end_layout
 
 \begin_layout Standard
-Het grote risico die wij op dit moment kunnen zien is dat door het feit
- dat wij 3 deliverables hebben, onze tijd verkeerd kunnen indelen waardoor
- er niet genoeg tijd over zal blijven voor 1 van die deliverables.
+Het grote risico die wij op dit moment kunnen inzien is dat door het feit
+ dat wij drie deliverables hebben, onze tijd verkeerd kunnen indelen waardoor
+ er niet genoeg tijd over zal blijven om al het werk af te kunnen ronden.
  Hier zouden wij goed rekening moeten houden in de planning en al na enkele
- onze aandacht moeten verspreiden.
+ weken onze aandacht moeten verspreiden.
 \end_layout
 
 \begin_layout Standard

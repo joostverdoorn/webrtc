@@ -80,15 +80,18 @@ Het plan van aanpak zal het opzet van het project beschrijven.
 \end_layout
 
 \begin_layout Subsection
+Schets van het 
+\lang dutch
+bedrijf
+\lang english
+
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Schets-van-het-bedrijf"
 
 \end_inset
 
-Schets van het 
-\lang dutch
-bedrijf
+
 \end_layout
 
 \begin_layout Standard
