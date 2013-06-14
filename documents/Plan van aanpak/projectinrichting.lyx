@@ -64,16 +64,50 @@
 Inleiding
 \end_layout
 
+\begin_layout Standard
+Dit hoofdstuk zal de projectindeling van het WebRTC project verduidelijken.
+\end_layout
+
 \begin_layout Subsection
 Betrokkenen
+\end_layout
+
+\begin_layout Standard
+De betrokkenen in dit project komen van drie verschillende partijen.
+ Ten eerste zal TNO de opdrachtgever zijn.
+ Binnen TNO zal dhr.
+ Klos (VOOR ZOVER IK HET WEET IS HET NIET DEFINITIEF WIE VANUIT TNO DIT
+ DOET, OF INMIDDELS WEL?) over de voortgang en kwaliteit van het project
+ waken.
+ Vanuit de Technische Universiteit Delft zal dhr.
+ Hidders ditzelfde doen om de belangen van de TU Delft te behartigen.
+ De uitvoerende taken zijn verdeeld over Jasper Abbink, Karens Grigorjancs
+ en Joost Verdoorn.
+ Zij zijn er voor verantwoordelijk dat de geplannde werkzaamheden op tijd
+ uitgevoerd zijn.
 \end_layout
 
 \begin_layout Subsection
 Informatie
 \end_layout
 
+\begin_layout Standard
+Het project zal uitgevoerd worden in tien voltijd weken.
+ Hiervan zullen er acht tijdens de gehele zomervakantie van de TU Delft
+ zijn en de resterende 80 uur per persoon zullen deeltijd vooraf uitgevoerd
+ worden.
+\end_layout
+
 \begin_layout Subsection
 Faciliteiten
+\end_layout
+
+\begin_layout Standard
+Tijdens de eerste twee weken zal gewerkt worden in studieruimtes van de
+ TU Delft of op anderen plekken waar het de deelnemers op dat ogenblijk
+ goed uitkomt.
+ Tijdens de zomervakantie zal er door TNO plaats in het kantoor aangeboden
+ worden op de locatie Brassersplein, Delft.
 \end_layout
 
 \end_body
