@@ -124,7 +124,7 @@ Het is belangrijk dat we elke week de documentatie nauwgezet bijwerken.
  in het technologierapport zal komen.
  Daarnaast moeten we zorgen dan we de library en de game goed gescheiden
  houden, en dat we de juiste selectie maken van welke functionaliteit in
- de library of in de game thuishoort.
+ de library of in de game thuis hoort.
 \end_layout
 
 \begin_layout Subsubsection
@@ -136,9 +136,9 @@ Voor het beheer van onze code zullen we gebruik maken van het Git versiecontrole
 systeem.
  Hoewel standaard alle code op Github publiek inzichtelijk is, hebben we
  voor dit project bij Github een privé repository aangevraagd.
- Dit betekent dat wij zelf bepalen wie wel en wie niet inzicht heederde
- deel van ons product, namelijk ft in onze code, omdat het nog niet bekend
- is of de code uiteindelijk wel of niet publiekelijk beschikbaar mag zijn.
+ Dit betekent dat wij zelf kunnen bepalen wie wel en wie niet inzicht heeft
+ in onze code, omdat het nog niet bekend is of de code uiteindelijk wel
+ of niet publiekelijk beschikbaar mag zijn.
 \end_layout
 
 \begin_layout Standard
@@ -156,30 +156,106 @@ Technieken
 \end_layout
 
 \begin_layout Standard
-We zullen in dit project gebruik maken van verschillende technieken en talen,
- waarbij het gebruik van de webtaal Javascript centraal staat.
- We zullen gebruik maken van de nieuwste technieken in ons domein, met als
- belangrijkste techniek WebRTC, welke ons in staat stelt om directe - peer
- to peer - communicatie te bereiken tussen browser, zonder daarbij software
- van derden - zoals plugins of add-ons - te gebruiken.
- Dit is een zeer krachtige technologie die ons in staat stelt om grote hoeveelhe
-den data met een lage overdrachtsduratie te versturen.
- Naast WebRTC zullen we gebruikmaken van andere HTML5 technieken zoals WebSocket
-s voor het totstandbrengen van de daadwerkelijke WebRTC verbinding, en een
- techniek op het vlak van computer graphics (zoals Canvas of WebGL) voor
- de game die onze library zal implementeren.
-\end_layout
-
-\begin_layout Subsection
-Werkzaamheden
+Bij dit project zullen we gebruik maken van de nieuwste technieken op het
+ gebied van het Web.
+ Allereerst staat natuurlijk WebRTC centraal, en stelt ons in staat om een
+ peer-to-peer verbinding te leggen tussen twee browsers.
+ WebRTC wordt in browsers geïmplementeerd als een API in JavaScript, en
+ van deze taal zullen we dan ook veel gebruik maken (al is het via CoffeeScript,
+ zie hierboven).
+ Naast WebRTC zullen we gebruik maken van technieken die ons in staat stellen
+ verschillende sensoren van mobiele devices uit te lezen.
+ Ook maken we gebruik van andere nieuwe technieken binnen het Web.
+ Zo zullen we WebSockets gebruiken tussen browser en server voor de totstandkomi
+ng van de daadwerlijke WebRTC connectie, en zullen we naar alle waarschijnlijkhe
+id een computer graphics implementatie in HTML5 gebruiken - denk aan Canvas
+ of WebGL - in de game die we ontwikkelen.
+ Naast onze bevindingen met WebRTC zullen we ook bevindingen op de andere
+ vlakken documenteren, zodat deze kennis niet verloren gaat.
 \end_layout
 
 \begin_layout Subsection
 Planning
 \end_layout
 
+\begin_layout Subsubsection*
+Week 1 - 24 juni t/m 30 juni
+\end_layout
+
 \begin_layout Standard
-hier ook al?
+Library
+\end_layout
+
+\begin_layout Subsubsection*
+Week 2 - 1 juli t/m 7 juli
+\end_layout
+
+\begin_layout Standard
+Library
+\end_layout
+
+\begin_layout Subsubsection*
+Week 3 - 8 juli t/m 14 juli: Sprint 1
+\end_layout
+
+\begin_layout Standard
+Game + library
+\end_layout
+
+\begin_layout Subsubsection*
+Week 4 - 15 juli t/m 21 juli: Sprint 2
+\end_layout
+
+\begin_layout Standard
+Game + library
+\end_layout
+
+\begin_layout Subsubsection*
+Week 5 - 22 juli t/m 28 juli: Sprint 3
+\end_layout
+
+\begin_layout Standard
+Game + library
+\end_layout
+
+\begin_layout Subsubsection*
+Week 6 - 29 t/m 4 augustus: Sprint 4
+\end_layout
+
+\begin_layout Standard
+Game + library
+\end_layout
+
+\begin_layout Subsubsection*
+Week 7 - 5 augustus t/m 11 agustus: Sprint 5
+\end_layout
+
+\begin_layout Standard
+Game + library
+\end_layout
+
+\begin_layout Subsubsection*
+Week 8 - 12 augustus t/m 18 augustus: Sprint 6
+\end_layout
+
+\begin_layout Standard
+Game
+\end_layout
+
+\begin_layout Subsubsection*
+Week 9 - 19 augustus t/m 25 augustus: Sprint 7
+\end_layout
+
+\begin_layout Standard
+Game
+\end_layout
+
+\begin_layout Subsubsection*
+Week 10 - 26 augustus t/m 1 september
+\end_layout
+
+\begin_layout Standard
+Afronden verslagen
 \end_layout
 
 \end_body
