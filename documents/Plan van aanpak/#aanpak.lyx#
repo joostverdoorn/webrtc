@@ -105,14 +105,6 @@ twikkelmethoden behandelt.
 \end_layout
 
 \begin_layout Standard
-We zullen door het hele proces heen werken aan onze derde deliverable, namelijk
- het technologieonderzoek en het verslag hiervan.
- Aan het eind van elke sprint zal het verslag worden uitgebreid met ervaringen
- die sprint hebben opgedaan, de problemen waar we tegen aan liepen en de
- oplossingen die we ervroo hebben gevonden.
-\end_layout
-
-\begin_layout Standard
 Voor het beheer van onze code zullen we gebruikmaken van het Git versiecontroles
 ysteem, gehost door Github.
  We hebben voor dit project bij Github een privé repository aangevraagd
