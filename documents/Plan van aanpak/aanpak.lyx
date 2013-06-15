@@ -79,46 +79,76 @@ In dit hoofdstuk zullen we de aanpak en planning van het project bespreken.
 Methodiek
 \end_layout
 
+\begin_layout Subsubsection
+Ontwikkelmethode
+\end_layout
+
 \begin_layout Standard
 Tijdens de bacheloropleiding Technische Informatica zijn verscheidene softwareon
 twikkelmethoden behandelt.
  Elk heeft zo z'n voor- en nadelen, maar Agile methoden zoals Scrum zijn
  vaak uitermate geschikt voor relatief korte projecten met een klein team,
- en hier zullen we dan ook gebruik van maken.
- Scrum maakt gebruik van korte ontwikkelcycli - ookwel sprints genoemd -
- die in tijdsduur varieren van slecht één week tot een maand.
- Gezien dat ons project slechts 10 weken loopt, waarvan we er 8 daadwerkelijk
- full-time aan zullen werken, zullen wij gebruikmaken van sprints met een
- tijdsduur van één week.
- Aan het eind van elke week zullen wij een werkend product hebben, en in
- elke sprint zal er nieuwe functionaliteit aan toe worden gevoegd.
- Scrum is uitermate geschikt voor ons project, aangezien de software die
- we af zullen leveren tweedelig zal zijn.
- Door gebruik te maken van Scrum zorgen we ervoor dat we snel kunnen schakelen
- tussen het ontwikkelen van de library en de game, omdat met Scrum elke
- sprint een nieuwe planning wordt gemaakt.
- Hoewel er begonnen zal worden met het ontwikkelen van de library, zal de
- ontwikkeling van beide systemen voor het grootste deel parallel lopen.
- Immers, tijdens het daadwerkelijk gebruik maken van de library zullen we
- er achter komen waar er nog functionaliteit ontbreekt, en deze zo nodig
- toevoegen.
+ en hier zullen we dan ook gebruik van maken, en wel om de volgende redenen.
+ Scrum maakt gebruik van korte ontwikkelcycli - ook wel sprints genoemd
+ - die in tijdsduur varieren van slecht één week tot een maand.
+ Aan het begin van elke sprint wordt een planning gemaakt van wat er in
+ die sprint moet gebeuren, en aan het eind van de sprint zal er een werkend
+ product zijn.
+ Aangezien ons project slechts tien weken loopt, en wij hiervan acht weken
+ full-time er aan werken, zullen we sprints hanteren met een duur van één
+ week.
+ Zoals Scrum voorschrijft zullen we aan het begin van de week plannen welke
+ taken we zullen uitvoeren, en aan het eind van elke week zullen we een
+ werkend systeem hebben.
 \end_layout
 
 \begin_layout Standard
-We zullen door het hele proces heen werken aan onze derde deliverable, namelijk
- het technologieonderzoek en het verslag hiervan.
- Aan het eind van elke sprint zal het verslag worden uitgebreid met ervaringen
- die sprint hebben opgedaan, de problemen waar we tegen aan liepen en de
- oplossingen die we ervroo hebben gevonden.
+Scrum is vanwege zijn korte ontwikkelsprints uitermate geschikt voor ons
+ project specifiek, gezien de aard van ons project.
+ Hoewel onze ontwikkeling zal starten met alleen de library, zal al snel
+ de ontwikkeling van de game en de library parallel lopen.
+ Juist door de library te gebruiken in de game komen we er achter op welke
+ vlakken er nog functionaliteit ontbreekt, en kunnen we de library zo nodig
+ aanpassen.
+ Ook zullen we aan het einde van elke sprint documenteren wat onze bevindingen
+ van die week zijn, zodat deze informatie gebruikt kan worden in het technologie
+rapport.
+ Juist door deze documentatie bij te houden zorgen we ervoor dat elk facet
+ van het ontwikkelen met WebRTC naar voren komt.
 \end_layout
 
 \begin_layout Standard
-Voor het beheer van onze code zullen we gebruikmaken van het Git versiecontroles
-ysteem, gehost door Github.
- We hebben voor dit project bij Github een privé repository aangevraagd
- omdat nog niet bekend is of de door ons ontwikkelde code uiteindelijk al
- dan niet publiekelijk beschikbaar mag zijn.
- 
+Het is belangrijk dat we elke week de documentatie nauwgezet bijwerken.
+ Een ervaren probleem kan snel vergeten worden als het niet op tijd wordt
+ opgeschreven, waarbij deze waardevolle kennis verloren gaat en niet meer
+ in het technologierapport zal komen.
+ Daarnaast moeten we zorgen dan we de library en de game goed gescheiden
+ houden, en dat we de juiste selectie maken van welke functionaliteit in
+ de library of in de game thuishoort.
+\end_layout
+
+\begin_layout Subsubsection
+Tools
+\end_layout
+
+\begin_layout Standard
+Voor het beheer van onze code zullen we gebruik maken van het Git versiecontrole
+systeem.
+ Hoewel standaard alle code op Github publiek inzichtelijk is, hebben we
+ voor dit project bij Github een privé repository aangevraagd.
+ Dit betekent dat wij zelf bepalen wie wel en wie niet inzicht heederde
+ deel van ons product, namelijk ft in onze code, omdat het nog niet bekend
+ is of de code uiteindelijk wel of niet publiekelijk beschikbaar mag zijn.
+\end_layout
+
+\begin_layout Standard
+We zullen niet rechtstreeks in JavaScript programmeren maar in plaats hiervan
+ de taal CoffeeScript gebruiken.
+ CoffeeScript is een taal die qua syntax veel lijkt op Ruby, en die door
+ een compiler omgezet wordt in equivalente JavaScript code.
+ De voordelen van CoffeeScript zijn talrijk, maar het grootste voordeel
+ is toch wel dat CoffeeScript een volledig Object Oriented taal is, in tegenstel
+ling tot JavaScripts soms ietwat onhandige prototype systeem.
 \end_layout
 
 \begin_layout Subsection
