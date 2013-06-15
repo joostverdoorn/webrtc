@@ -64,16 +64,43 @@
 Inleiding
 \end_layout
 
+\begin_layout Standard
+Dit hoofdstuk zal dieper ingaan in de beoogde planning van het project.
+ Ten eerste zal aangegeven worden hoe wij tijdens het project te werk zullen
+ gaan.
+ Ten tweede zullen de gebruiken technieken die bij het project te pas komen
+ besproken worden.
+ Vervolgens worden de geplannde werkzaamheden benoemd en tot slot zal er
+ een planning gepresenteerd worden.
+\end_layout
+
 \begin_layout Subsection
 Methodiek
 \end_layout
 
 \begin_layout Standard
-scrum?
+Wij zullen tijdens het project gebruik maken van scrum als softwareontwikkelmeth
+ode.
+ Hierbij houden wij sprints van [VUL IN!] weken/dagen aan.
+ Wij hebben voor deze methode gekozen omdat deze beter aan de voorwaarden
+ van softwareontwikkeling voldoet dan traditionelere ontwikkelmethodes in
+ techniek.
+ Door scrum te gebruiken zal er ook altijd een werkend product zijn en is
+ er de mogelijkheid om bij tijdsgebrek onderdelen makkelijk te schrappen
+ en bij tijdsovervloed de mogelijkheid bestaat om onderdelen toe te voegen.
+ Dit is bij bijvoorbeeld het watervalmethode niet mogelijk.
 \end_layout
 
 \begin_layout Subsection
 Technieken
+\end_layout
+
+\begin_layout Standard
+In het project zullen meerdere webtechnologieen gebruikt worden.
+ De voornaamste is WebRTC.
+ Het hele project gaat om het onderzoeken en gebruiken van de mogelijkheden
+ van deze technologie.
+ 
 \end_layout
 
 \begin_layout Subsection

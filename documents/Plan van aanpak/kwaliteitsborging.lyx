@@ -64,6 +64,11 @@
 Inleiding
 \end_layout
 
+\begin_layout Standard
+In dit hoofdstuk zal besproken worden hoe de kwaliteit van het project in
+ positieve zin beinvloedt kan worden.
+\end_layout
+
 \begin_layout Subsection
 De kwaliteit
 \end_layout
@@ -72,8 +77,24 @@ De kwaliteit
 Documentatie
 \end_layout
 
+\begin_layout Standard
+Om een verifieerbaar goed product te hebben is het belangrijk om alle uitgevoerd
+e stappen goed te documenteren.
+ Hiermee is het achteraf mogelijk om te zien of alles zoals vooraf bepaald
+ juist gedaan is.
+ Verder zorgt dit ervoor dat buitenstaanders snel kunnen begrijpen wat wij
+ gedaan hebben en hoezo dit gedaan is.
+\end_layout
+
 \begin_layout Subsubsection
 Versiebeheer
+\end_layout
+
+\begin_layout Standard
+Tijdens dit project zal er veel programmeercode geschreven worden.
+ Met meerdere mensen aan een snel veranderend project werken kan soms onhandig
+ worden en daarom maken wij gebruik van het versiebeheersysteem git (specifiek
+ de aangeboden versie van github.com) om de samenwerking te stimuleren.
 \end_layout
 
 \begin_layout Subsubsection
