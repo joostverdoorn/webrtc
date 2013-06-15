@@ -216,7 +216,7 @@ Het toegankelijk stellen van de technologie zal in de vorm van een library
 \end_layout
 
 \begin_layout Standard
-Voor een showcase van WebRTC zullen wij een kleine browser gebaseerd spel
+Voor een showcase van WebRTC zullen wij een klein browser gebaseerd spel
  ontwikkelen die gebruik maakt van de genoemde library.
  In deze game zullen we gebruik maken van zo veel mogelijk aspecten van
  WebRTC en zullen we mobile devices inzetten als controller voor de game.
