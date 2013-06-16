@@ -67,10 +67,10 @@ Inleiding
 \begin_layout Standard
 In dit hoofdstuk zal er toegelicht worden wat de voorlopige afspraken zijn
  met TNO.
- Wat zal er ontwikkeld worden, waarom wordt dit ontwikkeld en en voor wie
- wordt dit ontwikkeld? Aangezien het proces minstens zo belangrijk is als
- het resultaat zal er in dit hoofdstuk aandacht besteed worden aan zowel
- de inhoudelijke als de procesmatige kant van het project
+ Wat zal er ontwikkeld worden, waarom wordt dit ontwikkeld en voor wie wordt
+ dit ontwikkeld? Aangezien het proces minstens zo belangrijk is als het
+ resultaat zal er in dit hoofdstuk aandacht besteed worden aan zowel de
+ inhoudelijke als de procesmatige kant van het project
 \end_layout
 
 \begin_layout Subsection
@@ -168,8 +168,8 @@ Niet alleen de theoretische kant is interessant voor de opdrachtgever.
  Zo wil TNO dat de technologie op een makkelijke manier toegankelijk wordt
  gemaakt voor de werknemers binnen het bedrijf.
  Zonder te veel documentatie, en met een voorbeeldimplementatie, moet iedereen
- gebruik kunnen maken van WebRTC en deze technologie snel te kunnen implementere
-n in eigen project.
+ gebruik kunnen maken van WebRTC en deze technologie snel kunnen implementeren
+ in een eigen project.
 \end_layout
 
 \begin_layout Standard
