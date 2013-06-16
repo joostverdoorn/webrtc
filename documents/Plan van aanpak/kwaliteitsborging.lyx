@@ -138,14 +138,60 @@ Evaluatie
 \end_layout
 
 \begin_layout Standard
-Code zal altijd getest moeten worden op volledige werking zoals in de planning
- overeengekomen.
+De code zal altijd getest moeten worden op volledige werking zoals in de
+ planning overeengekomen.
  Hierdoor zal het project altijd naar verwachting werken en daarmee zo als
  gewenst.
 \end_layout
 
+\begin_layout Standard
+Als niet alles naar behoren werkt kan door middel van de documentatie gekeken
+ worden waar het fout ging en met het versiebeheer terug gegaan worden naar
+ een versie die wel nog werkte.
+ Deze manier helpt te garanderen dat er ten allen tijden een werken product
+ aanwezig is.
+\end_layout
+
 \begin_layout Subsubsection
 De pilots
+\end_layout
+
+\begin_layout Standard
+Doordat wij als softwareontwikkelmethode scrum gebruiken zal er na elke
+ sprint een werkend product zijn.
+ Hierdoor is het theoretisch mogelijk om elke week een testversie beschikbaar
+ te hebben.
+ Doordat wij voornamelijk een library maken, die voor eindgebruikers niet
+ heel interessant is zal het in het begin niet handig zijn om gebruikers
+ van buiten af het product te laten testen.
+\end_layout
+
+\begin_layout Standard
+Naast de library ontwikkelen wij ook een spel die de volledige library benut.
+ Naar mate dit spel verder gevordert is zal het wel mogelijk zijn dit voor
+ te leggen aan anderen om alvast een voorproefje van het finale product
+ te krijgen.
+ Hoe dit verder uit gaan zien hebben wij nog niet besloten.
+ Daarom is het nog niet mogelijk om specifiek een sprint aan te geven vanaf
+ wanneer het voor buitenstaanders interessant kan zijn.
+\end_layout
+
+\begin_layout Standard
+Zodra dit mogelijk is zal het voor ons belangrijk zijn dat vooral de functionali
+teit van de library werkt en zal er bij de pilot(s) dus geen nadruk liggen
+ op speltechnische aspecten (hoe 
+\begin_inset Quotes eld
+\end_inset
+
+leuk
+\begin_inset Quotes erd
+\end_inset
+
+ het bevonden wordt) gezien dit niet ons hoofdproduct is.
+ Deze pilots zijn nuttig voor ons ontwikkeltraject om zo in een echt scenario
+ fouten te kunnen opsporen waar wij niet aan gedacht hebben.
+ Denk hierbij aan specifieke achtereenvolgende invoer die het vastlopen
+ van de library ten gevolg heeft, maar in een andere volgorde niet.
 \end_layout
 
 \end_body
