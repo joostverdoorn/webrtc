@@ -85,6 +85,15 @@ Ten eerste zal TNO de opdrachtgever zijn.
  Klos over de voortgang en kwaliteit van het project waken.
  Inhoudelijk zal er verwacht worden dat er aan het einde een goed gedocumenteerd
  en werkend product af is.
+ Het doel van TNO is om het resultaat van dit project verder te gebruiken
+ bij andere projecten van het bedrijf zoals beschreven in hoofdstuk 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Doelstelling"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
