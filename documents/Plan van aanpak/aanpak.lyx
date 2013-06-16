@@ -85,17 +85,17 @@ Ontwikkelmethode
 
 \begin_layout Standard
 Tijdens de bacheloropleiding Technische Informatica zijn verscheidene softwareon
-twikkelmethoden behandelt.
+twikkelmethoden behandeld.
  Elk heeft zo z'n voor- en nadelen, maar Agile methoden zoals Scrum zijn
- vaak uitermate geschikt voor relatief korte projecten met een klein team,
- en hier zullen we dan ook gebruik van maken, en wel om de volgende redenen.
+ vaak uitermate geschikt voor relatief korte projecten met een klein team.
+ Hier zullen we dan ook gebruik van maken, en wel om de volgende reden.
  Scrum maakt gebruik van korte ontwikkelcycli - ook wel sprints genoemd
- - die in tijdsduur varieren van slecht één week tot een maand.
+ - die in tijdsduur variëren van slechts één week tot een maand.
  Aan het begin van elke sprint wordt een planning gemaakt van wat er in
  die sprint moet gebeuren, en aan het eind van de sprint zal er een werkend
  product zijn.
  Aangezien ons project slechts tien weken loopt, en wij hiervan acht weken
- full-time er aan werken, zullen we sprints hanteren met een duur van één
+ fulltime er aan werken, zullen we sprints hanteren met een duur van één
  week.
  Zoals Scrum voorschrijft zullen we aan het begin van de week plannen welke
  taken we zullen uitvoeren, en aan het eind van elke week zullen we een
@@ -137,18 +137,33 @@ systeem.
  Hoewel standaard alle code op Github publiek inzichtelijk is, hebben we
  voor dit project bij Github een privé repository aangevraagd.
  Dit betekent dat wij zelf kunnen bepalen wie wel en wie niet inzicht heeft
- in onze code, omdat het nog niet bekend is of de code uiteindelijk wel
- of niet publiekelijk beschikbaar mag zijn.
+ in onze code omdat het nog niet bekend is of de code uiteindelijk wel of
+ niet publiekelijk beschikbaar mag zijn.
 \end_layout
 
 \begin_layout Standard
 We zullen niet rechtstreeks in JavaScript programmeren maar in plaats hiervan
  de taal CoffeeScript gebruiken.
- CoffeeScript is een taal die qua syntax veel lijkt op Ruby, en die door
+ CoffeeScript is een taal die qua syntaxis veel lijkt op Ruby en die door
  een compiler omgezet wordt in equivalente JavaScript code.
- De voordelen van CoffeeScript zijn talrijk, maar het grootste voordeel
- is toch wel dat CoffeeScript een volledig Object Oriented taal is, in tegenstel
-ling tot JavaScripts soms ietwat onhandige prototype systeem.
+ De voordelen van CoffeeScript zijn talrijk maar het grootste voordeel is
+ toch wel dat CoffeeScript een volledig object georiënteerde taal is, in
+ tegenstelling tot JavaScript met een nogal onhandige prototype structuur.
+\end_layout
+
+\begin_layout Standard
+Ook hebben wij gekozen om met dezelfde IDE met CoffeeScript ondersteuning
+ te werken: Sublime Text 2.
+ Zo hopen wij de kans dat het mis gaat op verschillende systemen te verkleinen.
+ Zo zijn ook de kleinste spatie gerelateerde instellingen belangrijk omdat
+ CoffeeScript met Tabs en niet met haakjes werkt.
+\end_layout
+
+\begin_layout Standard
+Voor het lokaal testen van het systeem hebben wij een NodeJS platform opgezet
+ wat in praktijk een lokale JavaScript testserver is.
+ Ook is het een handige distributiecentrum voor veel verschillende externe
+ libraries waar wij nog veel gebruik zullen maken.
 \end_layout
 
 \begin_layout Subsection
@@ -164,18 +179,26 @@ Bij dit project zullen we gebruik maken van de nieuwste technieken op het
  van deze taal zullen we dan ook veel gebruik maken (al is het via CoffeeScript,
  zie hierboven).
  Naast WebRTC zullen we gebruik maken van technieken die ons in staat stellen
- verschillende sensoren van mobiele devices uit te lezen.
+ verschillende sensoren van mobiele apparaten uit te lezen.
  Ook maken we gebruik van andere nieuwe technieken binnen het Web.
  Zo zullen we WebSockets gebruiken tussen browser en server voor de totstandkomi
-ng van de daadwerlijke WebRTC connectie, en zullen we naar alle waarschijnlijkhe
-id een computer graphics implementatie in HTML5 gebruiken - denk aan Canvas
+ng van de daadwerkelijke WebRTC connectie, en zullen we naar alle waarschijnlijk
+heid een computer graphics implementatie in HTML5 gebruiken - denk aan Canvas
  of WebGL - in de game die we ontwikkelen.
  Naast onze bevindingen met WebRTC zullen we ook bevindingen op de andere
- vlakken documenteren, zodat deze kennis niet verloren gaat.
+ vlakken documenteren, zodat deze vergaarde kennis niet verloren gaat.
 \end_layout
 
 \begin_layout Subsection
 Planning
+\end_layout
+
+\begin_layout Subsubsection*
+Week 0 - 1 mei t/m 23 juni
+\end_layout
+
+\begin_layout Standard
+Uitkiezen project + plan van aanpak + opzetten ontwikkel omgeving + library
 \end_layout
 
 \begin_layout Subsubsection*
@@ -199,7 +222,7 @@ Week 3 - 8 juli t/m 14 juli: Sprint 1
 \end_layout
 
 \begin_layout Standard
-Game + library
+Game + library + oriëntatieverslag
 \end_layout
 
 \begin_layout Subsubsection*
@@ -227,7 +250,7 @@ Game + library
 \end_layout
 
 \begin_layout Subsubsection*
-Week 7 - 5 augustus t/m 11 agustus: Sprint 5
+Week 7 - 5 augustus t/m 11 augustus: Sprint 5
 \end_layout
 
 \begin_layout Standard
@@ -255,7 +278,7 @@ Week 10 - 26 augustus t/m 1 september
 \end_layout
 
 \begin_layout Standard
-Afronden verslagen
+Afronden verslagen + evaluatie + eindpresentatie
 \end_layout
 
 \end_body
