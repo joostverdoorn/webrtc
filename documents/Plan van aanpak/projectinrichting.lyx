@@ -66,6 +66,9 @@ Inleiding
 
 \begin_layout Standard
 Dit hoofdstuk zal de projectindeling van het WebRTC project verduidelijken.
+ Ten eerste zullen de betrokken partijen uitgelicht worden.
+ Vervolgens zal meer informatie gegeven worden over het proces.
+ Ten slotte zullen de benodigde faciliteiten behandeld worden.
 \end_layout
 
 \begin_layout Subsection
@@ -74,14 +77,39 @@ Betrokkenen
 
 \begin_layout Standard
 De betrokkenen in dit project komen van drie verschillende partijen.
- Ten eerste zal TNO de opdrachtgever zijn.
+\end_layout
+
+\begin_layout Standard
+Ten eerste zal TNO de opdrachtgever zijn.
  Binnen TNO zal dhr.
  Klos (VOOR ZOVER IK HET WEET IS HET NIET DEFINITIEF WIE VANUIT TNO DIT
  DOET, OF INMIDDELS WEL?) over de voortgang en kwaliteit van het project
  waken.
- Vanuit de Technische Universiteit Delft zal dhr.
- Hidders ditzelfde doen om de belangen van de TU Delft te behartigen.
- De uitvoerende taken zijn verdeeld over Jasper Abbink, Karens Grigorjancs
+ Inhoudelijk zal er verwacht worden dat er aan het einde een goed gedocumenteerd
+ en werkend product af is.
+\end_layout
+
+\begin_layout Standard
+Vanuit de Technische Universiteit Delft zijn er twee sub-partijen.
+ Dit zijn de begeleiding en de uitvoerende studenten.
+\end_layout
+
+\begin_layout Standard
+Het project zal vanuit de TU Delft door dhr.
+ Hidders begeleidt worden.
+ Hij zal net als dhr.
+ Klos over de voortgang en kwaliteit van het project waken maar dit vanuit
+ de belangen van de TU Delft.
+ De TU Delft wil dat de participerende studenten laten zien dat zij alle
+ geleerde stof van de bachelor Technische Informatica in dit project correct
+ toepassen.
+ De TU Delft schat hiervoor een minimale benodigde werkduur van 420 uur
+ per persoon.
+ Dit komt voort uit de 15 ects die de TU Delft hiervoor geeft.
+\end_layout
+
+\begin_layout Standard
+De uitvoerende taken zijn verdeeld over Jasper Abbink, Karens Grigorjancs
  en Joost Verdoorn.
  Zij zijn er voor verantwoordelijk dat de geplannde werkzaamheden op tijd
  uitgevoerd zijn.
@@ -106,9 +134,24 @@ Faciliteiten
 Tijdens de eerste twee weken zal gewerkt worden in studieruimtes van de
  TU Delft of op anderen plekken waar het de deelnemers op dat ogenblijk
  goed uitkomt.
- Tijdens de zomervakantie zal er door TNO plaats in het kantoor aangeboden
+\end_layout
+
+\begin_layout Standard
+Tijdens de zomervakantie zal er door TNO plaats in het kantoor aangeboden
  worden op de locatie Brassersplein, Delft.
  Het project zal op persoonlijke computers van de studenten uitgevoerd worden.
+\end_layout
+
+\begin_layout Standard
+Het project noodzaakt het gebruik van moderne mobiele telefoons met HTML5
+ ondersteuning en internettoegang.
+ Deze zullen door de studenten uit persoonlijk eigendom beschikbaar zijn.
+\end_layout
+
+\begin_layout Standard
+Voor de communicatie tussen de verschillende apparaten is een netwerkverbinding
+ nodig.
+ Deze is op de TU Delft en bij TNO aanwezig.
 \end_layout
 
 \end_body
