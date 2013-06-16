@@ -79,7 +79,10 @@ De kwaliteit
 De technische kwaliteit van het product is uitermate belangrijk gezien het
  resultaat van dit project moet aantonen dat wij onze bacheloropleiding
  Technische Informatica goed afgerond hebben.
- Dit gaat door middel van vier onderdelen.
+ Om de kwaliteit te waarborgen kan gebruik gemaakt worden van verificatie
+ en validatie.
+ Deze verificatie en validatie bewerkstelligen wij door middel van vier
+ onderdelen.
  Ten eerste zullen wij uitleggen wat de documentatie bevat.
  Vervolgens zal het gebruik van een versiebeheersysteem beschreven worden.
  Ten derde volgt hoe het project geëvalueerd zal worden.
@@ -149,17 +152,11 @@ Als niet alles naar behoren werkt kan door middel van de documentatie gekeken
  een versie die wel nog werkte.
  Deze manier helpt te garanderen dat er ten allen tijden een werkend product
  aanwezig is.
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-beetje open deur maar oke.
- Misschien kan je nog verificatie/validatie gebruiken
 \end_layout
 
-\end_inset
-
-
+\begin_layout Standard
+Samen met de de documentatie en het versiebeheer zal hier het product dus
+ geverifieerd kunnen worden.
 \end_layout
 
 \begin_layout Subsubsection
@@ -188,8 +185,8 @@ Naast de library ontwikkelen wij ook een spel die de library benut.
 
 \begin_layout Standard
 Zodra dit mogelijk is, zal het voor ons belangrijk zijn dat vooral de functional
-iteit van de library werkt en zal er bij de pilot(s) dus geen nadruk liggen
- op speltechnische aspecten (hoe 
+iteit van de library geimplementeerd in het spel werkt en zal er bij de
+ pilot(s) dus geen nadruk liggen op speltechnische aspecten (hoe 
 \begin_inset Quotes eld
 \end_inset
 
@@ -197,17 +194,8 @@ leuk
 \begin_inset Quotes erd
 \end_inset
 
- het bevonden wordt) gezien dit niet ons hoofdproduct is
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-wel degelijk
-\end_layout
-
-\end_inset
-
-.
+ het bevonden wordt) gezien ons hoofddoel een werkende library is en niet
+ een spel op zich ontwikkelen.
  Deze pilots zijn nuttig voor ons ontwikkeltraject om zo in een echt scenario
  fouten te kunnen opsporen waar wij niet aan gedacht hebben.
  Denk hierbij aan specifieke achtereenvolgende invoer die het vastlopen
@@ -215,18 +203,7 @@ wel degelijk
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-ik denk dat je onderscheid moet maken tussen library pilots en game pilots.
- Juist gaming pilots zijn belangrijk omdat wij daar niet alleen tips maar
- ook bugs van uit kunnen halen
-\end_layout
-
-\end_inset
-
-
+Deze pilots vormen de validatie van het product.
 \end_layout
 
 \end_body
