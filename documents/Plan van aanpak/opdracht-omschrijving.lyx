@@ -67,9 +67,10 @@ Inleiding
 \begin_layout Standard
 In dit hoofdstuk zal er toegelicht worden wat de voorlopige afspraken zijn
  met TNO.
- Wat gaan we precies bouwen, waarom en waarvoor? Gezien het proces minstens
- zo belangrijk is als het resultaat zal er in dit hoofdstuk aandacht besteed
- worden aan zowel de inhoudelijke als de procesmatige kant van het project
+ Wat zal er ontwikkeld worden, waarom wordt dit ontwikkeld en en voor wie
+ wordt dit ontwikkeld? Aangezien het proces minstens zo belangrijk is als
+ het resultaat zal er in dit hoofdstuk aandacht besteed worden aan zowel
+ de inhoudelijke als de procesmatige kant van het project
 \end_layout
 
 \begin_layout Subsection
@@ -77,7 +78,7 @@ De opdrachtgever
 \end_layout
 
 \begin_layout Standard
-Gezien het feit dat de opdrachtgever dezelfde is dan het bedrijf waar wij
+Gezien het feit dat de opdrachtgever dezelfde is als het bedrijf waar wij
  het opdracht gaan doen, is de opdrachtgever al beschreven in paragraaf
  
 \begin_inset CommandInset ref
@@ -123,16 +124,15 @@ Probleemstelling
 \end_layout
 
 \begin_layout Standard
-TNO heeft heel veel kennis in huis zodat zij hun klanten breed kunnen adviseren
- op alle gebieden.
- Daarom is het voor TNO altijd belangrijk om de kennis in huis goed op niveau
- te houden en op de hoogte te blijven van de kennis die elders ontwikkeld
- wordt.
- Zo is er op de afdeling Multimedia Technology een vraag ontstaan naar een
+TNO heeft veel kennis in huis zodat zij hun klanten breed kunnen adviseren
+ op zo veel mogelijk gebieden.
+ Daarom is het voor TNO altijd belangrijk om deze kennis goed op niveau
+ te houden en op de hoogte te blijven van alle relevante ontwikkelingen
+ die zich elders afspelen.
+ Zo is er op de afdeling Multimedia Technology een vraag ontstaan naar de
  nieuwe technologie WebRTC.
- Op dit moment is er op TNO vrijwel niks bekend hierover wat zij graag veranderd
- zien worden.
- 
+ Op dit moment is er bij TNO vrijwel nog niet genoeg kennis in huis op dit
+ vlak, en TNO ziet dit graag veranderen.
 \end_layout
 
 \begin_layout Subsection
@@ -154,31 +154,29 @@ TNO heeft samen met ons drie doelstellingen geformuleerd die zij belangrijk
 \begin_layout Standard
 De kennis die wij tijdens het project zullen vergaren dient vervolgens gebruikt
  te worden bij het oplossen van de daar aansluitende problemen bij TNO.
- Zo zijn er verschillende manieren om de verbinding op te zetten tussen
- de gebruikers.
- WebRTC is daar één van.
+ Er zijn tal van manieren om op het Web twee of meerdere gebruikers met
+ elkaar te verbinden, waarvan WebRTC er één is.
  TNO wil graag weten voor welke toepassingen WebRTC gebruikt kan worden
- en wanneer het de beste technologie is voor elk doel.
- Het is daarom belangrijk om te weten wat de sterke en de zwakke kanten
- of zelfs beperkingen zijn van WebRTC.
+ en wanneer het de beste technologie is voor een bepaald doel.
+ Het is daarom belangrijk om te weten wat de sterke en zwakke kanten of
+ beperkingen zijn van WebRTC.
 \end_layout
 
 \begin_layout Standard
 Niet alleen de theoretische kant is interessant voor de opdrachtgever.
- De technologie moet gebruikt worden, anders blijft het bij de in de la
- belandde verslagen.
- Zo wil TNO dat technologie op een makkelijke manier toegankelijk wordt
- gemaakt voor elke werknemer binnen het bedrijf.
- Zonder te veel documentatie moet iedereen gebruik kunnen maken van WebRTC
- en deze technologie snel te kunnen implementeren in eigen project.
+ De technologie moet ook daadwerkelijk geïmplementeerd en gebruikt worden.
+ Zo wil TNO dat de technologie op een makkelijke manier toegankelijk wordt
+ gemaakt voor de werknemers binnen het bedrijf.
+ Zonder te veel documentatie, en met een voorbeeldimplementatie, moet iedereen
+ gebruik kunnen maken van WebRTC en deze technologie snel te kunnen implementere
+n in eigen project.
 \end_layout
 
 \begin_layout Standard
-Tevens biedt TNO aan hun werknemers ruimte om in overleg mooie projecten
- te realiseren die als showcase kunnen dienen voor wat TNO allemaal kan.
- De laatste doel van ons bachelorproject is om in een of meerdere demo's
- te laten zien wat WebRTC allemaal kan.
- Dit zal als showcase voor de werknemers en klanten van TNO dienen.
+Tevens biedt TNO aan hun werknemers de ruimte om vernieuwende projecten
+ te ondernemen die als showcase kunnen dienen voor wat TNO allemaal kan.
+ Binnen dit kader zullen wij een demoapplicatie ontwikkelen die TNO kan
+ gebruiken om te laten zien wat de precieze mogelijkheden zijn van WebRTC.
 \end_layout
 
 \begin_layout Subsection
@@ -187,10 +185,11 @@ Opdrachtformulering
 
 \begin_layout Standard
 De doelstellingen van het project zijn zeer duidelijk gedefinieerd.
- WebRTC moet helemaal uitgekleed worden en aan de man gebracht worden.
+ Alle aspecten van WebRTC moeten volledig worden onderzocht en worden gebruikt.
  Dit project is daarom ook heel resultaatgericht.
- Wij zullen aan de slag moeten met deze technologie en aan het einde van
- het project moet er voldaan worden aan de hierboven genoemde doelstellingen.
+ We zullen alle alle hoeken en gaten van deze technologie leren kennen en
+ aan het einde van het project zal er voldaan worden aan de hierboven genoemde
+ doelstellingen.
 \end_layout
 
 \begin_layout Subsection
@@ -198,40 +197,44 @@ Op te leveren producten
 \end_layout
 
 \begin_layout Standard
-Elke doelstelling heeft een eigen vorm van de op te leveren product.
+Elk van de doelstellingen heeft een uniek eindproduct, welke we nu toe zullen
+ lichten.
 \end_layout
 
 \begin_layout Standard
-De vergaarde kennis over WebRTC zal gedocumenteerd moeten worden.
- Het zal in een oogopslag duidelijk moeten zijn waar het wel of juist niet
- voor gebruikt kan worden en of er betere alternatieven zijn voor elk doel.
- Deze documentatie zal geïntegreerd worden in het huidige documentatie omgeving
- van TNO.
+De vergaarde kennis over WebRTC zal gedocumenteerd worden.
+ Kort en bondig zal uiteen worden gezet waar de technologie wel en niet
+ voor moet worden gebruikt, en er zal helder uit worden gelegd wat de beste
+ alternatieven zijn voor een bepaald doel.
+ Deze documentatie zal zo mogelijk geïntegreerd worden in het huidige documentat
+ieomgeving van TNO.
 \end_layout
 
 \begin_layout Standard
-Het toegankelijk stellen van de technologie zal in de vorm van een library
- beschikbaar gesteld worden aan de werknemers van TNO.
- De library moet het mogelijk maken om alle in de praktijk nodige functies
- van WebRTC op eenvoudige manier te kunnen gebruiken.
- De functionaliteit die in praktijk nodig is, zal met de begeleiders tijdens
- het project worden besproken.
- Ook zullen wij in de library extra nadruk leggen op de communicatie tussen
- de PC's en de mobile devices die met elkaar kunnen communiceren en waarbij
- deze mobile devices gebruikt kunnen worden als input devices voor een web
- applicatie die draait op een PC.
+Ten tweede zullen we een library ontwikkelen die de werknemers in staat
+ stelt om snel aan de slag te kunnen met WebRTC.
+ Ons project legt vooral de nadruk op communicatie tussen PCs en mobiele
+ devices, en specifiek over het gebruik van de input van deze devices om
+ een webapplicatie op de PC aan te sturen.
+ Voor dit doel zullen wij een library schrijven die alle nodige functionaliteit
+ op een heldere en consistente manier beschikbaar stelt via een JavaScript
+ API.
+ Welke functionaliteit er precies in de library moet worden geïmplementeerd
+ zal - met goed overleg met de begeleiders - tijdens het project worden
+ bepaald.
 \end_layout
 
 \begin_layout Standard
-Voor een showcase van WebRTC zullen wij een klein browser gebaseerd spel
- ontwikkelen die gebruik maakt van de genoemde library.
- In deze game zullen we gebruik maken van zo veel mogelijk aspecten van
- WebRTC en zullen we mobile devices inzetten als controller voor de game.
- Hierbij zullen we voor zo ver mogelijk de unieke karakteristieken gebruiken
- van deze mobiele apparaten, zoals een touchscreen, verschillende sensoren
- en camera’s.
- Deze deliverable legt niet alleen veel nadruk op het ontwikkelen van spellen
- met de library maar ook op het aansluiten van multiplayer games op deze
+Voor een showcase van WebRTC zullen wij een kleine browser-based game ontwikkele
+n welke gebruik zal maken van de eerder genoemde library.
+ We zullen voor deze game zoveel mogelijk aspecten van WebRTC implementeren,
+ en voor de aansturing van deze game zal zo veel gebruik worden gemaakt
+ van mobiele devices.
+ Hierbij kunnen we goed gebruik maken van de unieke karakteristieken van
+ deze apparaten, waarbij men kan denken aan het touchscreen, verschillende
+ sensoren en camera's en microfoons.
+ Deze deliverable legt niet alleen veel nadruk op het ontwikkelen van applicatie
+s met onze library maar ook op het aansluiten van multiplayer games op deze
  technologie en het gebruiken van de mobiele apparaten als controller.
 \end_layout
 
@@ -240,11 +243,11 @@ Randvoorwaarden
 \end_layout
 
 \begin_layout Standard
-Gezien het feit dat wij vanuit nul aan het project beginnen zijn er geen
- inhoudelijke randvoorwaarden die gedefinieerd dienen te worden dan de doelstell
-ingen die al gespecificeerd zijn.
- Wel vindt TNO het belangrijk dat de library goed getest wordt en de codekwalite
-it goed is wat ons vanzelfsprekend lijkt.
+Gezien het feit dat wij in principe vanuit nul aan het project beginnen
+ zijn er, naast de doelstellingen die al gespecificeerd zijn - geen inhoudelijke
+ randvoorwaarden die gedefinieerd dienen te worden.
+ Wel vindt TNO het erg belangrijk dat de library goed getest wordt en dat
+ code van topkwaliteit is.
 \end_layout
 
 \begin_layout Standard
@@ -255,7 +258,7 @@ Er zijn wel procesvoorwaarden waaraan voldaan moet worden.
  wil TNO wel betrokken blijven in de beslissingen die het uiteindelijke
  resultaat zullen beïnvloeden.
  Hierdoor is het nodig dat wij de grootste tijd van het project het werk
- op het kantoor van TNO zullen uitvoeren.
+ op het kantoor van TNO Delft zullen uitvoeren.
 \end_layout
 
 \begin_layout Subsection
@@ -263,7 +266,7 @@ Risicofactoren
 \end_layout
 
 \begin_layout Standard
-Het grote risico die wij op dit moment kunnen inzien is dat door het feit
+Het grote risico dat wij op dit moment kunnen inzien is dat door het feit
  dat wij drie deliverables hebben, onze tijd verkeerd kunnen indelen waardoor
  er niet genoeg tijd over zal blijven om al het werk af te kunnen ronden.
  Hier zouden wij goed rekening moeten houden in de planning en al na enkele

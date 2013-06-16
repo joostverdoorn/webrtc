@@ -65,15 +65,16 @@ Het plan van aanpak
 \end_layout
 
 \begin_layout Standard
-Het plan van aanpak zal het opzet van het project beschrijven.
+Dit plan van aanpak zal de opzet van ons project beschrijven.
  Zowel inhoudelijke als de organisatorische aspecten komen aan bod in dit
  document.
- Gezien het feit dat ons project afwijkt van het standaard vorm van het
- bachelorproject waar er vooral geprogrammeerd wordt, kan ons plan van aanpak
- ook afwijken van een standaard plan van aanpak.
- Hoewel niet alle onderdelen van een standaard plan van aanpak relevant
- zijn, hebben wij besloten om alle onderdelen voor de volledigheid aan bod
- te laten komen.
+ Gezien het feit dat ons project afwijkt van hoe een bachelorproject normaal
+ wordt ondernomen - er wordt bij de meeste eindprojecten gefocust op de
+ ontwikkeling van één product - zal ons plan van aanpak ook afwijken van
+ een standaard plan van aanpak.
+ Hoewel niet alle onderdelen van een standaard plan van aanpak volledig
+ relevant zijn, hebben wij besloten om alle onderdelen voor de volledigheid
+ aan bod te laten komen.
 \end_layout
 
 \begin_layout Subsection
@@ -97,14 +98,7 @@ ng duurzaam versterken.
  de samenleving als geheel.
  Door haar veelzijdigheid en capaciteit tot integratie van deze kennis neemt
  TNO een unieke positie in.
-\end_layout
-
-\begin_layout Standard
-Doelgericht innoveren, dat is waar TNO voor staat.
- We ontwikkelen kennis niet om de kennis, maar om de praktische toepassing.
- Om nieuwe producten te creëren die het leven aangenamer en waardevoller
- maken, en die bedrijven helpen te innoveren.
- Om creatieve antwoorden te vinden op de vragen die de samenleving stelt.
+ 
 \end_layout
 
 \begin_layout Subsection
@@ -112,21 +106,29 @@ Achtergrond en aanleiding van de opdracht
 \end_layout
 
 \begin_layout Standard
-Na onze eerste gesprek als een groep, zijn wij al snel achtergekomen dat
- wij iets innovatiefs wilden gaan doen op het gebied van Web.
- Geen administratiesysteem in elkaar zetten voor een winkelier maar aan
- de slag te gaan met een nieuwe technologie en daar iets nieuws mee doen.
- Zo kwamen wij al snel bij TNO, een bedrijf die in Delft bekend staat om
- het verbinden van wetenschap en het bedrijfsleven.
- Wij hebben een gesprek gehad met TNO waar de nieuwste technologieën aan
- bod kwamen.
- Na een eigen research naar al die technologieën, hebben wij besloten om
- aan de slag te gaan met WebRTC.
- Wij hebben verschillende projectvoorstellen voorbereid en tijdens de tweede
- gesprek met meerdere werknemers van TNO zijn wij met elkaar tot overeenstemming
- gekomen bij het formuleren van het projectopdracht.
- Zo zijn wij blij met de uitdaging die wij aangaan en het bedrijf blij met
- de bijdrage die wij zullen gaan leveren.
+Na het samenkomen van ons als groep was het al snel duidelijk dat we op
+ zoek waren om iets vernieuwends, iets innovatiefs te gaan doen op het gebied
+ van webtechnologie.
+ We zagen het alle drie niet zitten om te blijven hangen waar we al ervaring
+ in hadden - het ontwikkelen van websites - maar aan de slag te gaan met
+ state-of-the-art technologieën en daar iets vernieuwends mee doen.
+ Bij het brainstormen over de organisatie waarbij we ons project zouden
+ doen kwamen we al snel bij TNO, welke in Delft bekend staat om het verbinden
+ van wetenschap, technologie en het bedrijfsleven.
+ Na een afspraak te hebben gemaakt met Joost de Wit van TNO hebben we gezamenlij
+k in een gesprek de nieuwste technologieën besproken waarin wij iets voor
+ TNO konden betekenen.
+ Na een eigen onderzoek naar de besproken technologieën sprak WebRTC ons
+ het meeste aan, omdat het dingen mogelijk maakt op het Web die eerder nog
+ niet konden.
+ Binnen het kader van WebRTC werden verschillende projectvoorstellen voorbereid,
+ die besproken werden tijdens de tweede zitting bij TNO, waarbij meerdere
+ werknemers van TNO aanwezig waren.
+ Tijdens dat gesprek zijn is er een gezamenlijke overeenstemming bereikt
+ en is er gekozen voor het project waarvoor hier het Plan van Aanpak ligt:
+ WebRTC Gaming.
+ We verheugen ons op de uitdagingen die dit project te bieden heeft en zien
+ een prettige samenwerken tegemoet.
 \end_layout
 
 \end_body

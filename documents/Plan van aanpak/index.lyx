@@ -61,7 +61,7 @@
 \begin_body
 
 \begin_layout Title
-Plan van Aanpak: WebRTC gaming
+Plan van Aanpak: WebRTC Gaming
 \end_layout
 
 \begin_layout Author
@@ -130,6 +130,10 @@ Voorwoord
 LatexCommand input
 filename "voorwoord.lyx"
 
+\end_inset
+
+
+\begin_inset Newpage pagebreak
 \end_inset
 
 
