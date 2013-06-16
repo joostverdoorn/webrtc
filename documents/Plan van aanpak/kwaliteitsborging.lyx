@@ -117,8 +117,8 @@ Versiebeheer
 \begin_layout Standard
 Tijdens dit project zal er veel programmeercode geschreven worden.
  Met meerdere mensen aan een snel veranderend project werken kan soms onhandig
- worden en daarom maken wij gebruik van het versiebeheersysteem git (specifiek
- de aangeboden versie van github.com) om de samenwerking te stimuleren.
+ worden en daarom maken wij gebruik van het versiebeheersysteem Git (specifiek
+ de aangeboden versie van Github) om de samenwerking te stimuleren.
 \end_layout
 
 \begin_layout Standard
@@ -164,7 +164,7 @@ De pilots
 \end_layout
 
 \begin_layout Standard
-Doordat wij als softwareontwikkelmethode scrum gebruiken zal er na elke
+Doordat wij als softwareontwikkelmethode Scrum gebruiken zal er na elke
  sprint een werkend product zijn.
  Hierdoor is het theoretisch mogelijk om elke week een testversie beschikbaar
  te hebben.
