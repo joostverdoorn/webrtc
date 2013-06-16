@@ -59,7 +59,7 @@ task 'watch', ->
 						makeDir(destination)
 
 build = ( ) ->
-	#buildCoffee()
+	buildCoffee()
 	buildOthers()
 
 buildCoffee = ( ) ->
