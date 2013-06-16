@@ -28,7 +28,7 @@ task 'watch', ->
 	if os.platform() is "win32"
 		watchTree = require('fs-watch-tree').watchTree
 		watchTree source, ( event ) ->
-			clean()
+			exec("rd /s /q #{target}");
 			build()
 	else
 		# Watch for changes in coffee files ...
@@ -59,7 +59,7 @@ task 'watch', ->
 						makeDir(destination)
 
 build = ( ) ->
-	buildCoffee()
+	#buildCoffee()
 	buildOthers()
 
 buildCoffee = ( ) ->
@@ -86,10 +86,7 @@ buildOthers = ( ) ->
 
 
 clean = () ->
-	if os.platform() is "win32"
-		exec("rd /s /q #{target}");
-	else
-		exec("ls | grep -v '#{keep.join('\\|')}' | xargs rm -r")
+	exec("git clean -x -f -d")
 		
 copy = ( file, destination ) ->
 	console.log("cp -f '#{file}' '#{destination}'")
