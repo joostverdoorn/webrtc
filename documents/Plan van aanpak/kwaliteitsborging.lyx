@@ -67,7 +67,7 @@ Inleiding
 \begin_layout Standard
 Een goede kwaliteit van het project is essentieel voor de TU Delft als ook
  voor TNO.
- Daarom zal dit hoofdstuk meer uitleggen over de geplannde maatregelen om
+ Daarom zal dit hoofdstuk meer uitleggen over de geplande maatregelen om
  de kwaliteit zo hoog mogelijk te houden.
 \end_layout
 
@@ -82,7 +82,7 @@ De technische kwaliteit van het product is uitermate belangrijk gezien het
  Dit gaat door middel van vier onderdelen.
  Ten eerste zullen wij uitleggen wat de documentatie bevat.
  Vervolgens zal het gebruik van een versiebeheersysteem beschreven worden.
- Ten derde volgt hoe het project geevalueerd zal worden.
+ Ten derde volgt hoe het project geëvalueerd zal worden.
  Ten slot zijn de pilots uitgelicht.
 \end_layout
 
@@ -103,7 +103,7 @@ e stappen goed te documenteren.
 In de documentatie leggen wij dus alle gemaakte keuzes en gemaakte aannames
  vast met goede argumentatie hierover.
  Verder bevat de documentatie de planning van het project met uitleg over
- het wel- of niet behalen van gestelde doelen.
+ het wel of niet behalen van gestelde doelen.
  Tot slot bevat de documentatie uitleg over de geschreven programmeercode.
 \end_layout
 
@@ -121,15 +121,14 @@ Tijdens dit project zal er veel programmeercode geschreven worden.
 \begin_layout Standard
 Om te garanderen dat er altijd een werkend product is zal er alleen compilerende
  code naar de server overgezet worden.
- Alvorens de code naar de hoofd-branch overgezet wordt moeten er op zijn
- minst automatische unit-tests geschreven worden die volledige coverage
- hebben.
- Verder moet de code door een ander teamlid gereviewed worden.
+ Alvorens de code naar de hoofd-branche overgezet wordt moeten er op zijn
+ minst automatische unit-tests geschreven worden die volledige dekking hebben.
+ Verder moet de code door een ander teamlid geevalueerd worden.
 \end_layout
 
 \begin_layout Standard
-Nieuwe features zullen in aparte branches geimplementeerd worden (per feature
- een nieuwe branch) om invloed van nieuwe, niet helemaal werkende onderdelen,
+Nieuwe features zullen in aparte branches geïmplementeerd worden (per feature
+ een nieuwe branche) om invloed van nieuwe, niet helemaal werkende onderdelen,
  op het project onmogelijk te maken.
 \end_layout
 
@@ -148,8 +147,19 @@ De code zal altijd getest moeten worden op volledige werking zoals in de
 Als niet alles naar behoren werkt kan door middel van de documentatie gekeken
  worden waar het fout ging en met het versiebeheer terug gegaan worden naar
  een versie die wel nog werkte.
- Deze manier helpt te garanderen dat er ten allen tijden een werken product
+ Deze manier helpt te garanderen dat er ten allen tijden een werkend product
  aanwezig is.
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+beetje open deur maar oke.
+ Misschien kan je nog verificatie/validatie gebruiken
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -167,8 +177,8 @@ Doordat wij als softwareontwikkelmethode scrum gebruiken zal er na elke
 \end_layout
 
 \begin_layout Standard
-Naast de library ontwikkelen wij ook een spel die de volledige library benut.
- Naar mate dit spel verder gevordert is zal het wel mogelijk zijn dit voor
+Naast de library ontwikkelen wij ook een spel die de library benut.
+ Naarmate dit spel verder gevorderd is zal het wel mogelijk zijn dit voor
  te leggen aan anderen om alvast een voorproefje van het finale product
  te krijgen.
  Hoe dit verder uit gaan zien hebben wij nog niet besloten.
@@ -177,8 +187,8 @@ Naast de library ontwikkelen wij ook een spel die de volledige library benut.
 \end_layout
 
 \begin_layout Standard
-Zodra dit mogelijk is zal het voor ons belangrijk zijn dat vooral de functionali
-teit van de library werkt en zal er bij de pilot(s) dus geen nadruk liggen
+Zodra dit mogelijk is, zal het voor ons belangrijk zijn dat vooral de functional
+iteit van de library werkt en zal er bij de pilot(s) dus geen nadruk liggen
  op speltechnische aspecten (hoe 
 \begin_inset Quotes eld
 \end_inset
@@ -187,11 +197,36 @@ leuk
 \begin_inset Quotes erd
 \end_inset
 
- het bevonden wordt) gezien dit niet ons hoofdproduct is.
+ het bevonden wordt) gezien dit niet ons hoofdproduct is
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+wel degelijk
+\end_layout
+
+\end_inset
+
+.
  Deze pilots zijn nuttig voor ons ontwikkeltraject om zo in een echt scenario
  fouten te kunnen opsporen waar wij niet aan gedacht hebben.
  Denk hierbij aan specifieke achtereenvolgende invoer die het vastlopen
  van de library ten gevolg heeft, maar in een andere volgorde niet.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+ik denk dat je onderscheid moet maken tussen library pilots en game pilots.
+ Juist gaming pilots zijn belangrijk omdat wij daar niet alleen tips maar
+ ook bugs van uit kunnen halen
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_body
