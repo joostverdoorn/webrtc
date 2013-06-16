@@ -65,12 +65,25 @@ Inleiding
 \end_layout
 
 \begin_layout Standard
-In dit hoofdstuk zal besproken worden hoe de kwaliteit van het project in
- positieve zin beinvloedt kan worden.
+Een goede kwaliteit van het project is essentieel voor de TU Delft als ook
+ voor TNO.
+ Daarom zal dit hoofdstuk meer uitleggen over de geplannde maatregelen om
+ de kwaliteit zo hoog mogelijk te houden.
 \end_layout
 
 \begin_layout Subsection
 De kwaliteit
+\end_layout
+
+\begin_layout Standard
+De technische kwaliteit van het product is uitermate belangrijk gezien het
+ resultaat van dit project moet aantonen dat wij onze bacheloropleiding
+ Technische Informatica goed afgerond hebben.
+ Dit gaat door middel van vier onderdelen.
+ Ten eerste zullen wij uitleggen wat de documentatie bevat.
+ Vervolgens zal het gebruik van een versiebeheersysteem beschreven worden.
+ Ten derde volgt hoe het project geevalueerd zal worden.
+ Ten slot zijn de pilots uitgelicht.
 \end_layout
 
 \begin_layout Subsubsection
@@ -86,6 +99,14 @@ e stappen goed te documenteren.
  gedaan hebben en hoezo dit gedaan is.
 \end_layout
 
+\begin_layout Standard
+In de documentatie leggen wij dus alle gemaakte keuzes en gemaakte aannames
+ vast met goede argumentatie hierover.
+ Verder bevat de documentatie de planning van het project met uitleg over
+ het wel- of niet behalen van gestelde doelen.
+ Tot slot bevat de documentatie uitleg over de geschreven programmeercode.
+\end_layout
+
 \begin_layout Subsubsection
 Versiebeheer
 \end_layout
@@ -97,11 +118,33 @@ Tijdens dit project zal er veel programmeercode geschreven worden.
  de aangeboden versie van github.com) om de samenwerking te stimuleren.
 \end_layout
 
+\begin_layout Standard
+Om te garanderen dat er altijd een werkend product is zal er alleen compilerende
+ code naar de server overgezet worden.
+ Alvorens de code naar de hoofd-branch overgezet wordt moeten er op zijn
+ minst automatische unit-tests geschreven worden die volledige coverage
+ hebben.
+ Verder moet de code door een ander teamlid gereviewed worden.
+\end_layout
+
+\begin_layout Standard
+Nieuwe features zullen in aparte branches geimplementeerd worden (per feature
+ een nieuwe branch) om invloed van nieuwe, niet helemaal werkende onderdelen,
+ op het project onmogelijk te maken.
+\end_layout
+
 \begin_layout Subsubsection
 Evaluatie
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Standard
+Code zal altijd getest moeten worden op volledige werking zoals in de planning
+ overeengekomen.
+ Hierdoor zal het project altijd naar verwachting werken en daarmee zo als
+ gewenst.
+\end_layout
+
+\begin_layout Subsubsection
 De pilots
 \end_layout
 
