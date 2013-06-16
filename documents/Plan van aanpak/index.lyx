@@ -61,7 +61,7 @@
 \begin_body
 
 \begin_layout Title
-Plan van aanpak
+Plan van Aanpak: WebRTC gaming
 \end_layout
 
 \begin_layout Author
@@ -74,6 +74,24 @@ Karens Grigorjancs
 \end_inset
 
 Joost Verdoorn
+\end_layout
+
+\begin_layout Standard
+
+\lang english
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+thispagestyle{empty}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard

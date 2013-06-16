@@ -146,14 +146,14 @@ TNO heeft samen met ons drie doelstellingen geformuleerd die zij belangrijk
 
 \begin_layout Standard
 De kennis die wij tijdens het project zullen vergaren dient vervolgens gebruikt
- te worden bij het oplossen van de daar aansluitende problemen.
+ te worden bij het oplossen van de daar aansluitende problemen bij TNO.
  Zo zijn er verschillende manieren om de verbinding op te zetten tussen
  de gebruikers.
- WebRTC is daar een van.
+ WebRTC is daar één van.
  TNO wil graag weten voor welke toepassingen WebRTC gebruikt kan worden
- en of het de beste technologie is voor dit doel.
+ en wanneer het de beste technologie is voor elk doel.
  Het is daarom belangrijk om te weten wat de sterke en de zwakke kanten
- of zelfs beperkingen zijn hiervan.
+ of zelfs beperkingen zijn van WebRTC.
 \end_layout
 
 \begin_layout Standard
@@ -223,6 +223,9 @@ Voor een showcase van WebRTC zullen wij een klein browser gebaseerd spel
  Hierbij zullen we voor zo ver mogelijk de unieke karakteristieken gebruiken
  van deze mobiele apparaten, zoals een touchscreen, verschillende sensoren
  en camera’s.
+ Deze deliverable legt niet alleen veel nadruk op het ontwikkelen van spellen
+ met de library maar ook op het aansluiten van multiplayer games op deze
+ technologie en het gebruiken van de mobiele apparaten als controller.
 \end_layout
 
 \begin_layout Subsection
