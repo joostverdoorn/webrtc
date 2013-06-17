@@ -2,7 +2,12 @@ fs = require('fs')
 exec = require('child_process').exec;
 spawn = require('child_process').spawn
 os = require('os')
-mkdirp = require('mkdirp');
+try
+	mkdirp = require('mkdirp');
+catch e
+	# ...
+
+
 
 source = 'src'
 target = 'lib'
@@ -79,7 +84,10 @@ buildOthers = ( ) ->
 				ext = result.split('.').pop()
 				name = result.split('\\').pop()
 				if ext isnt 'coffee'
-					mkdirp.sync("lib\\#{path}") 
+					try
+						mkdirp.sync("lib\\#{path}") 
+					catch e
+						# ...
 					exec("cp #{result} lib\\#{path}#{name}")
 	else
 		exec("cd #{source} && find . -type f -not -iname '*.coffee' -exec cp --parents -f '{}' '#{__dirname}/#{target}' \\;", (stdin, stdout, stderr) -> console.log stderr, stdout)
