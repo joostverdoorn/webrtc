@@ -19,7 +19,7 @@ require [
 				@_master.on('peer.channel.opened', ( ) =>
 					_pingInterval = setInterval(( ) =>
 						@_master.ping( ( latency ) =>
-							$('.latency').html(latency)
+							$('.latency').html(Math.round(latency))
 						)
 					, 100)
 
@@ -38,10 +38,15 @@ require [
 
 							$('.roll').html(@_roll)
 							$('.pitch').html(@_pitch)
-							$('.yaw').html(@_yaw)
-
-							
+							$('.yaw').html(@_yaw)	
 						)
+
+
+					$(".custom").keyup =>
+						@_custom = $(".custom").val()
+						customValue = value: @_custom
+						@_master.emit('peer.custom', customValue)
+
 				)
 			)
 
