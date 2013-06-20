@@ -385,10 +385,13 @@ function main(){
 	player1.style.height=playerHeight;						//this will come handy later when making the game more dynamic
 	
 	document.addEventListener("keydown", handleDown)		//add the key listeners
-	document.addEventListener("keyup", handleUp)
-	setInterval(frame, 1000/30);							//call the main game loop
+	document.addEventListener("keyup", handleUp)										
 	
 	
 }
 
 main();
+
+function start () {
+	setInterval(frame, 1000/30);				//call the main game loop
+}

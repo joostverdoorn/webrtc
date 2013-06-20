@@ -35,7 +35,7 @@ require [
 				slave.on ('peer.custom'), (custom) ->
 					$(".custom").text(custom.value)
 
-				slave.on('peer.disconnected', ( ) ->
+				slave.on('peer.disconnected', ( ) =>
 					@_slaves = _(@_slaves).without slave
 					elem.remove()
 				)

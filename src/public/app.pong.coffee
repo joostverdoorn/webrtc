@@ -37,16 +37,8 @@ require [
 
 							@_master.emit('peer.orientation', orientation)
 
-							$('.roll').html(@_roll)
-							$('.pitch').html(@_pitch)
-							$('.yaw').html(@_yaw)	
+
 						)
-
-
-					$(".custom").keyup =>
-						@_custom = $(".custom").val()
-						customValue = value: @_custom
-						@_master.emit('peer.custom', customValue)
 
 				)
 			)

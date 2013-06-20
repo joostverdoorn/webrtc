@@ -16,25 +16,38 @@ require [
 			@_slaves = []
 
 			@server.on('slave.add', ( id ) =>
+				# Generate a new Player
 				slave = new Pong(id)
+				@_slaves.push(slave)
 
+				# keep count of Slaves
+				num = @_slaves.indexOf(slave)
+				@.printStatus("Player#{num+1} joined </br>")
 
+				# Start the game when there are two players connected
+				if(num  is 1)
+					@.printStatus("Let's go!")
+					start()
+
+				# Manipulate controllers
 				slave.on('peer.orientation', ( orientation ) =>
-					if(@_slaves.indexOf(slave) is 0)
+					if(num is 0)
 						player1.vSpeed += Math.round (orientation.roll/5)
 					else
 						player2.vSpeed += Math.round (orientation.roll/5)
 				)
 
-				slave.on ('peer.custom'), (custom) ->
-					console.log(custom.value)
-
-				slave.on('peer.disconnected', ( ) ->
+				# Delete a slave when a player disconnects
+				slave.on('peer.disconnected', ( ) =>
 					@_slaves = _(@_slaves).without slave
 					elem.remove()
+					@.printStatus("Player#{num+1} disconnected</br>")
+
 				)
 
-				@_slaves.push(slave)
-			)		
+				
+			)	
+		printStatus: (message) ->
+			$("#log").html($("#log").html() + message)
 
 	window.App = new App.Masterpong
