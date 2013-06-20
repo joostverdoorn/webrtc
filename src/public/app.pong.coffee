@@ -40,7 +40,21 @@ require [
 
 						)
 
-				)
+				# manage controls on mobile
+					$("#play").click =>
+						$("#play").toggleClass("icon-pause icon-play")
+						status = $("#play").attr("class").indexOf("play");
+						button = if status is -1 then "play" else "pause"
+						@_master.emit('peer.button',button)
+
+
+					$("#stop").click =>
+						@_master.emit('peer.button', "stop")
+					)
+
+					
+	
+
 			)
 
 	window.App = new App.Pong

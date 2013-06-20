@@ -18,7 +18,8 @@
 //	This is an early version and it freezes when a player goes over 9 points. To restart a match you should refresh the browser window.
 //		
 //***************************************************
-
+var tick = null;
+var scoreCreated = false;
 var field = document.getElementById("playfield");
 var player1 = document.getElementById("player1");
 var player2 = document.getElementById("player2");
@@ -138,40 +139,48 @@ function updateScore(whichPlayer){							//this function adds points to scores a
 
 function createScores(){									//this creates the grids that will be used for displaying the scores
 
-	for(p=1;p<=2;p++)
-	{	
-		pScore=document.createElement("div");
-		pScore.className="score";
-		if(p==1) pScore.id="p1Score";
-		else pScore.id="p2Score";
-		
-		for(i=0;i<5;i++)									//creates the <div> grid that will serve as displays for each player
-		{
-			row=[];
-			for(j=0;j<4;j++)
-			{
-				currentPix=scoreNumbers[0][i][j];		
-				pixel=document.createElement("div");
-				pixel.className="pixel";
-				pixel.style.top=i*30+"px";
-				pixel.style.left=j*30+"px";
-				if(currentPix){
-					pixel.style.opacity=1;
-				}
-				else {
-					pixel.style.opacity=0;
-				}
-				row.push(pixel)
-				pScore.appendChild(pixel)
-			}
-			if(p==1) p1Display.push(row);
-			else p2Display.push(row);
-		}
-		
-		field.appendChild(pScore);
 	
+
+		for(p=1;p<=2;p++)
+		{	
+			pScore=document.createElement("div");
+			pScore.className="score";
+			if(p==1) pScore.id="p1Score";
+			else pScore.id="p2Score";
+			
+			for(i=0;i<5;i++)									//creates the <div> grid that will serve as displays for each player
+			{
+				row=[];
+				
+					for(j=0;j<4;j++)
+					{
+
+						currentPix=scoreNumbers[0][i][j];		
+						pixel=document.createElement("div");
+						pixel.className="pixel";
+						pixel.style.top=i*30+"px";
+						pixel.style.left=j*30+"px";
+						if(currentPix){
+							pixel.style.opacity=1;
+						}
+						else {
+							pixel.style.opacity=0;
+						}
+						row.push(pixel)
+						pScore.appendChild(pixel)
+					}
+
+				if(p==1) p1Display.push(row);
+				else p2Display.push(row);
+			}
+			
+			field.appendChild(pScore);
 		
-	}
+		}
+		scoreCreated = true;
+	
+
+
 }
 function manageBall(){
 
@@ -393,5 +402,26 @@ function main(){
 main();
 
 function start () {
-	setInterval(frame, 1000/30);				//call the main game loop
+	if(tick === null) {
+		tick = setInterval(frame, 1000/30);				//call the main game loop
+	}
+}
+
+function pause() {
+	if(tick !== null) {
+		clearInterval(tick);
+		tick = null;
+	}
+}
+
+function stop() {
+	p1Score = 0;
+	p2Score = 0;
+	$("#p1Score").html("");
+	$("#p2Score").html("");
+	main();
+
+	//start();
+
+
 }

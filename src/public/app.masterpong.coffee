@@ -22,7 +22,7 @@ require [
 
 				# keep count of Slaves
 				num = @_slaves.indexOf(slave)
-				@.printStatus("Player#{num+1} joined </br>")
+				@.printStatus("Player#{num+1} joined")
 
 				# Start the game when there are two players connected
 				if(num  is 1)
@@ -37,17 +37,25 @@ require [
 						player2.vSpeed += Math.round (orientation.roll/5)
 				)
 
+				# Take control of mobile buttons
+				slave.on('peer.button', ( button ) =>
+					switch button
+						when "play" then start()
+						when "pause" then pause()
+						when "stop" then stop()
+
+				)
+
 				# Delete a slave when a player disconnects
 				slave.on('peer.disconnected', ( ) =>
 					@_slaves = _(@_slaves).without slave
-					elem.remove()
-					@.printStatus("Player#{num+1} disconnected</br>")
+					@.printStatus("Player#{num+1} disconnected")
 
 				)
 
 				
 			)	
 		printStatus: (message) ->
-			$("#log").html($("#log").html() + message)
+			$("#log").html($("#log").html() + message + "</br>")
 
 	window.App = new App.Masterpong
