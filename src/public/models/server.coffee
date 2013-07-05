@@ -17,8 +17,7 @@ define [
 		# @param _address [String] the address of the server to which to connect.
 		#
 		constructor: ( @node, @_address ) ->
-			@_socket = io.connect(@_address)
-
+			@_socket = io.connect(@_address, {'force new connection': true})
 			@on('event.bind', ( name ) =>
 				if @_socket.listeners(name).length > 0
 					return
@@ -45,6 +44,11 @@ define [
 		emit: ( event, args... ) ->
 			@_socket.emit.apply(@_socket, arguments)
 
+		# Disconnects the WebSocket connection.
+		#
+		disconnect: ( ) ->
+			@_socket.disconnect()
+
 		# Sends a message to a peer, via the server.
 		#
 		# @param receiver [String] the id of the receiving client
@@ -55,7 +59,7 @@ define [
 			args = ['sendTo', receiver, event].concat(args)
 			@emit.apply(@, args)
 
-			# Pings the server. A callback function should be provided to do anything
+		# Pings the server. A callback function should be provided to do anything
 		# with the ping.
 		#
 		# @param callback [Function] the callback to be called when a pong was received.

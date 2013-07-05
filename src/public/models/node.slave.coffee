@@ -19,6 +19,7 @@ define [
 				@_master = new Master(@, id)
 
 				@_master.on('peer.channel.opened', ( ) =>
+					@server.disconnect()
 					_pingInterval = setInterval(( ) =>
 						@_master.ping( ( latency ) =>
 							$('.latency').html(Math.round(latency))

@@ -35,6 +35,7 @@ require [
 		# This method will be called from the baseclass when it has been constructed.
 		# 
 		initialize: ( ) ->
-			@node = new Node()
+			@node1 = new Node()
+			@node2 = new Node()
 
 	window.App = new App.Slave

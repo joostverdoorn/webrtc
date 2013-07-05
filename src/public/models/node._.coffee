@@ -18,7 +18,6 @@ define [
 		#
 		constructor: ( ) ->
 			@server = new Server(@, @serverAddress)
-
 			@initialize()
 
 		# Is called when the app has been constructed. Should be overridden by
