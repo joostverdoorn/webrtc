@@ -1,11 +1,11 @@
 define [
-	'helpers/mixable'
-	'helpers/mixin.eventbindings'
+	'public/helpers/mixable'
+	'public/helpers/mixin.eventbindings'
 
-	'vendor/js/underscore'
-	'vendor/js/adapter'
+	'public/vendor/js/underscore'
+	'public/vendor/js/adapter'
 
-	], ( Mixable, EventBindings ) ->
+	], ( Mixable, EventBindings, _ ) ->
 
 	# This abstract base class provides webrtc connections to masters and slaves
 	#

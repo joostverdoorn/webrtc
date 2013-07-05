@@ -1,5 +1,5 @@
 define [
-	'models/peer._'
+	'./peer._'
 	], ( Peer ) ->
 
 	# This class provides an implementation of Peer to represent slave

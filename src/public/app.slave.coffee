@@ -1,6 +1,6 @@
 require [
-	'app._'
-	'models/peer.master'
+	'./app._'
+	'./models/peer.master'
 	], ( App, Master ) =>
 
 	# Slave app class

@@ -1,12 +1,33 @@
 requirejs.config
-	shim:
-		'vendor/js/bootstrap': [ 'vendor/js/jquery' ]
+	shim:		
+		'underscore':
+			expors: '_'
+
+		'socket.io':
+			exports: 'io'
+
+		'jquery':
+			exports: '$'
+
+		'bootstrap': [ 'jquery' ]
+
+	# We want the following paths for 
+	# code-sharing reasons. Now it doesn't 
+	# matter from where we require a module.
+	paths:
+		'public': './'
+
+		'underscore': 'vendor/scripts/underscore'
+		'jquery': 'vendor/scripts/jquery'
+		'bootstrap': 'vendor/scripts/bootstrap'
+		'socket.io': 'socket.io/socket.io'
 
 define [
-	'models/server'
-	'vendor/js/underscore'
-	'vendor/js/jquery'
-	'vendor/js/bootstrap'
+	'public/models/server'
+	
+	'underscore'
+	'jquery'
+	'bootstrap'
 	], ( Server ) -> 
 	
 	# Application base class

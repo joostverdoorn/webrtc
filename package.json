@@ -6,7 +6,7 @@
 		"express": "3.x",
 		"underscore": "*",
 		"backbone": "*",
-		"requirejs": "*",
+		"requirejs": "2.1.5",
 		"socket.io": "*",
 		"fs-watch-tree": "*",
 		"mkdirp":"*"

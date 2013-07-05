@@ -1,8 +1,8 @@
 define [
-	'helpers/mixable'
-	'helpers/mixin.eventbindings'
-	'socket.io/socket.io'
-	], ( Mixable, EventBindings ) ->
+	'public/helpers/mixable'
+	'public/helpers/mixin.eventbindings'
+	'socket.io'
+	], ( Mixable, EventBindings, io ) ->
 
 	# This class is a model for the server, and provides all interaction with 
 	# the actual server.

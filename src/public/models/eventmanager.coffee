@@ -1,6 +1,6 @@
 define [
-	'vendor/underscore' 
-	], ( ) ->
+	'underscore' 
+	], ( _ ) ->
 
 	# Generic EventManager class
 	#
