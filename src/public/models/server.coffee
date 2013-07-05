@@ -1,6 +1,7 @@
 define [
 	'public/helpers/mixable'
 	'public/helpers/mixin.eventbindings'
+	
 	'socket.io'
 	], ( Mixable, EventBindings, io ) ->
 

@@ -60,11 +60,6 @@ requirejs [
 					when 'slave'
 						slave = new Slave(socket)
 						@addClient(slave)
-
-						masters = _(@_masters).values()
-
-						if master = masters[masters.length - 1]
-							slave.emit('master.add', master.id)
 			)
 
 		# Adds a client to the client list (either master or slave list) 

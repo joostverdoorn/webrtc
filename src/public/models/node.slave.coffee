@@ -15,11 +15,16 @@ define [
 		# This method will be called from the baseclass when it has been constructed.
 		# 
 		initialize: ( ) ->
-			@server.on('master.add', ( id ) =>
-				@_master = new Master(@, id)
-
-				@_master.on('peer.channel.opened', ( ) =>
-					@server.disconnect()
-					@trigger('peer.channel.opened', @_master);
+			@server.on('connect', =>
+				@server.requestInfo('masters', ( masters ) =>
+					@_addMaster(masters[masters.length - 1])
 				)
+			)
+
+		_addMaster: ( id ) ->
+			@_master = new Master(@, id)
+
+			@_master.on('peer.channel.opened', ( ) =>
+				@server.disconnect()
+				@trigger('peer.channel.opened', @_master);
 			)
