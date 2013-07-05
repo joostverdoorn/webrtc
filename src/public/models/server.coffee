@@ -16,7 +16,7 @@ define [
 		#
 		# @param _address [String] the address of the server to which to connect.
 		#
-		constructor: ( @_address ) ->
+		constructor: ( @node, @_address ) ->
 			@_socket = io.connect(@_address)
 
 			@on('event.bind', ( name ) =>
@@ -82,8 +82,8 @@ define [
 		# 
 		_onConnect: ( ) =>
 			console.log 'connected to server'
-			@_socket.emit('type.set', App.type)
-			App.id = @_socket.socket.sessionid
-			$('.id').html(App.id)
+			@_socket.emit('type.set', @node.type)
+			@node.id = @_socket.socket.sessionid
+			$('.id').html(@node.id)
 
 		

@@ -15,7 +15,7 @@ define [
 			@on('peer.channel.opened', @onChannelOpened)
 			@on('peer.channel.closed', @onChannelClosed)
 
-			App.server.sendTo(@id, 'slave.add', App.id)
+			@node.server.sendTo(@id, 'slave.add', @node.id)
 
 			@_channel = @_connection.createDataChannel('a', @_channelConfiguration)			
 			@_connection.createOffer(@_onLocalDescription)

@@ -55,7 +55,7 @@ define [
 		#
 		# @param id [String] the string representing the remote peer
 		#
-		constructor: ( @id ) ->
+		constructor: ( @node, @id ) ->
 			@_open = false
 			@_bindings = []
 
@@ -65,8 +65,8 @@ define [
 			@_connection.oniceconnectionstatechange = @_onIceConnectionStateChange
 			@_connection.ondatachannel = @_onDataChannel			
 			
-			App.server.on('peer.description.set', @_onRemoteDescription)
-			App.server.on('peer.candidate.add', @_onCandidateAdd)
+			@node.server.on('peer.description.set', @_onRemoteDescription)
+			@node.server.on('peer.candidate.add', @_onCandidateAdd)
 
 			@on('ping', @_onPing)
 			@on('pong', @_onPong)
@@ -150,7 +150,7 @@ define [
 		#
 		_onLocalDescription: ( description ) =>
 			@_connection.setLocalDescription(description)
-			App.server.sendTo(@id, 'peer.description.set', description)
+			@node.server.sendTo(@id, 'peer.description.set', description)
 
 		# Is called when a remote description has been received. It will create an answer. 
 		# This method MUST be implemented by any subclasses.
@@ -168,7 +168,7 @@ define [
 		#
 		_onIceCandidate: ( event ) =>
 			if event.candidate?
-				App.server.sendTo(@id, 'peer.candidate.add', event.candidate)
+				@node.server.sendTo(@id, 'peer.candidate.add', event.candidate)
 
 		# Is called when the remote wants to add an ice candidate.
 		#
