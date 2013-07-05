@@ -33,9 +33,11 @@ define [
 				@_socket.removeAllListeners(name)
 			)
 
+			@on('disconnect', @_onDisconnect)
 			@on('sendTo', @_onSendTo)
 			@on('ping', @_onPing)
 			@on('pong', @_onPong)
+			@on('getInfo', @_onGetInfo)
 
 			@initialize()
 
@@ -43,6 +45,13 @@ define [
 		# overridden by any subclass.
 		#
 		initialize: ( ) ->
+
+		# Kills our socket connection. The handler on the 'disconnect' event (_onDisconnect)
+		# will remove this client from the server.
+		#
+		die: ( ) ->
+			if @_socket.socket.connected
+				@_socket.disconnect()
 
 		# Emits to the client.
 		#
@@ -52,6 +61,7 @@ define [
 		emit: ( event, args... ) ->
 			args = [event].concat(args)
 			@_socket.emit.apply(@_socket, args)
+
 
 		# Pings the client. A callback function should be provided to do anything
 		# with the ping.
@@ -88,3 +98,13 @@ define [
 
 			client = Server.getClient(receiver)
 			client?.emit.apply(client, args)
+
+		# Is called when the socket disconnects. Will remove this client from the server list.
+		#
+		_onDisconnect: ( ) =>
+			Server.removeClient(@)
+		
+		_onGetInfo: ( request, requestID, args... ) ->
+			switch request
+				when 'clients'
+					@emit(Server.getClients())

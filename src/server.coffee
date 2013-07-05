@@ -67,6 +67,18 @@ requirejs [
 							slave.emit('master.add', master.id)
 			)
 
+		addClient: ( client ) ->
+			if client instanceof Master
+				@_masters[client.id] = client
+			else if client instanceof Slave
+				@_slaves[client.id] = client
+
+		removeClient: ( client ) ->
+			if @_masters[client.id]?
+				delete @_masters[client.id]
+			else if @_slaves[client.id]?
+				delete @_slaves[client.id]
+
 		# Returns the time that has passed since the starting of the server.
 		#
 		# @return [Integer] the amount of milliseconds that has elapsed.
