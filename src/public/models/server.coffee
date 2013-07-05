@@ -49,6 +49,19 @@ define [
 		disconnect: ( ) ->
 			@_socket.disconnect()
 
+		# Requests information from the server.
+		#
+		# @param request [String] the string identifier of the information request
+		# @param callback [Function] the callback to be called once the information is received
+		# @param args... [Any] the arguments to be passed along with the request
+		#
+		requestInfo: ( request, callback, args... ) ->
+			requestID = _.uniqueId('request')
+			@once(requestID, callback)
+
+			args = ['requestInfo', request, requestID].concat(args)
+			@emit.apply(@, args)
+
 		# Sends a message to a peer, via the server.
 		#
 		# @param receiver [String] the id of the receiving client
@@ -89,5 +102,7 @@ define [
 			@_socket.emit('type.set', @node.type)
 			@node.id = @_socket.socket.sessionid
 			$('.id').html(@node.id)
+
+
 
 		

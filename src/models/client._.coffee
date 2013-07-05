@@ -37,7 +37,7 @@ define [
 			@on('sendTo', @_onSendTo)
 			@on('ping', @_onPing)
 			@on('pong', @_onPong)
-			@on('getInfo', @_onGetInfo)
+			@on('requestInfo', @_onRequestInfo)
 
 			@initialize()
 
@@ -104,7 +104,11 @@ define [
 		_onDisconnect: ( ) =>
 			Server.removeClient(@)
 		
-		_onGetInfo: ( request, requestID, args... ) ->
+		_onRequestInfo: ( request, requestID, args... ) ->
 			switch request
+				when 'masters'
+					@emit(requestID, _(Server.getMasters()).keys())
+				when 'slaves'
+					@emit(requestID, _(Server.getSlaves()).keys())
 				when 'clients'
-					@emit(Server.getClients())
+					@emit(requestID, _(Server.getClients()).keys())

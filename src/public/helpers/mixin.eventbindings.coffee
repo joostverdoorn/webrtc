@@ -57,6 +57,13 @@ define [
 
 				return @
 
+			once: ( name, callback, context = null ) ->
+				fn = ( args... ) ->
+					callback.apply(context, args)
+					@off(name, callback, context)
+
+				@on(name, fn, context)
+
 			# Triggers an event.
 			#
 			# @param name [String] the event name to trigger

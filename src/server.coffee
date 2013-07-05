@@ -56,10 +56,10 @@ requirejs [
 				switch type
 					when 'master'
 						master = new Master(socket)					
-						@_masters[socket.id] = master
+						@addClient(master)
 					when 'slave'
 						slave = new Slave(socket)
-						@_slaves[socket.id] = slave
+						@addClient(slave)
 
 						masters = _(@_masters).values()
 
@@ -67,12 +67,20 @@ requirejs [
 							slave.emit('master.add', master.id)
 			)
 
+		# Adds a client to the client list (either master or slave list) 
+		#
+		# @param client [Client] the client to add
+		#
 		addClient: ( client ) ->
 			if client instanceof Master
 				@_masters[client.id] = client
 			else if client instanceof Slave
 				@_slaves[client.id] = client
 
+		# Removes a client from the client list (either master or slave list) 
+		#
+		# @param client [Client] the client to remove
+		#
 		removeClient: ( client ) ->
 			if @_masters[client.id]?
 				delete @_masters[client.id]
