@@ -20,34 +20,6 @@ define [
 
 				@_master.on('peer.channel.opened', ( ) =>
 					@server.disconnect()
-					_pingInterval = setInterval(( ) =>
-						@_master.ping( ( latency ) =>
-							$('.latency').html(Math.round(latency))
-						)
-					, 100)
-
-					if window.DeviceOrientationEvent
-						window.addEventListener('deviceorientation', (eventData) =>
-							@_roll = Math.round(eventData.gamma)
-							@_pitch = Math.round(eventData.beta)
-							@_yaw = Math.round(eventData.alpha)
-
-							orientation =
-								roll: @_roll
-								pitch: @_pitch
-								yaw: @_yaw
-
-							@_master.emit('peer.orientation', orientation)
-
-							$('.roll').html(@_roll)
-							$('.pitch').html(@_pitch)
-							$('.yaw').html(@_yaw)	
-						)
-
-					$(".custom").keyup =>
-						@_custom = $(".custom").val()
-						customValue = value: @_custom
-						@_master.emit('peer.custom', customValue)
-
+					@trigger('peer.channel.opened', @_master);
 				)
 			)

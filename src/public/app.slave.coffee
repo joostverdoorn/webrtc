@@ -36,7 +36,37 @@ require [
 		# This method will be called from the baseclass when it has been constructed.
 		# 
 		initialize: ( ) ->
-			@node1 = new Node()
-			@node2 = new Node()
+			@node = new Node()
+			@node.on('peer.channel.opened', (master) => 
+				console.log 'opened'
+				_pingInterval = setInterval(( ) =>
+					master.ping( ( latency ) =>
+						$('.latency').html(Math.round(latency))
+					)
+				, 100)
+
+				if window.DeviceOrientationEvent
+					window.addEventListener('deviceorientation', (eventData) =>
+						@_roll = Math.round(eventData.gamma)
+						@_pitch = Math.round(eventData.beta)
+						@_yaw = Math.round(eventData.alpha)
+
+						orientation =
+							roll: @_roll
+							pitch: @_pitch
+							yaw: @_yaw
+
+						master.emit('peer.orientation', orientation)
+
+						$('.roll').html(@_roll)
+						$('.pitch').html(@_pitch)
+						$('.yaw').html(@_yaw)	
+					)
+
+				$(".custom").keyup =>
+					@_custom = $(".custom").val()
+					customValue = value: @_custom
+					master.emit('peer.custom', customValue)
+			)
 
 	window.App = new App.Slave
