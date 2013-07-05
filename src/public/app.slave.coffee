@@ -20,6 +20,7 @@ requirejs.config
 		'underscore': 'vendor/scripts/underscore'
 		'jquery': 'vendor/scripts/jquery'
 		'bootstrap': 'vendor/scripts/bootstrap'
+		'adapter' : 'vendor/scripts/adapter'
 		'socket.io': 'socket.io/socket.io'
 
 require [

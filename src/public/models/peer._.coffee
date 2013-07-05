@@ -2,8 +2,8 @@ define [
 	'public/helpers/mixable'
 	'public/helpers/mixin.eventbindings'
 
-	'public/vendor/js/underscore'
-	'public/vendor/js/adapter'
+	'underscore'
+	'adapter'
 
 	], ( Mixable, EventBindings, _ ) ->
 

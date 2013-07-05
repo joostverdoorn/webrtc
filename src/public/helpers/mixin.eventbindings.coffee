@@ -1,5 +1,5 @@
 define [
-	'public/vendor/js/underscore'
+	'underscore'
 	], ->
 
 	EventBindings =
