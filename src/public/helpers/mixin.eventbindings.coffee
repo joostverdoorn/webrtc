@@ -2,17 +2,17 @@ define [
 	'underscore'
 	], ->
 
+	# These event bindings are modelled after the ones that Backbone.js uses. There
+	# was a strong internal struggle to either use those or the ones provided by 
+	# node.js's events.EventEmitter. If in the future those prove better, I have no
+	# problem switching. - Joost Verdoorn
+
 	EventBindings =
 
 		ClassMethods: {}
 
 		InstanceMethods: 
-
-			# These event bindings are modelled after the ones that Backbone.js uses. There
-			# was a strong internal struggle to either use those or the ones provided by 
-			# node.js's events.EventEmitter. If in the future those prove better, I have no
-			# problem switching. - Joost Verdoorn
-
+			
 			# Binds an event to a callback.
 			#
 			# @param name [String] the event name to bind
@@ -57,6 +57,12 @@ define [
 
 				return @
 
+			# Binds an event, and calls the callback only once on that event.
+			#
+			# @param name [String] the event name to bind
+			# @param callback [Function] the callback to call
+			# @param context [Object] the context of the binding
+			#
 			once: ( name, callback, context = null ) ->
 				fn = ( args... ) ->
 					callback.apply(context, args)

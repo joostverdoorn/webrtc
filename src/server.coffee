@@ -11,14 +11,13 @@ requirejs.config
 			exports: '_'
 
 requirejs [
-	'models/client.master'
-	'models/client.slave'
+	'models/node'
 
 	'express'
 	'http'
 	'socket.io'
 	'underscore'
-	], ( Master, Slave, express, http, io, _ ) ->
+	], ( Node, express, http, io, _ ) ->
 
 
 	# Server class. This is run on the server and maintains connections to 
@@ -31,8 +30,7 @@ requirejs [
 		constructor: ( ) ->
 			@_initTime = Date.now()
 
-			@_masters = {}
-			@_slaves = {}
+			@_nodes = []
 
 			@_app = express()
 			@_server = http.createServer(@_app)
@@ -52,35 +50,41 @@ requirejs [
 		# @param socket [WebSocket] the socket for which to start the login.
 		#
 		login: ( socket ) =>
-			socket.on('type.set', ( type ) => 
-				switch type
-					when 'master'
-						master = new Master(socket)					
-						@addClient(master)
-					when 'slave'
-						slave = new Slave(socket)
-						@addClient(slave)
-			)
+			node = new Node(socket)
+			@addNode(node)
 
-		# Adds a client to the client list (either master or slave list) 
+		# Adds a node to the node list
 		#
-		# @param client [Client] the client to add
+		# @param node [Node] the node to add
 		#
-		addClient: ( client ) ->
-			if client instanceof Master
-				@_masters[client.id] = client
-			else if client instanceof Slave
-				@_slaves[client.id] = client
+		addNode: ( node ) ->
+			@_nodes.push(node)
 
-		# Removes a client from the client list (either master or slave list) 
+		# Removes a node from the node list
 		#
-		# @param client [Client] the client to remove
+		# @param node [Node] the node to remove
 		#
-		removeClient: ( client ) ->
-			if @_masters[client.id]?
-				delete @_masters[client.id]
-			else if @_slaves[client.id]?
-				delete @_slaves[client.id]
+		removeNode: ( node ) ->
+			@_nodes = _(@_nodes).without(node)
+
+		# Returns a node specified by an id
+		#
+		# @param id [String] the id of the requested node
+		# @return [Node] the node
+		#
+		getNode: ( id ) ->
+			return _(@_nodes).find( ( node ) -> node.id is id )
+
+		# Returns an array of connected nodes.
+		#
+		# @param type [String] the type by which to filter the nodes
+		# @return [Array<Node>] an array containing all connected peers
+		#
+		getNodes: ( type = null ) ->
+			if type?
+				return _(@_nodes).filter( ( node ) -> node.type is type )
+			else
+				return @_nodes
 
 		# Returns the time that has passed since the starting of the server.
 		#
@@ -89,49 +93,4 @@ requirejs [
 		time: ( ) ->
 			return Date.now() - @_initTime
 
-		# Returns an array of all connected masters.
-		#
-		# @return [Array<Master>] an array containing all connected masters
-		#
-		getMasters: ( ) ->
-			return @_masters
-
-		# Returns a certain master
-		#
-		# @param id [String] the id of the master
-		# @return [Slave] the master
-		#
-		getMaster: ( id ) ->
-			return @getMasters()[id]
-
-		# Returns an array of all connected slaves.
-		#
-		# @return [Array<Slave>] an array containing all connected slaves
-		#
-		getSlaves: ( ) ->
-			return @_slaves
-
-		# Returns a certain slave
-		#
-		# @param id [String] the id of the slave
-		# @return [Slave] the slave
-		#
-		getSlave: ( id ) ->
-			return @getSlaves()[id]
-
-		# Returns an array of all connected clients.
-		#
-		# @return [Array<Client>] an array containing all connected clients
-		#
-		getClients: ( ) ->
-			return _.extend({}, @getMasters(), @getSlaves()) 
-
-		# Returns a certain client
-		#
-		# @param id [String] the id of the client
-		# @return [Client] the client
-		#
-		getClient: ( id ) ->
-			return @getClients()[id]
-		
 	global.Server = new Server()

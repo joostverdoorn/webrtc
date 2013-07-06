@@ -60,7 +60,7 @@ define [
 			requestID = _.uniqueId('request')
 			@once(requestID, callback)
 
-			args = ['requestInfo', request, requestID].concat(args)
+			args = ['info.request', request, requestID].concat(args)
 			@emit.apply(@, args)
 
 		# Sends a message to a peer, via the server.

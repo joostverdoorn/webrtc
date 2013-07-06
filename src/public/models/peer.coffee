@@ -56,20 +56,25 @@ define [
 		# @param id [String] the string representing the remote peer
 		#
 		constructor: ( @node, @id ) ->
-			@_open = false
-			@_bindings = []
+			@_channelOpen = false
+			@_isConnector = false
 
 			@_connection = new RTCPeerConnection(@_serverConfiguration, @_connectionConfiguration)
 			
 			@_connection.onicecandidate = @_onIceCandidate
 			@_connection.oniceconnectionstatechange = @_onIceConnectionStateChange
-			@_connection.ondatachannel = @_onDataChannel			
-			
-			@node.server.on('peer.description.set', @_onRemoteDescription)
-			@node.server.on('peer.candidate.add', @_onCandidateAdd)
+			@_connection.ondatachannel = @_onDataChannel
 
 			@on('ping', @_onPing)
 			@on('pong', @_onPong)
+
+			@on('peer.connected', @_onConnected)
+			@on('peer.disconnected', @_onDisconnected)
+			@on('peer.channel.opened', @_onChannelOpened)
+			@on('peer.channel.closed', @_onChannelClosed)
+
+			@node.server.on('peer.description.set', @_onRemoteDescription)
+			@node.server.on('peer.candidate.add', @_onCandidateAdd)
 
 			@initialize()
 
@@ -80,6 +85,19 @@ define [
 		# Completely removes the peer.
 		#
 		die: ( ) ->
+
+		#
+		#
+		connect: ( ) ->
+			@_isConnector = true
+			@node.server.sendTo(@id, 'peer.connection.request', @node.type)
+
+			channel = @_connection.createDataChannel('a', @_channelConfiguration)	
+			@_connection.createOffer(@_onLocalDescription)
+
+			@once('peer.connected', =>	
+				@_addChannel(channel)
+			)
 
 		# Disconnects the peer.
 		#
@@ -99,7 +117,7 @@ define [
 		# @param args... [Any] any paramters you may want to pass
 		#
 		emit: ( event, args... ) ->
-			unless @_open
+			unless @_channelOpen
 				return false
 			
 			data = 
@@ -152,14 +170,18 @@ define [
 			@_connection.setLocalDescription(description)
 			@node.server.sendTo(@id, 'peer.description.set', description)
 
-		# Is called when a remote description has been received. It will create an answer. 
-		# This method MUST be implemented by any subclasses.
+		# Is called when a remote description has been received. It will create an answer.
 		#
 		# @param id [String] a string representing the remote peer
 		# @param description [Object] an object representing the remote session description
 		#
 		_onRemoteDescription: ( remote, description ) =>
-			# Subclass: implement me!
+			if remote is @id
+				description = new RTCSessionDescription(description)
+				@_connection.setRemoteDescription(description)
+
+				unless @_isConnector
+					@_connection.createAnswer(@_onLocalDescription, null, {})
 
 		# Provides a callback for adding ice candidates. When a candidate is present,
 		# call candidate.add on the remote to add it.
@@ -210,7 +232,7 @@ define [
 		# @param event [Event] the channel open event
 		#
 		_onChannelOpen: ( event ) =>
-			@_open = true
+			@_channelOpen = true
 			@trigger('peer.channel.opened', @, event)
 
 		# Is called when the data channel is closed.
@@ -218,7 +240,7 @@ define [
 		# @param event [Event] the channel close event
 		#
 		_onChannelClose: ( event ) =>
-			@_open is false
+			@_channelOpen is false
 			@trigger('peer.channel.closed', @, event)
 
 		# Is called when the data channel has errored.
@@ -227,5 +249,25 @@ define [
 		#
 		_onChannelError: ( event ) =>
 			@trigger('peer.channel.errorer', @, event)
+
+		# Is called when a connection has been established.
+		#
+		_onConnected: ( ) ->
+			console.log "connected to node #{@id}"
+
+		# Is called when a connection has been broken.
+		#
+		_onDisconnected: ( ) ->
+			console.log "disconnected from node #{@id}"
+
+		# Is called when the channel has opened.
+		#
+		_onChannelOpened: ( ) ->
+			console.log "opened channel to node #{@id}"
+
+		# Is called when the channel has closed.
+		#
+		_onChannelClosed: ( ) ->
+			console.log "closed channel to node #{@id}"
 
 		

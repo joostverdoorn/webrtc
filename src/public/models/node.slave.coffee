@@ -1,11 +1,11 @@
 define [
 	'./node._'
-	'public/models/peer.master'
+	'public/models/peer'
 
 	'jquery'
-	], ( Node, Master, $ ) =>
+	], ( Node, Peer, $ ) ->
 
-	# Slave app class
+	# Slave node class
 	#
 
 	class Node.Slave extends Node
@@ -13,6 +13,7 @@ define [
 		type: 'slave'
 
 		# This method will be called from the baseclass when it has been constructed.
+		# It will request a list of master peers from the server and connect to one.
 		# 
 		initialize: ( ) ->
 			@server.on('connect', =>
@@ -20,9 +21,14 @@ define [
 					@_addMaster(masters[masters.length - 1])
 				)
 			)
-
+		
+		# Adds a ,aster peer specified by id
+		#
+		# @param id [String] the id of the peer
+		#
 		_addMaster: ( id ) ->
-			@_master = new Master(@, id)
+			@_master = new Peer(@, id)
+			@_master.connect()
 
 			@_master.on('peer.channel.opened', ( ) =>
 				@server.disconnect()

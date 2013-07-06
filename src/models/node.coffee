@@ -8,7 +8,7 @@ define [
 	# This abstract class provides websocket connections for masters and slaves
 	#
 
-	class Client extends Mixable
+	class Node extends Mixable
 
 		@concern EventBindings
 
@@ -29,15 +29,15 @@ define [
 				)
 			)
 
-			@on('event.unbind', ( name ) ->
-				@_socket.removeAllListeners(name)
-			)
+			@on('event.unbind', ( name ) ->	@_socket.removeAllListeners(name))
 
 			@on('disconnect', @_onDisconnect)
+			@on('type.set', ( type ) => @type = type)
 			@on('sendTo', @_onSendTo)
+			@on('info.request', @_onInfoRequest)
+
 			@on('ping', @_onPing)
 			@on('pong', @_onPong)
-			@on('requestInfo', @_onRequestInfo)
 
 			@initialize()
 
@@ -96,19 +96,26 @@ define [
 		_onSendTo: ( receiver, event, args... ) ->
 			args = [event, @id].concat(args)
 
-			client = Server.getClient(receiver)
-			client?.emit.apply(client, args)
+			node = Server.getNode(receiver)
+			node?.emit.apply(node, args)
 
 		# Is called when the socket disconnects. Will remove this client from the server list.
 		#
 		_onDisconnect: ( ) =>
-			Server.removeClient(@)
+			Server.removeNode(@)
 		
-		_onRequestInfo: ( request, requestID, args... ) ->
+		# Is called when a node requests info. The request id is used as event identifier
+		# in the return message.
+		#
+		# @param request [String] the string identifier of the requested info
+		# @param requestID [String] the string identifier of the request
+		# @param args... [Any] any additional args that could be required for requests
+		#
+		_onInfoRequest: ( request, requestID, args... ) ->
 			switch request
 				when 'masters'
-					@emit(requestID, _(Server.getMasters()).keys())
+					@emit(requestID, Server.getNodes('master').map( (node) -> node.id ))
 				when 'slaves'
-					@emit(requestID, _(Server.getSlaves()).keys())
-				when 'clients'
-					@emit(requestID, _(Server.getClients()).keys())
+					@emit(requestID, Server.getNodes('slave').map( (node) -> node.id ))
+				when 'nodes'
+					@emit(requestID, Server.getNodes().map( (node) -> node.id ))
