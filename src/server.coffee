@@ -104,7 +104,7 @@ requirejs [
 		query: ( request, args... ) ->
 			switch request
 				when 'nodes' 
-					return @getNodes()
+					return _(@getNodes()).map( ( node ) -> node.id )
 
 		# Returns the time that has passed since the starting of the server.
 		#
