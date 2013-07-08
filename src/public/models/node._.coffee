@@ -1,6 +1,7 @@
 requirejs.config
 	shim:
 		'public/vendor/scripts/jquery.plugins': [ 'public/vendor/scripts/jquery' ]
+		'public/vendor/scripts/bootstrap.min': [ 'public/vendor/scripts/jquery' ]
 
 define [
 	'public/helpers/mixable'
@@ -13,6 +14,7 @@ define [
 
 	'public/vendor/scripts/jquery'
 	'public/vendor/scripts/jquery.plugins'
+	'public/vendor/scripts/bootstrap.min'
 	'public/vendor/scripts/crypto'
 
 	], ( Mixable, EventBindings, Server, Peer, _ )->

@@ -38,6 +38,8 @@ require [
 		initialize: ( ) ->
 			@node = new Node()
 			@_benchmarks = new Object()
+			$("#nodes tbody").append("<tr class='success' id='#{@node.id}'><td>#{@node.id}</td><td>Node</td><td>#{@node.benchmark.cpu}</td><td class='ping'>0</td><td>todo</td></tr>")
+
 			@node.on('peer.channel.opened', ( peer , data ) =>
 				_pingInterval = setInterval(( ) =>
 					peer.ping( ( latency ) =>
@@ -50,7 +52,7 @@ require [
 				@_benchmarks[peer.id] = new Object()
 				#@_benchmarks[peer.id]["cpu"] = 
 
-				$("#nodes tr:last").after("<tr id='#{peer.id}'><td>#{peer.id}</td><td>Node</td><td>CPU</td><td class='ping'>peer</td><td>todo</td></tr>")
+				$("#nodes tbody").append("<tr id='#{peer.id}'><td>#{peer.id}</td><td>Node</td><td>CPU</td><td class='ping'>peer</td><td>todo</td></tr>")
 				
 			)
 
