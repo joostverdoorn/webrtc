@@ -66,7 +66,7 @@ define [
 			once: ( name, callback, context = null ) ->
 				fn = ( args... ) ->
 					callback.apply(context, args)
-					@off(name, callback, context)
+					@off(name, arguments.callee, context)
 
 				@on(name, fn, context)
 

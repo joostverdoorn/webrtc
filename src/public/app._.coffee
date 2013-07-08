@@ -1,6 +1,4 @@
-define [
-	'public/models/server'
-	], ( Server ) -> 
+define [], ( ) -> 
 	
 	# Application base class
 	#

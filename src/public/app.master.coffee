@@ -1,7 +1,7 @@
 requirejs.config
 	shim:		
 		'underscore':
-			expors: '_'
+			exports: '_'
 
 		'socket.io':
 			exports: 'io'

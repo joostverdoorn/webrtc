@@ -1,36 +1,11 @@
 define [
-	'public/helpers/mixable'
-	'public/helpers/mixin.eventbindings'
+	'public/models/remote._'
 
 	'underscore'
 	'adapter'
+	], ( Remote, _ ) ->
 
-	], ( Mixable, EventBindings, _ ) ->
-
-	# This abstract base class provides webrtc connections to masters and slaves
-	#
-	# Public events that can be bound:
-	#
-	#	peer.connected - when a connection to the peer has been established
-	#	peer.disconnected - when a connection to the peer was broken 
-	#	peer.closed - when a connection to the peer was deliberately closed
-	#
-	#	peer.channel.opened - when a channel to the peer was opened
-	# 	peer.channel.closed - when a channel to the peer was closed
-	#	peer.channel.errored - when an error has occured to th channel
-	#
-	# All subclasses MUST implement the following methods:
-	#	
-	#	_onRemoteDescription: ( remote, description )
-	#		Is called when a remote description has been received. It will create an answer. 
-	#		
-	#		@param id [String] a string representing the remote peer
-	#		@param description [Object] an object representing the remote session description
-	#
-
-	class Peer extends Mixable
-
-		@concern EventBindings
+	class Remote.Peer extends Remote
 
 		# Provides default server configuration for RTCPeerConnection.
 		_serverConfiguration:
@@ -51,75 +26,48 @@ define [
 		_channelConfiguration:
 			reliable: false
 
-		# Constructs a new peer. 
+		# Initializes this class. Will attempt to connect to a remote peer through WebRTC.
+		# Is called from the baseclass' constructor.
 		#
-		# @param id [String] the string representing the remote peer
+		# @param _address [String] the address of the server to connect to
 		#
-		constructor: ( @node, @id ) ->
-			@_channelOpen = false
-			@_isConnector = false
-
+		initialize: ( @id, connect = true ) ->
 			@_connection = new RTCPeerConnection(@_serverConfiguration, @_connectionConfiguration)
-			
+
 			@_connection.onicecandidate = @_onIceCandidate
 			@_connection.oniceconnectionstatechange = @_onIceConnectionStateChange
 			@_connection.ondatachannel = @_onDataChannel
 
-			@on('ping', @_onPing)
-			@on('pong', @_onPong)
+			@on('connected', @_onConnected)
+			@on('disconnected', @_onDisconnected)
+			@on('channel.opened', @_onChannelOpened)
+			@on('channel.closed', @_onChannelClosed)
 
-			@on('peer.connected', @_onConnected)
-			@on('peer.disconnected', @_onDisconnected)
-			@on('peer.channel.opened', @_onChannelOpened)
-			@on('peer.channel.closed', @_onChannelClosed)
+			if connect
+				@connect()
 
-			@node.server.on('peer.description.set', @_onRemoteDescription)
-			@node.server.on('peer.candidate.add', @_onCandidateAdd)
-
-			@initialize()
-
-		# This method is called from the constructor and should be overridden by subclasses
-		#
-		initialize: ( ) ->
-
-		# Completely removes the peer.
-		#
-		die: ( ) ->
-
-		#
+		# Attempts to connect to the remote peer.
 		#
 		connect: ( ) ->
 			@_isConnector = true
-			@node.server.sendTo(@id, 'peer.connection.request', @node.type)
+			@parent.emitTo(@id, 'peer.connectionRequest', @parent.id, @parent.type)
 
 			channel = @_connection.createDataChannel('a', @_channelConfiguration)	
 			@_connection.createOffer(@_onLocalDescription)
 
-			@on('peer.connected', =>	
+			@once('connected', =>	
 				@_addChannel(channel)
 			)
 
-		# Disconnects the peer.
-		#
 		disconnect: ( ) ->
 			@_connection.close()
-
-		# Returns the connection state of the connection.
-		#
-		# @return [RTCIceConnectionState] the connection state
-		#
-		getConnectionState: ( ) ->
-			return @_connection.iceConnectionState
-
+			
 		# Sends a message to the remote.
 		#
 		# @param event [String] the event to send
-		# @param args... [Any] any paramters you may want to pass
+		# @param args... [Any] any parameters you may want to pass
 		#
 		emit: ( event, args... ) ->
-			unless @_channelOpen
-				return false
-			
 			data = 
 				name: event
 				args: args
@@ -138,29 +86,6 @@ define [
 			@_channel.onclose = @_onChannelClose
 			@_channel.onerror = @_onChannelError
 
-		# Pings the peer. A callback function should be provided to do anything
-		# with the ping.
-		#
-		# @param callback [Function] the callback to be called when a pong was received.
-		#
-		ping: ( callback ) ->
-			@_pingStart = App.time()
-			@_pingCallback = callback
-			@emit('ping')
-
-		# Is called when a ping is received. We just emit 'pong' back to the peer.
-		#
-		_onPing: ( ) =>
-			@emit('pong')
-
-		# Is called when a pong is received. We call the callback function defined in 
-		# ping with the amount of time that has elapsed.
-		#
-		_onPong: ( ) =>
-			@_latency = App.time() - @_pingStart
-			@_pingCallback(@_latency)
-			@_pingStart = undefined
-
 		# Is called when a local description has been added. Will send this description
 		# to the remote.
 		#
@@ -168,20 +93,18 @@ define [
 		#
 		_onLocalDescription: ( description ) =>
 			@_connection.setLocalDescription(description)
-			@node.server.sendTo(@id, 'peer.description.set', description)
+			@parent.emitTo(@id, 'peer.setRemoteDescription', @parent.id, description)
 
 		# Is called when a remote description has been received. It will create an answer.
 		#
 		# @param id [String] a string representing the remote peer
 		# @param description [Object] an object representing the remote session description
 		#
-		_onRemoteDescription: ( remote, description ) =>
-			if remote is @id
-				description = new RTCSessionDescription(description)
-				@_connection.setRemoteDescription(description)
+		setRemoteDescription: ( description ) =>
+			@_connection.setRemoteDescription(description)
 
-				unless @_isConnector
-					@_connection.createAnswer(@_onLocalDescription, null, {})
+			unless @_isConnector
+				@_connection.createAnswer(@_onLocalDescription, null, {})
 
 		# Provides a callback for adding ice candidates. When a candidate is present,
 		# call candidate.add on the remote to add it.
@@ -190,17 +113,15 @@ define [
 		#
 		_onIceCandidate: ( event ) =>
 			if event.candidate?
-				@node.server.sendTo(@id, 'peer.candidate.add', event.candidate)
+				@parent.emitTo(@id, 'peer.addIceCandidate', @parent.id, event.candidate)
 
 		# Is called when the remote wants to add an ice candidate.
 		#
 		# @param id [String] the id of the remote
 		# @param candidate [Object] an object representing the ice candidate
 		#
-		_onCandidateAdd: ( remote, candidate ) =>
-			if remote is @id
-				candidate = new RTCIceCandidate(candidate)
-				@_connection.addIceCandidate(candidate)
+		addIceCandidate: ( candidate ) =>
+			@_connection.addIceCandidate(candidate)
 
 		# Is called when the ice connection state changed.
 		#
@@ -208,7 +129,7 @@ define [
 		#
 		_onIceConnectionStateChange: ( event ) =>
 			connectionState = @_connection.iceConnectionState
-			@trigger("peer.#{connectionState}", @, event)
+			@trigger(connectionState, @, event)
 
 		# Is called when a data channel is added to the connection.
 		#
@@ -233,7 +154,7 @@ define [
 		#
 		_onChannelOpen: ( event ) =>
 			@_channelOpen = true
-			@trigger('peer.channel.opened', @, event)
+			@trigger('channel.opened', @, event)
 
 		# Is called when the data channel is closed.
 		#
@@ -241,14 +162,14 @@ define [
 		#
 		_onChannelClose: ( event ) =>
 			@_channelOpen is false
-			@trigger('peer.channel.closed', @, event)
+			@trigger('channel.closed', @, event)
 
 		# Is called when the data channel has errored.
 		#
 		# @param event [Event] the channel open event
 		#
 		_onChannelError: ( event ) =>
-			@trigger('peer.channel.errorer', @, event)
+			@trigger('channel.errored', @, event)
 
 		# Is called when a connection has been established.
 		#
@@ -269,5 +190,3 @@ define [
 		#
 		_onChannelClosed: ( ) ->
 			console.log "closed channel to node #{@id}"
-
-		

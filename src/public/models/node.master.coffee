@@ -1,6 +1,6 @@
 define [
 	'./node._'
-	'public/models/peer'
+	'public/models/remote.peer'
 	
 	'jquery'
 	], ( Node, Peer, $ ) ->

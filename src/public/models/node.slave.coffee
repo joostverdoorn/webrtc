@@ -1,6 +1,6 @@
 define [
 	'./node._'
-	'public/models/peer'
+	'public/models/remote.peer'
 
 	'jquery'
 	], ( Node, Peer, $ ) ->
@@ -17,7 +17,7 @@ define [
 		# 
 		initialize: ( ) ->
 			@server.on('connect', =>
-				@server.requestInfo('masters', ( masters ) =>
+				@server.query('masters', ( masters ) =>
 					@_addMaster(masters[masters.length - 1])
 				)
 			)

@@ -7,8 +7,8 @@ define [
 	'public/helpers/mixable'
 	'public/helpers/mixin.eventbindings'
 
-	'public/models/server'
-	'public/models/peer'
+	'public/models/remote.server'
+	'public/models/remote.peer'
 	
 	'underscore'
 
@@ -39,7 +39,9 @@ define [
 
 			@server = new Server(@, @serverAddress)
 
-			@server.on('peer.connection.request', @_onPeerConnectionRequest)
+			@server.on('peer.connectionRequest', @_onPeerConnectionRequest)
+			@server.on('peer.setRemoteDescription', @_onPeerSetRemoteDescription)
+			@server.on('peer.addIceCandidate', @_onPeerAddIceCandidate)
 
 			@bench()
 
@@ -50,25 +52,42 @@ define [
 		#
 		initialize: ( ) ->
 
+		# Attempts to connect to a peer.
+		#
+		# @param id [String] the id of the peer to connect to
+		#
 		connect: ( id ) ->
 			peer = new Peer(@, id)
-			peer.connect()
 			@addPeer(peer)
 
-		disconnect: (id) ->
+		# Disconects a peer.
+		#
+		# @param id [String] the id of the peer to disconnect
+		#
+		disconnect: ( id ) ->
 			peer = @getPeer(id)
-			peer.disconnect()
+			peer?.disconnect()
 			@removePeer(peer)
+
+		# Tells the server to emit a message on to the specified peer.
+		#
+		# @param id [String] the id of the peer to pass the message to
+		# @param event [String] the event to pass to the peer
+		# @param args... [Any] any other arguments to pass along 
+		#
+		emitTo: ( id, event, args... ) ->
+			args = [id, event].concat(args)
+			@server.emitTo.apply(@server, args)
 		
 		# Adds a peer to the peer list
 		#
 		# @param peer [Peer] the peer to add
 		#
 		addPeer: ( peer ) ->
-			peer.on('peer.channel.opened', (peer ,data ) =>
+			peer.on('channel.opened', (peer ,data ) =>
 				@trigger('peer.channel.opened', peer, data);
 			)
-			peer.on('peer.disconnected', (peer, data ) =>
+			peer.on('disconnected', (peer, data ) =>
 				@trigger('peer.disconnected', peer );
 			)
 			@_peers.push(peer)
@@ -106,8 +125,26 @@ define [
 		# @param type [String] the type of the peer
 		#
 		_onPeerConnectionRequest: ( id, type ) =>
-			peer = new Peer(@, id)
+			peer = new Peer(@, id, false)
 			@addPeer(peer)
+
+		# Is called when a remote peer wants to set a remote description.
+		#
+		# @param id [String] the id string of the peer
+		# @param data [Object] a plain object representation of an RTCSessionDescription
+		#
+		_onPeerSetRemoteDescription: ( id, data ) =>
+			description = new RTCSessionDescription(data)
+			@getPeer(id)?.setRemoteDescription(description)
+
+		# Is called when a peer wants to add an ICE candidate
+		#
+		# @param id [String] the id string of the peer
+		# @param data [Object] a plain object representation of an RTCIceCandidate
+		#
+		_onPeerAddIceCandidate: ( id, data ) =>
+			candidate = new RTCIceCandidate(data)
+			@getPeer(id)?.addIceCandidate(candidate)
 
 		bench: () =>
 			startTime = performance.now()
@@ -117,6 +154,4 @@ define [
 			output = value: sha
 			endTime = performance.now()
 			@benchmark.cpu = Math.round(endTime - startTime)
-	
-
 

@@ -11,7 +11,7 @@ requirejs.config
 			exports: '_'
 
 requirejs [
-	'models/node'
+	'public/models/remote.client'
 
 	'express'
 	'http'
@@ -50,8 +50,12 @@ requirejs [
 		# @param socket [WebSocket] the socket for which to start the login.
 		#
 		login: ( socket ) =>
-			node = new Node(socket)
+			node = new Node(@, socket)
 			@addNode(node)
+
+		emitTo: ( id, args... ) ->
+			node = @getNode(id)
+			node?.emit.apply(node, args)
 
 		# Adds a node to the node list
 		#
