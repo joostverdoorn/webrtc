@@ -66,8 +66,8 @@ define [
 		#
 		disconnect: ( id ) ->
 			peer = @getPeer(id)
-			peer?.disconnect()
-			@removePeer(peer)
+			if peer?
+				@removePeer(peer)
 
 		# Tells the server to emit a message on to the specified peer.
 		#
@@ -97,6 +97,7 @@ define [
 		# @param peer [Peer] the peer to remove
 		#
 		removePeer: ( peer ) ->
+			peer.die()
 			@_peers = _(@_peers).without(peer)
 
 		# Returns a peer specified by an id

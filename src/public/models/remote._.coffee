@@ -22,6 +22,12 @@ define [
 			@on('query', @_onQuery)
 			@on('emitTo', @_onEmitTo)
 
+		# Disconnects the remote and removes all bindings.
+		#
+		die: ( ) ->
+			@disconnect()
+			@off()
+
 		# Queries the remote. Calls the callback function when a response is received.
 		#
 		# @param request [String] the request string identifier

@@ -41,13 +41,9 @@ define [
 			#
 			off: ( name = null, callback = null, context = null ) ->
 				@_events = {} unless @_events?
-				unless name? or callback? or context?
-					return @
 
 				names = if name then [ name ] else _.keys(@_events)
-				
 				for name in names
-
 					for event in @_events[name]
 						if ( not callback? or callback is event.callback ) and 
 								( not context? or context is event.context )

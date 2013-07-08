@@ -28,7 +28,7 @@ define [
 		#
 		disconnect: ( ) ->
 			@_connection.disconnect()
-			
+
 		# Sends a message to the remote.
 		#
 		# @param event [String] the event to send

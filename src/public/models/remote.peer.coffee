@@ -59,15 +59,20 @@ define [
 				@_addChannel(channel)
 			)
 
+		# Disconnects from the peer.
+		#
 		disconnect: ( ) ->
 			@_connection.close()
-			
+
 		# Sends a message to the remote.
 		#
 		# @param event [String] the event to send
 		# @param args... [Any] any parameters you may want to pass
 		#
 		emit: ( event, args... ) ->
+			unless @_channel.readyState is 'open'
+				return
+
 			data = 
 				name: event
 				args: args
