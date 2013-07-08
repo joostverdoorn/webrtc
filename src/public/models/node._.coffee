@@ -13,6 +13,8 @@ define [
 
 	'public/vendor/scripts/jquery'
 	'public/vendor/scripts/jquery.plugins'
+	'public/vendor/scripts/crypto'
+
 	], ( Mixable, EventBindings, Server, Peer, _ )->
 
 	class Node extends Mixable
@@ -24,6 +26,8 @@ define [
 			osName:  $.os.name
 			browserName:  $.browser.name
 			browserVersion: $.browser.versionNumber
+		benchmark:
+			cpu: null
 		serverAddress: ':8080/'
 
 		# Constructs a new app.
@@ -34,6 +38,8 @@ define [
 			@server = new Server(@, @serverAddress)
 
 			@server.on('peer.connection.request', @_onPeerConnectionRequest)
+
+			@bench()
 
 			@initialize()
 
@@ -52,6 +58,12 @@ define [
 		# @param peer [Peer] the peer to add
 		#
 		addPeer: ( peer ) ->
+			peer.on('peer.channel.opened', (peer ,data ) =>
+				@trigger('peer.channel.opened', peer, data);
+			)
+			peer.on('peer.disconnected', (peer, data ) =>
+				@trigger('peer.disconnected', peer );
+			)
 			@_peers.push(peer)
 
 		# Removes a peer from the peer list
@@ -88,9 +100,16 @@ define [
 		#
 		_onPeerConnectionRequest: ( id, type ) =>
 			peer = new Peer(@, id)
-			peer.on('peer.benchmark', ( data ) =>
-				@trigger('peer.benchmark',  id, data);
-			)
-			@_peers.push(peer)
+			@addPeer(peer)
+
+		bench: () =>
+			startTime = performance.now()
+			sha = "4C48nBiE586JGzhptoOV"
+			for i in [0...256] by 1
+				sha = CryptoJS.SHA3(sha).toString()
+			output = value: sha
+			endTime = performance.now()
+			@benchmark.cpu = Math.round(endTime - startTime)
+	
 
 

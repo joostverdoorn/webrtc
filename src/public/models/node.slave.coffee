@@ -34,3 +34,4 @@ define [
 				@server.disconnect()
 				@trigger('peer.channel.opened', @_master);
 			)
+			

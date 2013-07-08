@@ -38,7 +38,6 @@ require [
 		initialize: ( ) ->
 			@node = new Node()
 			@node.on('peer.channel.opened', (master) => 
-				console.log 'opened'
 				_pingInterval = setInterval(( ) =>
 					@node.master.ping( ( latency ) =>
 						$('.latency').html(Math.round(latency))
@@ -75,6 +74,7 @@ require [
 			for i in [0...56] by 1
 				sha = CryptoJS.SHA3(sha).toString()
 			output = value: sha
+			console.log "baas"
 			@node.master.emit('peer.benchmark', output)
 
 	window.App = new App.Slave

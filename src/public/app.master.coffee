@@ -37,50 +37,26 @@ require [
 		# 
 		initialize: ( ) ->
 			@node = new Node()
-			@_benchmarks = [[]]
-			@node.on('peer.channel.opened', ( slave ) =>
-				elem = $('<div><hr /></div>')
-				rollBar = $('<div class="progress"><div class="bar roll" style="width: 0%;"></div></div>')
-				pitchBar = $('<div class="progress"><div class="bar pitch" style="width: 0%;"></div></div>')
-				yawBar = $('<div class="progress"><div class="bar yaw" style="width: 0%;"></div></div>')
-				elem.append(rollBar, pitchBar, yawBar)
+			@_benchmarks = new Object()
+			@node.on('peer.channel.opened', ( peer , data ) =>
+				_pingInterval = setInterval(( ) =>
+					peer.ping( ( latency ) =>
+						latency = Math.round(latency)
+						@_benchmarks[peer.id]["ping"] = latency
+						$("##{peer.id} .ping").text(latency)
+					)
+				, 200)
 
-				$('#slaves').append(elem)
+				@_benchmarks[peer.id] = new Object()
+				#@_benchmarks[peer.id]["cpu"] = 
 
+				$("#nodes tr:last").after("<tr id='#{peer.id}'><td>#{peer.id}</td><td>Node</td><td>CPU</td><td class='ping'>peer</td><td>todo</td></tr>")
 				
 			)
-			
-			@node.on('peer.benchmark', ( id, benchmark ) =>
-				num = 0
-				for num in [0...@node._peers.length] by 1
-					if (@node._peers[num].id == id)
-						node  = @node._peers[num].node
-				
-				time = Math.round(@.time())
-				@_benchmarks.push(new Array())
-				@_benchmarks[num].push(time)
-				@_initTime = performance.now()
-				if(@_benchmarks[num].length is 12)
-					@_benchmarks[num].shift();
-					average = _.reduce(@_benchmarks[num],  (memo, num) ->
-						 memo + num
-					, 0) / @_benchmarks[num].length;
-					average = Math.round(average)
-					$(".bench").html($(".bench").html() + "<div id='#{node.id}'> Slave <b>#{node.system.osName} - #{node.system.browserName}#{node.system.browserVersion}</b> has a benchmark of #{average} </div>")
-			)
-			###
-			slave.on('peer.orientation', ( orientation ) ->
-				rollBar.children('.bar').width("#{100 * ((orientation.roll + 90) / 180)}%")
-				pitchBar.children('.bar').width("#{100 * ((orientation.pitch + 90) / 180)}%")
-				yawBar.children('.bar').width("#{100* (orientation.yaw / 360)}%")
+
+			@node.on('peer.disconnected', ( peer  ) =>
+				$("##{peer.id}").remove()
 			)
 
-			slave.on ('peer.custom'), (custom) ->
-				$(".custom").text(custom.value)
-
-			slave.on('peer.disconnected', ( ) =>
-				elem.remove()
-			)
 			
-			###
 	window.App = new App.Master

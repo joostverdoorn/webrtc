@@ -95,7 +95,7 @@ define [
 			channel = @_connection.createDataChannel('a', @_channelConfiguration)	
 			@_connection.createOffer(@_onLocalDescription)
 
-			@once('peer.connected', =>	
+			@on('peer.connected', =>	
 				@_addChannel(channel)
 			)
 
