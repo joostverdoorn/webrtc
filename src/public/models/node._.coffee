@@ -160,6 +160,8 @@ define [
 					return @benchmark
 				when 'type'
 					return @type
+				when 'peers'
+					return _(@getPeers()).map( ( peer ) -> peer.id )
 
 		bench: () =>
 			startTime = performance.now()

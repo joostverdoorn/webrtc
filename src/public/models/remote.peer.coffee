@@ -179,6 +179,7 @@ define [
 		# Is called when a connection has been broken.
 		#
 		_onDisconnected: ( ) ->
+			@parent.removePeer(@)
 			console.log "disconnected from node #{@id}"
 
 		# Is called when the channel has opened.

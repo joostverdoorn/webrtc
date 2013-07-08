@@ -16,6 +16,7 @@ define [
 
 			@on('event.bind', @_onEventBind)
 			@on('event.unbind', @_onEventUnbind)
+			@on('disconnect', -> @parent.removeNode(@))
 
 		# Disconnects from the client.
 		#
