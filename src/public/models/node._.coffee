@@ -146,6 +146,21 @@ define [
 			candidate = new RTCIceCandidate(data)
 			@getPeer(id)?.addIceCandidate(candidate)
 
+		# Responds to a request
+		#
+		# @param request [String] the string identifier of the request
+		# @param args... [Any] any arguments that may be accompanied with the request
+		# @return [Object] a response to the query
+		#
+		query: ( request, args... ) ->
+			switch request
+				when 'system' 
+					return @system
+				when 'benchmark'
+					return @benchmark
+				when 'type'
+					return @type
+
 		bench: () =>
 			startTime = performance.now()
 			sha = "4C48nBiE586JGzhptoOV"

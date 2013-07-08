@@ -53,6 +53,11 @@ requirejs [
 			node = new Node(@, socket)
 			@addNode(node)
 
+		# Sends a message to a certain node.
+		#
+		# @param id [String] the id of the node to pass the message to
+		# @param args... [Any] any arguments to pass along 
+		#
 		emitTo: ( id, args... ) ->
 			node = @getNode(id)
 			node?.emit.apply(node, args)
@@ -89,6 +94,17 @@ requirejs [
 				return _(@_nodes).filter( ( node ) -> node.type is type )
 			else
 				return @_nodes
+
+		# Responds to a request
+		#
+		# @param request [String] the string identifier of the request
+		# @param args... [Any] any arguments that may be accompanied with the request
+		# @return [Object] a response to the query
+		#
+		query: ( request, args... ) ->
+			switch request
+				when 'nodes' 
+					return @getNodes()
 
 		# Returns the time that has passed since the starting of the server.
 		#
