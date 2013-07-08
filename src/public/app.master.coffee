@@ -39,7 +39,7 @@ require [
 			@node = new Node()
 			@_benchmarks = new Object()
 			$("#nodes tbody").append("<tr class='success' id='#{@node.id}'><td>#{@node.id}</td><td>Master</td><td>#{@node.benchmark.cpu}</td><td class='ping'>0</td><td>#{@makeSystemString(@node.system)}</td><td class='status'>self</td><td class='actions'>-</td></tr>")
-			@getPeers();
+			_pingUpdatePeers =  setInterval((( ) => 	@getPeers() ), 5000)
 			@node.on('peer.channel.opened', ( peer , data ) =>
 				_pingInterval = setInterval(( ) =>
 					peer.ping( ( latency ) =>
@@ -53,10 +53,11 @@ require [
 				peer.query("benchmark", (benchmark) =>
 					@_benchmarks[peer.id]["cpu"] = benchmark["cpu"]
 					peer.query("system", (system) =>
-						systemString = @makeSystemString(system)
+						@node.system = system
+						systemString = @makeSystemString(@node.system)
 						$("#nodes tbody").append("<tr id='#{peer.id}'><td>#{peer.id}</td><td>Master</td><td>#{@_benchmarks[peer.id]["cpu"]}</td><td class='ping'>peer</td><td>#{systemString}</td><td class='status'>Connected</td><td class='actions'><a href='#'>Disconnect</a></td></tr>")
-						$("##{peer.id} a:contains('Disconnect')").click () =>
-						@disconnect(peer.id)
+						$("##{peer.id} a:contains('Disconnect')").click () => @disconnect(peer.id)
+						
 					)
 				)
 				
@@ -77,6 +78,7 @@ require [
 		# disconnect 
 		disconnect: ( id ) =>
 			peer = _(@node._peers).find( ( peer ) -> peer.id is id ) #should use a getPeer function later
+			console.log id
 			#disconnect iets
 
 		# manually connect to a node
@@ -87,16 +89,23 @@ require [
 
 		# get all available nodes peers from a server and display them
 		getPeers: () =>
+			$("tr").not(".success").remove()
 			@_allPeers = @node.server.query("nodes", (ids) =>
 				for id in ids
 					if id isnt @node.id
-						$("#nodes tbody").append("<tr id='#{id}'><td>#{id}</td><td>Master</td><td></td><td class='ping'></td><td></td><td class='status'></td><td class='actions'><a href='#'>Connect</a></td></tr>")
-						( (id) =>
- 							$("##{id} a:contains('Connect')").click () => @connect(id)
-						) (id)
+						peer  = _(@node._peers).find( ( peer ) -> peer.id is id )
+						if (peer?)
+							systemString = @makeSystemString(@node.system)
+							$("#nodes tbody").append("<tr id='#{peer.id}'><td>#{peer.id}</td><td>Master</td><td>#{@_benchmarks[peer.id]["cpu"]}</td><td class='ping'>peer</td><td>#{systemString}</td><td class='status'>Connected</td><td class='actions'><a href='#'>Disconnect</a></td></tr>")
+						
+						else
+							$("#nodes tbody").append("<tr id='#{id}'><td>#{id}</td><td>Master</td><td></td><td class='ping'></td><td></td><td class='status'></td><td class='actions'><a href='#'>Connect</a></td></tr>")
+							( (id) =>
+	 							$("##{id} a:contains('Connect')").click () => @connect(id)
+							) (id)
 							
 				
-			) 
+			)
 
 		makeSystemString: (system) ->
 			"#{system.osName} - #{system.browserName}#{system.browserVersion}"
