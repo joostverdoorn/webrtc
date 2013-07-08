@@ -1,3 +1,7 @@
+requirejs.config
+	shim:
+		'public/vendor/scripts/jquery.plugins': [ 'public/vendor/scripts/jquery' ]
+
 define [
 	'public/helpers/mixable'
 	'public/helpers/mixin.eventbindings'
@@ -6,6 +10,9 @@ define [
 	'public/models/peer'
 	
 	'underscore'
+
+	'public/vendor/scripts/jquery'
+	'public/vendor/scripts/jquery.plugins'
 	], ( Mixable, EventBindings, Server, Peer, _ )->
 
 	class Node extends Mixable
@@ -13,6 +20,10 @@ define [
 		@concern EventBindings
 
 		id: null
+		system: 
+			osName:  $.os.name
+			browserName:  $.browser.name
+			browserVersion: $.browser.versionNumber
 		serverAddress: ':8080/'
 
 		# Constructs a new app.
@@ -72,6 +83,9 @@ define [
 		#
 		_onPeerConnectionRequest: ( id, type ) =>
 			peer = new Peer(@, id)
+			peer.on('peer.benchmark', ( data ) =>
+				@trigger('peer.benchmark',  id, data);
+			)
 			@_peers.push(peer)
 
 

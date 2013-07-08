@@ -40,11 +40,15 @@ require [
 			@node.on('peer.channel.opened', (master) => 
 				console.log 'opened'
 				_pingInterval = setInterval(( ) =>
-					master.ping( ( latency ) =>
+					@node.master.ping( ( latency ) =>
 						$('.latency').html(Math.round(latency))
 					)
 				, 100)
 
+				# benchmark uitvoeren
+				for x in [0..11] by 1
+					@.bench()
+				###
 				if window.DeviceOrientationEvent
 					window.addEventListener('deviceorientation', (eventData) =>
 						@_roll = Math.round(eventData.gamma)
@@ -56,17 +60,21 @@ require [
 							pitch: @_pitch
 							yaw: @_yaw
 
-						master.emit('peer.orientation', orientation)
+						@node.emit('peer.orientation', orientation)
 
 						$('.roll').html(@_roll)
 						$('.pitch').html(@_pitch)
 						$('.yaw').html(@_yaw)	
 					)
-
-				$(".custom").keyup =>
-					@_custom = $(".custom").val()
-					customValue = value: @_custom
-					master.emit('peer.custom', customValue)
+				###
+				
 			)
+
+		bench: () =>
+			sha = "4C48nBiE586JGzhptoOV"
+			for i in [0...56] by 1
+				sha = CryptoJS.SHA3(sha).toString()
+			output = value: sha
+			@node.master.emit('peer.benchmark', output)
 
 	window.App = new App.Slave

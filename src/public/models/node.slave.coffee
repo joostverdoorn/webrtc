@@ -27,10 +27,10 @@ define [
 		# @param id [String] the id of the peer
 		#
 		_addMaster: ( id ) ->
-			@_master = new Peer(@, id)
-			@_master.connect()
+			@master = new Peer(@, id)
+			@master.connect()
 
-			@_master.on('peer.channel.opened', ( ) =>
+			@master.on('peer.channel.opened', ( ) =>
 				@server.disconnect()
 				@trigger('peer.channel.opened', @_master);
 			)
