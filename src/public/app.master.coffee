@@ -39,7 +39,7 @@ require [
 			@node = new Node()
 			@_benchmarks = new Object()
 			$("#nodes tbody").append("<tr class='success' id='#{@node.id}'><td>#{@node.id}</td><td>Master</td><td>#{@node.benchmark.cpu}</td><td class='ping'>0</td><td>#{@makeSystemString(@node.system)}</td><td class='status'>self</td><td class='actions'>-</td></tr>")
-
+			@getPeers();
 			@node.on('peer.channel.opened', ( peer , data ) =>
 				_pingInterval = setInterval(( ) =>
 					peer.ping( ( latency ) =>
@@ -67,12 +67,12 @@ require [
 				
 			)
 
-			@node.on('peer.disconnected', ( peer  ) =>
+			###@node.on('peer.disconnected', ( peer  ) =>
 				$("##{peer.id} .status").text ("Disconnected")
 				$("##{peer.id} .actions").html( "<a href='#'>Connect</a>")
 				$("##{peer.id} a:contains('Connect')").click () =>
 					@connect(peer.id)
-			)
+			)###
 
 		# disconnect 
 		disconnect: ( id ) =>
@@ -81,13 +81,22 @@ require [
 
 		# manually connect to a node
 		connect: ( id ) =>
-			peer = _(@node._peers).find( ( peer ) -> peer.id is id ) #should use a getPeer function later
-			@node.connect ("id")
 			$("##{id}").remove()
+			@node.connect (id)
+			
 
 		# get all available nodes peers from a server and display them
 		getPeers: () =>
-			# query 
+			@_allPeers = @node.server.query("nodes", (ids) =>
+				for id in ids
+					if id isnt @node.id
+						$("#nodes tbody").append("<tr id='#{id}'><td>#{id}</td><td>Master</td><td></td><td class='ping'></td><td></td><td class='status'></td><td class='actions'><a href='#'>Connect</a></td></tr>")
+						( (id) =>
+ 							$("##{id} a:contains('Connect')").click () => @connect(id)
+						) (id)
+							
+				
+			) 
 
 		makeSystemString: (system) ->
 			"#{system.osName} - #{system.browserName}#{system.browserVersion}"

@@ -75,5 +75,5 @@ define [
 		_onConnect: ( ) =>
 			console.log 'connected to server'
 			@parent.id = @_connection.socket.sessionid
-			$('.id').html(@parent.id)
+			$("td:first").text(@parent.id)
 
