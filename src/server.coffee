@@ -40,6 +40,26 @@ requirejs [
 			# Serve static content from ./public
 			@_app.configure =>
 				@_app.use(express.static("#{__dirname}/public"))
+
+			@_app.get('/nodes', ( req, res ) =>
+				nodes = @getNodes()
+
+				res.writeHead(200, 'Content-Type': 'text/plain')
+				i = 0
+				result = {}
+				for node in nodes
+					( (node) ->
+						node.query('peers', ( peers ) ->
+							result[node.id] = peers
+
+							i++
+
+							if i is nodes.length
+								res.write(JSON.stringify(result))
+								res.end()
+						)
+					) ( node )
+			)
 				
 			@_server.listen(8080)
 

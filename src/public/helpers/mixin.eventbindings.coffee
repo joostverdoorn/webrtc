@@ -1,6 +1,6 @@
 define [
 	'underscore'
-	], ->
+	], ( _ ) ->
 
 	# These event bindings are modelled after the ones that Backbone.js uses. There
 	# was a strong internal struggle to either use those or the ones provided by 

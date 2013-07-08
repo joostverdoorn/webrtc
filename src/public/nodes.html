@@ -1,0 +1,34 @@
+<!DOCTYPE xhtml>
+<html lang="en">
+
+<head>
+	<script src="vendor/scripts/jquery.js"></script>
+	<script src="vendor/scripts/graph.js"></script>
+	<link rel="stylesheet" href="vendor/stylesheets/bootstrap.css">
+</head>
+
+<body>
+	<svg xmlns="http://www.w3.org/2000/svg" id="canvas"></svg>
+	<script type="text/javascript">
+		var g = new Graph("canvas", 960, 700 );
+
+		$.ajax({
+			url: "/nodes",
+			dataType: 'json'
+		}).done(function(data) {
+			for(node in data) {
+				g.createVertex(node);
+			}
+
+			for(node in data) {
+				for(i in data[node]) {
+					g.createEdge(node, data[node][i]);
+				}
+			}
+
+			g.go();
+		});		
+	</script>
+</body>
+
+</html>
