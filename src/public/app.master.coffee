@@ -73,8 +73,8 @@ require [
 		# manually disconnect a node
 		disconnect: ( id ) =>
 			@node.disconnect(id)
-			$("##{peer.id} .status").text ("Disconnected")
-			$("##{peer.id} .actions").html("-")
+			$("##{id} .status").text ("Disconnected")
+			$("##{id} .actions").html("-")
 
 		# manually connect to a node
 		connect: ( id ) =>
@@ -95,7 +95,9 @@ require [
 						if (peer? and @_benchmarks[id]?)
 							systemString = @makeSystemString(@node.system)
 							$("#nodes tbody").append("<tr id='#{peer.id}'><td>#{peer.id}</td><td>Master</td><td>#{@_benchmarks[peer.id]["cpu"]}</td><td class='ping'>0</td><td>#{systemString}</td><td class='status'>Connected</td><td class='actions'><a href='#'>Disconnect</a></td></tr>")
-							$("##{peer.id} a:contains('Disconnect')").click () => @disconnect(peer.id)
+							( (id) =>
+	 							$("##{peer.id} a:contains('Disconnect')").click () => @disconnect(id)
+							) (id)
 						# this is not a connected node	
 						else
 							$("#nodes tbody").append("<tr id='#{id}'><td>#{id}</td><td>Master</td><td></td><td class='ping'></td><td></td><td class='status'></td><td class='actions'><a href='#'>Connect</a></td></tr>")
