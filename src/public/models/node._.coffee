@@ -54,6 +54,11 @@ define [
 			peer = new Peer(@, id)
 			peer.connect()
 			@addPeer(peer)
+
+		disconnect: (id) ->
+			peer = @getPeer(id)
+			peer.disconnect()
+			@removePeer(peer)
 		
 		# Adds a peer to the peer list
 		#
