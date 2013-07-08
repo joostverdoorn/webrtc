@@ -38,7 +38,11 @@ require [
 		initialize: ( ) ->
 			@node = new Node()
 			@_benchmarks = new Object()
+
+			# Display the own Peer as first row in the table
 			$("#nodes tbody").append("<tr class='success' id='#{@node.id}'><td>#{@node.id}</td><td>Master</td><td>#{@node.benchmark.cpu}</td><td class='ping'>0</td><td>#{@makeSystemString(@node.system)}</td><td class='status'>self</td><td class='actions'>-</td></tr>")
+			
+			# refresh the table each 5 seconds
 			_pingUpdatePeers =  setInterval((( ) => 	@getPeers() ), 5000)
 			@node.on('peer.channel.opened', ( peer , data ) =>
 				_pingInterval = setInterval(( ) =>
@@ -51,35 +55,19 @@ require [
 
 				@_benchmarks[peer.id] = new Object()
 				peer.query("benchmark", (benchmark) =>
-					@_benchmarks[peer.id]["cpu"] = benchmark["cpu"]
-					peer.query("system", (system) =>
-						@node.system = system
-						systemString = @makeSystemString(@node.system)
-						$("#nodes tbody").append("<tr id='#{peer.id}'><td>#{peer.id}</td><td>Master</td><td>#{@_benchmarks[peer.id]["cpu"]}</td><td class='ping'>peer</td><td>#{systemString}</td><td class='status'>Connected</td><td class='actions'><a href='#'>Disconnect</a></td></tr>")
-						$("##{peer.id} a:contains('Disconnect')").click () => @disconnect(peer.id)
-						
-					)
+					@_benchmarks[peer.id]["cpu"] = benchmark["cpu"]	
 				)
-				
-
-				
-
-				
+				peer.query("system", (system) =>
+						@node.system = system	
+				)
 				
 			)
 
-			###@node.on('peer.disconnected', ( peer  ) =>
-				$("##{peer.id} .status").text ("Disconnected")
-				$("##{peer.id} .actions").html( "<a href='#'>Connect</a>")
-				$("##{peer.id} a:contains('Connect')").click () =>
-					@connect(peer.id)
-			)###
-
-		# disconnect 
+		# manually disconnect a node
 		disconnect: ( id ) =>
-			peer = _(@node._peers).find( ( peer ) -> peer.id is id ) #should use a getPeer function later
-			console.log id
-			#disconnect iets
+			@node.disconnect(id)
+			$("##{peer.id} .status").text ("Disconnected")
+			$("##{peer.id} .actions").html("-")
 
 		# manually connect to a node
 		connect: ( id ) =>
@@ -89,15 +77,19 @@ require [
 
 		# get all available nodes peers from a server and display them
 		getPeers: () =>
-			$("tr").not(".success").remove()
+			# remove all other nodes
+			$("tr").not(".success").not(".heading").remove()
+			# get all nodes from a server
 			@_allPeers = @node.server.query("nodes", (ids) =>
 				for id in ids
 					if id isnt @node.id
 						peer  = _(@node._peers).find( ( peer ) -> peer.id is id )
-						if (peer?)
+						# is this  node already connected?
+						if (peer? and @_benchmarks[id]?)
 							systemString = @makeSystemString(@node.system)
 							$("#nodes tbody").append("<tr id='#{peer.id}'><td>#{peer.id}</td><td>Master</td><td>#{@_benchmarks[peer.id]["cpu"]}</td><td class='ping'>peer</td><td>#{systemString}</td><td class='status'>Connected</td><td class='actions'><a href='#'>Disconnect</a></td></tr>")
-						
+							$("##{peer.id} a:contains('Disconnect')").click () => @disconnect(peer.id)
+						# this is not a connected node	
 						else
 							$("#nodes tbody").append("<tr id='#{id}'><td>#{id}</td><td>Master</td><td></td><td class='ping'></td><td></td><td class='status'></td><td class='actions'><a href='#'>Connect</a></td></tr>")
 							( (id) =>
