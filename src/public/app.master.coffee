@@ -44,19 +44,26 @@ require [
 			
 			# refresh the table each 5 seconds
 			_pingUpdatePeers =  setInterval((( ) => 	@getPeers() ), 5000)
+
+			# The node is has opened a peer channel connection
 			@node.on('peer.channel.opened', ( peer , data ) =>
+				# Perform ping operations
 				_pingInterval = setInterval(( ) =>
 					peer.ping( ( latency ) =>
 						latency = Math.round(latency)
 						@_benchmarks[peer.id]["ping"] = latency
+						# Update Ping in the table
 						$("##{peer.id} .ping").text(latency)
 					)
 				, 200)
 
+				# get benchmarks of the Peer
 				@_benchmarks[peer.id] = new Object()
 				peer.query("benchmark", (benchmark) =>
 					@_benchmarks[peer.id]["cpu"] = benchmark["cpu"]	
 				)
+
+				# get System information of the Peer
 				peer.query("system", (system) =>
 						@node.system = system	
 				)
@@ -87,7 +94,7 @@ require [
 						# is this  node already connected?
 						if (peer? and @_benchmarks[id]?)
 							systemString = @makeSystemString(@node.system)
-							$("#nodes tbody").append("<tr id='#{peer.id}'><td>#{peer.id}</td><td>Master</td><td>#{@_benchmarks[peer.id]["cpu"]}</td><td class='ping'>peer</td><td>#{systemString}</td><td class='status'>Connected</td><td class='actions'><a href='#'>Disconnect</a></td></tr>")
+							$("#nodes tbody").append("<tr id='#{peer.id}'><td>#{peer.id}</td><td>Master</td><td>#{@_benchmarks[peer.id]["cpu"]}</td><td class='ping'>0</td><td>#{systemString}</td><td class='status'>Connected</td><td class='actions'><a href='#'>Disconnect</a></td></tr>")
 							$("##{peer.id} a:contains('Disconnect')").click () => @disconnect(peer.id)
 						# this is not a connected node	
 						else
