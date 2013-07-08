@@ -41,13 +41,18 @@ define [
 		# subclasses.
 		#
 		initialize: ( ) ->
+
+		connect: ( id ) ->
+			peer = new Peer(@, id)
+			peer.connect()
+			@addPeer(peer)
 		
 		# Adds a peer to the peer list
 		#
 		# @param peer [Peer] the peer to add
 		#
 		addPeer: ( peer ) ->
-			@_peers.add(peer)
+			@_peers.push(peer)
 
 		# Removes a peer from the peer list
 		#
