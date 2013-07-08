@@ -32,7 +32,7 @@ define [
 			queryID = _.uniqueId('query')
 			@once(queryID, callback)
 
-			args = ['query', request, requestID].concat(args)
+			args = ['query', request, queryID].concat(args)
 			@emit.apply(@, args)
 
 		# Is called when a remote query is received. Will query the parent and emit

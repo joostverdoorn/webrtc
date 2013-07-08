@@ -38,7 +38,7 @@ require [
 		initialize: ( ) ->
 			@node = new Node()
 			@_benchmarks = new Object()
-			$("#nodes tbody").append("<tr class='success' id='#{@node.id}'><td>#{@node.id}</td><td>Node</td><td>#{@node.benchmark.cpu}</td><td class='ping'>0</td><td>todo</td><td class='status'>self</td><td class='actions'>-</td></tr>")
+			$("#nodes tbody").append("<tr class='success' id='#{@node.id}'><td>#{@node.id}</td><td>Master</td><td>#{@node.benchmark.cpu}</td><td class='ping'>0</td><td>#{@makeSystemString(@node.system)}</td><td class='status'>self</td><td class='actions'>-</td></tr>")
 
 			@node.on('peer.channel.opened', ( peer , data ) =>
 				_pingInterval = setInterval(( ) =>
@@ -50,11 +50,20 @@ require [
 				, 200)
 
 				@_benchmarks[peer.id] = new Object()
-				#@_benchmarks[peer.id]["cpu"] = 
+				peer.query("benchmark", (benchmark) =>
+					@_benchmarks[peer.id]["cpu"] = benchmark["cpu"]
+					peer.query("system", (system) =>
+						systemString = @makeSystemString(system)
+						$("#nodes tbody").append("<tr id='#{peer.id}'><td>#{peer.id}</td><td>Master</td><td>#{@_benchmarks[peer.id]["cpu"]}</td><td class='ping'>peer</td><td>#{systemString}</td><td class='status'>Connected</td><td class='actions'><a href='#'>Disconnect</a></td></tr>")
+						$("##{peer.id} a:contains('Disconnect')").click () =>
+						@disconnect(peer.id)
+					)
+				)
+				
 
-				$("#nodes tbody").append("<tr id='#{peer.id}'><td>#{peer.id}</td><td>Node</td><td>CPU</td><td class='ping'>peer</td><td>todo</td><td class='status'>Connected</td><td class='actions'><a href='#'>Disconnect</a></td></tr>")
-				$("##{peer.id} a:contains('Disconnect')").click () =>
-					@disconnect(peer.id)
+				
+
+				
 				
 			)
 
@@ -79,6 +88,9 @@ require [
 		# get all available nodes peers from a server and display them
 		getPeers: () =>
 			# query 
+
+		makeSystemString: (system) ->
+			"#{system.osName} - #{system.browserName}#{system.browserVersion}"
 
 
 			
