@@ -86,6 +86,7 @@ LatexCommand label
 name "sub:Ontwikkelmethode"
 
 \end_inset
+
 Scrum
 \end_layout
 
@@ -168,11 +169,31 @@ Toolchain
 
 \begin_layout Standard
 Voor het beheer van de geschreven code zullen we gebruik maken van het Git
- versiecontrolesysteem, in een private repository op Github.
+ versiecontrolesysteem, in een private repository op Github
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+https://www.github.com/
+\end_layout
+
+\end_inset
+
+.
  De begeleiders kunnen toegang krijgen tot deze repository mochten ze hier
  behoefte aan hebben.
- Ook zullen ook gebruik maken van Github Issues voor onze Product Backlog,
- en de tool Huboard zal ons helpen met het ordenen van deze items.
+ Ook zullen wij gebruik maken van Github Issues voor onze Product Backlog,
+ en de tool Huboard
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+http://www.huboard.com/
+\end_layout
+
+\end_inset
+
+ zal ons helpen met het ordenen van deze items.
 \end_layout
 
 \begin_layout Standard
@@ -183,9 +204,9 @@ We zullen niet rechtstreeks in JavaScript programmeren maar in plaats hiervan
  De voordelen van CoffeeScript zijn talrijk maar het grootste voordeel is
  toch wel dat CoffeeScript een volledig object georiënteerde taal is, in
  tegenstelling tot JavaScript met een nogal onhandige prototype structuur.
- Voor het compileren van de CoffeeScript zullen we gebruik maken van Cake
- (het CoffeeScript equivalent van Make), waarbij we in een Cakefile definiëren
- waar de gecompileerde bestanden moeten komen.
+ Voor het compileren van de CoffeeScript-code zullen we gebruik maken van
+ Cake (het CoffeeScript equivalent van Make), waarbij we in een Cakefile
+ definiëren waar de gecompileerde bestanden moeten komen.
  Deze methode helpt ons en zo nodig anderen met het makkelijk verkrijgen
  van de juiste bestanden om ons project snel draaiende te krijgen.
 \end_layout
@@ -236,8 +257,8 @@ Planning
 \end_layout
 
 \begin_layout Standard
-Gezien dat we gebruik maken van Scrum, is het niet nodig om vooraf een volledige
- planning samen te stellen.
+Omdat wij Scrum gebruiken is het niet nodig om vooraf een volledige planning
+ samen te stellen.
  Elke sprint zal gekeken worden naar wat er die sprint precies ontwikkeld
  zal worden.
  Dit zorgt ervoor dat we snel om kunnen schakelen naar waar onze aandacht
