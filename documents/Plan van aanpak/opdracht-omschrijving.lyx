@@ -266,22 +266,24 @@ Randvoorwaarden
 \end_layout
 
 \begin_layout Standard
-Gezien het feit dat wij in principe vanuit nul aan het project beginnen
- zijn er, naast de doelstellingen die al gespecificeerd zijn - geen inhoudelijke
- randvoorwaarden die gedefinieerd dienen te worden.
- Wel vindt TNO het erg belangrijk dat de library goed getest wordt en dat
- code van topkwaliteit is.
+Naast de hierboven beschreven randvoorwarden zijn er nog een aantal punten
+ waar aandacht aan besteed moet worden.
 \end_layout
 
 \begin_layout Standard
-Er zijn wel procesvoorwaarden waaraan voldaan moet worden.
- Zo moet er aan de werknemers van TNO feedback worden gevraagd over de library
- en de documentatie die wij maken.
- Ondanks dat wij veel vrijheid zullen krijgen in de aanpak van het project,
- wil TNO wel betrokken blijven in de beslissingen die het uiteindelijke
- resultaat zullen beïnvloeden.
- Hierdoor is het nodig dat wij de grootste tijd van het project het werk
- op het kantoor van TNO Delft zullen uitvoeren.
+Ten eerste wil TNO dat de uiteindelijke library niet in CoffeeScript maar
+ in JavaScript geschreven zal worden.
+ Dit dient ter bevordering van de leesbaarheid voor buitenstaanders en zorgt
+ ervoor dat een JavaScript technologie direct met JavaScript aangeroepen
+ wordt.
+\end_layout
+
+\begin_layout Standard
+Ten tweede zal het onderzoek en de ontwikkelde toepassing zich volledig
+ richten op een afgesloten testsysteem.
+ Hierbij nemen wij aan dat alle computers de mogelijkheid hebben tot WebRTC
+ en is het dus niet nodig om mogelijkheden tot andere transportkanalen toe
+ te voegen.
 \end_layout
 
 \begin_layout Subsection
@@ -290,10 +292,13 @@ Risicofactoren
 
 \begin_layout Standard
 Het grote risico dat wij op dit moment kunnen inzien is dat door het feit
- dat wij drie deliverables hebben, onze tijd verkeerd kunnen indelen waardoor
- er niet genoeg tijd over zal blijven om al het werk af te kunnen ronden.
- Hier zouden wij goed rekening moeten houden in de planning en al na enkele
- weken onze aandacht moeten verspreiden.
+ dat wij twee verschillende project-deliverables hebben.
+ Hierdoor is het goed mogelijk dat wij onze tijd verkeerd kunnen indelen
+ waardoor er niet genoeg tijd over zal blijven om al het werk af te kunnen
+ ronden.
+ Hier moeten wij van begin af aan goed rekening mee houden om te voorkomen
+ dat dit gebeurd.
+ Een goede planning van de Scrum sprints is dus zeer belangrijk.
 \end_layout
 
 \begin_layout Standard

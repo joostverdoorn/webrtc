@@ -118,7 +118,7 @@ Versiebeheer
 Tijdens dit project zal er veel programmeercode geschreven worden.
  Met meerdere mensen aan een snel veranderend project werken kan soms onhandig
  worden en daarom maken wij gebruik van het versiebeheersysteem Git (specifiek
- de aangeboden versie van Github) om de samenwerking te stimuleren.
+ de aangeboden versie van Github) om de samenwerking te vereenvoudigen.
 \end_layout
 
 \begin_layout Standard
@@ -178,7 +178,7 @@ Naast de library ontwikkelen wij ook een spel die de library benut.
  Naarmate dit spel verder gevorderd is zal het wel mogelijk zijn dit voor
  te leggen aan anderen om alvast een voorproefje van het finale product
  te krijgen.
- Hoe dit verder uit gaan zien hebben wij nog niet besloten.
+ Hoe dit verder uit gaat zien hebben wij nog niet besloten.
  Daarom is het nog niet mogelijk om specifiek een sprint aan te geven vanaf
  wanneer het voor buitenstaanders interessant kan zijn.
 \end_layout
