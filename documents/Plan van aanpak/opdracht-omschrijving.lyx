@@ -70,7 +70,7 @@ In dit hoofdstuk zal er toegelicht worden wat de voorlopige afspraken zijn
  Wat zal er ontwikkeld worden, waarom wordt dit ontwikkeld en voor wie wordt
  dit ontwikkeld? Aangezien het proces minstens zo belangrijk is als het
  resultaat zal er in dit hoofdstuk aandacht besteed worden aan zowel de
- inhoudelijke als de procesmatige kant van het project
+ inhoudelijke als de procesmatige kant van het project.
 \end_layout
 
 \begin_layout Subsection
@@ -111,12 +111,22 @@ V.
 \begin_layout Enumerate
 
 \noun on
+E.
+ R.
+ Cramer
+\noun default
+ - Future Internet Researcher, TNO
+\end_layout
+
+\begin_layout Enumerate
+
+\noun on
 A.
  J.
  H.
  Hidders
 \noun default
- - Assistant professor at the group of Web Information Systems, TUDelft
+ - Assistant professor at the group of Web Information Systems, TU Delft
 \end_layout
 
 \begin_layout Subsection
@@ -131,8 +141,17 @@ TNO heeft veel kennis in huis zodat zij hun klanten breed kunnen adviseren
  die zich elders afspelen.
  Zo is er op de afdeling Multimedia Technology een vraag ontstaan naar de
  nieuwe technologie WebRTC.
- Op dit moment is er bij TNO nog niet genoeg kennis in huis op dit vlak,
- en TNO ziet dit graag veranderen.
+ TNO is altijd op zoek naar de nieuwe grenzen van toepasbaarheid van technologie
+ën en de mogelijke impact ervan.
+\end_layout
+
+\begin_layout Standard
+Op dit moment is er bij TNO al de basis kennis aanwezig over WebRTC, er
+ is dus geen behoefte aan een nieuwe demo van wat er allemaal met WebRTC
+ mogelijk is.
+ Wel is er behoefte naar een innovatieve kijk op WebRTC en daarbij behorende
+ uitdaging bij het opzoeken van randen van toepasbaarheid en/of beperkingen
+ van WebRTC.
 \end_layout
 
 \begin_layout Subsection
@@ -147,36 +166,18 @@ name "sub:Doelstelling"
 \end_layout
 
 \begin_layout Standard
-TNO heeft samen met ons drie doelstellingen geformuleerd die zij belangrijk
- vinden in het resultaat van ons bachelor project.
+Zoals net verteld in de Probleemstelling hebben wij als doelstelling om
+ WebRTC in een bepaalde scope van raden van toepasbaarheid uit te werken.
+ Uit deze zogenoemde randen van toepasbaarheid moeten één a twee randen
+ worden gekozen en daaruit de onderzoeksvragen worden gedefinieerd.
+ De mogelijke randvoorwaarden binnen WebRTC zijn: aantallen gebruikers,
+ media bronnen, synchronisatie, bandbreedte, compatibiliteit.
+ Hier zullen we in de volgende paragraaf een keuze uit maken.
 \end_layout
 
 \begin_layout Standard
-De kennis die wij tijdens het project zullen vergaren dient vervolgens gebruikt
- te worden bij het oplossen van de daar aansluitende problemen bij TNO.
- Er zijn tal van manieren om op het Web twee of meerdere gebruikers met
- elkaar te verbinden, waarvan WebRTC er één is.
- TNO wil graag weten voor welke toepassingen WebRTC gebruikt kan worden
- en wanneer het de beste technologie is voor een bepaald doel.
- Het is daarom belangrijk om te weten wat de sterke en zwakke kanten of
- beperkingen zijn van WebRTC.
-\end_layout
-
-\begin_layout Standard
-Niet alleen de theoretische kant is interessant voor de opdrachtgever.
- De technologie moet ook daadwerkelijk geïmplementeerd en gebruikt worden.
- Zo wil TNO dat de technologie op een makkelijke manier toegankelijk wordt
- gemaakt voor de werknemers binnen het bedrijf.
- Zonder te veel documentatie, en met een voorbeeldimplementatie, moet iedereen
- gebruik kunnen maken van WebRTC en deze technologie snel kunnen implementeren
- in een eigen project.
-\end_layout
-
-\begin_layout Standard
-Tevens biedt TNO aan hun werknemers de ruimte om vernieuwende projecten
- te ondernemen die als showcase kunnen dienen voor wat TNO allemaal kan.
- Binnen dit kader zullen wij een demoapplicatie ontwikkelen die TNO kan
- gebruiken om te laten zien wat de precieze mogelijkheden zijn van WebRTC.
+Als tweede doel van het project, zullen wij een demo applicatie maken die
+ onze bevindingen van het eerste deel aan de man laat zien.
 \end_layout
 
 \begin_layout Subsection
@@ -184,12 +185,52 @@ Opdrachtformulering
 \end_layout
 
 \begin_layout Standard
-De doelstellingen van het project zijn zeer duidelijk gedefinieerd.
- Alle aspecten van WebRTC moeten volledig worden onderzocht en worden gebruikt.
- Dit project is daarom ook heel resultaatgericht.
- We zullen alle hoeken en gaten van deze technologie leren kennen en aan
- het einde van het project zal er voldaan worden aan de hierboven genoemde
- doelstellingen.
+Na veel in de verschillende WebRTC te hebben verdiept, veel eigen experimenten
+ te hebben uitgevoerd en eigen problemen te zijn tegengekomen, hebben wij
+ besloten om ons project over de schaalbaarheid van WebRTC netwerken te
+ laten gaan.
+ WebRTC heeft namelijk als een groot voordeel dat gebruikers met elkaar
+ verbonden zijn zonder de tussenkomst van een server.
+ Dat biedt de mogelijkheden voor het opzetten van een grootschalige peer-to-peer
+ netwerken.
+\end_layout
+
+\begin_layout Standard
+Gedistribueerde peer-to-peer netwerken is een veel onderzochte onderwerp
+ waar veel papers over beschikbaar zijn.
+ Daar hebben wij in de afgelopen dagen al kennis mee genomen.
+ WebRTC biedt de nieuwe uitdagingen om binnen een browser omgeving peer-to-peer
+ netwerken te kunnen opzetten waarbij wij tijdens dit project voornamelijk
+ zullen richten op de schaalbaarheid hiervan.
+ Hieruit hebben wij de volgende hoofd onderzoeksvraag gedefinieerd: 
+\emph on
+"Op wat voor manier kan met behulp van WebRTC een dynamisch peer-to-peer
+ multiplayer-game-netwerk worden opgezet dat schaalt voor een groot aantal
+ spelers?".
+ 
+\emph default
+De bijbehorende vragen waar veel aandacht aan besteed gaat worden zijn:
+\end_layout
+
+\begin_layout Itemize
+Hoe worden de essentiële netwerktaken verdeeld over de peers?
+\end_layout
+
+\begin_layout Itemize
+Hoe kan worden omgegaan met onverwachte omstandigheden zoals de peers die
+ het netwerk verlaten?
+\end_layout
+
+\begin_layout Itemize
+Hoe kan data op een zo efficiënt mogelijke manier alle peers bereiken?
+\end_layout
+
+\begin_layout Standard
+Onze onderzoeksvraag verraadt al welke kant wij heen willen met de demo
+ applicatie.
+ Wij zullen een Massively Multiplayer Online Game (MMOG) ontwikkelen die
+ gebruik maakt van de WebRTC netwerk.
+ Deze game dient als een showcase voor ons onderzoek over schaalbaarheid.
 \end_layout
 
 \begin_layout Subsection
@@ -197,45 +238,27 @@ Op te leveren producten
 \end_layout
 
 \begin_layout Standard
-Elk van de doelstellingen heeft een uniek eindproduct, welke we nu toe zullen
- lichten.
+Wij hebben twee deliverables buiten onze procesmatige deliverables zoals
+ de verslagen.
 \end_layout
 
 \begin_layout Standard
-De vergaarde kennis over WebRTC zal gedocumenteerd worden.
- Kort en bondig zal uiteen worden gezet waar de technologie wel en niet
- voor moet worden gebruikt, en er zal helder uit worden gelegd wat de beste
- alternatieven zijn voor een bepaald doel.
- Deze documentatie zal zo mogelijk geïntegreerd worden in het huidige documentat
-ieomgeving van TNO.
+Ten eerste zullen we een Javascript library ontwikkelen die alle ins en
+ outs van ons onderzoek naar schaalbaarheid van WebRTC netwerken.
+ Deze library zal de algemene implementatie van deze netwerken mogelijk
+ maken.
+ Deze library zal o.a.
+ de functionaliteit bevatten die nodig is om bovenstaande vragen te beantwoorden.
 \end_layout
 
 \begin_layout Standard
-Ten tweede zullen we een library ontwikkelen die de werknemers in staat
- stelt om snel aan de slag te kunnen met WebRTC.
- Ons project legt vooral de nadruk op communicatie tussen PCs en mobiele
- devices, en specifiek over het gebruik van de input van deze devices om
- een webapplicatie op de PC aan te sturen.
- Voor dit doel zullen wij een library schrijven die alle nodige functionaliteit
- op een heldere en consistente manier beschikbaar stelt via een JavaScript
- API.
- Welke functionaliteit er precies in de library moet worden geïmplementeerd
- zal - met goed overleg met de begeleiders - tijdens het project worden
- bepaald.
-\end_layout
-
-\begin_layout Standard
-Voor een showcase van WebRTC zullen wij een kleine browser-based game ontwikkele
-n welke gebruik zal maken van de eerder genoemde library.
- We zullen voor deze game zoveel mogelijk aspecten van WebRTC implementeren,
- en voor de aansturing van deze game zal zo veel gebruik worden gemaakt
- van mobiele devices.
- Hierbij kunnen we goed gebruik maken van de unieke karakteristieken van
- deze apparaten, waarbij men kan denken aan het touchscreen, verschillende
- sensoren en camera's en microfoons.
- Deze deliverable legt niet alleen veel nadruk op het ontwikkelen van applicatie
-s met onze library maar ook op het aansluiten van multiplayer games op deze
- technologie en het gebruiken van de mobiele apparaten als controller.
+Zoals in de vorige paragraaf al verteld, zullen we voor een showcase van
+ ons onderzoek naar schaalbaarheid een browser-based game ontwikkelen welke
+ gebruik zal maken van de eerder genoemde library.
+ Dat is dan ook onze tweede deliverable.
+ Deze game zal de massale online multiplayer functionaliteit bieden gebaseerd
+ op de library waardoor de game eigenlijk een grote integration test is
+ voor de library.
 \end_layout
 
 \begin_layout Subsection
