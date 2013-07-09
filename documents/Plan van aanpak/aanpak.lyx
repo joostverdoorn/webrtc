@@ -97,12 +97,12 @@ twikkelmethoden behandeld.
  uitermate geschikt voor relatief kleine en kortlopende projecten.
  Scrum maakt gebruik van korte ontwikkelcycli, en houdt op deze manier de
  vaart in een project.
- Aan het begin van elke sprint wordt er bepaald welke features er die sprint
- zullen worden geïmplementeerd, en aan het eind van elke sprint dient er
- een werkend product te zijn.
- De features die nog geïmplementeerd moeten worden leven in de Product Backlog,
- en hieruit wordt elke sprint een selectie gemaakt van items die die sprint
- geïmplementeerd zullen worden.
+ Aan het begin van elke sprint wordt er bepaald welke features er in die
+ sprint zullen worden geïmplementeerd, en aan het eind van elke sprint dient
+ er een werkend product te zijn.
+ De features die nog geïmplementeerd moeten worden bevinden zich in de Product
+ Backlog, en hieruit wordt elke sprint een selectie gemaakt van items die
+ die sprint geïmplementeerd zullen worden.
 \end_layout
 
 \begin_layout Standard
@@ -110,16 +110,17 @@ Ons team zal het core team vormen, waarbij
 \noun on
 Karens
 \noun default
- de rol van Scrum Master zal aannemen.
+ de rol van de Scrum Master zal aannemen.
  De Scrum Master zal er voor zorgen dat het team zich geen zorgen hoeft
- te maken over externe factoren.
+ te maken over externe factoren en zal zorgen dat de Scrumproces gevolgd
+ wordt.
  Onze begeleider vanuit TNO, 
 \noun on
 Victor Klos
 \noun default
 , zal de Product Owner zijn.
- Hij zal controlleren of de software die wij ontwikkelen voldoet aan de
- eisen die TNO stelt, en zal de Product Backlog prioriteren.
+ Hij zal controleren of de software die wij ontwikkelen voldoet aan de eisen
+ die TNO stelt, en zal de Product Backlog prioriteren.
  
 \noun on
 Eelco Cramer 
@@ -137,7 +138,7 @@ Omdat ons project maar een korte tijd loopt zullen we sprints hanteren van
  De Scrum Master zal zorgen dat we hierbij niet te veel afdwalen en dat
  de stand-up niet langer duurt dan 15 minuten.
  Elke donderdagochtend zullen we onze wekelijkse Sprint Planning Meeting
- houden, waarbij we bepalen welke Backlog items we die week zullen behandelen.
+ houden, waarbij we bepalen welke Backlog items we die week zullen afwerken.
  De Product Owner zal hier zo veel mogelijk aanwezig zijn om te zorgen dat
  de juiste prioriteiten worden gesteld.
 \end_layout
@@ -152,7 +153,7 @@ Om te garanderen dat onze software volledig wordt getest zullen wij naast
  BDD kan gezien worden als een extensie op Test-Driven Development, maar
  verschilt hiervan in dat tests worden geschreven die veel gelijkenis tonen
  met user stories of specificaties.
- Deze stories en specificaties kunnen makkelijk worden ontleedt uit de Backlog
+ Deze stories en specificaties kunnen makkelijk worden ontleed uit de Backlog
  items die we voor Scrum zullen bijhouden.
  Wel is het bij BDD zo dat, net als bij TDD, tests in principe vooraf geschreven
  dienen te worden waarna de code wordt geïmplementeerd die ervoor zal zorgen
@@ -160,7 +161,7 @@ Om te garanderen dat onze software volledig wordt getest zullen wij naast
  Deze tests zullen niet alleen dienen om te kijken of die software het gewenste
  gedrag vertoont, maar ook om te kijken of er later in het proces geen functiona
 liteit wordt gebroken en ook zodat mensen die minder bekend zijn met de
- code uit de tests kunnen op maken hoe de code werkt.
+ code uit de tests kunnen opmaken hoe de code werkt.
 \end_layout
 
 \begin_layout Subsubsection
@@ -205,7 +206,7 @@ target "http://www.huboard.com/"
 
 \end_inset
 
- zal ons helpen met het ordenen van deze items.
+ zal ons helpen met het ordenen van deze items volgens de Scrum methodiek.
 \end_layout
 
 \begin_layout Standard
