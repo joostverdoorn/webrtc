@@ -131,8 +131,8 @@ Om te garanderen dat er altijd een werkend product is zal er alleen compilerende
 
 \begin_layout Standard
 Nieuwe features zullen in aparte branches geïmplementeerd worden (per feature
- een nieuwe branche) om invloed van nieuwe, niet helemaal werkende onderdelen,
- op het project onmogelijk te maken.
+ een nieuwe branche) om negatieve invloed van nieuwe, niet helemaal werkende
+ onderdelen, op het project te beperken.
 \end_layout
 
 \begin_layout Subsubsection
@@ -174,18 +174,18 @@ Doordat wij als softwareontwikkelmethode Scrum gebruiken zal er na elke
 \end_layout
 
 \begin_layout Standard
-Naast de library ontwikkelen wij ook een spel die de library benut.
- Naarmate dit spel verder gevorderd is zal het wel mogelijk zijn dit voor
- te leggen aan anderen om alvast een voorproefje van het finale product
- te krijgen.
- Hoe dit verder uit gaat zien hebben wij nog niet besloten.
+Naast de library ontwikkelen wij ook een game die de library benut.
+ Naarmate de ontwikkeling van deze game verder vordert zal het wel mogelijk
+ zijn dit voor te leggen aan anderen om alvast een voorproefje van het finale
+ product te krijgen.
+ Hoe dit verder uit gaat zien hebben is nog niet besloten.
  Daarom is het nog niet mogelijk om specifiek een sprint aan te geven vanaf
  wanneer het voor buitenstaanders interessant kan zijn.
 \end_layout
 
 \begin_layout Standard
 Zodra dit mogelijk is, zal het voor ons belangrijk zijn dat vooral de functional
-iteit van de library geimplementeerd in het spel werkt en zal er bij de
+iteit van de library geïmplementeerd in het spel werkt en zal er bij de
  pilot(s) dus geen nadruk liggen op speltechnische aspecten (hoe 
 \begin_inset Quotes eld
 \end_inset

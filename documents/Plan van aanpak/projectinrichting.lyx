@@ -65,7 +65,7 @@ Inleiding
 \end_layout
 
 \begin_layout Standard
-Dit hoofdstuk zal de projectindeling van het WebRTC project verduidelijken.
+Dit hoofdstuk zal de projectindeling van ons project verduidelijken.
  Ten eerste zullen de betrokken partijen uitgelicht worden.
  Vervolgens zal meer informatie gegeven worden over het proces.
  Ten slotte zullen de benodigde faciliteiten behandeld worden.
@@ -82,7 +82,11 @@ De betrokkenen in dit project komen van drie verschillende partijen.
 \begin_layout Standard
 Ten eerste zal TNO de opdrachtgever zijn.
  Binnen TNO zal dhr.
- Klos over de voortgang en kwaliteit van het project waken.
+ 
+\noun on
+Klos
+\noun default
+ over de voortgang en kwaliteit van het project waken.
  Binnen Scrum is hij de Product Owner.
  Inhoudelijk zal dit neer komen op de onderdelen besproken in hoofdstuk
  
@@ -103,7 +107,11 @@ reference "sub:Doelstelling"
 
 .
  Dhr.
- Cramer zal de technische begeleiding op zich nemen.
+ 
+\noun on
+Cramer
+\noun default
+ zal de technische begeleiding op zich nemen.
  Hier is binnen Scrum niet een goed gedefinieerde rol voor, maar binnen
  de PRINCE2-management termen is dit de Project Assurance.
 \end_layout
@@ -115,10 +123,18 @@ Vanuit de Technische Universiteit Delft zijn er twee sub-partijen.
 
 \begin_layout Standard
 Het project zal vanuit de TU Delft door dhr.
- Hidders begeleidt worden.
+ 
+\noun on
+Hidders
+\noun default
+ begeleidt worden.
  Hij zal net als dhr.
- Klos over de voortgang en kwaliteit van het project waken maar dit vanuit
- de belangen van de TU Delft.
+ 
+\noun on
+Klos
+\noun default
+ over de voortgang en kwaliteit van het project waken maar dit vanuit de
+ belangen van de TU Delft.
  De TU Delft wil dat de participerende studenten laten zien dat zij alle
  geleerde stof van de bachelor Technische Informatica in dit project correct
  toepassen.
@@ -128,9 +144,20 @@ Het project zal vanuit de TU Delft door dhr.
 \end_layout
 
 \begin_layout Standard
-De uitvoerende taken zijn verdeeld over Jasper Abbink, Karens Grigorjancs
- en Joost Verdoorn.
- Zij zijn er voor verantwoordelijk dat de geplannde werkzaamheden op tijd
+De uitvoerende taken zijn verdeeld over 
+\noun on
+Jasper Abbink
+\noun default
+, 
+\noun on
+Karens Grigorjancs
+\noun default
+ en 
+\noun on
+Joost Verdoorn
+\noun default
+.
+ Zij zijn er voor verantwoordelijk dat de geplande werkzaamheden op tijd
  uitgevoerd zijn.
 \end_layout
 
@@ -160,8 +187,16 @@ nd met het begin van de werkweek.
  de vorige dag gedaan is en wat er de komende dag gedaan zal worden.
  Naar mate het project verder vordert kan dit ook twee keer per dag gebeuren.
  Dhr.
- Klos en dhr.
- Cramer zullen minstens eens per sprint hierbij aanwezig te zijn.
+ 
+\noun on
+Klos
+\noun default
+ en dhr.
+ 
+\noun on
+Cramer
+\noun default
+ zullen minstens eens per sprint hierbij aanwezig te zijn.
 \end_layout
 
 \begin_layout Subsection
@@ -170,8 +205,8 @@ Faciliteiten
 
 \begin_layout Standard
 Tijdens de eerste twee weken zal gewerkt worden in studieruimtes van de
- TU Delft of op anderen plekken waar het de deelnemers op dat ogenblijk
- goed uitkomt.
+ TU Delft of op anderen plekken waar het de deelnemers op dat ogenblik goed
+ uitkomt.
 \end_layout
 
 \begin_layout Standard
