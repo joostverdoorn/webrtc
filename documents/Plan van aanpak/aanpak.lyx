@@ -174,7 +174,13 @@ Voor het beheer van de geschreven code zullen we gebruik maken van het Git
 status open
 
 \begin_layout Plain Layout
-https://www.github.com/
+\begin_inset CommandInset href
+LatexCommand href
+target "https://www.github.com/"
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -188,7 +194,13 @@ https://www.github.com/
 status open
 
 \begin_layout Plain Layout
-http://www.huboard.com/
+\begin_inset CommandInset href
+LatexCommand href
+target "http://www.huboard.com/"
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
