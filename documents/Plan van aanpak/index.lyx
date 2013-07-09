@@ -162,6 +162,13 @@ filename "introductie.lyx"
 
 \begin_layout Section
 Opdrachtomschrijving
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Opdrachtomschrijving"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
