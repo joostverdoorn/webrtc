@@ -18,15 +18,19 @@ define [
 			@initialize.apply(@, args)
 
 			@on('ping', @_onPing)
-			@on('pong', @_onPong)
 			@on('query', @_onQuery)
 			@on('emitTo', @_onEmitTo)
+
+			@_pingInterval = setInterval(@ping, 500) 
 
 		# Disconnects the remote and removes all bindings.
 		#
 		die: ( ) ->
-			@disconnect()
+			if @isConnected()
+				@disconnect()
+
 			@off()
+			clearInterval(@_pingInterval)
 
 		# Queries the remote. Calls the callback function when a response is received.
 		#
@@ -68,23 +72,18 @@ define [
 		#
 		# @param callback [Function] the callback to be called when a pong was received.
 		#
-		ping: ( callback ) ->
-			@_pingStart = Date.now()
-			@_pingCallback = callback
+		ping: ( callback ) =>
+			time = Date.now()
+			@once('pong', ( ) =>
+				@latency = Date.now() - time
+				callback?(@latency)
+			)
 			@emit('ping')
 
-		# Is called when a ping is received. We just emit 'pong' back to the server.
+		# Is called when a ping is received. We just emit 'pong' back to the remote.
 		#
 		_onPing: ( ) =>
 			@emit('pong')
-
-		# Is called when a pong is received. We call the callback function defined in 
-		# ping with the amount of time that has elapsed.
-		#
-		_onPong: ( ) =>
-			@latency = Date.now() - @_pingStart
-			@_pingCallback?(@latency)
-			@_pingStart = undefined
 
 
 

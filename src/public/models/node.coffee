@@ -1,8 +1,3 @@
-requirejs.config
-	shim:
-		'public/vendor/scripts/jquery.plugins': [ 'public/vendor/scripts/jquery' ]
-		'public/vendor/scripts/bootstrap.min': [ 'public/vendor/scripts/jquery' ]
-
 define [
 	'public/helpers/mixable'
 	'public/helpers/mixin.eventbindings'
@@ -11,26 +6,26 @@ define [
 	'public/models/remote.peer'
 	
 	'underscore'
+	'jquery'
 
-	'public/vendor/scripts/jquery'
 	'public/vendor/scripts/jquery.plugins'
-	'public/vendor/scripts/bootstrap.min'
 	'public/vendor/scripts/crypto'
 
-	], ( Mixable, EventBindings, Server, Peer, _ )->
+	], ( Mixable, EventBindings, Server, Peer, _, $ )->
 
 	class Node extends Mixable
 
 		@concern EventBindings
 
 		id: null
+		serverAddress: ':8080/'
+
 		system: 
 			osName:  $.os.name
 			browserName:  $.browser.name
 			browserVersion: $.browser.versionNumber
 		benchmark:
-			cpu: null
-		serverAddress: ':8080/'
+			cpu: null		
 
 		# Constructs a new app.
 		#
@@ -43,7 +38,7 @@ define [
 			@server.on('peer.setRemoteDescription', @_onPeerSetRemoteDescription)
 			@server.on('peer.addIceCandidate', @_onPeerAddIceCandidate)
 
-			@bench()
+			@runBenchmark()
 
 			@initialize()
 
@@ -65,9 +60,7 @@ define [
 		# @param id [String] the id of the peer to disconnect
 		#
 		disconnect: ( id ) ->
-			peer = @getPeer(id)
-			if peer?
-				@removePeer(peer)
+			@getPeer(id)?.disconnect()			
 
 		# Tells the server to emit a message on to the specified peer.
 		#
@@ -84,13 +77,15 @@ define [
 		# @param peer [Peer] the peer to add
 		#
 		addPeer: ( peer ) ->
-			peer.on('channel.opened', (peer ,data ) =>
-				@trigger('peer.channel.opened', peer, data);
+			peer.on('disconnected', ( peer ) =>
+				@removePeer(peer)
 			)
-			peer.on('disconnected', (peer, data ) =>
-				@trigger('peer.disconnected', peer );
-			)
+
+			if duplicatePeer = @getPeer(peer.id)
+				@removePeer(duplicatePeer)
+
 			@_peers.push(peer)
+			@trigger('peer.added', peer)
 
 		# Removes a peer from the peer list
 		#
@@ -99,6 +94,7 @@ define [
 		removePeer: ( peer ) ->
 			peer.die()
 			@_peers = _(@_peers).without(peer)
+			@trigger('peer.removed', peer)
 
 		# Returns a peer specified by an id
 		#
@@ -164,12 +160,15 @@ define [
 				when 'peers'
 					return _(@getPeers()).map( ( peer ) -> peer.id )
 
-		bench: () =>
-			startTime = performance.now()
+		# Runs a benchmark to get the available resources on this node.
+		#
+		runBenchmark: () =>
+			startTime = performance.now()			
 			sha = "4C48nBiE586JGzhptoOV"
-			for i in [0...256] by 1
+
+			for i in [0...128]
 				sha = CryptoJS.SHA3(sha).toString()
-			output = value: sha
+
 			endTime = performance.now()
 			@benchmark.cpu = Math.round(endTime - startTime)
 

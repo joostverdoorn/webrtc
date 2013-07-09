@@ -38,7 +38,7 @@ define [
 			@_connection.oniceconnectionstatechange = @_onIceConnectionStateChange
 			@_connection.ondatachannel = @_onDataChannel
 
-			@on('connected', @_onConnected)
+			@on('connect', @_onConnect)
 			@on('disconnected', @_onDisconnected)
 			@on('channel.opened', @_onChannelOpened)
 			@on('channel.closed', @_onChannelClosed)
@@ -55,7 +55,7 @@ define [
 			channel = @_connection.createDataChannel('a', @_channelConfiguration)	
 			@_connection.createOffer(@_onLocalDescription)
 
-			@once('connected', =>	
+			@once('connect', =>	
 				@_addChannel(channel)
 			)
 
@@ -64,13 +64,20 @@ define [
 		disconnect: ( ) ->
 			@_connection.close()
 
+		# Returns wether or not this peer is connected.
+		#
+		# @return [Boolean] wether or not this peer is connected
+		#
+		isConnected: ( ) ->
+			return @_connection.iceConnectionState is 'connected'
+
 		# Sends a message to the remote.
 		#
 		# @param event [String] the event to send
 		# @param args... [Any] any parameters you may want to pass
 		#
 		emit: ( event, args... ) ->
-			unless @_channel.readyState is 'open'
+			unless @_channel?.readyState is 'open'
 				return
 
 			data = 
@@ -134,7 +141,12 @@ define [
 		#
 		_onIceConnectionStateChange: ( event ) =>
 			connectionState = @_connection.iceConnectionState
-			@trigger(connectionState, @, event)
+
+			switch connectionState
+				when 'connected'
+					@trigger('connect', @, event)
+				when 'disconnected', 'failed', 'closed'
+					@trigger('disconnected', @, event)
 
 		# Is called when a data channel is added to the connection.
 		#
@@ -159,6 +171,15 @@ define [
 		#
 		_onChannelOpen: ( event ) =>
 			@_channelOpen = true
+
+			@query( 'benchmark', ( benchmark ) =>
+				@benchmark = benchmark
+			)
+
+			@query( 'system', ( system ) =>
+				@system = system
+			)
+
 			@trigger('channel.opened', @, event)
 
 		# Is called when the data channel is closed.
@@ -169,30 +190,22 @@ define [
 			@_channelOpen is false
 			@trigger('channel.closed', @, event)
 
-		# Is called when the data channel has errored.
-		#
-		# @param event [Event] the channel open event
-		#
-		_onChannelError: ( event ) =>
-			@trigger('channel.errored', @, event)
-
 		# Is called when a connection has been established.
 		#
-		_onConnected: ( ) ->
+		_onConnect: ( ) ->
 			console.log "connected to node #{@id}"
 
 		# Is called when a connection has been broken.
 		#
 		_onDisconnected: ( ) ->
-			@parent.removePeer(@)
 			console.log "disconnected from node #{@id}"
 
 		# Is called when the channel has opened.
 		#
 		_onChannelOpened: ( ) ->
-			console.log "opened channel to node #{@id}"
+			console.log "channel opened to node #{@id}"
 
 		# Is called when the channel has closed.
 		#
 		_onChannelClosed: ( ) ->
-			console.log "closed channel to node #{@id}"
+			console.log "channel closed to node #{@id}"

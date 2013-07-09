@@ -29,6 +29,13 @@ define [
 		disconnect: ( ) ->
 			@_connection.disconnect()
 
+		# Returns wether or not this peer is connected.
+		#
+		# @return [Boolean] wether or not this peer is connected
+		#
+		isConnected: ( ) ->
+			return @_connection.socket.connected
+
 		# Sends a message to the remote.
 		#
 		# @param event [String] the event to send
