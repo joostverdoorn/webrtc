@@ -9,7 +9,8 @@
 		"requirejs": "2.1.5",
 		"socket.io": "*",
 		"fs-watch-tree": "*",
-		"mkdirp":"*"
+		"mkdirp": "*",
+		"jasmine-node": "*"
 	}
 
 }
