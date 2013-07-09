@@ -126,7 +126,7 @@ Om te garanderen dat er altijd een werkend product is zal er alleen compilerende
  code naar de server overgezet worden.
  Alvorens de code naar de hoofd-branche overgezet wordt moeten er op zijn
  minst automatische unit-tests geschreven worden die volledige dekking hebben.
- Verder moet de code door een ander teamlid geevalueerd worden.
+ Verder moet de code door minstens één ander teamlid geëvalueerd worden.
 \end_layout
 
 \begin_layout Standard
@@ -152,6 +152,8 @@ Als niet alles naar behoren werkt kan door middel van de documentatie gekeken
  een versie die wel nog werkte.
  Deze manier helpt te garanderen dat er ten allen tijden een werkend product
  aanwezig is.
+ Ook zal er tweemaal de volledige code evaluatie worden uitgevoerd door
+ een externe partij Software Improvement Group (SIG).
 \end_layout
 
 \begin_layout Standard
@@ -178,7 +180,7 @@ Naast de library ontwikkelen wij ook een game die de library benut.
  Naarmate de ontwikkeling van deze game verder vordert zal het wel mogelijk
  zijn dit voor te leggen aan anderen om alvast een voorproefje van het finale
  product te krijgen.
- Hoe dit verder uit gaat zien hebben is nog niet besloten.
+ Hoe dit verder uit gaat zien hebben, is nog niet besloten.
  Daarom is het nog niet mogelijk om specifiek een sprint aan te geven vanaf
  wanneer het voor buitenstaanders interessant kan zijn.
 \end_layout
