@@ -83,6 +83,7 @@ De betrokkenen in dit project komen van drie verschillende partijen.
 Ten eerste zal TNO de opdrachtgever zijn.
  Binnen TNO zal dhr.
  Klos over de voortgang en kwaliteit van het project waken.
+ Binnen Scrum is hij de Product Owner.
  Inhoudelijk zal er verwacht worden dat er aan het einde een goed gedocumenteerd
  en werkend product af is.
  Het doel van TNO is om het resultaat van dit project verder te gebruiken
@@ -94,6 +95,10 @@ reference "sub:Doelstelling"
 \end_inset
 
 .
+ Dhr.
+ Cramer zal de technische begeleiding op zich nemen.
+ Hier is binnen Scrum niet een goed gedefinieerde rol voor, maar binnen
+ de PRINCE2-management termen is dit de Project Assurance.
 \end_layout
 
 \begin_layout Standard
@@ -133,6 +138,25 @@ Het project zal uitgevoerd worden in tien voltijd weken.
  worden.
 \end_layout
 
+\begin_layout Standard
+Zoals in hoofdstuk 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Ontwikkelmethode"
+
+\end_inset
+
+ aangegeven zal Scrum gebruikt worden als softwareontwikkelmethode.
+ De duur van een sprint is een week met het begin van een sprint niet samenvalle
+nd met het begin van de werkweek.
+ Elke ochtend om 10:00 zal er een kwartier lang besproken worden wat er
+ de vorige dag gedaan is en wat er de komende dag gedaan zal worden.
+ Naar mate het project verder vordert kan dit ook twee keer per dag gebeuren.
+ Dhr.
+ Klos en dhr.
+ Cramer zullen minstens eens per sprint hierbij aanwezig te zijn.
+\end_layout
+
 \begin_layout Subsection
 Faciliteiten
 \end_layout
@@ -150,8 +174,8 @@ Tijdens de zomervakantie zal er door TNO plaats in het kantoor aangeboden
 \end_layout
 
 \begin_layout Standard
-Het project noodzaakt het gebruik van moderne mobiele telefoons met HTML5
- ondersteuning en internettoegang.
+Het project noodzaakt het gebruik van moderne browsers en mobiele telefoons
+ met HTML5 en WebRTC ondersteuning en internettoegang.
  Deze zullen door de studenten uit persoonlijk eigendom beschikbaar zijn.
 \end_layout
 
