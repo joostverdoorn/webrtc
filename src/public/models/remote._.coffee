@@ -29,8 +29,8 @@ define [
 			if @isConnected()
 				@disconnect()
 
-			@off()
 			clearInterval(@_pingInterval)
+			@off()			
 
 		# Queries the remote. Calls the callback function when a response is received.
 		#
