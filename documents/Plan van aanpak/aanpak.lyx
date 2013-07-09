@@ -65,7 +65,8 @@ Inleiding
 \end_layout
 
 \begin_layout Standard
-In dit hoofdstuk zullen we de aanpak en planning van het project bespreken.
+In dit hoofdstuk zullen we uitgebreid de aanpak en planning van het project
+ bespreken.
  Allereerst zullen we uiteenzetten wat onze werkwijze zal zijn en hoe we
  onze tijd zullen verdelen over de deliverables, welke hulpmiddelen we hiervoor
  zullen gaan gebruiken, en de mogelijke uitdagingen die we hierbij voorzien.
@@ -80,72 +81,98 @@ Methodiek
 \end_layout
 
 \begin_layout Subsubsection
-Ontwikkelmethode
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Ontwikkelmethode"
 
 \end_inset
-
-
+Scrum
 \end_layout
 
 \begin_layout Standard
 Tijdens de bacheloropleiding Technische Informatica zijn verscheidene softwareon
 twikkelmethoden behandeld.
- Elk heeft zo z'n voor- en nadelen, maar Agile methoden zoals Scrum zijn
- vaak uitermate geschikt voor relatief korte projecten met een klein team.
- Hier zullen we dan ook gebruik van maken, en wel om de volgende reden.
- Scrum maakt gebruik van korte ontwikkelcycli - ook wel sprints genoemd
- - die in tijdsduur variëren van slechts één week tot een maand.
- Aan het begin van elke sprint wordt een planning gemaakt van wat er in
- die sprint moet gebeuren, en aan het eind van de sprint zal er een werkend
- product zijn.
- Aangezien ons project slechts tien weken loopt, en wij hiervan acht weken
- fulltime er aan werken, zullen we sprints hanteren met een duur van één
- week.
- Zoals Scrum voorschrijft zullen we aan het begin van de week plannen welke
- taken we zullen uitvoeren, en aan het eind van elke week zullen we een
- werkend systeem hebben.
+ Elk heeft zo z'n voor- en nadelen, maar Agile methoden als Scrum zijn vaak
+ uitermate geschikt voor relatief kleine en kortlopende projecten.
+ Scrum maakt gebruik van korte ontwikkelcycli, en houdt op deze manier de
+ vaart in een project.
+ Aan het begin van elke sprint wordt er bepaald welke features er die sprint
+ zullen worden geïmplementeerd, en aan het eind van elke sprint dient er
+ een werkend product te zijn.
+ De features die nog geïmplementeerd moeten worden leven in de Product Backlog,
+ en hieruit wordt elke sprint een selectie gemaakt van items die die sprint
+ geïmplementeerd zullen worden.
 \end_layout
 
 \begin_layout Standard
-Scrum is vanwege zijn korte ontwikkelsprints uitermate geschikt voor ons
- project specifiek, gezien de aard van ons project.
- Hoewel onze ontwikkeling zal starten met alleen de library, zal al snel
- de ontwikkeling van de game en de library parallel lopen.
- Juist door de library te gebruiken in de game komen we er achter op welke
- vlakken er nog functionaliteit ontbreekt, en kunnen we de library zo nodig
- aanpassen.
- Ook zullen we aan het einde van elke sprint documenteren wat onze bevindingen
- van die week zijn, zodat deze informatie gebruikt kan worden in het technologie
-rapport.
- Juist door deze documentatie bij te houden zorgen we ervoor dat elk facet
- van het ontwikkelen met WebRTC naar voren komt.
+Ons team zal het core team vormen, waarbij 
+\noun on
+Karens
+\noun default
+ de rol van Scrum Master zal aannemen.
+ De Scrum Master zal er voor zorgen dat het team zich geen zorgen hoeft
+ te maken over externe factoren.
+ Onze begeleider vanuit TNO, 
+\noun on
+Victor Klos
+\noun default
+, zal de Product Owner zijn.
+ Hij zal controlleren of de software die wij ontwikkelen voldoet aan de
+ eisen die TNO stelt, en zal de Product Backlog prioriteren.
+ 
+\noun on
+Eelco Cramer 
+\noun default
+zal ons op technisch vlak begeleiden, en ons assisteren met het maken van
+ (belangrijke) technische beslissingen.
 \end_layout
 
 \begin_layout Standard
-Het is belangrijk dat we elke week de documentatie nauwgezet bijwerken.
- Een ervaren probleem kan snel vergeten worden als het niet op tijd wordt
- opgeschreven, waarbij deze waardevolle kennis verloren gaat en niet meer
- in het technologierapport zal komen.
- Daarnaast moeten we zorgen dan we de library en de game goed gescheiden
- houden, en dat we de juiste selectie maken van welke functionaliteit in
- de library of in de game thuis hoort.
+Omdat ons project maar een korte tijd loopt zullen we sprints hanteren van
+ één week, lopend van donderdag tot woensdag.
+ Dagelijks om 10 uur 's ochtends zullen wij een stand-up houden van maximaal
+ een kwartier, waarbij we behandelen wat we sinds de vorige stand-up hebben
+ gedaan, wat we zullen gaan doen en waar we tegenaan lopen.
+ De Scrum Master zal zorgen dat we hierbij niet te veel afdwalen en dat
+ de stand-up niet langer duurt dan 15 minuten.
+ Elke donderdagochtend zullen we onze wekelijkse Sprint Planning Meeting
+ houden, waarbij we bepalen welke Backlog items we die week zullen behandelen.
+ De Product Owner zal hier zo veel mogelijk aanwezig zijn om te zorgen dat
+ de juiste prioriteiten worden gesteld.
 \end_layout
 
 \begin_layout Subsubsection
-Tools
+Behaviour-Driven Development
 \end_layout
 
 \begin_layout Standard
-Voor het beheer van onze code zullen we gebruik maken van het Git versiecontrole
-systeem.
- Hoewel standaard alle code op Github publiek inzichtelijk is, hebben we
- voor dit project bij Github een privé repository aangevraagd.
- Dit betekent dat wij zelf kunnen bepalen wie wel en wie niet inzicht heeft
- in onze code omdat het nog niet bekend is of de code uiteindelijk wel of
- niet publiekelijk beschikbaar mag zijn.
+Om te garanderen dat onze software volledig wordt getest zullen wij naast
+ Scrum de ontwikkelmethodiek Behaviour-Driven Development (BDD) hanteren.
+ BDD kan gezien worden als een extensie op Test-Driven Development, maar
+ verschilt hiervan in dat tests worden geschreven die veel gelijkenis tonen
+ met user stories of specificaties.
+ Deze stories en specificaties kunnen makkelijk worden ontleedt uit de Backlog
+ items die we voor Scrum zullen bijhouden.
+ Wel is het bij BDD zo dat, net als bij TDD, tests in principe vooraf geschreven
+ dienen te worden waarna de code wordt geïmplementeerd die ervoor zal zorgen
+ dat de tests slagen.
+ Deze tests zullen niet alleen dienen om te kijken of die software het gewenste
+ gedrag vertoont, maar ook om te kijken of er later in het proces geen functiona
+liteit wordt gebroken en ook zodat mensen die minder bekend zijn met de
+ code uit de tests kunnen op maken hoe de code werkt.
+\end_layout
+
+\begin_layout Subsubsection
+Toolchain
+\end_layout
+
+\begin_layout Standard
+Voor het beheer van de geschreven code zullen we gebruik maken van het Git
+ versiecontrolesysteem, in een private repository op Github.
+ De begeleiders kunnen toegang krijgen tot deze repository mochten ze hier
+ behoefte aan hebben.
+ Ook zullen ook gebruik maken van Github Issues voor onze Product Backlog,
+ en de tool Huboard zal ons helpen met het ordenen van deze items.
 \end_layout
 
 \begin_layout Standard
@@ -156,6 +183,18 @@ We zullen niet rechtstreeks in JavaScript programmeren maar in plaats hiervan
  De voordelen van CoffeeScript zijn talrijk maar het grootste voordeel is
  toch wel dat CoffeeScript een volledig object georiënteerde taal is, in
  tegenstelling tot JavaScript met een nogal onhandige prototype structuur.
+ Voor het compileren van de CoffeeScript zullen we gebruik maken van Cake
+ (het CoffeeScript equivalent van Make), waarbij we in een Cakefile definiëren
+ waar de gecompileerde bestanden moeten komen.
+ Deze methode helpt ons en zo nodig anderen met het makkelijk verkrijgen
+ van de juiste bestanden om ons project snel draaiende te krijgen.
+\end_layout
+
+\begin_layout Standard
+Omdat de uiteindelijke library in heldere JavaScript geschreven zal moeten
+ zijn, zullen we tegen het einde van het project zorgen dat we de CoffeeScript
+ op een nader te bepalen manier wordt omgezet in functioneel equivalente
+ JavaScript code.
 \end_layout
 
 \begin_layout Standard
@@ -163,14 +202,7 @@ Ook hebben wij gekozen om met dezelfde IDE met CoffeeScript ondersteuning
  te werken: Sublime Text 2.
  Zo hopen wij de kans dat het mis gaat op verschillende systemen te verkleinen.
  Zo zijn ook de kleinste spatie gerelateerde instellingen belangrijk omdat
- CoffeeScript met Tabs en niet met haakjes werkt.
-\end_layout
-
-\begin_layout Standard
-Voor het lokaal testen van het systeem hebben wij een NodeJS platform opgezet
- wat in praktijk een lokale JavaScript testserver is.
- Ook is het een handige distributiecentrum voor veel verschillende externe
- libraries waar wij nog veel gebruik zullen maken.
+ CoffeeScript met indentatie in plaats van brackets werkt.
 \end_layout
 
 \begin_layout Subsection
@@ -185,15 +217,18 @@ Bij dit project zullen we gebruik maken van de nieuwste technieken op het
  WebRTC wordt in browsers geïmplementeerd als een API in JavaScript, en
  van deze taal zullen we dan ook veel gebruik maken (al is het via CoffeeScript,
  zie hierboven).
- Naast WebRTC zullen we gebruik maken van technieken die ons in staat stellen
- verschillende sensoren van mobiele apparaten uit te lezen.
- Ook maken we gebruik van andere nieuwe technieken binnen het Web.
- Zo zullen we WebSockets gebruiken tussen browser en server voor de totstandkomi
-ng van de daadwerkelijke WebRTC connectie, en zullen we naar alle waarschijnlijk
-heid een computer graphics implementatie in HTML5 gebruiken - denk aan Canvas
- of WebGL - in de game die we ontwikkelen.
- Naast onze bevindingen met WebRTC zullen we ook bevindingen op de andere
- vlakken documenteren, zodat deze vergaarde kennis niet verloren gaat.
+ Server-side zullen we gebruik maken van Node.js, voor welke wij ook in CoffeeScr
+ipt zullen programmeren.
+ Om code zowel client als server-side te gebruiken zullen we op Node.js ook
+ gebruik maken van AMD (via Require.js) in plaats van Node.js' eigen require
+ systeem.
+ Dit zal voorkomen dat we code meermaals moeten schrijven en onderhouden.
+ Voor verbindingen tussen Node.js en de browser zullen we WebSockets gebruiken.
+ Deze verbinding zal onder andere gebruikt worden als signaling channel
+ voor de totstandkoming van de daadwerkelijke WebRTC connectie.
+ Ook zullen we naar alle waarschijnlijkheid een computer graphics implementatie
+ in HTML5 gebruiken - denk aan Canvas of WebGL - in de game die we ontwikkelen.
+ 
 \end_layout
 
 \begin_layout Subsection
