@@ -3,6 +3,9 @@
 \begin_document
 \begin_header
 \textclass article
+\begin_preamble
+\hyphenation{WebRTC}
+\end_preamble
 \use_default_options true
 \maintain_unincluded_children false
 \language dutch
