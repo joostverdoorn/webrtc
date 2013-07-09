@@ -79,7 +79,7 @@ De opdrachtgever
 
 \begin_layout Standard
 Gezien het feit dat de opdrachtgever dezelfde is als het bedrijf waar wij
- het opdracht gaan doen, is de opdrachtgever al beschreven in paragraaf
+ de project gaan uitvoeren, is de opdrachtgever al beschreven in paragraaf
  
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -192,17 +192,23 @@ Na veel in de verschillende WebRTC te hebben verdiept, veel eigen experimenten
  WebRTC heeft namelijk als een groot voordeel dat gebruikers met elkaar
  verbonden zijn zonder de tussenkomst van een server.
  Dat biedt de mogelijkheden voor het opzetten van een grootschalige peer-to-peer
- netwerken.
+ netwerk.
 \end_layout
 
 \begin_layout Standard
-Gedistribueerde peer-to-peer netwerken is een veel onderzochte onderwerp
- waar veel papers over beschikbaar zijn.
- Daar hebben wij in de afgelopen dagen al kennis mee genomen.
- WebRTC biedt de nieuwe uitdagingen om binnen een browser omgeving peer-to-peer
- netwerken te kunnen opzetten waarbij wij tijdens dit project voornamelijk
+\begin_inset Quotes eld
+\end_inset
+
+Gedistribueerde netwerken
+\begin_inset Quotes erd
+\end_inset
+
+ is een veel onderzocht onderwerp waar veel papers over beschikbaar zijn.
+ Daar hebben wij in de afgelopen dagen al kennis mee gemaakt.
+ WebRTC biedt de nieuwe uitdagingen om binnen een browseromgeving peer-to-peer
+ netwerken te kunnen opzetten waarbij wij ons tijdens dit project voornamelijk
  zullen richten op de schaalbaarheid hiervan.
- Hieruit hebben wij de volgende hoofd onderzoeksvraag gedefinieerd: 
+ Hieruit hebben wij de volgende hoofdonderzoeksvraag gedefinieerd: 
 \emph on
 "Op wat voor manier kan met behulp van WebRTC een dynamisch peer-to-peer
  multiplayer-game-netwerk worden opgezet dat schaalt voor een groot aantal
@@ -229,7 +235,7 @@ Hoe kan data op een zo efficiënt mogelijke manier alle peers bereiken?
 Onze onderzoeksvraag verraadt al welke kant wij heen willen met de demo
  applicatie.
  Wij zullen een Massively Multiplayer Online Game (MMOG) ontwikkelen die
- gebruik maakt van de WebRTC netwerk.
+ gebruik maakt van een WebRTC netwerk.
  Deze game dient als een showcase voor ons onderzoek over schaalbaarheid.
 \end_layout
 
@@ -244,11 +250,11 @@ Wij hebben twee deliverables buiten onze procesmatige deliverables zoals
 
 \begin_layout Standard
 Ten eerste zullen we een Javascript library ontwikkelen die alle ins en
- outs van ons onderzoek naar schaalbaarheid van WebRTC netwerken.
+ outs van ons onderzoek naar schaalbaarheid van WebRTC netwerken behandelt.
  Deze library zal de algemene implementatie van deze netwerken mogelijk
  maken.
- Deze library zal o.a.
- de functionaliteit bevatten die nodig is om bovenstaande vragen te beantwoorden.
+ Hiermeel zal de library onder andere de functionaliteit bevatten die nodig
+ is om bovenstaande vragen te beantwoorden.
 \end_layout
 
 \begin_layout Standard
