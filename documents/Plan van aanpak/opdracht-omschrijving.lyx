@@ -79,7 +79,7 @@ De opdrachtgever
 
 \begin_layout Standard
 Gezien het feit dat de opdrachtgever dezelfde is als het bedrijf waar wij
- de project gaan uitvoeren, is de opdrachtgever al beschreven in paragraaf
+ het project gaan uitvoeren, is de opdrachtgever al beschreven in paragraaf
  
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -95,7 +95,7 @@ Contactpersonen
 \end_layout
 
 \begin_layout Standard
-Wij hebben twee contactpersonen die ons zullen begeleiden tijdens het project:
+Wij hebben drie contactpersonen die ons zullen begeleiden tijdens het project:
 \end_layout
 
 \begin_layout Enumerate
@@ -146,12 +146,11 @@ TNO heeft veel kennis in huis zodat zij hun klanten breed kunnen adviseren
 \end_layout
 
 \begin_layout Standard
-Op dit moment is er bij TNO al de basis kennis aanwezig over WebRTC, er
- is dus geen behoefte aan een nieuwe demo van wat er allemaal met WebRTC
- mogelijk is.
- Wel is er behoefte naar een innovatieve kijk op WebRTC en daarbij behorende
- uitdaging bij het opzoeken van randen van toepasbaarheid en/of beperkingen
- van WebRTC.
+Op dit moment is er bij TNO al basis kennis aanwezig over WebRTC, en is
+ er dus geen behoefte aan een nieuwe demo van die deze kennis implementeert.
+ Wel is er behoefte naar een innovatieve kijk op toepassingen van WebRTC
+ en de daar bij behorende uitdagingen bij het opzoeken en verleggen van
+ de technologische grenzen van WebRTC.
 \end_layout
 
 \begin_layout Subsection
@@ -166,18 +165,21 @@ name "sub:Doelstelling"
 \end_layout
 
 \begin_layout Standard
-Zoals net verteld in de Probleemstelling hebben wij als doelstelling om
- WebRTC in een bepaalde scope van raden van toepasbaarheid uit te werken.
- Uit deze zogenoemde randen van toepasbaarheid moeten één a twee randen
- worden gekozen en daaruit de onderzoeksvragen worden gedefinieerd.
- De mogelijke randvoorwaarden binnen WebRTC zijn: aantallen gebruikers,
- media bronnen, synchronisatie, bandbreedte, compatibiliteit.
+Zoals net verteld in de Probleemstelling is er dus behoefte aan grensverleggende
+ toepassingen en bijbehorende kennis op het gebied van WebRTC.
+ Als doelstelling nemen wij dan ook om binnen de scope van de WebRTC de
+ randen van toepasbaarheid op te zoeken.
+ Hieruit moet een bepaald vlak worden gekozen vanuit waar de onderzoeksvragen
+ worden gedefinieerd.
+ Mogelijke grenzen binnen WebRTC zijn: aantallen gebruikers, media bronnen,
+ synchronisatie, bandbreedte, compatibiliteit.
  Hier zullen we in de volgende paragraaf een keuze uit maken.
 \end_layout
 
 \begin_layout Standard
-Als tweede doel van het project, zullen wij een demo applicatie maken die
- onze bevindingen van het eerste deel aan de man laat zien.
+Als tweede doelstelling hebben wij om een demonstratie in de vorm van een
+ applicatie te geven waarin duidelijk onze bevinden worden getoond, en wordt
+ laten zien dat de grenzen van de technologie verlegd zijn.
 \end_layout
 
 \begin_layout Subsection
@@ -185,10 +187,10 @@ Opdrachtformulering
 \end_layout
 
 \begin_layout Standard
-Na veel in de verschillende WebRTC te hebben verdiept, veel eigen experimenten
- te hebben uitgevoerd en eigen problemen te zijn tegengekomen, hebben wij
- besloten om ons project over de schaalbaarheid van WebRTC netwerken te
- laten gaan.
+Na ons veel in de verschillende aspecten van WebRTC te hebben verdiept,
+ veel eigen experimenten te hebben uitgevoerd en eigen problemen te zijn
+ tegengekomen, hebben wij besloten om ons project over de schaalbaarheid
+ van WebRTC netwerken te laten gaan.
  WebRTC heeft namelijk als een groot voordeel dat gebruikers met elkaar
  verbonden zijn zonder de tussenkomst van een server.
  Dat biedt de mogelijkheden voor het opzetten van een grootschalige peer-to-peer
@@ -205,7 +207,7 @@ Gedistribueerde netwerken
 
  is een veel onderzocht onderwerp waar veel papers over beschikbaar zijn.
  Daar hebben wij in de afgelopen dagen al kennis mee gemaakt.
- WebRTC biedt de nieuwe uitdagingen om binnen een browseromgeving peer-to-peer
+ WebRTC biedt nieuwe uitdagingen om binnen een browseromgeving peer-to-peer
  netwerken te kunnen opzetten waarbij wij ons tijdens dit project voornamelijk
  zullen richten op de schaalbaarheid hiervan.
  Hieruit hebben wij de volgende hoofdonderzoeksvraag gedefinieerd: 
@@ -234,9 +236,9 @@ Hoe kan data op een zo efficiënt mogelijke manier alle peers bereiken?
 \begin_layout Standard
 Onze onderzoeksvraag verraadt al welke kant wij heen willen met de demo
  applicatie.
- Wij zullen een Massively Multiplayer Online Game (MMOG) ontwikkelen die
- gebruik maakt van een WebRTC netwerk.
- Deze game dient als een showcase voor ons onderzoek over schaalbaarheid.
+ Wij zullen een kleine Massively Multiplayer Online Game (MMOG) ontwikkelen
+ die gebruik maakt van een WebRTC netwerk.
+ Deze game dient als een showcase voor ons onderzoek naar schaalbaarheid.
 \end_layout
 
 \begin_layout Subsection
@@ -249,7 +251,7 @@ Wij hebben twee deliverables buiten onze procesmatige deliverables zoals
 \end_layout
 
 \begin_layout Standard
-Ten eerste zullen we een Javascript library ontwikkelen die alle ins en
+Ten eerste zullen we een JavaScript library ontwikkelen die alle ins en
  outs van ons onderzoek naar schaalbaarheid van WebRTC netwerken behandelt.
  Deze library zal de algemene implementatie van deze netwerken mogelijk
  maken.
@@ -279,9 +281,9 @@ Naast de hierboven beschreven randvoorwarden zijn er nog een aantal punten
 \begin_layout Standard
 Ten eerste wil TNO dat de uiteindelijke library niet in CoffeeScript maar
  in JavaScript geschreven zal worden.
- Dit dient ter bevordering van de leesbaarheid voor buitenstaanders en zorgt
- ervoor dat een JavaScript technologie direct met JavaScript aangeroepen
- wordt.
+ Dit dient ter bevordering van de leesbaarheid en bruikbaarheid voor buitenstaan
+ders en zorgt ervoor dat een JavaScript technologie direct met JavaScript
+ aangeroepen wordt.
 \end_layout
 
 \begin_layout Standard
