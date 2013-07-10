@@ -65,8 +65,7 @@ Inleiding
 \end_layout
 
 \begin_layout Standard
-In dit hoofdstuk zal er toegelicht worden wat de voorlopige afspraken zijn
- met TNO.
+In dit hoofdstuk worden de voorlopige afspraken met TNO toegelicht.
  Wat zal er ontwikkeld worden, waarom wordt dit ontwikkeld en voor wie wordt
  dit ontwikkeld? Aangezien het proces minstens zo belangrijk is als het
  resultaat zal er in dit hoofdstuk aandacht besteed worden aan zowel de
@@ -134,20 +133,19 @@ Probleemstelling
 \end_layout
 
 \begin_layout Standard
-TNO heeft veel kennis in huis zodat zij hun klanten breed kunnen adviseren
- op zo veel mogelijk gebieden.
+TNO heeft veel kennis in huis zodat zij hun klanten breed kunnen adviseren.
  Daarom is het voor TNO altijd belangrijk om deze kennis goed op niveau
  te houden en op de hoogte te blijven van alle relevante ontwikkelingen
  die zich elders afspelen.
  Zo is er op de afdeling Multimedia Technology een vraag ontstaan naar de
  nieuwe technologie WebRTC.
- TNO is altijd op zoek naar de nieuwe grenzen van toepasbaarheid van technologie
-ën en de mogelijke impact ervan.
+ TNO is altijd op zoek naar de grenzen van toepasbaarheid van de nieuwe
+ technologieën en de mogelijke impact ervan.
 \end_layout
 
 \begin_layout Standard
-Op dit moment is er bij TNO al basis kennis aanwezig over WebRTC, en is
- er dus geen behoefte aan een nieuwe demo die deze kennis implementeert.
+Op dit moment is er bij TNO al basiskennis aanwezig over WebRTC, en is er
+ dus geen behoefte aan een nieuwe demo die deze kennis implementeert.
  Wel is er behoefte naar een innovatieve kijk op toepassingen van WebRTC
  en de daar bij behorende uitdagingen bij het opzoeken en verleggen van
  de technologische grenzen van WebRTC.
@@ -187,10 +185,10 @@ Opdrachtformulering
 \end_layout
 
 \begin_layout Standard
-Na ons veel in de verschillende aspecten van WebRTC te hebben verdiept,
- veel eigen experimenten te hebben uitgevoerd en eigen problemen te zijn
- tegengekomen, hebben wij besloten om ons project over de schaalbaarheid
- van WebRTC netwerken te laten gaan.
+Na ons in de verschillende aspecten van WebRTC te hebben verdiept, eigen
+ experimenten te hebben uitgevoerd en eigen problemen te zijn tegengekomen,
+ hebben wij besloten om ons project over de schaalbaarheid van WebRTC netwerken
+ te laten gaan.
  WebRTC heeft namelijk als een groot voordeel dat gebruikers met elkaar
  verbonden zijn zonder de tussenkomst van een server.
  Dat biedt de mogelijkheden voor het opzetten van een grootschalige peer-to-peer

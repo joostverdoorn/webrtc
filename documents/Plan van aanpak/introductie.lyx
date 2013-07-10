@@ -65,13 +65,12 @@ Het plan van aanpak
 \end_layout
 
 \begin_layout Standard
-Dit plan van aanpak zal de opzet van ons project beschrijven.
- Zowel inhoudelijke als de organisatorische aspecten komen aan bod in dit
- document.
+Dit plan van aanpak beschrijft de opzet van ons project.
+ Zowel inhoudelijke als organisatorische aspecten komen aan bod in dit document.
  Gezien het feit dat ons project afwijkt van hoe een bachelorproject normaal
  wordt ondernomen - er wordt bij de meeste eindprojecten gefocust op de
- ontwikkeling van één product - zal ons plan van aanpak ook afwijken van
- een standaard plan van aanpak.
+ ontwikkeling van een applicatie - zal ons plan van aanpak ook afwijken
+ van een standaard plan van aanpak.
  Hoewel niet alle onderdelen van een standaard plan van aanpak volledig
  relevant zijn, hebben wij besloten om alle onderdelen voor de volledigheid
  aan bod te laten komen.
@@ -107,34 +106,26 @@ Achtergrond en aanleiding van de opdracht
 
 \begin_layout Standard
 Na het samenkomen van ons als groep was het al snel duidelijk dat we op
- zoek waren om iets vernieuwends, iets innovatiefs te gaan doen op het gebied
- van webtechnologie.
- We zagen het alle drie niet zitten om te blijven hangen waar we al ervaring
- in hadden - het ontwikkelen van websites - maar aan de slag te gaan met
- state-of-the-art technologieën en daar iets vernieuwends mee doen.
- Bij het brainstormen over de organisatie waarbij we ons project zouden
- doen kwamen we al snel bij TNO, welke in Delft bekend staat om het verbinden
- van wetenschap, technologie en het bedrijfsleven.
+ zoek waren om iets innovatiefs te gaan doen op het gebied van web en aan
+ de slag te gaan met state-of-the-art technologieën.Zo kwamen we al snel
+ bij TNO.
  Na een afspraak te hebben gemaakt met 
 \noun on
 Joost de Wit
 \noun default
- van TNO hebben we gezamenlijk in een gesprek de nieuwste technologieën
- besproken waarin wij iets voor TNO konden betekenen.
+, hebben we gezamenlijk de nieuwste technologieën besproken waarin wij iets
+ voor TNO konden betekenen.
  Na een eigen onderzoek naar de besproken technologieën sprak WebRTC ons
  het meeste aan, omdat het dingen mogelijk maakt op het Web die eerder nog
  niet konden.
  Binnen het kader van WebRTC werden verschillende projectvoorstellen voorbereid,
- die besproken werden tijdens de tweede zitting bij TNO, waarbij meerdere
- werknemers van TNO aanwezig waren.
+ die besproken werden tijdens de tweede gesprek.
  Tijdens dat gesprek is er een gezamenlijke overeenstemming bereikt om door
- te gaan met het project en verder de onderzoeksvragen te specifieren.
+ te gaan met het project en verder de onderzoeksvragen te specificeren.
  Tijdens het derde gesprek werd er samen nagedacht over de verschillende
- onderzoeksgebeiden van WebRTC waarna er gekozen is voor het onderzoeksgebied
+ onderzoeksgebieden van WebRTC waarna er gekozen is voor het onderzoeksgebied
  in dynamische peer-to-peer game netwerken met behulp van WebRTC waarvoor
  hier het Plan van Aanpak ligt.
- We verheugen ons op de uitdagingen die dit project te bieden heeft en zien
- een prettige samenwerking tegemoet.
 \end_layout
 
 \end_body
