@@ -29,42 +29,45 @@ require [
 	#
 
 	class App.NodeGraph extends App
-		
-		# The update URL
-		_updateURL = '/nodes'
-
-		# The datatype for @_updateURL
-		_dataType = 'json'
 
 		# This method will be called from the baseclass when it has been constructed.
 		# 
 		initialize: ( ) ->
+
+			# The update URL
+			@_updateURL = '/nodes'
+
+			# The datatype for @_updateURL
+			@_dataType = 'json'
+
 			@_addedNodes = {}
 			@_addedEdges = {}
 			@_animating = false
-			@_sigmaInstance = sigma.init document.getElementById 'graph'
-			@_sigmaInstance.drawingProperties {
-					defaultLabelColor: '#fff'
-					defaultLabelSize: 14
-					defaultLabelBGColor: '#fff'
-					defaultLabelHoverColor: '#000'
-					labelThreshold: 6
-					defaultEdgeType: 'line'
-				}
-			@_sigmaInstance.graphProperties {
-					minNodeSize: 0.5
-					maxNodeSize: 5
-					minEdgeSize: 1
-					maxEdgeSize: 1
-				}
-			@_sigmaInstance.mouseProperties {
-					maxRatio: 4
-				}
+			$(document).ready(( ) =>
+				@_sigmaInstance = sigma.init document.getElementById 'graph'
+				@_sigmaInstance.drawingProperties {
+						defaultLabelColor: '#fff'
+						defaultLabelSize: 14
+						defaultLabelBGColor: '#fff'
+						defaultLabelHoverColor: '#000'
+						labelThreshold: 6
+						defaultEdgeType: 'line'
+					}
+				@_sigmaInstance.graphProperties {
+						minNodeSize: 0.5
+						maxNodeSize: 5
+						minEdgeSize: 1
+						maxEdgeSize: 1
+					}
+				@_sigmaInstance.mouseProperties {
+						maxRatio: 4
+					}
 
-			@_sigmaInstance.draw()
-			@startAnimation()
+				@_sigmaInstance.draw()
+				@startAnimation()
 
-			@update()
+				@update()
+			)
 
 		# Updates the view and sets the timeout on itself again
 		#
@@ -74,27 +77,30 @@ require [
 					dataType: @_dataType
 				}).done ( data ) =>
 					# Check if all previous nodes and edges still exist
-					for node in @_addedNodes
+					for node, a of @_addedNodes
 						if not data[node]
 							# Node was removed from the network, so remove it from the graph
 							@removeNode node
 						else
 							# Node still exists, but do all old edges still exist?
-							for edge in @_addedEdges[node]
+							for edge, b of @_addedEdges[node]
 								if not data[node][edge]		# The edge does not exist anymore, so remove it
 									@removeEdge node, edge
 
 					# Add newly added network nodes to the graph
-					for node in data
+					for node, a of data
 						#if not @_addedNodes[node]		# Node does not yet exist, so create it
 							@addNode node
 
 					# All nodes exist so now it's time to add all non-existent edges
-					for node in data
-						for edge in data[node]
+					for node, a of data
+						for edge, b of data[node]
 							@addEdge node, edge
 
-					setTimeout @update, 1000
+					setTimeout (
+						() => 
+							@update()
+						), 1000
 
 
 			
@@ -117,7 +123,7 @@ require [
 				return
 
 			@_animating = true
-			@_sigmaInstance.startForceAtlas2()
+			#@_sigmaInstance.startForceAtlas2()
 
 		# Stops the Force Atlas 2 algorithm to draw the graph nicely
 		#
@@ -151,6 +157,7 @@ require [
 			@_addedNodes[title] = true
 			if not @_addedEdges[title]
 				@_addedEdges[title] = {}
+
 			@_sigmaInstance.addNode title, {
 					x: Math.random()
 					y: Math.random()
