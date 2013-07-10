@@ -37,8 +37,8 @@ task 'watch', ->
 			build()
 	else
 		# Watch for changes in coffee files ...
-		console.log("coffee -wco" + "./#{target}" + " ./#{source}")
-		coffeeWatcher = exec("coffee -wco " + "./#{target}" + " ./#{source}")
+		console.log("coffee -mwco " + "./#{target}" + " ./#{source}")
+		coffeeWatcher = exec("coffee -mwco " + "./#{target}" + " ./#{source}")
 		
 		coffeeWatcher.stdout.setEncoding('utf8')
 		coffeeWatcher.stdout.on('data', ( data ) -> console.log(data))
@@ -68,7 +68,7 @@ build = ( ) ->
 	buildOthers()
 
 buildCoffee = ( ) ->
-	exec("coffee -c -o #{__dirname}/#{target} #{source}", (stdin, stdout, stderr) -> console.log stderr, stdout)
+	exec("coffee -m -c -o #{__dirname}/#{target} #{source}", (stdin, stdout, stderr) -> console.log stderr, stdout)
 
 buildOthers = ( ) ->
 	# Windows sucks so try harder
