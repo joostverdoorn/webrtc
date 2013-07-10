@@ -31,6 +31,7 @@ define [
 		#
 		constructor: ( ) ->
 			@_peers = []
+			@_unconnectedPeers = []
 
 			@server = new Server(@, @serverAddress)
 
@@ -50,10 +51,20 @@ define [
 		# Attempts to connect to a peer.
 		#
 		# @param id [String] the id of the peer to connect to
+		# @param connect [Boolean] wether to instantiate the connection
 		#
-		connect: ( id ) ->
-			peer = new Peer(@, id)
-			@addPeer(peer)
+		connect: ( id, connect = true ) ->
+			peer = new Peer(@, id, connect)
+
+			if duplicatePeer = @getPeer(peer.id, true)
+				@_unconnectedPeers = _(@_unconnectedPeers).without(duplicatePeer)
+
+			peer.on('connect', =>
+				@_unconnectedPeers = _(@_unconnectedPeers).without(peer)
+				@addPeer(peer)
+			)
+
+			@_unconnectedPeers.push(peer)
 
 		# Disconects a peer.
 		#
@@ -77,12 +88,12 @@ define [
 		# @param peer [Peer] the peer to add
 		#
 		addPeer: ( peer ) ->
+			if duplicatePeer = @getPeer(peer.id)
+				@removePeer(duplicatePeer)
+
 			peer.on('disconnected', ( peer ) =>
 				@removePeer(peer)
 			)
-
-			if duplicatePeer = @getPeer(peer.id)
-				@removePeer(duplicatePeer)
 
 			@_peers.push(peer)
 			@trigger('peer.added', peer)
@@ -101,19 +112,24 @@ define [
 		# @param id [String] the id of the requested peer
 		# @param [Peer] the peer
 		#
-		getPeer: ( id ) ->
-			return _(@_peers).find( ( peer ) -> peer.id is id )
+		getPeer: ( id, getUnconnected = false ) ->
+			peers = @getPeers(null, getUnconnected)
+			return _(peers).find( ( peer ) -> peer.id is id )
 
 		# Returns an array of connected peers.
 		#
 		# @param type [String] the type by which to filter the nodes
 		# @return [Array<Peer>] an array containing all connected masters
 		#
-		getPeers: ( type = null ) ->
+		getPeers: ( type = null, getUnconnected = false ) ->
+			peers = @_peers
+			if getUnconnected
+				peers = @_unconnectedPeers.concat(peers)
+
 			if type?
-				return _(@_peers).filter( ( peer ) -> peer.type is type )
+				return _(peers).filter( ( peer ) -> peer.type is type )
 			else
-				return @_peers
+				return peers
 
 		# Is called when a peer requests a connection with this node. Will
 		# accept this request by establishing a connection.
@@ -122,8 +138,7 @@ define [
 		# @param type [String] the type of the peer
 		#
 		_onPeerConnectionRequest: ( id, type ) =>
-			peer = new Peer(@, id, false)
-			@addPeer(peer)
+			@connect(id, false)
 
 		# Is called when a remote peer wants to set a remote description.
 		#
@@ -132,7 +147,7 @@ define [
 		#
 		_onPeerSetRemoteDescription: ( id, data ) =>
 			description = new RTCSessionDescription(data)
-			@getPeer(id)?.setRemoteDescription(description)
+			@getPeer(id, true)?.setRemoteDescription(description)
 
 		# Is called when a peer wants to add an ICE candidate
 		#
@@ -141,7 +156,7 @@ define [
 		#
 		_onPeerAddIceCandidate: ( id, data ) =>
 			candidate = new RTCIceCandidate(data)
-			@getPeer(id)?.addIceCandidate(candidate)
+			@getPeer(id, true)?.addIceCandidate(candidate)
 
 		# Responds to a request
 		#
