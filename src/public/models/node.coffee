@@ -124,16 +124,16 @@ define [
 
 		# Returns an array of connected peers.
 		#
-		# @param type [String] the type by which to filter the nodes
+		# @param role [Peer.Role] the role by which to filter the nodes
 		# @return [Array<Peer>] an array containing all connected masters
 		#
-		getPeers: ( type = null, getUnconnected = false ) ->
+		getPeers: ( role = null, getUnconnected = false ) ->
 			peers = @_peers
 			if getUnconnected
 				peers = @_unconnectedPeers.concat(peers)
 
-			if type?
-				return _(peers).filter( ( peer ) -> peer.type is type )
+			if role?
+				return _(peers).filter( ( peer ) -> peer.role is role )
 			else
 				return peers
 
@@ -142,7 +142,8 @@ define [
 		# @param peer [Peer] the peer to set as parent
 		#
 		setParent: ( peer ) ->
-			peer.type = 'parent'
+			@_parent?.role = Peer.Role.None
+			peer.role = Peer.Role.Parent
 			@_parent = peer
 
 		# Returns the parent peer of this node.
@@ -160,7 +161,7 @@ define [
 			if peer is @_parent
 				@_parent = null
 
-			peer.type = 'child'
+			peer.role = Peer.Role.Child
 
 		# Removes a peer as child node. Does not automatically close 
 		# the connection but will make it a normal peer.
@@ -168,14 +169,14 @@ define [
 		# @param peer [Peer] the peer to remove as child
 		#
 		removeChild: ( peer ) ->
-			peer.type = 'peer'
+			peer.role = Peer.Role.None
 
 		# Returns all current child nodes.
 		#
 		# @return [Array<Peer>] an array of all child nodes
 		#
 		getChildren: ( ) ->
-			return @getPeers('child')
+			return @getPeers(Peer.Role.Child)
 
 		# Adds a peer as sibling node.
 		#
@@ -185,7 +186,7 @@ define [
 			if peer is @_parent
 				@_parent = null
 
-			peer.type = 'sibling'
+			peer.role = Peer.Role.Sibling
 
 		# Removes a peer as sibling node. Does not automatically close 
 		# the connection but will make it a normal peer.
@@ -193,14 +194,14 @@ define [
 		# @param peer [Peer] the peer to remove as sibling
 		#
 		removeSibling: ( peer ) ->
-			peer.type = 'peer'
+			peer.role = Peer.Role.None
 
 		# Returns all current sibling nodes.
 		#
 		# @return [Array<Peer>] an array of all sibling nodes
 		#
 		getSiblings: ( ) ->
-			return @getPeers('sibling')
+			return @getPeers(Peer.Role.Sibling)
 
 		# Responds to a request
 		#
