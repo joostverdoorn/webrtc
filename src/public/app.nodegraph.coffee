@@ -118,7 +118,7 @@ require [
 			if (Math.abs(r-g) < 50 && Math.abs(g-b) < 50 && Math.abs(b-r) < 50)
 				return @randomColor()
 			else
-				return 'rgb(' + r + ',' + g + ',' + b + ')'
+				return "rgb(#{r},#{g},#{b})"
 
 		# Starts the Force Atlas 2 algorithm to draw the graph nicely
 		#
