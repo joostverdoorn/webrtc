@@ -188,6 +188,10 @@ define [
 				@system = system
 			)
 
+			@query( 'isSuperNode', ( isSuperNode ) =>
+				@isSuperNode = isSuperNode
+			)
+
 			@trigger('channel.opened', @, event)
 
 		# Is called when the data channel is closed.

@@ -39,39 +39,53 @@ require [
 		initialize: ( ) ->
 			@node = new Node()
 
-			@_updateNodesInterval = setInterval(@displayNodes, 5000)
+			@_updateNodesInterval = setInterval(@update, 5000)
 
-			$("#nodes tbody").append(@generateNodeRow(@node.id, @node.benchmark, @node.server.latency, @node.system, false, true))
+			
 
 			@node.on('peer.added', ( peer ) =>
-				$("#node-#{peer.id}").replaceWith(@generateNodeRow(peer.id, null, 0, null, true))
+				$("#node-#{peer.id}").replaceWith(@generateNodeRow( peer ))
 			)
 
 			@node.on('peer.removed', ( peer ) => 
-				$("#node-#{peer.id}").replaceWith(@generateNodeRow(peer.id))
+				$("#node-#{peer.id}").replaceWith(@generateNodeRow(peer))
 			)
 
 			@node.server.on('connect', ( ) =>
-				$(".self-row td:first").text(@node.id)
+				$("#nodes tbody").append(@generateNodeRow(@node))
 			)
+
+			@node.on('setSuperNode', ( isSuperNode ) =>
+				$(".self-row .superNode").text(isSuperNode)
+			)
+
+
+
+
+
+
+
+
 			
 		# Displays all available nodes.
 		#
-		displayNodes: () =>
-			$('.node-row').remove()
-
-			@node.server.query('nodes', ( ids ) =>
-				for id in ids
-					unless id is @node.id
-						peer = @node.getPeer(id)
-					
-						if peer
-							row = @generateNodeRow(id, peer.benchmark, peer.latency, peer.system, true)
-						else
-							row = @generateNodeRow(id)
-
-						$("#nodes tbody").append(row)
+		update: () =>		
+			@node.server.query('nodes', ( nodes ) =>
+				@displayNodes(nodes)
 			)
+
+
+		displayNodes: (nodes) =>
+			$('.node-row').remove()
+			for node in nodes
+				unless node.id is @node.id
+					peer = @node.getPeer(node.id)
+					if peer
+						row = @generateNodeRow(peer)
+					else
+						row = @generateNodeRow(node)
+
+				$("#nodes tbody").append(row)
 
 		# Generate and returns a jQuery object of a table row containing all information
 		# of a node, neatly formatted.
@@ -84,57 +98,61 @@ require [
 		# @param self [Boolean] wether or not this row should represent ourself
 		# @return [jQuery] a jQuery object of a table row
 		#
-		generateNodeRow: ( id, benchmark = null, ping = 0, system = null, connected = false, self = false ) ->
-			if system?
-				systemString = "#{system.osName} - #{system.browserName}#{system.browserVersion}"
+		generateNodeRow: ( node ) ->
+
+			self = @node.id is node.id
+			if node.system?
+				systemString = "#{node.system.osName} - #{node.system.browserName}#{node.system.browserVersion}"
 			else
 				systemString = "-"
 
-			if benchmark?
-				benchmarkString = "#{benchmark['cpu']}"
+			if node.benchmark?
+				benchmarkString = "#{node.benchmark['cpu']}"
 			else
 				benchmarkString = "-"
 
 			if self
-				row = $("<tr class='self-row success' id='node-#{id}'></tr>")
+				row = $("<tr class='self-row success' id='node-#{node.id}'></tr>")
 			else
-				row = $("<tr class='node-row' id='node-#{id}'></tr>")
+				row = $("<tr class='node-row' id='node-#{node.id}'></tr>")
 			
-			row.append("<td>#{id}</td>")
-			row.append("<td>Node</td>")
+			row.append("<td>#{node.id}</td>")
+			row.append("<td class='superNode'>#{node.isSuperNode}</td>")
 
-			if connected
+			if self
 				row.append("<td>#{benchmarkString}</td>")
-				row.append("<td>#{ping}</td>")
+				row.append("<td class='ping'>-</td>")
+				row.append("<td>#{systemString}</td>")
+				row.append("<td>self</td>")
+				row.append("<td></td>")
+
+			else if node.latency?
+				row.append("<td>#{benchmarkString}</td>")
+				row.append("<td>#{node.latency}</td>")
 				row.append("<td>#{systemString}</td>")
 				row.append("<td>Connected</td>")
 				
 				elem = $("<td><a href='#'>Disconnect</a></td>")
 				elem.click( ( ) => 
-					@node.disconnect(id)
+					@node.disconnect(node.id)
 					elem.replaceWith("<td>Disconnecting...</td>")
-				)
-				row.append(elem)
-
-			else if not self
-				row.append("<td></td>")
-				row.append("<td></td>")
-				row.append("<td></td>")
-				row.append("<td></td>")
-				
-				elem = $("<td><a href='#'>Connect</a></td>")
-				elem.click( ( ) => 
-					@node.connect(id) 
-					elem.replaceWith("<td>Connecting...</td>")
 				)
 				row.append(elem)
 
 			else 
 				row.append("<td>#{benchmarkString}</td>")
-				row.append("<td class='ping'>#{ping}</td>")
+				row.append("<td>-</td>")
 				row.append("<td>#{systemString}</td>")
-				row.append("<td>self</td>")
 				row.append("<td></td>")
+				
+				elem = $("<td><a href='#'>Connect</a></td>")
+				elem.click( ( ) => 
+					@node.connect(node.id) 
+					elem.replaceWith("<td>Connecting...</td>")
+				)
+				row.append(elem)
+
+
 
 			return row
 			
