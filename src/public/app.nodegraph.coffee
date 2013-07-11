@@ -1,5 +1,7 @@
 requirejs.config
 	shim:
+		'underscore':
+			exports: '_'
 		'jquery':
 			exports: '$'
 		'sigma':
@@ -13,6 +15,7 @@ requirejs.config
 	paths:
 		'public': './'
 
+		'underscore': 'vendor/scripts/underscore'
 		'jquery': 'vendor/scripts/jquery'
 		'sigma': 'vendor/scripts/sigma.min'
 		'forceatlas': 'vendor/scripts/sigma.forceatlas2'
@@ -21,8 +24,9 @@ require [
 	'app._'
 	'jquery'
 	'sigma'
+	'underscore'
 	'forceatlas'
-	], ( App, $, sigma ) ->
+	], ( App, $, sigma, _ ) ->
 
 	# NodeGraph app class
 	#
@@ -62,22 +66,23 @@ require [
 						maxRatio: 4
 					}
 
-				
-				#@startAnimation()
+				@_sigmaInstance.draw()
 
-				console.log 'Init done'
+				_.defer(( ) =>
+					@startAnimation()
+				)
+
 				@update()
 			)
 
 		# Updates the view and sets the timeout on itself again
 		#
 		update: ( ) ->
-			console.log 'Update() called'
 			$.ajax({
 					url: @_updateURL
 					dataType: @_dataType
-				}).error((data, a, b, c, d, e)=>
-					console.log 'ERROR!!!!'
+				}).error(( )=>
+					console.log 'ERROR!'
 					console.log arguments
 				).done ( data ) =>
 					# Check if all previous nodes and edges still exist
@@ -88,7 +93,7 @@ require [
 						else
 							# Node still exists, but do all old edges still exist?
 							for edge, b of @_addedEdges[node]
-								if $.inArray(edge, data[node]) == -1		# The edge does not exist anymore, so remove it
+								if b and $.inArray(edge, data[node]) == -1		# The edge does not exist anymore, so remove it
 									@removeEdge node, edge
 
 					# Add newly added network nodes to the graph
@@ -162,9 +167,6 @@ require [
 			if not @_addedEdges[title]
 				@_addedEdges[title] = {}
 
-			if @_animating
-				@stopAnimation()
-
 			@_sigmaInstance.addNode(title, {
 					x: Math.random()
 					y: Math.random()
@@ -172,37 +174,27 @@ require [
 					size: 1
 				}).draw()
 
-			if @_animating
-				@startAnimation()
-
 		# Adds an edge between two edges
 		#
 		addEdge: ( node1, node2 ) ->
-			console.log @_addedEdges
 			if not @_addedNodes[node1] or not @_addedNodes[node2] or @_addedEdges[node1][node2] or @_addedEdges[node2][node1]
 				return
-			console.log not @_addedNodes[node1]
-			console.log not @_addedNodes[node2]
-			console.log @_addedEdges[node1]
-			console.log @_addedEdges[node2]
-			console.log @_addedEdges[node1][node2]
-			console.log @_addedEdges[node2][node1]
+
 			@_addedEdges[node1][node2] = true
 			@_addedEdges[node2][node1] = true
 
-			@_sigmaInstance.addEdge node1 + '_' + node2, node1, node2
+			@_sigmaInstance.addEdge(node1 + '_' + node2, node1, node2).draw()
 
 		# Removes an edge between two nodes
 		#
 		removeEdge: ( node1, node2 ) ->
-			console.log "Reoving edge between #{node1} and #{node2}"
 			if not @_addedNodes[node1] or not @_addedNodes[node2] or not @_addedEdges[node1][node2] or not @_addedEdges[node2][node1]
 				return
 
 			@_addedEdges[node1][node2] = false
 			@_addedEdges[node2][node1] = false
 
-			@_sigmaInstance.dropEdge [node1, node2]
-			@_sigmaInstance.dropEdge [node2, node1]
+			@_sigmaInstance.dropEdge("#{node1}_#{node2}").draw()
+			@_sigmaInstance.dropEdge("#{node2}_#{node1}").draw()
 			
 	window.App = new App.NodeGraph
