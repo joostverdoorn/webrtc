@@ -137,6 +137,7 @@ define [
 		# Sets a peer as the parent node of this node.
 		#
 		# @param peer [Peer] the peer to set as parent
+		# @param callback [function] is called with a parameter if a node is accepted or not
 		#
 		setParent: ( peer, callback ) ->
 			peer.query("requestParent", ( accepted ) =>
@@ -206,16 +207,12 @@ define [
 		getSiblings: ( ) ->
 			return @getPeers(Peer.Role.Sibling)
 
-		startSuperNode: () =>
-			unless @isSuperNode
-				@isSuperNode = true
-				@server.emit("setSuperNode",@isSuperNode)
-				@trigger("setSuperNode", @isSuperNode)
-
-
-		stopSuperNode: () =>
-			if @isSuperNode
-				@isSuperNode = false
+		# Change a SuperNode state of a node
+		#
+		# @param superNode [boolean] SuperNode state
+		#
+		setSuperNode: (superNode) =>
+				@isSuperNode = superNode
 				@server.emit("setSuperNode",@isSuperNode)
 				@trigger("setSuperNode", @isSuperNode)
 
@@ -286,17 +283,22 @@ define [
 			candidate = new RTCIceCandidate(data)
 			@getPeer(id, true)?.addIceCandidate(candidate)
 
+		# Is called when a node enters a network
+		#
 		_onServerConnect: () =>
 			@server.query("nodes", (nodes) =>
 				if nodes.length is 1 and _(nodes).first().id is @id
-					@startSuperNode()
+					@setSuperNode(true)
 				else 					
 					superNodes = _(nodes).filter( (node) -> node.isSuperNode)
 					@_chooseParent(superNodes)
 					
 
 			)
-
+		# Is called until a node connects to a Supernode
+		#
+		# @param superNodes [[Node]] an array of available superNodes
+		#
 		_chooseParent: (superNodes) =>
 			superNode = superNodes.pop()
 			peer = @connect(superNode.id)
@@ -308,11 +310,3 @@ define [
 							@_chooseParent(superNodes)
 				)
 			)
-
-
-					  
-						
-				
-
-
-

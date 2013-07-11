@@ -124,7 +124,7 @@ requirejs [
 		query: ( request, args... ) ->
 			switch request
 				when 'nodes' 
-					nodes = (node.stringify() for node in @getNodes())		
+					nodes = (node.serialize() for node in @getNodes())		
 					return nodes
 
 		# Returns the time that has passed since the starting of the server.

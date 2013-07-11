@@ -76,16 +76,19 @@ define [
 			@_connection.removeAllListeners(name)
 
 
+		# Is called when a SuperNode state is changed
+		#
+		# @param name [String] the event that's unbound
+		#
 		_onSetSuperNode: (isSuperNode) =>
 			@isSuperNode = isSuperNode
 
-
-
-		stringify: () ->
+		# Serialize a node object to send to new nodes. Is called from the server
+		#
+		serialize: () ->
 			node = new Object()
 			node.id = @id
 			node.system = @system
 			node.benchmark = @benchmark
 			node.isSuperNode = @isSuperNode
 			return node
-
