@@ -5,7 +5,6 @@ requirejs.config
 		'sigma':
 			exports: 'sigma'
 
-		'public/vendor/scripts/jquery.plugins': [ 'jquery' ]
 		'forceatlas': [ 'sigma' ]
 
 	# We want the following paths for 
@@ -44,7 +43,7 @@ require [
 			@_addedEdges = {}
 			@_animating = false
 			$(document).ready(( ) =>
-				@_sigmaInstance = sigma.init document.getElementById 'graph'
+				@_sigmaInstance = sigma.init $('#graph').get(0)
 				@_sigmaInstance.drawingProperties {
 						defaultLabelColor: '#fff'
 						defaultLabelSize: 14
@@ -63,19 +62,24 @@ require [
 						maxRatio: 4
 					}
 
-				@_sigmaInstance.draw()
-				@startAnimation()
+				
+				#@startAnimation()
 
+				console.log 'Init done'
 				@update()
 			)
 
 		# Updates the view and sets the timeout on itself again
 		#
 		update: ( ) ->
+			console.log 'Update() called'
 			$.ajax({
 					url: @_updateURL
 					dataType: @_dataType
-				}).done ( data ) =>
+				}).error((data, a, b, c, d, e)=>
+					console.log 'ERROR!!!!'
+					console.log arguments
+				).done ( data ) =>
 					# Check if all previous nodes and edges still exist
 					for node, a of @_addedNodes
 						if not data[node]
@@ -84,7 +88,7 @@ require [
 						else
 							# Node still exists, but do all old edges still exist?
 							for edge, b of @_addedEdges[node]
-								if not data[node][edge]		# The edge does not exist anymore, so remove it
+								if $.inArray(edge, data[node]) == -1		# The edge does not exist anymore, so remove it
 									@removeEdge node, edge
 
 					# Add newly added network nodes to the graph
@@ -95,7 +99,7 @@ require [
 					# All nodes exist so now it's time to add all non-existent edges
 					for node, a of data
 						for edge, b of data[node]
-							@addEdge node, edge
+							@addEdge node, b
 
 					setTimeout (
 						() => 
@@ -123,7 +127,7 @@ require [
 				return
 
 			@_animating = true
-			#@_sigmaInstance.startForceAtlas2()
+			@_sigmaInstance.startForceAtlas2()
 
 		# Stops the Force Atlas 2 algorithm to draw the graph nicely
 		#
@@ -158,19 +162,31 @@ require [
 			if not @_addedEdges[title]
 				@_addedEdges[title] = {}
 
-			@_sigmaInstance.addNode title, {
+			if @_animating
+				@stopAnimation()
+
+			@_sigmaInstance.addNode(title, {
 					x: Math.random()
 					y: Math.random()
 					color: @randomColor()
 					size: 1
-				}
+				}).draw()
+
+			if @_animating
+				@startAnimation()
 
 		# Adds an edge between two edges
 		#
 		addEdge: ( node1, node2 ) ->
+			console.log @_addedEdges
 			if not @_addedNodes[node1] or not @_addedNodes[node2] or @_addedEdges[node1][node2] or @_addedEdges[node2][node1]
 				return
-
+			console.log not @_addedNodes[node1]
+			console.log not @_addedNodes[node2]
+			console.log @_addedEdges[node1]
+			console.log @_addedEdges[node2]
+			console.log @_addedEdges[node1][node2]
+			console.log @_addedEdges[node2][node1]
 			@_addedEdges[node1][node2] = true
 			@_addedEdges[node2][node1] = true
 
@@ -179,6 +195,7 @@ require [
 		# Removes an edge between two nodes
 		#
 		removeEdge: ( node1, node2 ) ->
+			console.log "Reoving edge between #{node1} and #{node2}"
 			if not @_addedNodes[node1] or not @_addedNodes[node2] or not @_addedEdges[node1][node2] or not @_addedEdges[node2][node1]
 				return
 

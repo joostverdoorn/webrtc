@@ -44,7 +44,7 @@ requirejs [
 			@_app.get('/nodes', ( req, res ) =>
 				nodes = @getNodes()
 
-				res.writeHead(200, 'Content-Type': 'text/plain')
+				res.writeHead(200, 'Content-Type': 'application/json')
 				i = 0
 				result = {}
 				for node in nodes
