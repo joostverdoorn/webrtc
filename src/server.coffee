@@ -124,7 +124,8 @@ requirejs [
 		query: ( request, args... ) ->
 			switch request
 				when 'nodes' 
-					return _(@getNodes()).map( ( node ) -> node.id )
+					nodes = (node.stringify() for node in @getNodes())		
+					return nodes
 
 		# Returns the time that has passed since the starting of the server.
 		#
@@ -132,5 +133,7 @@ requirejs [
 		#
 		time: ( ) ->
 			return Date.now() - @_initTime
+
+
 
 	global.Server = new Server()

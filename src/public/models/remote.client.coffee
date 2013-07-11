@@ -17,6 +17,20 @@ define [
 			@on('event.bind', @_onEventBind)
 			@on('event.unbind', @_onEventUnbind)
 			@on('disconnect', -> @_controller.removeNode(@))
+			@on('setSuperNode', @_onSetSuperNode)
+
+			@query( 'benchmark', ( benchmark ) =>
+				@benchmark = benchmark
+			)
+
+			@query( 'system', ( system ) =>
+				@system = system
+			)
+
+			@query( 'isSuperNode', ( isSuperNode ) =>
+				@isSuperNode = isSuperNode
+			)
+
 
 		# Disconnects from the client.
 		#
@@ -60,3 +74,18 @@ define [
 		#
 		_onEventUnbind: ( name ) =>
 			@_connection.removeAllListeners(name)
+
+
+		_onSetSuperNode: (isSuperNode) =>
+			@isSuperNode = isSuperNode
+
+
+
+		stringify: () ->
+			node = new Object()
+			node.id = @id
+			node.system = @system
+			node.benchmark = @benchmark
+			node.isSuperNode = @isSuperNode
+			return node
+
