@@ -6,7 +6,6 @@ requirejs.config
 			exports: '$'
 		'sigma':
 			exports: 'sigma'
-
 		'forceatlas': [ 'sigma' ]
 
 	# We want the following paths for 
@@ -19,14 +18,15 @@ requirejs.config
 		'jquery': 'vendor/scripts/jquery'
 		'sigma': 'vendor/scripts/sigma.min'
 		'forceatlas': 'vendor/scripts/sigma.forceatlas2'
+
 		
 require [
 	'app._'
 	'jquery'
-	'sigma'
 	'underscore'
+	'sigma'
 	'forceatlas'
-	], ( App, $, sigma, _ ) ->
+	], ( App, $, _, sigma ) ->
 
 	# NodeGraph app class
 	#
@@ -67,10 +67,7 @@ require [
 					}
 
 				@_sigmaInstance.draw()
-
-				_.defer(( ) =>
-					@startAnimation()
-				)
+				@startAnimation()
 
 				@update()
 			)
@@ -85,6 +82,7 @@ require [
 					console.log 'ERROR!'
 					console.log arguments
 				).done ( data ) =>
+					
 					# Check if all previous nodes and edges still exist
 					for node, a of @_addedNodes
 						if not data[node]
@@ -93,7 +91,7 @@ require [
 						else
 							# Node still exists, but do all old edges still exist?
 							for edge, b of @_addedEdges[node]
-								if b and $.inArray(edge, data[node]) == -1		# The edge does not exist anymore, so remove it
+								if b and $.inArray(edge, data[node]) == -1 and $.inArray(node, data[edge]) == -1		# The edge does not exist anymore, so remove it
 									@removeEdge node, edge
 
 					# Add newly added network nodes to the graph
@@ -132,6 +130,8 @@ require [
 				return
 
 			@_animating = true
+
+			
 			@_sigmaInstance.startForceAtlas2()
 
 		# Stops the Force Atlas 2 algorithm to draw the graph nicely
@@ -167,23 +167,27 @@ require [
 			if not @_addedEdges[title]
 				@_addedEdges[title] = {}
 
+			console.log 'adding node'
 			@_sigmaInstance.addNode(title, {
 					x: Math.random()
 					y: Math.random()
 					color: @randomColor()
 					size: 1
-				}).draw()
+				})#.draw()
 
 		# Adds an edge between two edges
 		#
 		addEdge: ( node1, node2 ) ->
+			#console.log 'adding'
 			if not @_addedNodes[node1] or not @_addedNodes[node2] or @_addedEdges[node1][node2] or @_addedEdges[node2][node1]
 				return
 
+			console.log "adding #{node1} -> #{node2}"
 			@_addedEdges[node1][node2] = true
 			@_addedEdges[node2][node1] = true
 
-			@_sigmaInstance.addEdge(node1 + '_' + node2, node1, node2).draw()
+			@_sigmaInstance.addEdge(node1 + '_' + node2, node1, node2)#.draw()
+			
 
 		# Removes an edge between two nodes
 		#
@@ -191,10 +195,11 @@ require [
 			if not @_addedNodes[node1] or not @_addedNodes[node2] or not @_addedEdges[node1][node2] or not @_addedEdges[node2][node1]
 				return
 
+			console.log "removing #{node1} -> #{node2}"
 			@_addedEdges[node1][node2] = false
 			@_addedEdges[node2][node1] = false
 
-			@_sigmaInstance.dropEdge("#{node1}_#{node2}").draw()
-			@_sigmaInstance.dropEdge("#{node2}_#{node1}").draw()
+			@_sigmaInstance.dropEdge("#{node1}_#{node2}")#.draw()
+			@_sigmaInstance.dropEdge("#{node2}_#{node1}")#.draw()
 			
 	window.App = new App.NodeGraph

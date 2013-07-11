@@ -245,6 +245,8 @@ sigma.forceatlas2.ForceAtlas2 = function(graph) {
         // But the speed shoudn't rise too much too quickly,
         // since it would make the convergence drop dramatically.
         var maxRise = 0.5;   // Max rise: 50%
+        if (isNaN(targetSpeed))
+          targetSpeed = 9999999999999;
         self.p.speed = self.p.speed +
                        Math.min(
                          targetSpeed - self.p.speed,
@@ -286,12 +288,15 @@ sigma.forceatlas2.ForceAtlas2 = function(graph) {
 
               factor = Math.min(factor * df, 10) / df;
 
-              n.x += n.fa2.dx * factor;
-              n.y += n.fa2.dy * factor;
+              if (!isNaN(factor)) {
+                n.x += n.fa2.dx * factor;
+                n.y += n.fa2.dy * factor;
+              }
             }
           }
         } else {
           var speed = self.p.speed;
+
           while (i < nodes.length && i < self.state.index + sInt) {
             var n = nodes[i++];
             var fixed = n.fixed || false;
@@ -306,8 +311,10 @@ sigma.forceatlas2.ForceAtlas2 = function(graph) {
               );
               var factor = speed / (1 + speed * Math.sqrt(swinging));
 
-              n.x += n.fa2.dx * factor;
-              n.y += n.fa2.dy * factor;
+              if (!isNaN(factor)) {
+                n.x += n.fa2.dx * factor;
+                n.y += n.fa2.dy * factor;
+              }
             }
           }
         }
