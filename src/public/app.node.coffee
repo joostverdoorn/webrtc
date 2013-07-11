@@ -55,7 +55,6 @@ require [
 			)
 
 			@node.on('setSuperNode', ( isSuperNode ) =>
-				console.log 
 				$(".self-row .superNode").text(isSuperNode)
 			)
 
@@ -79,12 +78,7 @@ require [
 		# Generate and returns a jQuery object of a table row containing all information
 		# of a node, neatly formatted.
 		#
-		# @param id [String] the id of the node
-		# @param benchmark [Object] the benchmark object of the node
-		# @param ping [Integer] the latency to the node
-		# @param system [Object] the system object of the node
-		# @param connected [Boolean] wether or not we are currently connected to this node
-		# @param self [Boolean] wether or not this row should represent ourself
+		# @param node [Node] Accepts a Node or a Peer object
 		# @return [jQuery] a jQuery object of a table row
 		#
 		generateNodeRow: ( node ) ->
@@ -143,8 +137,6 @@ require [
 					elem.replaceWith("<td>Connecting...</td>")
 				)
 				row.append(elem)
-
-
 
 			return row
 			
