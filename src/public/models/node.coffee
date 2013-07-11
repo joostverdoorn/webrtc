@@ -30,8 +30,14 @@ define [
 		# Constructs a new app.
 		#
 		constructor: ( ) ->
+			@_isSuperNode = false
+
+			# Unstructured entities
 			@_peers = []
 			@_unconnectedPeers = []
+
+			# Structured entities
+			@_parent = null
 
 			@server = new Server(@, @serverAddress)
 
@@ -131,32 +137,70 @@ define [
 			else
 				return peers
 
-		# Is called when a peer requests a connection with this node. Will
-		# accept this request by establishing a connection.
+		# Sets a peer as the parent node of this node.
 		#
-		# @param id [String] the id of the peer
-		# @param type [String] the type of the peer
+		# @param peer [Peer] the peer to set as parent
 		#
-		_onPeerConnectionRequest: ( id, type ) =>
-			@connect(id, false)
+		setParent: ( peer ) ->
+			peer.type = 'parent'
+			@_parent = peer
 
-		# Is called when a remote peer wants to set a remote description.
+		# Returns the parent peer of this node.
 		#
-		# @param id [String] the id string of the peer
-		# @param data [Object] a plain object representation of an RTCSessionDescription
+		# @return [Peer] the parent peer
 		#
-		_onPeerSetRemoteDescription: ( id, data ) =>
-			description = new RTCSessionDescription(data)
-			@getPeer(id, true)?.setRemoteDescription(description)
+		getParent: ( ) ->
+			return @_parent
 
-		# Is called when a peer wants to add an ICE candidate
+		# Adds a peer as child node.
 		#
-		# @param id [String] the id string of the peer
-		# @param data [Object] a plain object representation of an RTCIceCandidate
+		# @param peer [Peer] the peer to add as child
 		#
-		_onPeerAddIceCandidate: ( id, data ) =>
-			candidate = new RTCIceCandidate(data)
-			@getPeer(id, true)?.addIceCandidate(candidate)
+		addChild: ( peer ) ->
+			if peer is @_parent
+				@_parent = null
+
+			peer.type = 'child'
+
+		# Removes a peer as child node. Does not automatically close 
+		# the connection but will make it a normal peer.
+		#
+		# @param peer [Peer] the peer to remove as child
+		#
+		removeChild: ( peer ) ->
+			peer.type = 'peer'
+
+		# Returns all current child nodes.
+		#
+		# @return [Array<Peer>] an array of all child nodes
+		#
+		getChildren: ( ) ->
+			return @getPeers('child')
+
+		# Adds a peer as sibling node.
+		#
+		# @param peer [Peer] the peer to add as sibling
+		#
+		addSibling: ( peer ) ->
+			if peer is @_parent
+				@_parent = null
+
+			peer.type = 'sibling'
+
+		# Removes a peer as sibling node. Does not automatically close 
+		# the connection but will make it a normal peer.
+		#
+		# @param peer [Peer] the peer to remove as sibling
+		#
+		removeSibling: ( peer ) ->
+			peer.type = 'peer'
+
+		# Returns all current sibling nodes.
+		#
+		# @return [Array<Peer>] an array of all sibling nodes
+		#
+		getSiblings: ( ) ->
+			return @getPeers('sibling')
 
 		# Responds to a request
 		#
@@ -186,4 +230,33 @@ define [
 
 			endTime = performance.now()
 			@benchmark.cpu = Math.round(endTime - startTime)
+
+		# Is called when a peer requests a connection with this node. Will
+		# accept this request by establishing a connection.
+		#
+		# @param id [String] the id of the peer
+		# @param type [String] the type of the peer
+		#
+		_onPeerConnectionRequest: ( id, type ) =>
+			@connect(id, false)
+
+		# Is called when a remote peer wants to set a remote description.
+		#
+		# @param id [String] the id string of the peer
+		# @param data [Object] a plain object representation of an RTCSessionDescription
+		#
+		_onPeerSetRemoteDescription: ( id, data ) =>
+			description = new RTCSessionDescription(data)
+			@getPeer(id, true)?.setRemoteDescription(description)
+
+		# Is called when a peer wants to add an ICE candidate
+		#
+		# @param id [String] the id string of the peer
+		# @param data [Object] a plain object representation of an RTCIceCandidate
+		#
+		_onPeerAddIceCandidate: ( id, data ) =>
+			candidate = new RTCIceCandidate(data)
+			@getPeer(id, true)?.addIceCandidate(candidate)
+
+
 

@@ -14,7 +14,7 @@ define [
 		# @param parent [Object] the parent object (Server or Node).
 		# @param args... [Any] any arguments to pass along to subclasses
 		#
-		constructor: ( @parent, args... ) ->
+		constructor: ( @_controller, args... ) ->
 			@initialize.apply(@, args)
 
 			@on('ping', @_onPing)
@@ -54,7 +54,7 @@ define [
 		#
 		_onQuery: ( request, queryID, args... ) =>
 			args = [request].concat(args)
-			result = @parent.query.apply(@parent, args)
+			result = @_controller.query.apply(@_controller, args)
 			@emit(queryID, result)
 
 		# Is called when the remote wants us to pass along a message to another peer. 
@@ -65,7 +65,7 @@ define [
 		#
 		_onEmitTo: ( id, args... ) =>
 			args = [id].concat(args)
-			@parent.emitTo.apply(@parent, args)
+			@_controller.emitTo.apply(@_controller, args)
 
 		# Pings the server. A callback function should be provided to do anything
 		# with the ping.

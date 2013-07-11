@@ -50,6 +50,10 @@ require [
 			@node.on('peer.removed', ( peer ) => 
 				$("#node-#{peer.id}").replaceWith(@generateNodeRow(peer.id))
 			)
+
+			@node.server.on('connect', ( ) =>
+				$(".self-row td:first").text(@node.id)
+			)
 			
 		# Displays all available nodes.
 		#

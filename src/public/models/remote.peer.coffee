@@ -7,6 +7,8 @@ define [
 
 	class Remote.Peer extends Remote
 
+		type: 'peer'
+
 		# Provides default server configuration for RTCPeerConnection.
 		_serverConfiguration:
 			iceServers: [
@@ -50,7 +52,7 @@ define [
 		#
 		connect: ( ) ->
 			@_isConnector = true
-			@parent.emitTo(@id, 'peer.connectionRequest', @parent.id, @parent.type)
+			@controller.emitTo(@id, 'peer.connectionRequest', @controller.id, @controller.type)
 
 			channel = @_connection.createDataChannel('a', @_channelConfiguration)	
 			@_connection.createOffer(@_onLocalDescription)
@@ -105,7 +107,7 @@ define [
 		#
 		_onLocalDescription: ( description ) =>
 			@_connection.setLocalDescription(description)
-			@parent.emitTo(@id, 'peer.setRemoteDescription', @parent.id, description)
+			@controller.emitTo(@id, 'peer.setRemoteDescription', @controller.id, description)
 
 		# Is called when a remote description has been received. It will create an answer.
 		#
@@ -125,7 +127,7 @@ define [
 		#
 		_onIceCandidate: ( event ) =>
 			if event.candidate?
-				@parent.emitTo(@id, 'peer.addIceCandidate', @parent.id, event.candidate)
+				@controller.emitTo(@id, 'peer.addIceCandidate', @controller.id, event.candidate)
 
 		# Is called when the remote wants to add an ice candidate.
 		#

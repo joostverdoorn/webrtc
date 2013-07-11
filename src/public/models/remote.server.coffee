@@ -81,6 +81,4 @@ define [
 		# 
 		_onConnect: ( ) =>
 			console.log 'connected to server'
-			@parent.id = @_connection.socket.sessionid
-			$("td:first").text(@parent.id)
-
+			@_controller.id = @_connection.socket.sessionid
