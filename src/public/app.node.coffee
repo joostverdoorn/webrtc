@@ -39,10 +39,9 @@ require [
 		initialize: ( ) ->
 			@node = new Node()
 
-			@_updateNodesInterval = setInterval(@update, 5000)
+			@_updateNodesInterval = setInterval(@displayNodes, 5000)
 
 			
-
 			@node.on('peer.added', ( peer ) =>
 				$("#node-#{peer.id}").replaceWith(@generateNodeRow( peer ))
 			)
@@ -56,36 +55,26 @@ require [
 			)
 
 			@node.on('setSuperNode', ( isSuperNode ) =>
+				console.log 
 				$(".self-row .superNode").text(isSuperNode)
 			)
 
-
-
-
-
-
-
-
-			
 		# Displays all available nodes.
 		#
-		update: () =>		
+		displayNodes: () =>
 			@node.server.query('nodes', ( nodes ) =>
-				@displayNodes(nodes)
+				$('.node-row').remove()
+
+				for node in nodes
+					unless node.id is @node.id
+						peer = @node.getPeer(node.id)
+						if peer
+							row = @generateNodeRow(peer)
+						else
+							row = @generateNodeRow(node)
+
+					$("#nodes tbody").append(row)
 			)
-
-
-		displayNodes: (nodes) =>
-			$('.node-row').remove()
-			for node in nodes
-				unless node.id is @node.id
-					peer = @node.getPeer(node.id)
-					if peer
-						row = @generateNodeRow(peer)
-					else
-						row = @generateNodeRow(node)
-
-				$("#nodes tbody").append(row)
 
 		# Generate and returns a jQuery object of a table row containing all information
 		# of a node, neatly formatted.
@@ -117,19 +106,21 @@ require [
 				row = $("<tr class='node-row' id='node-#{node.id}'></tr>")
 			
 			row.append("<td>#{node.id}</td>")
-			row.append("<td class='superNode'>#{node.isSuperNode}</td>")
+			row.append("<td>#{benchmarkString}</td>")
 
-			if self
-				row.append("<td>#{benchmarkString}</td>")
+			if self				
 				row.append("<td class='ping'>-</td>")
 				row.append("<td>#{systemString}</td>")
-				row.append("<td>self</td>")
+				row.append("<td class='superNode'>false</td>")
+				row.append("<td>-</td>")
+				row.append("<td>-</td>")
 				row.append("<td></td>")
 
 			else if node.latency?
-				row.append("<td>#{benchmarkString}</td>")
 				row.append("<td>#{node.latency}</td>")
 				row.append("<td>#{systemString}</td>")
+				row.append("<td class='superNode'>#{node.isSuperNode}</td>")
+				row.append("<td>#{node.role}</td>")
 				row.append("<td>Connected</td>")
 				
 				elem = $("<td><a href='#'>Disconnect</a></td>")
@@ -140,9 +131,10 @@ require [
 				row.append(elem)
 
 			else 
-				row.append("<td>#{benchmarkString}</td>")
 				row.append("<td>-</td>")
 				row.append("<td>#{systemString}</td>")
+				row.append("<td class='superNode'>#{node.isSuperNode}</td>")
+				row.append("<td>-</td>")
 				row.append("<td></td>")
 				
 				elem = $("<td><a href='#'>Connect</a></td>")

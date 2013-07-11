@@ -250,10 +250,10 @@ Wij hebben twee deliverables buiten onze procesmatige deliverables zoals
 
 \begin_layout Standard
 Ten eerste zullen we een JavaScript library ontwikkelen die alle ins en
- outs van ons onderzoek naar schaalbaarheid van WebRTC netwerken behandelt.
+ outs van ons onderzoek naar schaalbaarheid van WebRTC netwerken ontsluit.
  Deze library zal de algemene implementatie van deze netwerken mogelijk
  maken.
- Hiermeel zal de library onder andere de functionaliteit bevatten die nodig
+ Hiermee zal de library onder andere de functionaliteit bevatten die nodig
  is om bovenstaande vragen te beantwoorden.
 \end_layout
 
@@ -272,7 +272,7 @@ Randvoorwaarden
 \end_layout
 
 \begin_layout Standard
-Naast de hierboven beschreven randvoorwarden zijn er nog een aantal punten
+Naast de hierboven beschreven randvoorwaarden zijn er nog een aantal punten
  waar aandacht aan besteed moet worden.
 \end_layout
 
@@ -298,7 +298,7 @@ Risicofactoren
 
 \begin_layout Standard
 Het grote risico dat wij op dit moment kunnen inzien is dat door het feit
- dat wij twee verschillende project-deliverables hebben.
+ dat wij twee verschillende project deliverables hebben.
  Hierdoor is het goed mogelijk dat wij onze tijd verkeerd kunnen indelen
  waardoor er niet genoeg tijd over zal blijven om al het werk af te kunnen
  ronden.

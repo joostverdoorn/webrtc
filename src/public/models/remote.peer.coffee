@@ -8,10 +8,10 @@ define [
 	class Remote.Peer extends Remote
 
 		@Role:
-			None: 0
-			Parent: 1
-			Sibling: 2
-			Child: 3
+			None: "Not defined"
+			Parent: "Parent"
+			Sibling: "Sibling"
+			Child: "Child"
 
 		role: Peer.Role.None
 

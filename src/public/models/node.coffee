@@ -300,13 +300,13 @@ define [
 		# @param superNodes [[Node]] an array of available superNodes
 		#
 		_chooseParent: (superNodes) =>
-			superNode = superNodes.pop()
-			peer = @connect(superNode.id)
-			peer.on("channel.opened", () =>
-				@setParent(peer, (accepted) =>
-					unless accepted
-						peer.disconnect()
-						if superNodes.length > 0
+			if superNodes.length > 0
+				superNode = superNodes.pop()
+				peer = @connect(superNode.id)
+				peer.on("channel.opened", () =>
+					@setParent(peer, (accepted) =>
+						unless accepted
+							peer.disconnect()
 							@_chooseParent(superNodes)
+					)
 				)
-			)
