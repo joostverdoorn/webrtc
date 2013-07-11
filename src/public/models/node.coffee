@@ -30,7 +30,7 @@ define [
 		# Constructs a new app.
 		#
 		constructor: ( ) ->
-			@_isSuperNode = false
+			@isSuperNode = false
 
 			# Unstructured entities
 			@_peers = []
@@ -44,15 +44,11 @@ define [
 			@server.on('peer.connectionRequest', @_onPeerConnectionRequest)
 			@server.on('peer.setRemoteDescription', @_onPeerSetRemoteDescription)
 			@server.on('peer.addIceCandidate', @_onPeerAddIceCandidate)
+			@server.on('connect', @_onServerConnect)
 
 			@runBenchmark()
 
-			@initialize()
 
-		# Is called when the app has been constructed. Should be overridden by
-		# subclasses.
-		#
-		initialize: ( ) ->
 
 		# Attempts to connect to a peer.
 		#
@@ -71,6 +67,7 @@ define [
 			)
 
 			@_unconnectedPeers.push(peer)
+			return peer
 
 		# Disconects a peer.
 		#
@@ -141,10 +138,16 @@ define [
 		#
 		# @param peer [Peer] the peer to set as parent
 		#
-		setParent: ( peer ) ->
-			@_parent?.role = Peer.Role.None
-			peer.role = Peer.Role.Parent
-			@_parent = peer
+		setParent: ( peer, callback ) ->
+			peer.query("requestParent", ( accepted ) =>
+				if accepted
+					@_parent?.role = Peer.Role.None
+					peer.role = Peer.Role.Parent
+					@_parent = peer
+				callback(accepted)
+			, @id)
+
+
 
 		# Returns the parent peer of this node.
 		#
@@ -203,6 +206,19 @@ define [
 		getSiblings: ( ) ->
 			return @getPeers(Peer.Role.Sibling)
 
+		startSuperNode: () =>
+			unless @isSuperNode
+				@isSuperNode = true
+				@server.emit("setSuperNode",@isSuperNode)
+				@trigger("setSuperNode", @isSuperNode)
+
+
+		stopSuperNode: () =>
+			if @isSuperNode
+				@isSuperNode = false
+				@server.emit("setSuperNode",@isSuperNode)
+				@trigger("setSuperNode", @isSuperNode)
+
 		# Responds to a request
 		#
 		# @param request [String] the string identifier of the request
@@ -210,15 +226,26 @@ define [
 		# @return [Object] a response to the query
 		#
 		query: ( request, args... ) ->
+
 			switch request
 				when 'system' 
 					return @system
 				when 'benchmark'
 					return @benchmark
-				when 'type'
-					return @type
+				when 'isSuperNode' 
+					return @isSuperNode
 				when 'peers'
 					return _(@getPeers()).map( ( peer ) -> peer.id )
+				# accept at most 4 children ndoes
+				when 'requestParent'
+					if @getChildren().length < 4
+						child  = @getPeer(args[0])
+						if child?
+							@addChild(child)
+							return true
+					return false
+
+
 
 		# Runs a benchmark to get the available resources on this node.
 		#
@@ -258,6 +285,34 @@ define [
 		_onPeerAddIceCandidate: ( id, data ) =>
 			candidate = new RTCIceCandidate(data)
 			@getPeer(id, true)?.addIceCandidate(candidate)
+
+		_onServerConnect: () =>
+			@server.query("nodes", (nodes) =>
+				if nodes.length is 1 and _(nodes).first().id is @id
+					@startSuperNode()
+				else 					
+					superNodes = _(nodes).filter( (node) -> node.isSuperNode)
+					@_chooseParent(superNodes)
+					
+
+			)
+
+		_chooseParent: (superNodes) =>
+			superNode = superNodes.pop()
+			peer = @connect(superNode.id)
+			peer.on("channel.opened", () =>
+				@setParent(peer, (accepted) =>
+					unless accepted
+						peer.disconnect()
+						if superNodes.length > 0
+							@_chooseParent(superNodes)
+				)
+			)
+
+
+					  
+						
+				
 
 
 
