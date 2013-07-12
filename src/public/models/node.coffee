@@ -65,6 +65,7 @@ define [
 				@_unconnectedPeers = _(@_unconnectedPeers).without(peer)
 				@addPeer(peer)
 			)
+			peer.on('peer.addSibling', @_onAddSibling)
 
 			@_unconnectedPeers.push(peer)
 			return peer
@@ -94,9 +95,8 @@ define [
 			if duplicatePeer = @getPeer(peer.id)
 				@removePeer(duplicatePeer)
 
-			peer.on('disconnected', ( peer ) =>
-				@removePeer(peer)
-			)
+			peer.on('disconnected', @removePeer)
+
 
 			@_peers.push(peer)
 			@trigger('peer.added', peer)
@@ -191,6 +191,7 @@ define [
 				@_parent = null
 
 			peer.role = Peer.Role.Sibling
+			peer.emit("peer.addSibling", @id)
 
 		# Removes a peer as sibling node. Does not automatically close 
 		# the connection but will make it a normal peer.
@@ -294,22 +295,23 @@ define [
 					_superNodes = superNodes.slice(0)
 					@_chooseParent(superNodes)
 
-					# Set siblings of siblings
+					# Become a Supernode and become a Sibling
 					@on("hasParent", (hasParent) =>
 						for superNode in _superNodes
-							if hasParent
+							unless hasParent
+								@setSuperNode(true)			
 								peer = @getPeer(superNode.id)
-							else
-								@setSuperNode(true)								
-								peer = @getPeer(superNode.id)
-								peer.role = Peer.Role.Sibling
-
-					)
-						
-						
-					
+								@addSibling(peer)
+					)	
 
 			)
+
+
+		_onAddSibling: (id) =>
+			peer = @getPeer(id)
+			if peer
+				@addSibling(peer)
+
 		# Is called until a node connects to a Supernode
 		#
 		# @param superNodes [[Node]] an array of available superNodes
@@ -324,7 +326,6 @@ define [
 							@trigger("hasParent", true)
 						else
 							@_chooseParent(superNodes)
-
 					)
 				)
 			else
