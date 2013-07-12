@@ -2,12 +2,16 @@ define [
 	'public/helpers/mixable'
 	'public/helpers/mixin.eventbindings'
 
+	'public/models/message'
+
 	'underscore'
-	], ( Mixable, EventBindings, _ ) ->
+	], ( Mixable, EventBindings, Message, _ ) ->
 
 	class Remote extends Mixable
 
 		@concern EventBindings
+
+		@hashes = []
 
 		# Constructs a remote.
 		#
@@ -17,11 +21,13 @@ define [
 		constructor: ( @_controller, args... ) ->
 			@initialize.apply(@, args)
 
+			@on('message', @_onMessage)
 			@on('ping', @_onPing)
 			@on('query', @_onQuery)
-			@on('emitTo', @_onEmitTo)
+			@on('emitTo', @_onEmitTo)			
+			@on('log', ( args... ) => console.log(args))			
 
-			@_pingInterval = setInterval(@ping, 500) 
+			@_pingInterval = setInterval(@ping, 2500) 
 
 		# Disconnects the remote and removes all bindings.
 		#
@@ -30,7 +36,59 @@ define [
 				@disconnect()
 
 			clearInterval(@_pingInterval)
-			@off()			
+			@off()
+
+		# Is called when a data channel message is received. Discards any 
+		# duplicate messages.
+		#
+		# @param message [String] the unparsed message
+		#
+		_onMessage: ( messageString ) =>
+			message = Message.deserialize(messageString)
+
+			if hash = message.hash() in Remote.hashes
+				return
+
+			Remote.hashes.push(hash)
+			if Remote.hashes.length > 1000
+				Remote.hashes.splice(0, 200)
+
+			if message.to is @_controller.id
+				args = [message.event].concat(message.args).concat(message)
+				@trigger.apply(@, args)
+			else
+				@_controller.relay(message)			
+
+		# Sends a message to the remote.
+		#
+		# @param event [String] the event to send
+		# @param args... [Any] any parameters you may want to pass
+		#
+		emit: ( event, args... ) ->
+			message = new Message(@id, @_controller.id, event, args)
+			@send(message)
+
+		# Sends a message to a peer, via the server.
+		#
+		# @param to [String] the id of the receiving peer
+		# @param event [String] the event to send
+		# @param args... [Any] any paramters you may want to pass
+		#
+		emitTo: ( to, event, args... ) ->
+			message = new Message(to, @_controller.id, event, args)
+			@send(message)
+
+		# Is called when the remote wants us to pass along a message to another peer. 
+		# Will call emitTo on our parent to pass this message.
+		#
+		# @param id [String] the id of the node to pass the message along to
+		# @param event [String] the event to pass to the node 
+		# @param args... [Any] any arguments to pass along to the node
+		#
+		_onEmitTo: ( id, message ) =>
+			args = [message.event].concat(message.args)
+			unless @_controller.emitTo.apply(@_controller, args)
+				@_controller.relay(id, message, @)
 
 		# Queries the remote. Calls the callback function when a response is received.
 		#
@@ -53,19 +111,9 @@ define [
 		# @param args... [Any] any other arguments to be passed along with the query
 		#
 		_onQuery: ( request, queryID, args... ) =>
-			args = [request].concat(args)
+			args = [request].concat(args).concat(@)
 			result = @_controller.query.apply(@_controller, args)
 			@emit(queryID, result)
-
-		# Is called when the remote wants us to pass along a message to another peer. 
-		# Will call emitTo on our parent to pass this message.
-		#
-		# @param id [String] the id of the peer to pass the message along to
-		# @param args... [Any] any arguments to pass along to the peer
-		#
-		_onEmitTo: ( id, args... ) =>
-			args = [id].concat(args)
-			@_controller.emitTo.apply(@_controller, args)
 
 		# Pings the server. A callback function should be provided to do anything
 		# with the ping.
@@ -84,6 +132,8 @@ define [
 		#
 		_onPing: ( ) =>
 			@emit('pong')
+
+
 
 
 

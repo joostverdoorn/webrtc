@@ -1,5 +1,5 @@
 {
-	"name": "WebRTC",
+	"name": "webrtc",
 	"description": "A WebRTC library",
 	"version": "0.0.1",
 	"dependencies": {
@@ -10,7 +10,8 @@
 		"socket.io": "*",
 		"fs-watch-tree": "*",
 		"mkdirp": "*",
-		"jasmine-node": "*"
+		"jasmine-node": "*",
+		"murmurhash3": "*"
 	}
 
 }

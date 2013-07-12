@@ -72,7 +72,7 @@ define [
 			# @param args [Any*] any arguments to pass to the callback
 			#
 			trigger: ( name, args... ) ->
-				#console.log arguments
+				#console.log @constructor.name, arguments
 				@_events = {} unless @_events?
 				for event in @_events[name] ? []
 					event.callback.apply(event.context ? @, args)
