@@ -292,6 +292,7 @@ define [
 					@setSuperNode(true)
 				else 					
 					superNodes = _(nodes).filter( (node) -> node.isSuperNode)
+					superNodes = _(superNodes).sortBy( (superNode) -> superNode.benchmark)
 					_superNodes = superNodes.slice(0)
 					@_chooseParent(superNodes)
 
