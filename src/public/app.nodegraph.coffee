@@ -55,6 +55,8 @@ require [
 						defaultLabelHoverColor: '#000'
 						labelThreshold: 6
 						defaultEdgeType: 'line'
+						edgeColor: 'asd'
+						defaultEdgeColor: '#FFF'
 					}
 				@_sigmaInstance.graphProperties {
 						minNodeSize: 0.5
