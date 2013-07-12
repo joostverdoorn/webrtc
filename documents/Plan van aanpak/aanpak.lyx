@@ -162,6 +162,9 @@ Om te garanderen dat onze software volledig wordt getest zullen wij naast
  gedrag vertoont, maar ook om te kijken of er later in het proces geen functiona
 liteit wordt gebroken en ook zodat mensen die minder bekend zijn met de
  code uit de tests kunnen opmaken hoe de code werkt.
+ Als testing framework zullen we gebruik maken van Jasmine, een BDD-test-framewo
+rk voor JavaScript.
+ 
 \end_layout
 
 \begin_layout Subsubsection
