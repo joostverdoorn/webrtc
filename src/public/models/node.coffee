@@ -291,7 +291,22 @@ define [
 					@setSuperNode(true)
 				else 					
 					superNodes = _(nodes).filter( (node) -> node.isSuperNode)
+					_superNodes = superNodes.slice(0)
 					@_chooseParent(superNodes)
+
+					# Set siblings of siblings
+					@on("hasParent", (hasParent) =>
+						for superNode in _superNodes
+							if hasParent
+								peer = @getPeer(superNode.id)
+							else
+								@setSuperNode(true)								
+								peer = @getPeer(superNode.id)
+								peer.role = Peer.Role.Sibling
+
+					)
+						
+						
 					
 
 			)
@@ -305,8 +320,12 @@ define [
 				peer = @connect(superNode.id)
 				peer.on("channel.opened", () =>
 					@setParent(peer, (accepted) =>
-						unless accepted
-							peer.disconnect()
+						if accepted
+							@trigger("hasParent", true)
+						else
 							@_chooseParent(superNodes)
+
 					)
 				)
+			else
+				@trigger("hasParent", false)
