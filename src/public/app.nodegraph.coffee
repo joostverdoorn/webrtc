@@ -106,6 +106,14 @@ require [
 						for edge, b of data[node]
 							@addEdge node, b
 
+					@_sigmaInstance.iterNodes((n) =>
+							if n.degree > 1
+								n.color = '#F00'
+							else if n.degree is 1
+								n.color = '#0F0'
+							else
+								n.color = '#FF0'
+						)
 					setTimeout (
 						() => 
 							@update()
@@ -173,7 +181,7 @@ require [
 			@_sigmaInstance.addNode(title, {
 					x: Math.random()
 					y: Math.random()
-					color: @randomColor()
+					color: '#FF0'#@randomColor()
 					size: 1
 				})#.draw()
 
