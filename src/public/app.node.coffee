@@ -67,10 +67,8 @@ require [
 				for node in nodes
 					unless node.id is @node.id
 						peer = @node.getPeer(node.id)
-						if peer
-							row = @generateNodeRow(peer)
-						else
-							row = @generateNodeRow(node)
+						# peer might be empty/unset so render the node instead
+						row = @generateNodeRow(peer || node)
 
 					$("#nodes tbody").append(row)
 			)
