@@ -14,22 +14,14 @@ define [
 		initialize: ( @_connection ) ->
 			@id = @_connection.id
 
-			@on('event.bind', @_onEventBind)
-			@on('event.unbind', @_onEventUnbind)
-			@on('disconnect', -> @_controller.removeNode(@))
+			@_connection.on('message', ( message ) => @trigger('message', message))
+			@_connection.on('disconnect', ( ) => @trigger('disconnect'))
+
 			@on('setSuperNode', @_onSetSuperNode)
 
-			@query( 'benchmark', ( benchmark ) =>
-				@benchmark = benchmark
-			)
-
-			@query( 'system', ( system ) =>
-				@system = system
-			)
-
-			@query( 'isSuperNode', ( isSuperNode ) =>
-				@isSuperNode = isSuperNode
-			)
+			@query('benchmark', ( benchmark ) => @benchmark = benchmark)
+			@query('system', ( system ) => @system = system)
+			@query('isSuperNode', ( isSuperNode ) => @isSuperNode = isSuperNode)
 
 
 		# Disconnects from the client.
@@ -44,37 +36,12 @@ define [
 		isConnected: ( ) ->
 			return @_connection.socket.connected
 
-		# Sends a message to the remote.
+		# Sends a predefined message to the remote.
 		#
-		# @param event [String] the event to send
-		# @param args... [Any] any parameters you may want to pass
+		# @param message [Message] the message to send
 		#
-		emit: ( event, args... ) ->
-			args = [event].concat(args)
-			@_connection.emit.apply(@_connection, args)
-
-		# Is called when an event is bound. This is used to trigger events when
-		# a certain input is received from the remote.
-		#
-		# @param name [String] the event that's bound
-		#
-		_onEventBind: ( name ) =>
-			if @_connection.listeners(name).length > 0
-				return
-
-			@_connection.on(name, ( args... ) =>
-				args = [name].concat(args)
-				@trigger.apply(@, args)
-			)
-
-		# Is called when an event is unbound. This is used to release a binding on
-		# remote input.
-		#
-		# @param name [String] the event that's unbound
-		#
-		_onEventUnbind: ( name ) =>
-			@_connection.removeAllListeners(name)
-
+		send: ( message ) ->
+			@_connection.emit('message', message.serialize()) 
 
 		# Is called when a SuperNode state is changed
 		#

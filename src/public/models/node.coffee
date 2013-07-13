@@ -4,14 +4,15 @@ define [
 
 	'public/models/remote.server'
 	'public/models/remote.peer'
+	'public/models/message'
 	
 	'underscore'
 	'jquery'
+	'jquery.plugins'
 
-	'public/vendor/scripts/jquery.plugins'
 	'public/vendor/scripts/crypto'
 
-	], ( Mixable, EventBindings, Server, Peer, _, $ )->
+	], ( Mixable, EventBindings, Server, Peer, Message, _, $ )->
 
 	class Node extends Mixable
 
@@ -48,8 +49,6 @@ define [
 
 			@runBenchmark()
 
-
-
 		# Attempts to connect to a peer.
 		#
 		# @param id [String] the id of the peer to connect to
@@ -58,14 +57,17 @@ define [
 		connect: ( id, connect = true ) ->
 			peer = new Peer(@, id, connect)
 
-			if duplicatePeer = @getPeer(peer.id, true)
+			if duplicatePeer = @getPeer(peer.id, null, true)
 				@_unconnectedPeers = _(@_unconnectedPeers).without(duplicatePeer)
 
 			peer.on('connect', =>
 				@_unconnectedPeers = _(@_unconnectedPeers).without(peer)
 				@addPeer(peer)
 			)
-			peer.on('peer.addSibling', @_onAddSibling)
+
+			peer.on('peer.addSibling', =>
+				@addSibling(peer, false)
+			)
 
 			@_unconnectedPeers.push(peer)
 			return peer
@@ -75,17 +77,33 @@ define [
 		# @param id [String] the id of the peer to disconnect
 		#
 		disconnect: ( id ) ->
-			@getPeer(id)?.disconnect()			
+			@getPeer(id)?.disconnect()
 
-		# Tells the server to emit a message on to the specified peer.
+		# Attempts to emit to a peer by id. Unreliable.
 		#
-		# @param id [String] the id of the peer to pass the message to
+		# @param to [String] the id of the peer to pass the message to
 		# @param event [String] the event to pass to the peer
 		# @param args... [Any] any other arguments to pass along 
 		#
-		emitTo: ( id, event, args... ) ->
-			args = [id, event].concat(args)
-			@server.emitTo.apply(@server, args)
+		emitTo: ( to, event, args... ) ->
+			message = new Message(to, @id, event, args)
+			@relay(message)
+		
+		# Relays a mesage to other nodes. If the intended receiver is not a direct 
+		# neighbour, we route the message through other nodes in an attempt to reach 
+		# the destination.
+		#
+		# @param message [Message] the message to relay.
+		#
+		relay: ( message ) ->
+			if peer = @getChild(message.to) or peer = @getSibling(message.to)
+				peer.send(message)
+			else if parent = @getParent()
+				parent.send(message)
+			else if @isSuperNode
+				sibling.send(message) for sibling in @getSiblings() when sibling.id isnt message.from
+			else
+				@server.send(message)
 		
 		# Adds a peer to the peer list
 		#
@@ -95,8 +113,9 @@ define [
 			if duplicatePeer = @getPeer(peer.id)
 				@removePeer(duplicatePeer)
 
-			peer.on('disconnected', @removePeer)
-
+			peer.on('disconnect', ( ) =>
+				@removePeer(peer)
+			)
 
 			@_peers.push(peer)
 			@trigger('peer.added', peer)
@@ -113,10 +132,10 @@ define [
 		# Returns a peer specified by an id
 		#
 		# @param id [String] the id of the requested peer
-		# @param [Peer] the peer
+		# @return [Peer] the peer
 		#
-		getPeer: ( id, getUnconnected = false ) ->
-			peers = @getPeers(null, getUnconnected)
+		getPeer: ( id, role = null, getUnconnected = false ) ->
+			peers = @getPeers(role, getUnconnected)
 			return _(peers).find( ( peer ) -> peer.id is id )
 
 		# Returns an array of connected peers.
@@ -140,15 +159,13 @@ define [
 		# @param callback [function] is called with a parameter if a node is accepted or not
 		#
 		setParent: ( peer, callback ) ->
-			peer.query("requestParent", ( accepted ) =>
+			peer.query("peer.requestParent", ( accepted ) =>
 				if accepted
 					@_parent?.role = Peer.Role.None
 					peer.role = Peer.Role.Parent
 					@_parent = peer
 				callback(accepted)
 			, @id)
-
-
 
 		# Returns the parent peer of this node.
 		#
@@ -175,6 +192,14 @@ define [
 		removeChild: ( peer ) ->
 			peer.role = Peer.Role.None
 
+		# Returns a child specified by an id
+		#
+		# @param id [String] the id of the requested child
+		# @return [Peer] the child
+		#
+		getChild: ( id ) ->
+			return @getPeer(id, Peer.Role.Child)
+
 		# Returns all current child nodes.
 		#
 		# @return [Array<Peer>] an array of all child nodes
@@ -186,12 +211,15 @@ define [
 		#
 		# @param peer [Peer] the peer to add as sibling
 		#
-		addSibling: ( peer ) ->
+		addSibling: ( peer, instantiate = true ) ->
 			if peer is @_parent
 				@_parent = null
 
 			peer.role = Peer.Role.Sibling
-			peer.emit("peer.addSibling", @id)
+
+			if instantiate
+				console.log peer, peer.emit
+				peer.emit("peer.addSibling", @id)
 
 		# Removes a peer as sibling node. Does not automatically close 
 		# the connection but will make it a normal peer.
@@ -200,6 +228,14 @@ define [
 		#
 		removeSibling: ( peer ) ->
 			peer.role = Peer.Role.None
+
+		# Returns a sibling specified by an id
+		#
+		# @param id [String] the id of the requested sibling
+		# @return [Peer] the sibling
+		#
+		getSibling: ( id ) ->
+			return @getPeer(id, Peer.Role.Sibling)
 
 		# Returns all current sibling nodes.
 		#
@@ -212,19 +248,19 @@ define [
 		#
 		# @param superNode [boolean] SuperNode state
 		#
-		setSuperNode: (superNode) =>
-				@isSuperNode = superNode
-				@server.emit("setSuperNode",@isSuperNode)
-				@trigger("setSuperNode", @isSuperNode)
+		setSuperNode: ( superNode ) =>
+			@isSuperNode = superNode
+			@server.emit("setSuperNode",@isSuperNode)
+			@trigger("setSuperNode", @isSuperNode)
 
 		# Responds to a request
 		#
 		# @param request [String] the string identifier of the request
 		# @param args... [Any] any arguments that may be accompanied with the request
+		# @param from [Peer] the peer we received the query from
 		# @return [Object] a response to the query
 		#
 		query: ( request, args... ) ->
-
 			switch request
 				when 'system' 
 					return @system
@@ -235,15 +271,13 @@ define [
 				when 'peers'
 					return _(@getPeers()).map( ( peer ) -> peer.id )
 				# accept at most 4 children ndoes
-				when 'requestParent'
+				when 'peer.requestParent'
 					if @getChildren().length < 4
 						child  = @getPeer(args[0])
 						if child?
 							@addChild(child)
 							return true
 					return false
-
-
 
 		# Runs a benchmark to get the available resources on this node.
 		#
@@ -273,7 +307,7 @@ define [
 		#
 		_onPeerSetRemoteDescription: ( id, data ) =>
 			description = new RTCSessionDescription(data)
-			@getPeer(id, true)?.setRemoteDescription(description)
+			@getPeer(id, null, true)?.setRemoteDescription(description)
 
 		# Is called when a peer wants to add an ICE candidate
 		#
@@ -282,7 +316,7 @@ define [
 		#
 		_onPeerAddIceCandidate: ( id, data ) =>
 			candidate = new RTCIceCandidate(data)
-			@getPeer(id, true)?.addIceCandidate(candidate)
+			@getPeer(id, null, true)?.addIceCandidate(candidate)
 
 		# Is called when a node enters a network
 		#
@@ -303,21 +337,14 @@ define [
 								@setSuperNode(true)			
 								peer = @getPeer(superNode.id)
 								@addSibling(peer)
-					)	
-
+					)
 			)
-
-
-		_onAddSibling: (id) =>
-			peer = @getPeer(id)
-			if peer
-				@addSibling(peer)
 
 		# Is called until a node connects to a Supernode
 		#
 		# @param superNodes [[Node]] an array of available superNodes
 		#
-		_chooseParent: (superNodes) =>
+		_chooseParent: ( superNodes ) =>
 			if superNodes.length > 0
 				superNode = superNodes.pop()
 				peer = @connect(superNode.id)
@@ -331,3 +358,4 @@ define [
 				)
 			else
 				@trigger("hasParent", false)
+

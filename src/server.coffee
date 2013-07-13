@@ -73,14 +73,24 @@ requirejs [
 			node = new Node(@, socket)
 			@addNode(node)
 
+			node.on('disconnect', ( ) =>
+				@removeNode(node)
+			)
+
 		# Sends a message to a certain node.
 		#
-		# @param id [String] the id of the node to pass the message to
+		# @param to [String] the id of the node to pass the message to
+		# @param event [String] the event to pass to the node 
 		# @param args... [Any] any arguments to pass along 
+		# @param from [Node] the node we received the message from
 		#
-		emitTo: ( id, args... ) ->
-			node = @getNode(id)
-			node?.emit.apply(node, args)
+		emitTo: ( to, event, args... ) ->
+			message = new Message(to, null, event, args)	
+			@relay(message)
+
+		relay: ( message ) ->
+			if node = @getNode(message.to)
+				node.send(message)
 
 		# Adds a node to the node list
 		#
