@@ -1,28 +1,28 @@
-requirejs.config
-	shim:		
-		'underscore':
-			exports: '_'
+# requirejs.config
+# 	shim:		
+# 		'underscore':
+# 			exports: '_'
 
-		'socket.io':
-			exports: 'io'
+# 		'socket.io':
+# 			exports: 'io'
 
-		'jquery':
-			exports: '$'
+# 		'jquery':
+# 			exports: '$'
 
-		'bootstrap': [ 'jquery' ]
-		'public/vendor/scripts/jquery.plugins': [ 'jquery' ]
+# 		'bootstrap': [ 'jquery' ]
+# 		'public/vendor/scripts/jquery.plugins': [ 'jquery' ]
 
-	# We want the following paths for 
-	# code-sharing reasons. Now it doesn't 
-	# matter from where we require a module.
-	paths:
-		'public': './'
+# 	# We want the following paths for 
+# 	# code-sharing reasons. Now it doesn't 
+# 	# matter from where we require a module.
+# 	paths:
+# 		'public': './'
 
-		'underscore': 'vendor/scripts/underscore'
-		'jquery': 'vendor/scripts/jquery'
-		'bootstrap': 'vendor/scripts/bootstrap'
-		'adapter' : 'vendor/scripts/adapter'
-		'socket.io': 'socket.io/socket.io'
+# 		'underscore': 'vendor/scripts/underscore'
+# 		'jquery': 'vendor/scripts/jquery'
+# 		'bootstrap': 'vendor/scripts/bootstrap'
+# 		'adapter' : 'vendor/scripts/adapter'
+# 		'socket.io': 'socket.io/socket.io'
 
 define [], ( ) -> 
 	

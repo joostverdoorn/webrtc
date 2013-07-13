@@ -9,8 +9,11 @@ requirejs.config
 		'jquery':
 			exports: '$'
 
+		'murmurhash3':
+			exports: 'MurmurHash3'
+
 		'bootstrap': [ 'jquery' ]
-		'public/vendor/scripts/jquery.plugins': [ 'jquery' ]
+		'jquery.plugins': [ 'jquery' ]
 
 	# We want the following paths for 
 	# code-sharing reasons. Now it doesn't 
@@ -20,9 +23,11 @@ requirejs.config
 
 		'underscore': 'vendor/scripts/underscore'
 		'jquery': 'vendor/scripts/jquery'
+		'jquery.plugins': 'vendor/scripts/jquery.plugins'
 		'bootstrap': 'vendor/scripts/bootstrap'
 		'adapter' : 'vendor/scripts/adapter'
 		'socket.io': 'socket.io/socket.io'
+		'murmurhash3': 'vendor/scripts/murmurhash3'
 		
 require [
 	'app._'
@@ -40,7 +45,6 @@ require [
 			@node = new Node()
 
 			@_updateNodesInterval = setInterval(@displayNodes, 5000)
-
 			
 			@node.on('peer.added', ( peer ) =>
 				$("#node-#{peer.id}").replaceWith(@generateNodeRow( peer ))

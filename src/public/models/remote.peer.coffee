@@ -8,7 +8,7 @@ define [
 	class Remote.Peer extends Remote
 
 		@Role:
-			None: "Not defined"
+			None: "None"
 			Parent: "Parent"
 			Sibling: "Sibling"
 			Child: "Child"
@@ -47,7 +47,7 @@ define [
 			@_connection.ondatachannel = @_onDataChannel
 
 			@on('connect', @_onConnect)
-			@on('disconnected', @_onDisconnected)
+			@on('disconnect', @_onDisconnect)
 			@on('channel.opened', @_onChannelOpened)
 			@on('channel.closed', @_onChannelClosed)
 
@@ -79,20 +79,15 @@ define [
 		isConnected: ( ) ->
 			return @_connection.iceConnectionState is 'connected'
 
-		# Sends a message to the remote.
+		# Sends a predefined message to the remote.
 		#
-		# @param event [String] the event to send
-		# @param args... [Any] any parameters you may want to pass
+		# @param message [Message] the message to send
 		#
-		emit: ( event, args... ) ->
+		send: ( message ) ->
 			unless @_channel?.readyState is 'open'
 				return
-
-			data = 
-				name: event
-				args: args
-
-			@_channel.send(JSON.stringify(data))
+			
+			@_channel.send(message.serialize())
 
 		# Adds a new data channel, and adds event bindings to it.
 		#
@@ -154,7 +149,7 @@ define [
 				when 'connected'
 					@trigger('connect', @, event)
 				when 'disconnected', 'failed', 'closed'
-					@trigger('disconnected', @, event)
+					@trigger('disconnect', @, event)
 
 		# Is called when a data channel is added to the connection.
 		#
@@ -163,15 +158,12 @@ define [
 		_onDataChannel: ( event ) =>
 			@_addChannel(event.channel)
 
-		# Is called when a data channel message is received.
+		# Is called when a message was received on channel.
 		#
-		# @param event [Event] the message event
+		# @param messageEvent [MessageEvent] an RTC message event
 		#
-		_onChannelMessage: ( event ) =>
-			data = JSON.parse(event.data)
-			args = [data.name].concat(data.args)
-
-			@trigger.apply(@, args)
+		_onChannelMessage: ( messageEvent ) =>
+			@trigger('message', messageEvent.data)
 
 		# Is called when the data channel is opened.
 		#
@@ -180,17 +172,9 @@ define [
 		_onChannelOpen: ( event ) =>
 			@_channelOpen = true
 
-			@query( 'benchmark', ( benchmark ) =>
-				@benchmark = benchmark
-			)
-
-			@query( 'system', ( system ) =>
-				@system = system
-			)
-
-			@query( 'isSuperNode', ( isSuperNode ) =>
-				@isSuperNode = isSuperNode
-			)
+			@query('benchmark', ( benchmark ) => @benchmark = benchmark)
+			@query('system', ( system ) => @system = system)
+			@query('isSuperNode', ( isSuperNode ) => @isSuperNode = isSuperNode)
 
 			@trigger('channel.opened', @, event)
 
@@ -209,7 +193,7 @@ define [
 
 		# Is called when a connection has been broken.
 		#
-		_onDisconnected: ( ) ->
+		_onDisconnect: ( ) ->
 			console.log "disconnected from node #{@id}"
 
 		# Is called when the channel has opened.
