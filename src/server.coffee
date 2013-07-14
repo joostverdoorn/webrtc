@@ -12,12 +12,13 @@ requirejs.config
 
 requirejs [
 	'public/models/remote.client'
+	'public/models/collection'
 
 	'express'
 	'http'
 	'socket.io'
 	'underscore'
-	], ( Node, express, http, io, _ ) ->
+	], ( Node, Collection, express, http, io, _ ) ->
 
 
 	# Server class. This is run on the server and maintains connections to 
@@ -30,7 +31,7 @@ requirejs [
 		constructor: ( ) ->
 			@_initTime = Date.now()
 
-			@_nodes = []
+			@_nodes = new Collection()
 
 			@_app = express()
 			@_server = http.createServer(@_app)
@@ -82,12 +83,15 @@ requirejs [
 		# @param to [String] the id of the node to pass the message to
 		# @param event [String] the event to pass to the node 
 		# @param args... [Any] any arguments to pass along 
-		# @param from [Node] the node we received the message from
 		#
 		emitTo: ( to, event, args... ) ->
 			message = new Message(to, null, event, args)	
 			@relay(message)
 
+		# Relays a composed message to a certain node.
+		#
+		# @param message [Message] the message to relay
+		#
 		relay: ( message ) ->
 			if node = @getNode(message.to)
 				node.send(message)
@@ -97,14 +101,14 @@ requirejs [
 		# @param node [Node] the node to add
 		#
 		addNode: ( node ) ->
-			@_nodes.push(node)
+			@_nodes.add(node)
 
 		# Removes a node from the node list
 		#
 		# @param node [Node] the node to remove
 		#
 		removeNode: ( node ) ->
-			@_nodes = _(@_nodes).without(node)
+			@_nodes.remove(node)
 
 		# Returns a node specified by an id
 		#

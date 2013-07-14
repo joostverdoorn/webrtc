@@ -45,8 +45,9 @@ define [
 		#
 		_onMessage: ( messageString ) =>
 			message = Message.deserialize(messageString)
-
-			if hash = message.hash() in Remote.hashes
+			
+			hash = message.hash()
+			if hash in Remote.hashes
 				return
 
 			Remote.hashes.push(hash)
@@ -59,7 +60,7 @@ define [
 			else
 				@_controller.relay(message)			
 
-		# Sends a message to the remote.
+		# Compiles and sends a message to the remote.
 		#
 		# @param event [String] the event to send
 		# @param args... [Any] any parameters you may want to pass
@@ -78,17 +79,19 @@ define [
 			message = new Message(to, @_controller.id, event, args)
 			@send(message)
 
-		# Is called when the remote wants us to pass along a message to another peer. 
-		# Will call emitTo on our parent to pass this message.
+		# Sends a predefined message to the remote, but first hashes the message 
+		# to make sure it's ignored when someone bounces it back to us.
 		#
-		# @param id [String] the id of the node to pass the message along to
-		# @param event [String] the event to pass to the node 
-		# @param args... [Any] any arguments to pass along to the node
+		# @param message [Message] the message to send
 		#
-		_onEmitTo: ( id, message ) =>
-			args = [message.event].concat(message.args)
-			unless @_controller.emitTo.apply(@_controller, args)
-				@_controller.relay(id, message, @)
+		send: ( message ) ->
+			hash = message.hash()
+			
+			Remote.hashes.push(hash)
+			if Remote.hashes.length > 1000
+				Remote.hashes.splice(0, 200)
+			
+			@_send(message)
 
 		# Queries the remote. Calls the callback function when a response is received.
 		#
@@ -96,7 +99,7 @@ define [
 		# @param callback [Function] the function to call when a response was received
 		# @param args [Any] any other arguments to be passed along with the query
 		#
-		query: ( request, callback, args... ) ->
+		query: ( request, args..., callback ) ->
 			queryID = _.uniqueId('query')
 			@once(queryID, callback)
 
@@ -110,10 +113,10 @@ define [
 		# @param queryID [String] the query identifier used to respond to the query
 		# @param args... [Any] any other arguments to be passed along with the query
 		#
-		_onQuery: ( request, queryID, args... ) =>
+		_onQuery: ( request, queryID, args..., message ) =>
 			args = [request].concat(args).concat(@)
 			result = @_controller.query.apply(@_controller, args)
-			@emit(queryID, result)
+			@emitTo(message.from, queryID, result)
 
 		# Pings the server. A callback function should be provided to do anything
 		# with the ping.

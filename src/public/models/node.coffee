@@ -5,6 +5,8 @@ define [
 	'public/models/remote.server'
 	'public/models/remote.peer'
 	'public/models/message'
+
+	'public/models/collection'
 	
 	'underscore'
 	'jquery'
@@ -12,7 +14,7 @@ define [
 
 	'public/vendor/scripts/crypto'
 
-	], ( Mixable, EventBindings, Server, Peer, Message, _, $ )->
+	], ( Mixable, EventBindings, Server, Peer, Message, Collection, _, $ )->
 
 	class Node extends Mixable
 
@@ -34,8 +36,7 @@ define [
 			@isSuperNode = false
 
 			# Unstructured entities
-			@_peers = []
-			@_unconnectedPeers = []
+			@_peers = new Collection()
 
 			# Structured entities
 			@_parent = null
@@ -52,24 +53,11 @@ define [
 		# Attempts to connect to a peer.
 		#
 		# @param id [String] the id of the peer to connect to
-		# @param connect [Boolean] wether to instantiate the connection
+		# @param instatiate [Boolean] wether to instantiate the connection
 		#
-		connect: ( id, connect = true ) ->
-			peer = new Peer(@, id, connect)
-
-			if duplicatePeer = @getPeer(peer.id, null, true)
-				@_unconnectedPeers = _(@_unconnectedPeers).without(duplicatePeer)
-
-			peer.on('connect', =>
-				@_unconnectedPeers = _(@_unconnectedPeers).without(peer)
-				@addPeer(peer)
-			)
-
-			peer.on('peer.addSibling', =>
-				@addSibling(peer, false)
-			)
-
-			@_unconnectedPeers.push(peer)
+		connect: ( id, instatiate = true ) ->
+			peer = new Peer(@, id, instatiate)
+			@addPeer(peer)
 			return peer
 
 		# Disconects a peer.
@@ -79,45 +67,15 @@ define [
 		disconnect: ( id ) ->
 			@getPeer(id)?.disconnect()
 
-		# Attempts to emit to a peer by id. Unreliable.
-		#
-		# @param to [String] the id of the peer to pass the message to
-		# @param event [String] the event to pass to the peer
-		# @param args... [Any] any other arguments to pass along 
-		#
-		emitTo: ( to, event, args... ) ->
-			message = new Message(to, @id, event, args)
-			@relay(message)
-		
-		# Relays a mesage to other nodes. If the intended receiver is not a direct 
-		# neighbour, we route the message through other nodes in an attempt to reach 
-		# the destination.
-		#
-		# @param message [Message] the message to relay.
-		#
-		relay: ( message ) ->
-			if peer = @getChild(message.to) or peer = @getSibling(message.to)
-				peer.send(message)
-			else if parent = @getParent()
-				parent.send(message)
-			else if @isSuperNode
-				sibling.send(message) for sibling in @getSiblings() when sibling.id isnt message.from
-			else
-				@server.send(message)
-		
 		# Adds a peer to the peer list
 		#
 		# @param peer [Peer] the peer to add
 		#
 		addPeer: ( peer ) ->
-			if duplicatePeer = @getPeer(peer.id)
-				@removePeer(duplicatePeer)
+			peer.on('disconnect', ( ) => @removePeer(peer))
+			peer.on('peer.addSibling', ( ) => @addSibling(peer, false))
 
-			peer.on('disconnect', ( ) =>
-				@removePeer(peer)
-			)
-
-			@_peers.push(peer)
+			@_peers.add(peer)
 			@trigger('peer.added', peer)
 
 		# Removes a peer from the peer list
@@ -126,7 +84,8 @@ define [
 		#
 		removePeer: ( peer ) ->
 			peer.die()
-			@_peers = _(@_peers).without(peer)
+
+			@_peers.remove(peer)
 			@trigger('peer.removed', peer)
 
 		# Returns a peer specified by an id
@@ -144,14 +103,38 @@ define [
 		# @return [Array<Peer>] an array containing all connected masters
 		#
 		getPeers: ( role = null, getUnconnected = false ) ->
-			peers = @_peers
-			if getUnconnected
-				peers = @_unconnectedPeers.concat(peers)
+			fn = ( peer ) ->
+				return (not role? or role is peer.role) and 
+					(getUnconnected or peer.isConnected())
 
-			if role?
-				return _(peers).filter( ( peer ) -> peer.role is role )
-			else
-				return peers
+			return @_peers.filter(fn)
+
+		# Is called when a peer requests a connection with this node. Will
+		# accept this request by establishing a connection.
+		#
+		# @param id [String] the id of the peer
+		# @param type [String] the type of the peer
+		#
+		_onPeerConnectionRequest: ( id, type ) =>
+			@connect(id, false)
+
+		# Is called when a remote peer wants to set a remote description.
+		#
+		# @param id [String] the id string of the peer
+		# @param data [Object] a plain object representation of an RTCSessionDescription
+		#
+		_onPeerSetRemoteDescription: ( id, data ) =>
+			description = new RTCSessionDescription(data)
+			@getPeer(id, null, true)?.setRemoteDescription(description)
+
+		# Is called when a peer wants to add an ICE candidate
+		#
+		# @param id [String] the id string of the peer
+		# @param data [Object] a plain object representation of an RTCIceCandidate
+		#
+		_onPeerAddIceCandidate: ( id, data ) =>
+			candidate = new RTCIceCandidate(data)
+			@getPeer(id, null, true)?.addIceCandidate(candidate)
 
 		# Sets a peer as the parent node of this node.
 		#
@@ -159,13 +142,13 @@ define [
 		# @param callback [function] is called with a parameter if a node is accepted or not
 		#
 		setParent: ( peer, callback ) ->
-			peer.query("peer.requestParent", ( accepted ) =>
+			peer.query("peer.requestParent", @id, ( accepted ) =>
 				if accepted
 					@_parent?.role = Peer.Role.None
 					peer.role = Peer.Role.Parent
 					@_parent = peer
 				callback(accepted)
-			, @id)
+			)
 
 		# Returns the parent peer of this node.
 		#
@@ -218,7 +201,6 @@ define [
 			peer.role = Peer.Role.Sibling
 
 			if instantiate
-				console.log peer, peer.emit
 				peer.emit("peer.addSibling", @id)
 
 		# Removes a peer as sibling node. Does not automatically close 
@@ -253,6 +235,45 @@ define [
 			@server.emit("setSuperNode",@isSuperNode)
 			@trigger("setSuperNode", @isSuperNode)
 
+		# Attempts to emit to a peer by id. Unreliable.
+		#
+		# @param to [String] the id of the peer to pass the message to
+		# @param event [String] the event to pass to the peer
+		# @param args... [Any] any other arguments to pass along 
+		#
+		emitTo: ( to, event, args... ) ->
+			message = new Message(to, @id, event, args)
+			@relay(message)
+
+		# Attempts to query a peer by id. Unreliable.
+		#
+		# @param to [String] the id of the peer to query
+		# @param request [String] the request string identifier
+		# @param callback [Function] the function to call when a response has arrived
+		# @param args... [Any] any other arguments to be passed along with the query
+		#
+		queryTo: ( to, request, callback, args... ) ->
+			queryID = _.uniqueId('query')
+			args = [to, 'query', request, queryID].concat(args)
+			@_peers.once(queryID, callback)
+			@emitTo.apply(@, args)			
+		
+		# Relays a mesage to other nodes. If the intended receiver is not a direct 
+		# neighbour, we route the message through other nodes in an attempt to reach 
+		# the destination.
+		#
+		# @param message [Message] the message to relay.
+		#
+		relay: ( message ) ->
+			if peer = @getChild(message.to) or peer = @getSibling(message.to)
+				peer.send(message)
+			else if parent = @getParent()
+				parent.send(message)
+			else if @isSuperNode
+				sibling.send(message) for sibling in @getSiblings() when sibling.id isnt message.from
+			else
+				@server.send(message)
+
 		# Responds to a request
 		#
 		# @param request [String] the string identifier of the request
@@ -270,10 +291,9 @@ define [
 					return @isSuperNode
 				when 'peers'
 					return _(@getPeers()).map( ( peer ) -> peer.id )
-				# accept at most 4 children ndoes
 				when 'peer.requestParent'
 					if @getChildren().length < 4
-						child  = @getPeer(args[0])
+						child = @getPeer(args[0])
 						if child?
 							@addChild(child)
 							return true
@@ -290,33 +310,6 @@ define [
 
 			endTime = performance.now()
 			@benchmark.cpu = Math.round(endTime - startTime)
-
-		# Is called when a peer requests a connection with this node. Will
-		# accept this request by establishing a connection.
-		#
-		# @param id [String] the id of the peer
-		# @param type [String] the type of the peer
-		#
-		_onPeerConnectionRequest: ( id, type ) =>
-			@connect(id, false)
-
-		# Is called when a remote peer wants to set a remote description.
-		#
-		# @param id [String] the id string of the peer
-		# @param data [Object] a plain object representation of an RTCSessionDescription
-		#
-		_onPeerSetRemoteDescription: ( id, data ) =>
-			description = new RTCSessionDescription(data)
-			@getPeer(id, null, true)?.setRemoteDescription(description)
-
-		# Is called when a peer wants to add an ICE candidate
-		#
-		# @param id [String] the id string of the peer
-		# @param data [Object] a plain object representation of an RTCIceCandidate
-		#
-		_onPeerAddIceCandidate: ( id, data ) =>
-			candidate = new RTCIceCandidate(data)
-			@getPeer(id, null, true)?.addIceCandidate(candidate)
 
 		# Is called when a node enters a network
 		#

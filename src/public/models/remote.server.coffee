@@ -41,7 +41,7 @@ define [
 		#
 		# @param message [Message] the message to send
 		#
-		send: ( message ) ->
+		_send: ( message ) ->
 			@_connection.emit('message', message.serialize()) 
 
 		# Is called when a connection is made. We emit our type to the server.

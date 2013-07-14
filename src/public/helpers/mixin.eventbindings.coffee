@@ -29,8 +29,6 @@ define [
 
 				@_events[name].push(event)
 
-				@trigger('event.bind', name)
-
 				return @
 
 			# Unbinds an event.
@@ -48,8 +46,6 @@ define [
 						if ( not callback? or callback is event.callback ) and 
 								( not context? or context is event.context )
 							@_events[name] = _(@_events[name]).without event
-
-					@trigger('event.unbind', name) if @_events[name].length is 0
 
 				return @
 
@@ -72,9 +68,13 @@ define [
 			# @param args [Any*] any arguments to pass to the callback
 			#
 			trigger: ( name, args... ) ->
-				#console.log @constructor.name, arguments
 				@_events = {} unless @_events?
 				for event in @_events[name] ? []
 					event.callback.apply(event.context ? @, args)
+
+				# Trigger an event for catch-all listeners.
+				unless name is '*'
+					args = ['*', name].concat(args)
+					@trigger.apply(@, args)
 
 				return @

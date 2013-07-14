@@ -39,7 +39,7 @@ define [
 		#
 		# @param _address [String] the address of the server to connect to
 		#
-		initialize: ( @id, connect = true ) ->
+		initialize: ( @id, instatiate = true ) ->
 			@_connection = new RTCPeerConnection(@_serverConfiguration, @_connectionConfiguration)
 
 			@_connection.onicecandidate = @_onIceCandidate
@@ -51,7 +51,7 @@ define [
 			@on('channel.opened', @_onChannelOpened)
 			@on('channel.closed', @_onChannelClosed)
 
-			if connect
+			if instatiate
 				@connect()
 
 		# Attempts to connect to the remote peer.
@@ -83,7 +83,7 @@ define [
 		#
 		# @param message [Message] the message to send
 		#
-		send: ( message ) ->
+		_send: ( message ) ->
 			unless @_channel?.readyState is 'open'
 				return
 			
