@@ -9,9 +9,6 @@ requirejs.config
 		'jquery':
 			exports: '$'
 
-		'murmurhash3':
-			exports: 'MurmurHash3'
-
 		'bootstrap': [ 'jquery' ]
 		'jquery.plugins': [ 'jquery' ]
 
@@ -27,7 +24,6 @@ requirejs.config
 		'bootstrap': 'vendor/scripts/bootstrap'
 		'adapter' : 'vendor/scripts/adapter'
 		'socket.io': 'socket.io/socket.io'
-		'murmurhash3': 'vendor/scripts/murmurhash3'
 		
 require [
 	'app._'

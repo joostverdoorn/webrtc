@@ -1,6 +1,4 @@
-define [
-	'murmurhash3'
-	], ( MurmurHash3 ) ->
+define [], ( ) ->
 
 	class Message
 
@@ -31,12 +29,21 @@ define [
 			return JSON.stringify(object)
 
 		# Generates a unique hash for this message to check for duplicates.
+		# We use the djb2 hashing method described here: 
+		# http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
+		# as it provides excellent speed vs distribution.
 		#
 		# @return [String] the hash of this message
 		#
 		hash: ( ) ->
 			string = @serialize()
-			return MurmurHash3.hashString
+			hash = 5381;
+
+			for i in [0...string.length] 
+				char = string.charCodeAt(i)
+				hash = ((hash << 5) + hash) + char
+		
+			return hash
 
 		# Generates a message from a JSON string and returns this
 		#
