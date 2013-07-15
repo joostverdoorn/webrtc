@@ -5,6 +5,7 @@ define [
 	'public/models/remote.server'
 	'public/models/remote.peer'
 	'public/models/message'
+	'public/models/token'
 
 	'public/models/collection'
 	
@@ -12,7 +13,7 @@ define [
 
 	'public/vendor/scripts/crypto'
 
-	], ( Mixable, EventBindings, Server, Peer, Message, Collection, _ )->
+	], ( Mixable, EventBindings, Server, Peer, Message, Collection, _ ) ->
 
 	class Node extends Mixable
 
@@ -35,6 +36,7 @@ define [
 
 			# Unstructured entities
 			@_peers = new Collection()
+			@_tokens = new Collection()
 
 			# Structured entities
 			@_parent = null
@@ -48,6 +50,11 @@ define [
 
 			@coordinates = [Math.random(), Math.random()]
 			@coordinateDelta = 1
+
+			@_peers.on('peer.setSuperNode', @_onPeerSetSuperNode)
+			@_peers.on('token.add', @_tokenRecieved)
+			@_peers.on('token.hop', @_onTokenHop)
+			@_peers.on('token.info', @_onTokenInfo)
 
 			setInterval(@update, 2500)
 
@@ -237,6 +244,20 @@ define [
 			@isSuperNode = superNode
 			@server.emit("setSuperNode",@isSuperNode)
 			@trigger("setSuperNode", @isSuperNode)
+			@broadcast('peer.setSuperNode', @id, @isSuperNode)
+
+
+		_onPeerSetSuperNode: (_peer, peerId, isSuperNode) =>
+			if @isSuperNode
+				peer = @getPeer(peerId)
+				if peer?
+					@addSibling(peer)
+				else
+					peer = @connect(peerId)
+					peer.once('connect', =>
+						@addSibling(peer)
+					)
+
 
 		# Attempts to emit to a peer by id. Unreliable.
 		#
@@ -327,12 +348,77 @@ define [
 			endTime = performance.now()
 			@benchmark.cpu = Math.round(endTime - startTime)
 
+		# Look up if node is having trouble 
+		#
+		# @return [Boolean] Return true if node has troubles
+		#
+		hasDifficulties: () =>
+			if @getChildren().length > 3
+				return true
+			return false
+
+		# Adds a token to the collection of foreign tokens
+		#
+		addToken: (token) ->
+			duplicateToken = _(@_tokens).find( (t) -> token.id is t.id)
+			@_tokens.remove(duplicateToken)
+			@_tokens.add(token)
+
+		# Remove token from a collection of tokens
+		#
+		removeToken: (token) ->
+			@_tokens.remove(token)
+
+		# Function is called when a node recieves a token
+		#
+		fromTokenToSuperNode: () =>
+			@broadcast('token.hop', @token.serialize(), @coordinates)
+			@_tokenRestTimeout = setTimeout(( ) =>
+				@setSuperNode(true)
+			, 3000)
+			
+		# Is called when a token hops. Sends a token information to the initiator
+		#
+		_onTokenHop: (peer, tokenString, coordinates) =>
+			token = Token.deserialize(tokenString)
+			@addToken(token)
+			if @token?
+				@emitTo(token.nodeId, 'token.info', @token.serialize(), @coordinates )
+
+		# Is called when a message returns from other nodes
+		#
+		_onTokenInfo: (peer, tokenString, coordinates) =>
+			token = Token.deserialize(tokenString)
+			@addToken(token)
+
+		# Generates a new token and gives it to a random child 
+		#
+		generateToken: () =>
+			if @hasDifficulties()
+				token = new Token(null, @id)
+				children = @getChildren()
+				console.log children
+				randomChild = children[_.random(0,children.length-1)]
+				randomChild.emit("token.add",token.serialize())
+			
+
+		# Is called when a node recieves a token from another Node
+		#
+		_tokenRecieved: ( peer, tokenString ) =>
+			token = Token.deserialize(tokenString)
+			token.nodeId = @id
+			@token = token
+			@fromTokenToSuperNode()
+			
+
+
 		# Is called when a node enters a network
 		#
 		_onServerConnect: () =>
 			@server.query("nodes", (nodes) =>
 				if nodes.length is 1 and _(nodes).first().id is @id
-					@setSuperNode(true)
+					@token = new Token(@id)
+					@fromTokenToSuperNode()
 				else 					
 					superNodes = _(nodes).filter( (node) -> node.isSuperNode)
 					superNodes = _(superNodes).sortBy( (superNode) -> superNode.benchmark)
@@ -343,7 +429,7 @@ define [
 					@on("hasParent", (hasParent) =>
 						for superNode in _superNodes
 							unless hasParent
-								@setSuperNode(true)			
+								@setSuperNode(true)
 								peer = @getPeer(superNode.id)
 								@addSibling(peer)
 					)
