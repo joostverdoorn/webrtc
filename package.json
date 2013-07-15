@@ -10,7 +10,7 @@
 		"socket.io": "*",
 		"fs-watch-tree": "*",
 		"mkdirp": "*",
-		"jasmine-node": "*",
+		"jasmine-node": "*"
 	}
 
 }
