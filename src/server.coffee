@@ -159,6 +159,8 @@ requirejs [
 		#
 		query: ( request, args... ) ->
 			switch request
+				when 'ping'
+					return 'pong'
 				when 'nodes' 
 					nodes = (node.serialize() for node in @getNodes())		
 					return nodes

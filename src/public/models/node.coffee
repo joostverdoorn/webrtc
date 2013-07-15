@@ -26,7 +26,7 @@ define [
 			browserName:  'browserName'
 			browserVersion: 'browserVersion'
 		benchmark:
-			cpu: null		
+			cpu: null
 
 		# Constructs a new app.
 		#
@@ -45,6 +45,11 @@ define [
 			@server.on('peer.setRemoteDescription', @_onPeerSetRemoteDescription)
 			@server.on('peer.addIceCandidate', @_onPeerAddIceCandidate)
 			@server.on('connect', @_onServerConnect)
+
+			@coordinates = [Math.random(), Math.random()]
+			@coordinateDelta = 1
+
+			setInterval(@update, 2500)
 
 			@runBenchmark()
 
@@ -292,6 +297,8 @@ define [
 		#
 		query: ( request, args... ) ->
 			switch request
+				when 'ping'
+					return @coordinates
 				when 'system' 
 					return @system
 				when 'benchmark'
@@ -361,3 +368,25 @@ define [
 			else
 				@trigger("hasParent", false)
 
+		update: ( ) =>
+			for peer in @getPeers()
+				dim = @coordinates.length
+
+				direction = [] 		# Vector to peer
+				displacement = [] 	# Displacement vector
+				distance = 0 		# Distance between node and peer
+
+				for i in [0...dim]
+					difference = peer.coordinates[i] - @coordinates[i]
+					direction[i] = difference
+					distance += Math.pow(difference, 2)
+
+				distance = Math.sqrt(distance)
+				error = distance - peer.latency
+
+				for i in [0...dim]
+					direction[i] = direction[i] / distance 						# Make direction into unit vector
+					displacement[i] =  direction[i] * error * @coordinateDelta 	# Calculate displacement
+					@coordinates[i] = @coordinates[i] + displacement[i]			# Calculate new coordinates
+
+				@coordinateDelta = Math.max(0.05, @coordinateDelta - 0.025)

@@ -27,15 +27,12 @@ define [
 			@on('emitTo', @_onEmitTo)			
 			@on('log', ( args... ) => console.log(args))			
 
-			@_pingInterval = setInterval(@ping, 2500) 
-
 		# Disconnects the remote and removes all bindings.
 		#
 		die: ( ) ->
 			if @isConnected()
 				@disconnect()
 
-			clearInterval(@_pingInterval)
 			@off()
 
 		# Is called when a data channel message is received. Discards any 
@@ -129,19 +126,10 @@ define [
 		#
 		ping: ( callback ) =>
 			time = Date.now()
-			@once('pong', ( ) =>
-				@latency = Date.now() - time
-				callback?(@latency)
-			)
-			@emit('ping')
 
-		# Is called when a ping is received. We just emit 'pong' back to the remote.
-		#
-		_onPing: ( ) =>
-			@emit('pong')
+			fn = ( args... ) =>
+				latency = Date.now() - time
+				args = [latency].concat(args)
+				callback.apply(@, args)
 
-
-
-
-
-
+			@query('ping', fn)

@@ -51,6 +51,9 @@ define [
 			@on('channel.opened', @_onChannelOpened)
 			@on('channel.closed', @_onChannelClosed)
 
+			@coordinates = [Math.random(), Math.random()]
+			@latency = Math.random() * 5
+
 			if instatiate
 				@connect()
 
@@ -189,11 +192,18 @@ define [
 		# Is called when a connection has been established.
 		#
 		_onConnect: ( ) ->
+			@_pingInterval = setInterval( ( ) =>
+				@ping( ( latency, coordinates ) => 
+					@latency = latency
+					@coordinates = coordinates
+				)
+			, 2500)
 			console.log "connected to node #{@id}"
 
 		# Is called when a connection has been broken.
 		#
 		_onDisconnect: ( ) ->
+			clearInterval(@_pingInterval)
 			console.log "disconnected from node #{@id}"
 
 		# Is called when the channel has opened.
