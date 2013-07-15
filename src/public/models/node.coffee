@@ -256,7 +256,16 @@ define [
 			queryID = _.uniqueId('query')
 			args = [to, 'query', request, queryID].concat(args)
 			@_peers.once(queryID, callback)
-			@emitTo.apply(@, args)			
+			@emitTo.apply(@, args)
+		
+		# Broadcasts a message to all peers in network.
+		#
+		# @param event [String] the event to broadcast
+		# @param args... [Any] any other arguments to pass along
+		#
+		broadcast: ( event, args... ) ->
+			message = new Message('*', @id, event, args)
+			@relay(message)
 		
 		# Relays a mesage to other nodes. If the intended receiver is not a direct 
 		# neighbour, we route the message through other nodes in an attempt to reach 
@@ -265,7 +274,9 @@ define [
 		# @param message [Message] the message to relay.
 		#
 		relay: ( message ) ->
-			if peer = @getChild(message.to) or peer = @getSibling(message.to)
+			if message.to is '*'
+				peer.send(message) for peer in @getSiblings().concat(@getChildren()).concat(@getParent()) when peer?
+			else if peer = @getChild(message.to) or peer = @getSibling(message.to)
 				peer.send(message)
 			else if parent = @getParent()
 				parent.send(message)

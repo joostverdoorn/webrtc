@@ -57,8 +57,12 @@ define [
 			if message.to is @_controller.id
 				args = [message.event].concat(message.args).concat(message)
 				@trigger.apply(@, args)
-			else
-				@_controller.relay(message)			
+			else if message.to is '*'
+				args = [message.event].concat(message.args).concat(message)
+				@trigger.apply(@, args)
+				@_controller.relay(message)
+			else 
+				@_controller.relay(message)
 
 		# Compiles and sends a message to the remote.
 		#
