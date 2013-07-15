@@ -84,7 +84,9 @@ require [
 					console.log 'ERROR!'
 					console.log arguments
 				).done ( data ) =>
-					
+					if data.error is 'ERR_TIMEOUT'
+						console.log 'TIMEOUT'
+
 					# Check if all previous nodes and edges still exist
 					for node, a of @_addedNodes
 						if not data[node]
@@ -93,26 +95,25 @@ require [
 						else
 							# Node still exists, but do all old edges still exist?
 							for edge, b of @_addedEdges[node]
-								if b and $.inArray(edge, data[node]) == -1 and $.inArray(node, data[edge]) == -1		# The edge does not exist anymore, so remove it
+								if b and $.inArray(edge, data[node].peers) == -1 and $.inArray(node, data[edge].peers) == -1		# The edge does not exist anymore, so remove it
 									@removeEdge node, edge
 
 					# Add newly added network nodes to the graph
-					for node, a of data
+					for node, nodeInfo of data
 						#if not @_addedNodes[node]		# Node does not yet exist, so create it
-							@addNode node
+							@addNode node, nodeInfo
 
 					# All nodes exist so now it's time to add all non-existent edges
 					for node, a of data
-						for edge, b of data[node]
+						for edge, b of data[node].peers
 							@addEdge node, b
 
 					@_sigmaInstance.iterNodes((n) =>
-							if n.degree > 1
-								n.color = '#F00'
-							else if n.degree is 1
-								n.color = '#0F0'
-							else
-								n.color = '#FF0'
+							switch data[n.id].isSuperNode
+								when true
+									n.color = '#F00'
+								when false
+									n.color = '#0F0'
 						)
 					setTimeout (
 						() => 
@@ -169,7 +170,7 @@ require [
 
 		# Adds a node to the sigma instance
 		#
-		addNode: ( title ) ->
+		addNode: ( title, nodeInfo ) ->
 			if @_addedNodes[title]
 				return
 
@@ -178,10 +179,16 @@ require [
 				@_addedEdges[title] = {}
 
 			console.log 'adding node'
+			switch nodeInfo.isSuperNode
+				when true
+					color = '#F00'
+				when false
+					color = '#0F0'
+
 			@_sigmaInstance.addNode(title, {
 					x: Math.random()
 					y: Math.random()
-					color: '#FF0'#@randomColor()
+					color: color
 					size: 1
 				})#.draw()
 

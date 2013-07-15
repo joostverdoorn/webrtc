@@ -48,14 +48,36 @@ requirejs [
 				res.writeHead(200, 'Content-Type': 'application/json')
 				i = 0
 				result = {}
+				console.log nodes.length
+				if nodes.length is 0
+					res.write '[]'
+					res.end()
+
+				requestDone = false
+
+				setTimeout(=>
+						unless requestDone
+							res.write JSON.stringify({
+									error: 'ERR_TIMEOUT'
+								})
+							requestDone = true
+					, 5000);
+
 				for node in nodes
 					( (node) ->
 						node.query('peers', ( peers ) ->
-							result[node.id] = peers
+							result[node.id] = {
+								peers: peers
+								isSuperNode: node.isSuperNode
+								benchmark: node.benchmark
+								system: node.system
+								latency: node.latency
+							}
 
 							i++
 
-							if i is nodes.length
+							if i is nodes.length and not requestDone
+								requestDone = true
 								res.write(JSON.stringify(result))
 								res.end()
 						)
