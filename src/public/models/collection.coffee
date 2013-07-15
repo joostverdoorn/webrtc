@@ -24,7 +24,8 @@ define [
 			object.on?('*', fn, @)
 
 		remove: ( object ) ->
-			if index = @indexOf(object) > -1
+			index = @indexOf(object)
+			if index > -1
 				@splice(index, 1)
 				object.off?('*', null, @)
 
