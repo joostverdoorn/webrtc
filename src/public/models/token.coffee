@@ -1,13 +1,18 @@
-define [], ( ) ->
+define [
+	'public/models/vector'
 
-	class Token
+	'underscore'
+	], ( Vector, _ ) ->
+
+	class Token extends Array
 
 		id = null
 		timestamp = null
 		nodeId = null
 		releasedBy = null
-		coordinates = null # only set in a local set of tokens
-		point = null
+		coordinates = null # only set in a local set of tokens. Only used locally
+		position = null
+		candidates = null # Only used locally to compare the differences
 
 
 		# Constructs a new token.
@@ -17,6 +22,7 @@ define [], ( ) ->
 			@timestamp = Date.now()
 			@nodeId = nodeId
 			@releasedBy = releasedBy
+			@position = new Vector()
 
 		# Serializes this token to a JSON string
 		#
@@ -28,7 +34,7 @@ define [], ( ) ->
 				timestamp: @timestamp
 				nodeId: @nodeId
 				releasedBy: @releasedBy
-				point: @point
+				position: @position.serialize()
 			return JSON.stringify(object)
 
 		# Generates a token from a JSON string and returns this
@@ -41,10 +47,11 @@ define [], ( ) ->
 			token = new Token( object.nodeId, object.releasedBy)
 			token.id = object.id
 			token.timestamp = object.timestamp
-			token.point = object.point
+			if object.position?
+				token.position = Vector.deserialize(object.position)
 			return token
 
 
 
 
-		
+		 

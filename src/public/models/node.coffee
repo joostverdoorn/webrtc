@@ -30,7 +30,8 @@ define [
 		benchmark:
 			cpu: null
 
-		broadcastTimeout = 4000; # Wait for return messages after a node broadcasts that it has a token
+		broadcastTimeout = 4000 # Wait for return messages after a node broadcasts that it has a token
+		tokenThreshhold = 0.5
 
 		# Constructs a new app.
 		#
@@ -43,6 +44,7 @@ define [
 
 			# Structured entities
 			@_parent = null
+			@token = null
 
 			@server = new Server(@, @serverAddress)
 
@@ -55,10 +57,11 @@ define [
 			@coordinateDelta = 1
 
 			@_peers.on('peer.setSuperNode', @_onPeerSetSuperNode)
-			@_peers.on('token.add', @_tokenRecieved)
-			@_peers.on('token.hop', @_onTokenHop)
+			@_peers.on('token.add', @_tokenReceived)
+			@_peers.on('token.hop', @_onTokenInfo)
 			@_peers.on('token.info', @_onTokenInfo)
-			@_peers.on('peer.askTokenCandidate', @_onAskTokenCandidate)
+			@_peers.on('peer.requestTokenCandidate', @_onRequestTokenCandidate)
+			@_peers.on('peer.receivedTokenCandidate', @_onReceivedTokenCandidate)
 
 			setInterval(@update, 2500)
 
@@ -156,7 +159,7 @@ define [
 		# @param callback [function] is called with a parameter if a node is accepted or not
 		#
 		setParent: ( peer, callback ) ->
-			peer.query("peer.requestParent", @id, ( accepted ) =>
+			peer.query('peer.requestParent', @id, ( accepted ) =>
 				if accepted
 					@_parent?.role = Peer.Role.None
 					peer.role = Peer.Role.Parent
@@ -215,7 +218,7 @@ define [
 			peer.role = Peer.Role.Sibling
 
 			if instantiate
-				peer.emit("peer.addSibling", @id)
+				peer.emit('peer.addSibling', @id)
 
 		# Removes a peer as sibling node. Does not automatically close 
 		# the connection but will make it a normal peer.
@@ -244,13 +247,18 @@ define [
 		#
 		# @param superNode [boolean] SuperNode state
 		#
-		setSuperNode: ( superNode ) =>
+		setSuperNode: ( superNode = true ) =>
 			@isSuperNode = superNode
-			@server.emit("setSuperNode",@isSuperNode)
-			@trigger("setSuperNode", @isSuperNode)
+			@server.emit('setSuperNode', @isSuperNode)
+			@trigger('setSuperNode', @isSuperNode)
 			@broadcast('peer.setSuperNode', @id, @isSuperNode)
 
-
+		# Is called when a peer becomes a supernode
+		#
+		# @param _peer [Peer] The last routing peer
+		# @param peerId [String] Id of the node that just became a supernode
+		# @param superNode [boolean] SuperNode state
+		#
 		_onPeerSetSuperNode: (_peer, peerId, isSuperNode) =>
 			if @isSuperNode
 				peer = @getPeer(peerId)
@@ -261,7 +269,6 @@ define [
 					peer.once('connect', =>
 						@addSibling(peer)
 					)
-
 
 		# Attempts to emit to a peer by id. Unreliable.
 		#
@@ -340,118 +347,28 @@ define [
 							return true
 					return false
 
-		# Runs a benchmark to get the available resources on this node.
-		#
-		runBenchmark: () =>
-			startTime = performance.now()			
-			sha = "4C48nBiE586JGzhptoOV"
+		###
 
-			for i in [0...128]
-				sha = CryptoJS.SHA3(sha).toString()
 
-			endTime = performance.now()
-			@benchmark.cpu = Math.round(endTime - startTime)
+		*** General functions end here ***
 
-		# Look up if node is having trouble 
-		#
-		# @return [Boolean] Return true if node has troubles
-		#
-		hasDifficulties: () =>
-			if @getChildren().length > 3
-				return true
-			return false
 
-		# Adds a token to the collection of foreign tokens
-		#
-		addToken: (token) ->
-			duplicateToken = _(@_tokens).find( (t) -> token.id is t.id)
-			@_tokens.remove(duplicateToken)
-			@_tokens.add(token)
-
-		# Remove token from a collection of tokens
-		#
-		removeToken: (token) ->
-			@_tokens.remove(token)
-
-		# Function is called when a node recieves a token
-		#
-		fromTokenToSuperNode: () =>
-			@broadcast('token.hop', @token.serialize(), @coordinates.serialize())
-			@_tokenRestTimeout = setTimeout(( ) =>
-				@calculateTokenForce()
-				@setSuperNode(true)
-			, broadcastTimeout)
-			
-		# Is called when a token hops. Sends a token information to the initiator
-		#
-		_onTokenHop: (peer, tokenString, vectorString) =>
-			token = Token.deserialize(tokenString)
-			tokenCoordinates = Vector.deserialize(vectorString)
-			token.coordinates = tokenCoordinates
-			@addToken(token)
-			if @token?
-				@emitTo(token.nodeId, 'token.info', @token.serialize(), @coordinates.serialize() )
-
-		# Is called when a message returns from other nodes
-		#
-		_onTokenInfo: (peer, tokenString, vectorString) =>
-			token = Token.deserialize(tokenString)
-			tokenCoordinates = Vector.deserialize(vectorString)
-			token.coordinates = tokenCoordinates
-			@addToken(token)
-
-		# Calculates the force of own token
-		#
-		calculateTokenForce: () =>
-			tokenForce = Vector.makeNulVector(@coordinates.length)
-			for token in @_tokens
-				direction = @coordinates.substract(token.coordinates)	# Difference between self and other Token
-				direction = direction.calculateForce()					# Make Force smaller for bigger distances
-				tokenForce = tokenForce.add(direction)					# Sum all token differences
-			@token.point = @coordinates.substract(tokenForce)			# Calculate the new Token Point and save it in Token object
-
-			
-			# Ask other supernodes for their best node in neighboorhood of the tokenPoint
-			#@broadcast('peer.askTokenCandidate', @token.serialize())
-			
-		# _onAskTokenCandidate: (peer, tokenString)
-		# 	if(isSuperNode)
-
-		# Generates a new token and gives it to a random child 
-		#
-		generateToken: () =>
-			if @hasDifficulties()
-				token = new Token(null, @id)
-				children = @getChildren()
-				randomChild = children[_.random(0,children.length-1)]
-				randomChild.emit("token.add",token.serialize())
-				return randomChild
-			
-
-		# Is called when a node recieves a token from another Node
-		#
-		_tokenRecieved: ( peer, tokenString ) =>
-			token = Token.deserialize(tokenString)
-			token.nodeId = @id
-			@token = token
-			@fromTokenToSuperNode()
-			
-
+		###
 
 		# Is called when a node enters a network
 		#
 		_onServerConnect: () =>
 			@server.query("nodes", (nodes) =>
 				if nodes.length is 1 and _(nodes).first().id is @id
-					@token = new Token(@id)
-					@fromTokenToSuperNode()
+					@token = new Token(@id, @id)
+					@setSuperNode(true)
 				else 					
 					superNodes = _(nodes).filter( (node) -> node.isSuperNode)
 					superNodes = _(superNodes).sortBy( (superNode) -> superNode.benchmark)
 					_superNodes = superNodes.slice(0)
 					@_chooseParent(superNodes)
 
-					# Become a Supernode and become a Sibling
+					# Become a Supernode and become a Sibling ----- obsolete
 					@on("hasParent", (hasParent) =>
 						for superNode in _superNodes
 							unless hasParent
@@ -480,9 +397,169 @@ define [
 			else
 				@trigger("hasParent", false)
 
+		# Runs a benchmark to get the available resources on this node.
+		#
+		runBenchmark: () =>
+			startTime = performance.now()			
+			sha = "4C48nBiE586JGzhptoOV"
+
+			for i in [0...128]
+				sha = CryptoJS.SHA3(sha).toString()
+
+			endTime = performance.now()
+			@benchmark.cpu = Math.round(endTime - startTime)
+
+		# Look up if node is having trouble 
+		#
+		# @return [Boolean] Return true if node has troubles 
+		#
+		hasDifficulties: () =>
+			if @isSuperNode
+				if @getChildren().length > 3
+					return true
+			return false
+
+		# Generates a new token and gives it to a random child 
+		#
+		# @return [String] Returns id of the selected Child which will receive a token
+		#
+		generateToken: () =>
+			if @hasDifficulties()
+				token = new Token(null, @id)
+				children = @getChildren()
+				randomChild = children[_.random(0,children.length-1)]
+				randomChild.emit("token.add",token.serialize())
+				return randomChild.id
+			
+		# Is called when a node receives a token from another Node
+		#	
+		# @param peer [Peer] The last routing peer
+		# @param tokenString [String] A serialized token
+		#
+		_tokenReceived: ( peer, tokenString ) =>
+			@token = Token.deserialize(tokenString)
+			@token.nodeId = @id
+			@fromTokenToSuperNode()
+
+		# Function is called when a node recieves a token
+		#
+		fromTokenToSuperNode: () =>
+			@broadcast('token.hop', @token.serialize(), @coordinates.serialize(), true)
+			@_tokenRestTimeout = setTimeout(( ) =>
+				@calculateTokenMagnitude()
+			, @broadcastTimeout)
+
+		# Is called when a token hops. Sends a token information to the initiator
+		#
+		# @param peer [Peer] The last routing peer
+		# @param tokenString [String] A serialised token
+		# @param vectorString [String] Serialised coordinates of the holder of the token
+		#
+		_onTokenInfo: (peer, tokenString, vectorString, instantiate = true) =>
+			token = Token.deserialize(tokenString)
+			token.coordinates =  Vector.deserialize(vectorString)
+			@addToken(token)
+			if @token? and instantiate
+				@emitTo(token.nodeId, 'token.info', @token.serialize(), @coordinates.serialize(), false)
+
+		# Adds a token to the collection of foreign tokens
+		#
+		# @param [Token] A token to be added. This token can not be own token
+		#
+		addToken: (token) ->
+			duplicateToken = _(@_tokens).find( (t) -> token.id is t.id)
+			@_tokens.remove(duplicateToken)
+			unless (@token? and @token.id is token.id)
+				@_tokens.add(token)
+
+		# Remove token from a collection of tokens
+		#
+		# @param [Token] A token to be removed.
+		#
+		removeToken: (token) ->
+			@_tokens.remove(token)
+
+		# Calculates the magnitude of own token and then broadcasts it to the rest
+		#
+		# #return [Float] Return Magnitude of the token
+		#
+		calculateTokenMagnitude: () =>
+			tokenForce = Vector.makeZeroVector(@coordinates.length)
+			for token in @_tokens
+				direction = @coordinates.substract(token.coordinates)	# Difference between self and other Token
+				direction = direction.calculateForce()					# Make Force smaller for bigger distances
+				tokenForce = tokenForce.add(direction)					# Sum all token differences
+			@token.position = @coordinates.substract(tokenForce)		# Calculate the new Token Position and save it in Token object
+			tokenMagnitude = @coordinates.getDistance(@token.position)
+			console.log tokenMagnitude
+
+			if (tokenMagnitude > tokenThreshhold)
+				# Ask other supernodes for their best child in neighboorhood of the tokenPosition
+				@broadcast('peer.requestTokenCandidate', @token.serialize())
+				setTimeout( () =>
+					@pickNewTokenOwner()
+				,@broadcastTimeout)
+			else
+				@setSuperNode(true)
+
+			return tokenMagnitude
+		
+		# Is called when a token magnitude is calculated. A supernode selects his 
+		# best child as candidate for the token
+		#
+		# @param peer [Peer] The last routing peer
+		# @param tokenString [String] A serialised token
+		#
+		_onRequestTokenCandidate: (peer, tokenString) =>
+			if(@isSuperNode)
+				token = Token.deserialize(tokenString)
+				bestCandidateDistance = null
+				for child in @getChildren()
+					distance = token.position.getDistance(child.coordinates)
+					if !bestCandidateDistance? or distance < bestCandidateDistance
+						bestCandidateDistance = distance
+						bestCandidate = child
+				if child?
+					@emitTo(token.nodeId, "peer.receivedTokenCandidate", distance, child.id)
+				
+		# Is called when a node holding a token, receives other candidate nodes for the token
+		#
+		# @param peer [Peer] The last routing peer
+		# @param distance [Float] Distance from the candidate to the token
+		# @param nodeId [String] Node id of the candidate
+		#
+		_onReceivedTokenCandidate: (peer, distance, nodeId) =>
+			unless @token.candidates?
+				@token.candidates = new Array()
+			candidate = new Object()
+			candidate.distance = distance
+			candidate.nodeId = nodeId
+			@token.candidates.push(candidate)
+
+		# Picks a new owner of the token. If the new owner is self, then it becomes a supernode
+		#
+		# @return[Node] Return a new owner of the token
+		#
+		pickNewTokenOwner: () =>
+			bestCandidateDistance = null
+			for candidate in @token.candidates
+				if !bestCandidateDistance? or candidate.distance < bestCandidateDistance
+					bestCandidateDistance = candidate.distance
+					bestCandidate = candidate
+
+			console.log "Best Candidate is " + bestCandidate.nodeId + " with distance " + bestCandidateDistance
+
+			if bestCandidate.nodeId is @id
+				@setSuperNode(true)
+			else
+				console.log @token
+				@emitTo(bestCandidate.nodeId,"token.add", @token.serialize())
+				@token = null
+			return bestCandidate
+
 		update: ( ) =>
 			for peer in @getPeers()	
-				direction = peer.coordinates.substract(@coordinates)			# Vector to peer
+				direction = peer.coordinates.substract(@coordinates)		# Vector to peer
 				distance = peer.coordinates.getDistance(@coordinates)		# Distance between node and peer
 				error = distance - peer.latency								# Difference between distance and Latency
 
