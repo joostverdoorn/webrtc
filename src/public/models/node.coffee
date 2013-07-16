@@ -9,12 +9,10 @@ define [
 	'public/models/collection'
 	
 	'underscore'
-	'jquery'
-	'jquery.plugins'
 
 	'public/vendor/scripts/crypto'
 
-	], ( Mixable, EventBindings, Server, Peer, Message, Collection, _, $ )->
+	], ( Mixable, EventBindings, Server, Peer, Message, Collection, _ )->
 
 	class Node extends Mixable
 
@@ -24,9 +22,9 @@ define [
 		serverAddress: ':8080/'
 
 		system: 
-			osName:  $.os.name
-			browserName:  $.browser.name
-			browserVersion: $.browser.versionNumber
+			osName:  'osName'
+			browserName:  'browserName'
+			browserVersion: 'browserVersion'
 		benchmark:
 			cpu: null		
 

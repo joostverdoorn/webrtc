@@ -28,7 +28,8 @@ requirejs.config
 require [
 	'app._'
 	'models/node'
-	], ( App, Node ) ->
+	'jquery'
+	], ( App, Node, $ ) ->
 
 	# Master app class
 	#
