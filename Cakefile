@@ -63,6 +63,11 @@ task 'watch', ->
 					if event.isMkdir()
 						makeDir(destination)
 
+task 'test', ->
+	ps = exec("node lib/tests/runner")
+	ps.stdout.setEncoding('utf8')
+	ps.stdout.on('data', ( data ) -> console.log(data))
+
 build = ( ) ->
 	buildCoffee()
 	buildOthers()
