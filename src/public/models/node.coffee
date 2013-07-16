@@ -14,7 +14,7 @@ define [
 
 	'public/vendor/scripts/crypto'
 
-	], ( Mixable, EventBindings, Server, Peer, Message, Collection, _ ) ->
+	], ( Mixable, EventBindings, Server, Peer, Message, Token, Collection, Vector, _ ) ->
 
 	class Node extends Mixable
 
@@ -552,7 +552,6 @@ define [
 			if bestCandidate.nodeId is @id
 				@setSuperNode(true)
 			else
-				console.log @token
 				@emitTo(bestCandidate.nodeId,"token.add", @token.serialize())
 				@token = null
 			return bestCandidate
