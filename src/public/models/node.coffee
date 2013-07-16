@@ -8,6 +8,7 @@ define [
 	'public/models/token'
 
 	'public/models/collection'
+	'public/models/vector'
 	
 	'underscore'
 
@@ -29,6 +30,8 @@ define [
 		benchmark:
 			cpu: null
 
+		broadcastTimeout = 4000; # Wait for return messages after a node broadcasts that it has a token
+
 		# Constructs a new app.
 		#
 		constructor: ( ) ->
@@ -48,13 +51,14 @@ define [
 			@server.on('peer.addIceCandidate', @_onPeerAddIceCandidate)
 			@server.on('connect', @_onServerConnect)
 
-			@coordinates = [Math.random(), Math.random()]
+			@coordinates = new Vector(Math.random(), Math.random())
 			@coordinateDelta = 1
 
 			@_peers.on('peer.setSuperNode', @_onPeerSetSuperNode)
 			@_peers.on('token.add', @_tokenRecieved)
 			@_peers.on('token.hop', @_onTokenHop)
 			@_peers.on('token.info', @_onTokenInfo)
+			@_peers.on('peer.askTokenCandidate', @_onAskTokenCandidate)
 
 			setInterval(@update, 2500)
 
@@ -319,7 +323,7 @@ define [
 		query: ( request, args... ) ->
 			switch request
 				when 'ping'
-					return @coordinates
+					return @coordinates.serialize()
 				when 'system' 
 					return @system
 				when 'benchmark'
@@ -372,24 +376,46 @@ define [
 		# Function is called when a node recieves a token
 		#
 		fromTokenToSuperNode: () =>
-			@broadcast('token.hop', @token.serialize(), @coordinates)
+			@broadcast('token.hop', @token.serialize(), @coordinates.serialize())
 			@_tokenRestTimeout = setTimeout(( ) =>
+				@calculateTokenForce()
 				@setSuperNode(true)
-			, 3000)
+			, broadcastTimeout)
 			
 		# Is called when a token hops. Sends a token information to the initiator
 		#
-		_onTokenHop: (peer, tokenString, coordinates) =>
+		_onTokenHop: (peer, tokenString, vectorString) =>
 			token = Token.deserialize(tokenString)
+			tokenCoordinates = Vector.deserialize(vectorString)
+			token.coordinates = tokenCoordinates
 			@addToken(token)
 			if @token?
-				@emitTo(token.nodeId, 'token.info', @token.serialize(), @coordinates )
+				@emitTo(token.nodeId, 'token.info', @token.serialize(), @coordinates.serialize() )
 
 		# Is called when a message returns from other nodes
 		#
-		_onTokenInfo: (peer, tokenString, coordinates) =>
+		_onTokenInfo: (peer, tokenString, vectorString) =>
 			token = Token.deserialize(tokenString)
+			tokenCoordinates = Vector.deserialize(vectorString)
+			token.coordinates = tokenCoordinates
 			@addToken(token)
+
+		# Calculates the force of own token
+		#
+		calculateTokenForce: () =>
+			tokenForce = Vector.makeNulVector(@coordinates.length)
+			for token in @_tokens
+				direction = @coordinates.substract(token.coordinates)	# Difference between self and other Token
+				direction = direction.calculateForce()					# Make Force smaller for bigger distances
+				tokenForce = tokenForce.add(direction)					# Sum all token differences
+			@token.point = @coordinates.substract(tokenForce)			# Calculate the new Token Point and save it in Token object
+
+			
+			# Ask other supernodes for their best node in neighboorhood of the tokenPoint
+			#@broadcast('peer.askTokenCandidate', @token.serialize())
+			
+		# _onAskTokenCandidate: (peer, tokenString)
+		# 	if(isSuperNode)
 
 		# Generates a new token and gives it to a random child 
 		#
@@ -397,9 +423,9 @@ define [
 			if @hasDifficulties()
 				token = new Token(null, @id)
 				children = @getChildren()
-				console.log children
 				randomChild = children[_.random(0,children.length-1)]
 				randomChild.emit("token.add",token.serialize())
+				return randomChild
 			
 
 		# Is called when a node recieves a token from another Node
@@ -455,24 +481,13 @@ define [
 				@trigger("hasParent", false)
 
 		update: ( ) =>
-			for peer in @getPeers()
-				dim = @coordinates.length
+			for peer in @getPeers()	
+				direction = peer.coordinates.substract(@coordinates)			# Vector to peer
+				distance = peer.coordinates.getDistance(@coordinates)		# Distance between node and peer
+				error = distance - peer.latency								# Difference between distance and Latency
 
-				direction = [] 		# Vector to peer
-				displacement = [] 	# Displacement vector
-				distance = 0 		# Distance between node and peer
-
-				for i in [0...dim]
-					difference = peer.coordinates[i] - @coordinates[i]
-					direction[i] = difference
-					distance += Math.pow(difference, 2)
-
-				distance = Math.sqrt(distance)
-				error = distance - peer.latency
-
-				for i in [0...dim]
-					direction[i] = direction[i] / distance 						# Make direction into unit vector
-					displacement[i] =  direction[i] * error * @coordinateDelta 	# Calculate displacement
-					@coordinates[i] = @coordinates[i] + displacement[i]			# Calculate new coordinates
-
+				direction = direction.unit()								# Make direction into unit vector
+				displacement =  direction.scale(error * @coordinateDelta)	# Calculate displacement
+				@coordinates = @coordinates.add( displacement )				# Calculate new coordinates
+								
 				@coordinateDelta = Math.max(0.05, @coordinateDelta - 0.025)

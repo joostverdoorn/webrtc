@@ -1,9 +1,9 @@
 define [
 	'public/models/remote._'
-
+	'public/models/vector'
 	'underscore'
 	'adapter'
-	], ( Remote, _ ) ->
+	], ( Remote, Vector, _ ) ->
 
 	class Remote.Peer extends Remote
 
@@ -51,7 +51,7 @@ define [
 			@on('channel.opened', @_onChannelOpened)
 			@on('channel.closed', @_onChannelClosed)
 
-			@coordinates = [Math.random(), Math.random()]
+			@coordinates = new Vector(Math.random(), Math.random())
 			@latency = Math.random() * 5
 
 			if instatiate
@@ -193,9 +193,9 @@ define [
 		#
 		_onConnect: ( ) ->
 			@_pingInterval = setInterval( ( ) =>
-				@ping( ( latency, coordinates ) => 
+				@ping( ( latency, coordinateString ) => 
 					@latency = latency
-					@coordinates = coordinates
+					@coordinates = Vector.deserialize(coordinateString)
 				)
 			, 2500)
 			console.log "connected to node #{@id}"

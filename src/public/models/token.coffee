@@ -6,6 +6,8 @@ define [], ( ) ->
 		timestamp = null
 		nodeId = null
 		releasedBy = null
+		coordinates = null # only set in a local set of tokens
+		point = null
 
 
 		# Constructs a new token.
@@ -26,6 +28,7 @@ define [], ( ) ->
 				timestamp: @timestamp
 				nodeId: @nodeId
 				releasedBy: @releasedBy
+				point: @point
 			return JSON.stringify(object)
 
 		# Generates a token from a JSON string and returns this
@@ -38,6 +41,7 @@ define [], ( ) ->
 			token = new Token( object.nodeId, object.releasedBy)
 			token.id = object.id
 			token.timestamp = object.timestamp
+			token.point = object.point
 			return token
 
 
