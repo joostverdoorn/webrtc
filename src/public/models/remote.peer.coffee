@@ -67,7 +67,7 @@ define [
 			channel = @_connection.createDataChannel('a', @_channelConfiguration)	
 			@_connection.createOffer(@_onLocalDescription)
 
-			@once('connect', =>	
+			@on('connect', =>	
 				@_addChannel(channel)
 			)
 
@@ -176,6 +176,13 @@ define [
 		_onChannelOpen: ( event ) =>
 			@_channelOpen = true
 
+			@_pingInterval = setInterval( ( ) =>
+				@ping( ( latency, coordinateString ) => 
+					@latency = latency
+					@coordinates = Vector.deserialize(coordinateString)
+				)
+			, 2500)
+
 			@query('benchmark', ( benchmark ) => @benchmark = benchmark)
 			@query('system', ( system ) => @system = system)
 			@query('isSuperNode', ( isSuperNode ) => @isSuperNode = isSuperNode)
@@ -193,12 +200,6 @@ define [
 		# Is called when a connection has been established.
 		#
 		_onConnect: ( ) ->
-			@_pingInterval = setInterval( ( ) =>
-				@ping( ( latency, coordinateString ) => 
-					@latency = latency
-					@coordinates = Vector.deserialize(coordinateString)
-				)
-			, 2500)
 			console.log "connected to node #{@id}"
 
 		# Is called when a connection has been broken.

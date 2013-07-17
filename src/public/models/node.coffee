@@ -250,10 +250,10 @@ define [
 		# @param superNode [boolean] SuperNode state
 		#
 		setSuperNode: ( superNode = true ) =>
-			@isSuperNode = superNode
 			@server.emit('setSuperNode', @isSuperNode)
 			@trigger('setSuperNode', @isSuperNode) # App is listening
 			@broadcast('peer.setSuperNode', @id, @isSuperNode)
+			@isSuperNode = superNode
 
 		# Is called when a peer becomes a supernode
 		#
@@ -262,15 +262,19 @@ define [
 		# @param superNode [boolean] SuperNode state
 		#
 		_onPeerSetSuperNode: (_peer, peerId, isSuperNode) =>
-			if @isSuperNode
-				peer = @getPeer(peerId)
-				if peer?
+			peer = @getPeer(peerId)
+			if peer?
+				peer.isSuperNode = isSuperNode
+
+				if @isSuperNode
 					@addSibling(peer)
-				else
-					peer = @connect(peerId)
-					peer.once('channel.opened', =>
-						@addSibling(peer)
-					)
+			else if @isSuperNode
+				peer = @connect(peerId)
+				peer.once('channel.opened', =>
+					@addSibling(peer)
+				)
+			else if _(@getPeers()).filter( ( peer ) -> peer.isSuperNode).length < 5
+				@connect(peerId)
 
 		# Attempts to emit to a peer by id. Unreliable.
 		#
@@ -392,11 +396,8 @@ define [
 						( ( peer ) =>
 							peer.on('channel.opened', =>
 								peer.ping( ( latency ) => 
-									console.log 'latency', latency
 									pingCount++
-									console.log pingCount, candidates.length
 									if pingCount is candidates.length
-										console.log 'yolo!'
 										peers = _(peers).sort( ( peer ) -> peer.latency )
 										@_pickParent(peers)
 								)
@@ -414,10 +415,13 @@ define [
 		_pickParent: ( candidates ) =>
 			if candidates.length > 0
 				candidate = candidates.pop()
+				console.log("sending parent request to #{candidate.id}")
 				@setParent(candidate, ( accepted) =>
 					if accepted
+						console.log("parent request to #{candidate.id} accepted")
 						@trigger('hasParent', true)
 					else
+						console.log("parent request to #{candidate.id} denied")
 						@_pickParent(candidates)
 				)
 			else
