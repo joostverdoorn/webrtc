@@ -46,6 +46,7 @@ define [
 			if index > -1
 				@splice(index, 1)
 				object.off?('*', null, @)
+				return object
 
 
 

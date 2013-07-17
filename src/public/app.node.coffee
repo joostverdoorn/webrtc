@@ -83,10 +83,6 @@ require [
 		generateNodeRow: ( node ) ->
 
 			self = @node.id is node.id
-			if node.system?
-				systemString = "#{node.system.osName} - #{node.system.browserName}#{node.system.browserVersion}"
-			else
-				systemString = "-"
 
 			if node.benchmark?
 				benchmarkString = "#{node.benchmark['cpu']}"
@@ -103,15 +99,13 @@ require [
 
 			if self				
 				row.append("<td class='ping'>-</td>")
-				row.append("<td>#{systemString}</td>")
 				row.append("<td class='superNode'>false</td>")
 				row.append("<td>-</td>")
 				row.append("<td>-</td>")
 				row.append("<td></td>")
 
 			else if node.latency?
-				row.append("<td>#{node.latency}</td>")
-				row.append("<td>#{systemString}</td>")
+				row.append("<td>#{Math.round(node.latency)}</td>")
 				row.append("<td class='superNode'>#{node.isSuperNode}</td>")
 				row.append("<td>#{node.role}</td>")
 				row.append("<td>Connected</td>")
@@ -125,7 +119,6 @@ require [
 
 			else 
 				row.append("<td>-</td>")
-				row.append("<td>#{systemString}</td>")
 				row.append("<td class='superNode'>#{node.isSuperNode}</td>")
 				row.append("<td>-</td>")
 				row.append("<td></td>")
