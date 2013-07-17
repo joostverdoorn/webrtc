@@ -125,11 +125,11 @@ define [
 		# @param callback [Function] the callback to be called when a pong was received.
 		#
 		ping: ( callback ) =>
-			time = Date.now()
+			time = performance.now()
 
 			fn = ( args... ) =>
-				latency = Date.now() - time
-				args = [latency].concat(args)
+				@latency = performance.now() - time
+				args = [@latency].concat(args)
 				callback.apply(@, args)
 
 			@query('ping', fn)

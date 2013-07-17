@@ -189,7 +189,6 @@ define [
 		_onChannelOpen: ( event ) =>
 			@_pingInterval = setInterval( ( ) =>
 				@ping( ( latency, coordinateString ) => 
-					@latency = latency
 					@coordinates = Vector.deserialize(coordinateString)
 				)
 			, 2500)
