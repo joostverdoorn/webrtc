@@ -70,10 +70,10 @@ define [
 		# Attempts to connect to a peer.
 		#
 		# @param id [String] the id of the peer to connect to
-		# @param instatiate [Boolean] wether to instantiate the connection
+		# @param instantiate [Boolean] wether to instantiate the connection
 		#
-		connect: ( id, instatiate = true ) ->
-			peer = new Peer(@, id, instatiate)
+		connect: ( id, instantiate = true ) ->
+			peer = new Peer(@, id, instantiate)
 			@addPeer(peer)
 			return peer
 
@@ -355,47 +355,72 @@ define [
 
 		###
 
-		# Is called when a node enters a network
+		# Is called when a node enters a network. This will either
+		# make the current node a supernode, when no other supernodes
+		# are found, or it connect to a bunch of other supernodes
+		# and pick the one with the lowest latency is parent.
 		#
 		_onServerConnect: ( ) =>
-			@server.query("nodes", ( nodes ) =>
-				if nodes.length is 1 and _(nodes).first().id is @id
+			@server.query('nodes', ( nodes ) =>
+				superNodes = _(nodes).filter( ( node ) => node.isSuperNode )
+
+				# If no supernodes present, become a supernode
+				if superNodes.length is 0
 					@token = new Token(@id, @id)
 					@setSuperNode(true)
-				else 					
-					superNodes = _(nodes).filter( ( node ) -> node.isSuperNode)
-					superNodes = _(superNodes).sortBy( ( superNode ) -> superNode.benchmark)
-					_superNodes = superNodes.slice(0)
-					@_pickParent(superNodes)
 
-					# Become a Supernode and become a Sibling ----- obsolete
-					@on("hasParent", ( hasParent ) =>
-						for superNode in _superNodes
-							unless hasParent
-								@setSuperNode(true)
-								peer = @getPeer(superNode.id)
-								@addSibling(peer)
-					)
+				# Else connect to a bunch of random supernodes
+				else
+					candidates = superNodes.slice(0)
+					n = Math.min(5, superNodes.length)
+					while candidates.length > 5
+						i = Math.floor(candidates.length * Math.random)
+						candidates.splice(i, 1)
+
+					pingCount = 0
+					peers = []
+
+					for candidate in candidates
+						peer = @connect(candidate.id)
+						peers.push(peer)
+						
+						# Ping all the connected supernodes and set
+						# the one with the largest ping as parent.
+						# We keep the connection to the others open
+						# aid in finding our coordinates.
+						( ( peer ) =>
+							peer.on('channel.opened', =>
+								peer.ping( ( latency ) => 
+									console.log 'latency', latency
+									pingCount++
+									console.log pingCount, candidates.length
+									if pingCount is candidates.length
+										console.log 'yolo!'
+										peers = _(peers).sort( ( peer ) -> peer.latency )
+										@_pickParent(peers)
+								)
+							)
+						) ( peer )
 			)
 
-		# Is called until a node connects to a Supernode
+		# Recursive function that attempts to pick a parent from an
+		# array of available peers. If a parent request is refused,
+		# this function calls itself with all candidates that have
+		# not yet refused a parent request. 
 		#
-		# @param superNodes [[Node]] an array of available superNodes
+		# @param candidates [Array<Peer>] an array of available peers
 		#
-		_pickParent: ( superNodes ) =>
-			if superNodes.length > 0
-				superNode = superNodes.pop()
-				peer = @connect(superNode.id)
-				peer.on("channel.opened", ( ) =>
-					@setParent(peer, ( accepted ) =>
-						if accepted
-							@trigger("hasParent", true)
-						else
-							@_pickParent(superNodes)
-					)
+		_pickParent: ( candidates ) =>
+			if candidates.length > 0
+				candidate = candidates.pop()
+				@setParent(candidate, ( accepted) =>
+					if accepted
+						@trigger('hasParent', true)
+					else
+						@_pickParent(candidates)
 				)
 			else
-				@trigger("hasParent", false)
+				@trigger('hasParent', false)
 
 		# Runs a benchmark to get the available resources on this node.
 		#

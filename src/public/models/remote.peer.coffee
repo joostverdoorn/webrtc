@@ -37,9 +37,10 @@ define [
 		# Initializes this class. Will attempt to connect to a remote peer through WebRTC.
 		# Is called from the baseclass' constructor.
 		#
-		# @param _address [String] the address of the server to connect to
+		# @param id [String] the id of the peer to connect to
+		# @param instantiate [Booelean] wether to instantiate the connection or wait for the remote
 		#
-		initialize: ( @id, instatiate = true ) ->
+		initialize: ( @id, instantiate = true ) ->
 			@_connection = new RTCPeerConnection(@_serverConfiguration, @_connectionConfiguration)
 
 			@_connection.onicecandidate = @_onIceCandidate
@@ -54,7 +55,7 @@ define [
 			@coordinates = new Vector(Math.random(), Math.random(), Math.random())
 			@latency = Math.random() * 5
 
-			if instatiate
+			if instantiate
 				@connect()
 
 		# Attempts to connect to the remote peer.
