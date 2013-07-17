@@ -479,11 +479,9 @@ define [
 		#
 		_onTokenInfo: ( peer, tokenString, vectorString, instantiate = true ) =>
 			token = Token.deserialize(tokenString)
-			console.log "Received info about ",  token
 			token.coordinates = Vector.deserialize(vectorString)
 			@addToken(token)
 			if @token? and instantiate
-				console.log "Ik heb een token ", @token
 				@emitTo(token.nodeId, 'token.info', @token.serialize(), @coordinates.serialize(), false)
 
 		# Adds a token to the collection of foreign tokens
@@ -522,7 +520,7 @@ define [
 				@broadcast('token.requestCandidate', @token.serialize())
 				setTimeout( ( ) =>
 					@_pickNewTokenOwner()
-				, broadcastTimeout)
+				, @broadcastTimeout)
 			else
 				@setSuperNode(true)
 
