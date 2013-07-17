@@ -67,9 +67,7 @@ define [
 			channel = @_connection.createDataChannel('a', @_channelConfiguration)	
 			@_connection.createOffer(@_onLocalDescription)
 
-			@on('connect', =>	
-				@_addChannel(channel)
-			)
+			@_addChannel(channel)
 
 		# Disconnects from the peer.
 		#
@@ -83,15 +81,30 @@ define [
 		isConnected: ( ) ->
 			return @_connection.iceConnectionState is 'connected'
 
+		# Returns wether or not the data channel to this peer is open
+		#
+		# @return [Boolean] wether or not the channel is open
+		#
+		isChannelOpen: ( ) ->
+			return @_channel?.readyState is 'open'
+
 		# Sends a predefined message to the remote.
 		#
 		# @param message [Message] the message to send
 		#
-		_send: ( message ) ->
-			unless @_channel?.readyState is 'open'
+		_send: ( message, retries = 0 ) ->
+			maxRetries = 5
+
+			unless @isChannelOpen()
 				return
 			
-			@_channel.send(message.serialize())
+			try
+				@_channel.send(message.serialize())
+			catch error
+				if retries < maxRetries
+					_( => @_send(message, retries + 1)).defer()
+				else
+					console.log 'failed to send message', message
 
 		# Adds a new data channel, and adds event bindings to it.
 		#
@@ -174,8 +187,6 @@ define [
 		# @param event [Event] the channel open event
 		#
 		_onChannelOpen: ( event ) =>
-			@_channelOpen = true
-
 			@_pingInterval = setInterval( ( ) =>
 				@ping( ( latency, coordinateString ) => 
 					@latency = latency
@@ -194,7 +205,6 @@ define [
 		# @param event [Event] the channel close event
 		#
 		_onChannelClose: ( event ) =>
-			@_channelOpen is false
 			@trigger('channel.closed', @, event)
 
 		# Is called when a connection has been established.
