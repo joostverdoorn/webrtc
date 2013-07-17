@@ -90,10 +90,10 @@ define [
 		#
 		addPeer: ( peer ) ->
 			peer.on('disconnect', ( ) => @removePeer(peer))
-			peer.on('peer.addSibling', ( ) => @addSibling(peer, false); console.log peer.id)
+			peer.on('peer.addSibling', ( ) => @addSibling(peer, false))
 
 			@_peers.add(peer)
-			@trigger('peer.added', peer) # 
+			@trigger('peer.added', peer)
 
 		# Removes a peer from the peer list
 		#
@@ -184,7 +184,7 @@ define [
 
 			peer.role = Peer.Role.Child
 			if @getChildren().length > 2
-				@generateToken()
+				_(@generateToken).defer()
 
 		# Removes a peer as child node. Does not automatically close 
 		# the connection but will make it a normal peer.
@@ -218,7 +218,6 @@ define [
 				@_parent = null
 
 			peer.role = Peer.Role.Sibling
-			console.log peer, instantiate
 			if instantiate
 				peer.emit('peer.addSibling', @id)
 
@@ -415,7 +414,6 @@ define [
 		_pickParent: ( candidates ) =>
 			if candidates.length > 0
 				candidate = candidates.pop()
-				console.log("sending parent request to #{candidate.id}")
 				@setParent(candidate, ( accepted) =>
 					if accepted
 						console.log("parent request to #{candidate.id} accepted")
@@ -448,7 +446,7 @@ define [
 			children = @getChildren()
 			randomChild = children[_.random(0,children.length-1)]
 			randomChild.emit("token.add",token.serialize())
-			return randomChild.id
+			console.log  randomChild.id +  " received a token"
 			
 		# Is called when a node receives a token from another Node
 		#	
@@ -457,7 +455,7 @@ define [
 		#
 		_onTokenReceived: ( peer, tokenString ) =>
 			@token = Token.deserialize(tokenString)
-			@_tokens.remove(@token)
+			@removeToken(@token)
 			@token.nodeId = @id
 
 			@broadcast('token.hop', @token.serialize(), @coordinates.serialize(), true)
@@ -473,9 +471,11 @@ define [
 		#
 		_onTokenInfo: ( peer, tokenString, vectorString, instantiate = true ) =>
 			token = Token.deserialize(tokenString)
-			token.coordinates =  Vector.deserialize(vectorString)
+			console.log "Received info about ",  token
+			token.coordinates = Vector.deserialize(vectorString)
 			@addToken(token)
 			if @token? and instantiate
+				console.log "Ik heb een token ", @token
 				@emitTo(token.nodeId, 'token.info', @token.serialize(), @coordinates.serialize(), false)
 
 		# Adds a token to the collection of foreign tokens
@@ -508,14 +508,13 @@ define [
 				tokenForce = tokenForce.add(direction)					# Sum all token differences
 			@token.position = @coordinates.substract(tokenForce)		# Calculate the new Token Position and save it in Token object
 			tokenMagnitude = @coordinates.getDistance(@token.position)
-			console.log tokenMagnitude
 
 			if (tokenMagnitude > tokenThreshhold)
 				# Ask other supernodes for their best child in neighboorhood of the tokenPosition
 				@broadcast('token.requestCandidate', @token.serialize())
 				setTimeout( ( ) =>
 					@_pickNewTokenOwner()
-				,@broadcastTimeout)
+				, broadcastTimeout)
 			else
 				@setSuperNode(true)
 

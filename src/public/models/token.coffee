@@ -23,6 +23,7 @@ define [
 			@nodeId = nodeId
 			@releasedBy = releasedBy
 			@position = new Vector()
+			@candidates = []
 
 		# Serializes this token to a JSON string
 		#

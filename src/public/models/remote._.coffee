@@ -87,7 +87,6 @@ define [
 		#
 		send: ( message ) ->
 			hash = message.hash()
-			
 			Remote.hashes.push(hash)
 			if Remote.hashes.length > 1000
 				Remote.hashes.splice(0, 200)
