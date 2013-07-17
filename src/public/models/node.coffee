@@ -250,9 +250,9 @@ define [
 		# @param superNode [boolean] SuperNode state
 		#
 		setSuperNode: ( superNode = true ) =>
-			@server.emit('setSuperNode', @isSuperNode)
-			@trigger('setSuperNode', @isSuperNode) # App is listening
-			@broadcast('peer.setSuperNode', @id, @isSuperNode)
+			@server.emit('setSuperNode', superNode)
+			@trigger('setSuperNode', superNode) # App is listening
+			@broadcast('peer.setSuperNode', @id, superNode)
 			@isSuperNode = superNode
 
 		# Is called when a peer becomes a supernode
