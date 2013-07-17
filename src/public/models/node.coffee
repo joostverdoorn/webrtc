@@ -51,11 +51,13 @@ define [
 			@server.on('peer.connectionRequest', @_onPeerConnectionRequest)
 			@server.on('peer.setRemoteDescription', @_onPeerSetRemoteDescription)
 			@server.on('peer.addIceCandidate', @_onPeerAddIceCandidate)
-			@server.on('connect', @_onServerConnect)
+			@server.on('connect', @_enterNetwork)
 
 			@coordinates = new Vector(Math.random(), Math.random(), Math.random())
 			@coordinateDelta = 1
 
+			@_peers.on('disconnect', @_onPeerDisconnect)
+			@_peers.on('peer.addSibling', ( peer ) => @addSibling(peer, false))
 			@_peers.on('peer.setSuperNode', @_onPeerSetSuperNode)
 			@_peers.on('token.add', @_onTokenReceived)
 			@_peers.on('token.hop', @_onTokenInfo)
@@ -67,13 +69,14 @@ define [
 
 			@runBenchmark()
 
-			# This will help us log errors. It makes 
-			# console.log print to both console and server.
-			# Logs can be retrieved at /log
-			console.rLog = console.log
-			console.log = ( args... ) ->
-				App.node.server.emit('debug', args)
-				console.rLog.apply(@, args)
+			# # This will help us log errors. It makes 
+			# # console.log print to both console and server.
+			# # Logs can be retrieved at /log
+			# console.rLog = console.log
+			# console.log = ( args... ) ->
+			# 	console.rLog.apply(@, args)
+			# 	App.node.server.emit('debug', args)
+				
 
 		# Attempts to connect to a peer.
 		#
@@ -92,14 +95,23 @@ define [
 		disconnect: ( id ) ->
 			@getPeer(id)?.disconnect()
 
+		# Is called when a peers disconnects. If that peer was 
+		# our parent, we pick a new parent.
+		#
+		# @param peer [Peer] the peer that disconnects
+		#
+		_onPeerDisconnect: ( peer ) =>
+			if peer is @getParent()
+				candidates = _(@getPeers()).filter( ( p ) -> p.isSuperNode )
+				@_pickParent(candidates)
+			
+			@removePeer(peer)
+
 		# Adds a peer to the peer list
 		#
 		# @param peer [Peer] the peer to add
 		#
 		addPeer: ( peer ) ->
-			peer.on('disconnect', ( ) => @removePeer(peer))
-			peer.on('peer.addSibling', ( ) => @addSibling(peer, false))
-
 			@_peers.add(peer)
 			@trigger('peer.added', peer)
 
@@ -109,7 +121,6 @@ define [
 		#
 		removePeer: ( peer ) ->
 			peer.die()
-
 			@_peers.remove(peer)
 			@trigger('peer.removed', peer)
 
@@ -372,7 +383,7 @@ define [
 		# are found, or it connect to a bunch of other supernodes
 		# and pick the one with the lowest latency is parent.
 		#
-		_onServerConnect: ( ) =>
+		_enterNetwork: ( ) =>
 			@server.query('nodes', ( nodes ) =>
 				superNodes = _(nodes).filter( ( node ) => node.isSuperNode )
 
@@ -405,7 +416,6 @@ define [
 								peer.ping( ( latency ) => 
 									pingCount++
 									if pingCount is candidates.length
-										peers = _(peers).sort( ( peer ) -> peer.latency )
 										@_pickParent(peers)
 								)
 							)
@@ -421,8 +431,9 @@ define [
 		#
 		_pickParent: ( candidates ) =>
 			if candidates.length > 0
-				candidate = candidates.pop()
-				@setParent(candidate, ( accepted) =>
+				candidates = _(candidates).sortBy( 'latency' )
+				candidate = candidates.shift()
+				@setParent(candidate, ( accepted ) =>
 					if accepted
 						console.log("parent request to #{candidate.id} accepted")
 						@trigger('hasParent', true)
@@ -431,7 +442,7 @@ define [
 						@_pickParent(candidates)
 				)
 			else
-				@trigger('hasParent', false)
+				@_enterNetwork()
 
 		# Runs a benchmark to get the available resources on this node.
 		#
