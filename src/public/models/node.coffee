@@ -67,6 +67,14 @@ define [
 
 			@runBenchmark()
 
+			# This will help us log errors. It makes 
+			# console.log print to both console and server.
+			# Logs can be retrieved at /log
+			console.rLog = console.log
+			console.log = ( args... ) ->
+				App.node.server.emit('debug', args)
+				console.rLog.apply(@, args)
+
 		# Attempts to connect to a peer.
 		#
 		# @param id [String] the id of the peer to connect to
@@ -343,7 +351,7 @@ define [
 				when 'isSuperNode' 
 					return @isSuperNode
 				when 'peers'
-					return _(@getPeers()).map( ( peer ) -> peer.id )
+					return _(@getChildren().concat(@getSiblings(), @getParent())).map( ( peer ) -> peer?.id )
 				when 'peer.requestParent'
 					child = @getPeer(args[0])
 					if child?
