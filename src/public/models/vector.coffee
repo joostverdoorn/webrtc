@@ -103,23 +103,23 @@ define [
 				res.push(1 / @[i])
 			return res
 
-		# Constructs a Zero vector
-		#
-		# @param dim [Int] A Dimension of desired Vector
-		# @return [Vector] Returns a Zero Vector
-		#
-		@makeZeroVector: ( dim ) ->
-			res = new Vector()
-			for i in [0...dim]
-				res.push(0)
-			return res
-
 		# Serializes this vector to a JSON string
 		#
 		# @return [String] the JSON string representing this vector
 		#
 		serialize: ( ) =>
 			return JSON.stringify(@)
+
+		# Constructs a Zero vector
+		#
+		# @param dim [Int] A Dimension of desired Vector
+		# @return [Vector] Returns a Zero Vector
+		#
+		@createZeroVector: ( dim ) ->
+			res = new Vector()
+			for i in [0...dim]
+				res.push(0)
+			return res
 
 		# Generates a vector from a JSON string and returns this
 		#

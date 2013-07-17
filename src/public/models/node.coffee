@@ -57,13 +57,13 @@ define [
 			@coordinateDelta = 1
 
 			@_peers.on('peer.setSuperNode', @_onPeerSetSuperNode)
-			@_peers.on('token.add', @_tokenReceived)
+			@_peers.on('token.add', @_onTokenReceived)
 			@_peers.on('token.hop', @_onTokenInfo)
 			@_peers.on('token.info', @_onTokenInfo)
-			@_peers.on('peer.requestTokenCandidate', @_onRequestTokenCandidate)
-			@_peers.on('peer.receivedTokenCandidate', @_onReceivedTokenCandidate)
+			@_peers.on('token.requestCandidate', @_onTokenRequestCandidate)
+			@_peers.on('token.candidate', @_onTokenCandidate)
 
-			setInterval(@update, 2500)
+			setInterval(@_updateCoordinates, 2500)
 
 			@runBenchmark()
 
@@ -436,16 +436,11 @@ define [
 		# @param peer [Peer] The last routing peer
 		# @param tokenString [String] A serialized token
 		#
-		_tokenReceived: ( peer, tokenString ) =>
+		_onTokenReceived: ( peer, tokenString ) =>
 			@token = Token.deserialize(tokenString)
-			console.log @_tokens
 			@_tokens.remove(@token)
 			@token.nodeId = @id
-			@fromTokenToSuperNode()
 
-		# Function is called when a node recieves a token
-		#
-		fromTokenToSuperNode: () =>
 			@broadcast('token.hop', @token.serialize(), @coordinates.serialize(), true)
 			@_tokenRestTimeout = setTimeout(( ) =>
 				@_calculateTokenMagnitude()
@@ -487,7 +482,7 @@ define [
 		# #return [Float] Return Magnitude of the token
 		#
 		_calculateTokenMagnitude: () ->
-			tokenForce = Vector.makeZeroVector(@coordinates.length)
+			tokenForce = Vector.createZeroVector(@coordinates.length)
 			for token in @_tokens
 				direction = @coordinates.substract(token.coordinates)	# Difference between self and other Token
 				direction = direction.calculateForce()					# Make Force smaller for bigger distances
@@ -498,9 +493,9 @@ define [
 
 			if (tokenMagnitude > tokenThreshhold)
 				# Ask other supernodes for their best child in neighboorhood of the tokenPosition
-				@broadcast('peer.requestTokenCandidate', @token.serialize())
+				@broadcast('token.requestCandidate', @token.serialize())
 				setTimeout( () =>
-					@pickNewTokenOwner()
+					@_pickNewTokenOwner()
 				,@broadcastTimeout)
 			else
 				@setSuperNode(true)
@@ -513,7 +508,7 @@ define [
 		# @param peer [Peer] The last routing peer
 		# @param tokenString [String] A serialised token
 		#
-		_onRequestTokenCandidate: (peer, tokenString) =>
+		_onTokenRequestCandidate: (peer, tokenString) =>
 			if(@isSuperNode)
 				token = Token.deserialize(tokenString)
 				bestCandidateDistance = null
@@ -523,7 +518,7 @@ define [
 						bestCandidateDistance = distance
 						bestCandidate = child
 				if child?
-					@emitTo(token.nodeId, "peer.receivedTokenCandidate", distance, child.id)
+					@emitTo(token.nodeId, "token.candidate", distance, child.id)
 				
 		# Is called when a node holding a token, receives other candidate nodes for the token
 		#
@@ -543,7 +538,7 @@ define [
 		#
 		# @return[Node] Return a new owner of the token
 		#
-		pickNewTokenOwner: () ->
+		_pickNewTokenOwner: ( ) ->
 			bestCandidateDistance = null
 			for candidate in @token.candidates
 				if !bestCandidateDistance? or candidate.distance < bestCandidateDistance
@@ -561,7 +556,7 @@ define [
 
 		# Applies Vivaldi alghoritm. Calculates the coordinates of a node
 		#
-		update: ( ) =>
+		_updateCoordinates: ( ) =>
 			for peer in @getPeers()	
 				direction = peer.coordinates.substract(@coordinates)		# Vector to peer
 				distance = peer.coordinates.getDistance(@coordinates)		# Distance between node and peer
