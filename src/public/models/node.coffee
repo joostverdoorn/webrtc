@@ -32,7 +32,7 @@ define [
 
 		broadcastTimeout = 4000 # Wait for return messages after a node broadcasts that it has a token
 		tokenThreshhold = 1
-		superNodeSwitchThreshhold = 0.8 # Scaler
+		superNodeSwitchThreshhold = 0.5 # Scaler
 
 		# Constructs a new app.
 		#
@@ -71,6 +71,7 @@ define [
 
 			setInterval(@_updateCoordinates, 2500)
 			setInterval(@_lookForBetterSupernode, 10000)
+			@staySuperNodeTimeout = null
 
 			@runBenchmark()
 
@@ -127,6 +128,7 @@ define [
 			peer.die()
 			@_peers.remove(peer)
 			@trigger('peer.removed', peer)
+			@_triggerStaySuperNodeTimeout()
 
 		# Returns a peer specified by an id
 		#
@@ -183,7 +185,6 @@ define [
 		#
 		setParent: ( peer, callback ) ->
 			peer.query('peer.requestParent', @id, ( accepted ) =>
-				console.log accepted
 				if accepted
 					@_parent?.emit('peer.abandonParent')
 					@_parent?.role = Peer.Role.None
@@ -207,7 +208,7 @@ define [
 		addChild: ( peer ) ->
 			if peer is @_parent
 				@_parent = null
-
+			console.log peer.id
 			peer.role = Peer.Role.Child
 			if @getChildren().length > 4
 				_(@generateToken).defer()
@@ -219,6 +220,7 @@ define [
 		#
 		removeChild: ( peer ) ->
 			peer.role = Peer.Role.None
+			@_triggerStaySuperNodeTimeout()
 
 		# Returns a child specified by an id
 		#
@@ -279,6 +281,26 @@ define [
 			@trigger('setSuperNode', superNode) # App is listening
 			@broadcast('peer.setSuperNode', @id, superNode)
 			@isSuperNode = superNode
+			if superNode
+				@_triggerStaySuperNodeTimeout()
+			else
+				for sibling in @getSiblings()
+					@removeSibling(sibling)
+				@_pickParent()
+
+		_triggerStaySuperNodeTimeout: () =>
+			if @getChildren().length is 0
+				clearTimeout(@staySuperNodeTimeout)
+				@staySuperNodeTimeout = setTimeout( ( ) =>
+					@_superNodeTimeout()
+				, 20000)
+
+		_superNodeTimeout: () =>
+			console.log "Aantal kinderen: ", @getChildren().length
+			if @getChildren().length is 0
+				@setSuperNode(false)
+				clearTimeout(@staySuperNodeTimeout)
+
 
 		# Is called when a peer becomes a supernode
 		#
@@ -292,13 +314,16 @@ define [
 				peer.isSuperNode = isSuperNode
 
 				if @isSuperNode
-					@addSibling(peer)
+					if isSuperNode
+						@addSibling(peer)
+					else
+						@removeSibling(peer)
 			else if @isSuperNode
 				peer = @connect(peerId)
 				peer.once('channel.opened', =>
 					@addSibling(peer)
 				)
-			else if _(@getPeers()).filter( ( peer ) -> peer.isSuperNode).length < 5
+			else if isSuperNode and _(@getPeers()).filter( ( peer ) -> peer.isSuperNode).length < 5
 				@connect(peerId)
 
 		# Attempts to emit to a peer by id. Unreliable.
@@ -371,11 +396,12 @@ define [
 				when 'peers'
 					return _(@getChildren().concat(@getSiblings(), @getParent())).map( ( peer ) -> peer?.id )
 				when 'peer.requestParent'
-					child = @getPeer(args[0])
-					console.log "hier is mijn nieuwe kind", child
-					if child?
-						@addChild(child)
-						return true
+					if @isSuperNode
+						child = @getPeer(args[0])
+						console.log "hier is mijn nieuwe kind", child
+						if child?
+							@addChild(child)
+							return true
 					return false
 
 		# Is called when a node enters a network. This will either
@@ -416,20 +442,20 @@ define [
 								peer.ping( ( latency ) => 
 									pingCount++
 									if pingCount is candidates.length
-										@_pickParent(peers)
+										@_pickParent()
 								)
 							)
 						) ( peer )
 			)
 
-		# Recursive function that attempts to pick a parent from an
-		# array of available peers. If a parent request is refused,
+		# Recursive function that attempts to pick a parent from all
+		# connected supernodes. If a parent request is refused,
 		# this function calls itself with all candidates that have
 		# not yet refused a parent request. 
 		#
-		# @param candidates [Array<Peer>] an array of available peers
-		#
-		_pickParent: ( candidates ) =>
+		_pickParent: ( candidates = null ) =>
+			unless candidates?
+				candidates = _(@getPeers()).filter( ( p ) => p.isSuperNode )
 			if candidates.length > 0
 				candidates = _(candidates).sortBy( 'latency' )
 				candidate = candidates.shift()
@@ -578,19 +604,18 @@ define [
 		#
 		_pickNewTokenOwner: ( ) ->
 			bestCandidateDistance = null
-			for candidate in @token.candidates
+			for candidate in @token.candidates ? []
 				if !bestCandidateDistance? or candidate.distance < bestCandidateDistance
 					bestCandidateDistance = candidate.distance
 					bestCandidate = candidate
 
 			console.log "Best Candidate is " + bestCandidate.nodeId + " with distance " + bestCandidateDistance
-
-			if bestCandidate.nodeId is @id
-				@setSuperNode(true)
-			else
-				@emitTo(bestCandidate.nodeId,'token.add', @token.serialize())
-				@token = null
-			return bestCandidate
+			if bestCandidate
+				if bestCandidate.nodeId is @id
+					@setSuperNode(true)
+				else
+					@emitTo(bestCandidate.nodeId,'token.add', @token.serialize())
+					@token = null
 
 		# Applies Vivaldi alghoritm. Calculates the coordinates of a node
 		#
@@ -611,7 +636,8 @@ define [
 		_lookForBetterSupernode: () =>
 			siblings = @getSiblings()
 			children = @getChildren()
-			if @isSuperNode and siblings.length > 0 and children.length > 0
+			childrenLength = children.length
+			if @isSuperNode and siblings.length > 0 and childrenLength > 0
 				for child in children
 					bestCandidateDistance = null
 					for parent in siblings
