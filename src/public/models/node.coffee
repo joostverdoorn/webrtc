@@ -90,10 +90,10 @@ define [
 		#
 		addPeer: ( peer ) ->
 			peer.on('disconnect', ( ) => @removePeer(peer))
-			peer.on('peer.addSibling', ( ) => @addSibling(peer, false))
+			peer.on('peer.addSibling', ( ) => @addSibling(peer, false); console.log peer.id)
 
 			@_peers.add(peer)
-			@trigger('peer.added', peer)
+			@trigger('peer.added', peer) # 
 
 		# Removes a peer from the peer list
 		#
@@ -183,6 +183,8 @@ define [
 				@_parent = null
 
 			peer.role = Peer.Role.Child
+			if @getChildren().length > 2
+				@generateToken()
 
 		# Removes a peer as child node. Does not automatically close 
 		# the connection but will make it a normal peer.
@@ -216,7 +218,7 @@ define [
 				@_parent = null
 
 			peer.role = Peer.Role.Sibling
-
+			console.log peer, instantiate
 			if instantiate
 				peer.emit('peer.addSibling', @id)
 
@@ -250,7 +252,7 @@ define [
 		setSuperNode: ( superNode = true ) =>
 			@isSuperNode = superNode
 			@server.emit('setSuperNode', @isSuperNode)
-			@trigger('setSuperNode', @isSuperNode)
+			@trigger('setSuperNode', @isSuperNode) # App is listening
 			@broadcast('peer.setSuperNode', @id, @isSuperNode)
 
 		# Is called when a peer becomes a supernode
@@ -266,7 +268,7 @@ define [
 					@addSibling(peer)
 				else
 					peer = @connect(peerId)
-					peer.once('connect', =>
+					peer.once('channel.opened', =>
 						@addSibling(peer)
 					)
 
@@ -340,11 +342,10 @@ define [
 				when 'peers'
 					return _(@getPeers()).map( ( peer ) -> peer.id )
 				when 'peer.requestParent'
-					if @getChildren().length < 4
-						child = @getPeer(args[0])
-						if child?
-							@addChild(child)
-							return true
+					child = @getPeer(args[0])
+					if child?
+						@addChild(child)
+						return true
 					return false
 
 		###
@@ -434,27 +435,16 @@ define [
 			endTime = performance.now()
 			@benchmark.cpu = Math.round(endTime - startTime)
 
-		# Look up if node is having trouble 
-		#
-		# @return [Boolean] Return true if node has troubles 
-		#
-		hasDifficulties: ( ) =>
-			if @isSuperNode
-				if @getChildren().length > 3
-					return true
-			return false
-
 		# Generates a new token and gives it to a random child 
 		#
 		# @return [String] Returns id of the selected Child which will receive a token
 		#
-		generateToken: ( ) =>
-			if @hasDifficulties()
-				token = new Token(null, @id)
-				children = @getChildren()
-				randomChild = children[_.random(0,children.length-1)]
-				randomChild.emit("token.add",token.serialize())
-				return randomChild.id
+		generateToken: () =>
+			token = new Token(null, @id)
+			children = @getChildren()
+			randomChild = children[_.random(0,children.length-1)]
+			randomChild.emit("token.add",token.serialize())
+			return randomChild.id
 			
 		# Is called when a node receives a token from another Node
 		#	
