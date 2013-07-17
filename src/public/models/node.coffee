@@ -357,19 +357,19 @@ define [
 
 		# Is called when a node enters a network
 		#
-		_onServerConnect: () =>
-			@server.query("nodes", (nodes) =>
+		_onServerConnect: ( ) =>
+			@server.query("nodes", ( nodes ) =>
 				if nodes.length is 1 and _(nodes).first().id is @id
 					@token = new Token(@id, @id)
 					@setSuperNode(true)
 				else 					
-					superNodes = _(nodes).filter( (node) -> node.isSuperNode)
-					superNodes = _(superNodes).sortBy( (superNode) -> superNode.benchmark)
+					superNodes = _(nodes).filter( ( node ) -> node.isSuperNode)
+					superNodes = _(superNodes).sortBy( ( superNode ) -> superNode.benchmark)
 					_superNodes = superNodes.slice(0)
-					@_chooseParent(superNodes)
+					@_pickParent(superNodes)
 
 					# Become a Supernode and become a Sibling ----- obsolete
-					@on("hasParent", (hasParent) =>
+					@on("hasParent", ( hasParent ) =>
 						for superNode in _superNodes
 							unless hasParent
 								@setSuperNode(true)
@@ -382,16 +382,16 @@ define [
 		#
 		# @param superNodes [[Node]] an array of available superNodes
 		#
-		_chooseParent: ( superNodes ) =>
+		_pickParent: ( superNodes ) =>
 			if superNodes.length > 0
 				superNode = superNodes.pop()
 				peer = @connect(superNode.id)
-				peer.on("channel.opened", () =>
-					@setParent(peer, (accepted) =>
+				peer.on("channel.opened", ( ) =>
+					@setParent(peer, ( accepted ) =>
 						if accepted
 							@trigger("hasParent", true)
 						else
-							@_chooseParent(superNodes)
+							@_pickParent(superNodes)
 					)
 				)
 			else
@@ -413,7 +413,7 @@ define [
 		#
 		# @return [Boolean] Return true if node has troubles 
 		#
-		hasDifficulties: () =>
+		hasDifficulties: ( ) =>
 			if @isSuperNode
 				if @getChildren().length > 3
 					return true
@@ -423,7 +423,7 @@ define [
 		#
 		# @return [String] Returns id of the selected Child which will receive a token
 		#
-		generateToken: () =>
+		generateToken: ( ) =>
 			if @hasDifficulties()
 				token = new Token(null, @id)
 				children = @getChildren()
@@ -452,7 +452,7 @@ define [
 		# @param tokenString [String] A serialised token
 		# @param vectorString [String] Serialised coordinates of the holder of the token
 		#
-		_onTokenInfo: (peer, tokenString, vectorString, instantiate = true) =>
+		_onTokenInfo: ( peer, tokenString, vectorString, instantiate = true ) =>
 			token = Token.deserialize(tokenString)
 			token.coordinates =  Vector.deserialize(vectorString)
 			@addToken(token)
@@ -463,7 +463,7 @@ define [
 		#
 		# @param [Token] A token to be added. This token can not be own token
 		#
-		addToken: (token) ->
+		addToken: ( token ) ->
 			duplicateToken = _(@_tokens).find( (t) -> token.id is t.id)
 			@_tokens.remove(duplicateToken)
 			unless (@token? and @token.id is token.id)
@@ -473,15 +473,15 @@ define [
 		#
 		# @param [Token] A token to be removed.
 		#
-		removeToken: (token) ->
-			oldToken = _(@_tokens).find( (t) -> token.id is t.id)
+		removeToken: ( token ) ->
+			oldToken = _(@_tokens).find( ( t ) -> token.id is t.id)
 			@_tokens.remove(oldToken)
 
 		# Calculates the magnitude of own token and then broadcasts it to the rest
 		#
 		# #return [Float] Return Magnitude of the token
 		#
-		_calculateTokenMagnitude: () ->
+		_calculateTokenMagnitude: ( ) ->
 			tokenForce = Vector.createZeroVector(@coordinates.length)
 			for token in @_tokens
 				direction = @coordinates.substract(token.coordinates)	# Difference between self and other Token
@@ -494,7 +494,7 @@ define [
 			if (tokenMagnitude > tokenThreshhold)
 				# Ask other supernodes for their best child in neighboorhood of the tokenPosition
 				@broadcast('token.requestCandidate', @token.serialize())
-				setTimeout( () =>
+				setTimeout( ( ) =>
 					@_pickNewTokenOwner()
 				,@broadcastTimeout)
 			else
@@ -508,7 +508,7 @@ define [
 		# @param peer [Peer] The last routing peer
 		# @param tokenString [String] A serialised token
 		#
-		_onTokenRequestCandidate: (peer, tokenString) =>
+		_onTokenRequestCandidate: ( peer, tokenString ) =>
 			if(@isSuperNode)
 				token = Token.deserialize(tokenString)
 				bestCandidateDistance = null
@@ -526,7 +526,7 @@ define [
 		# @param distance [Float] Distance from the candidate to the token
 		# @param nodeId [String] Node id of the candidate
 		#
-		_onReceivedTokenCandidate: (peer, distance, nodeId) =>
+		_onTokenCandidate: ( peer, distance, nodeId ) =>
 			unless @token.candidates?
 				@token.candidates = new Array()
 			candidate = new Object()
