@@ -27,7 +27,7 @@ define [
 		# @param v [Vector] A Vector to be added
 		# @return [Vector] Answer of the operation
 		#
-		add: ( v ) =>
+		add: ( v ) ->
 			sum = new Vector()
 
 			for i in [0...@length]
@@ -39,7 +39,7 @@ define [
 		# @param v [Vector] A Vector to be substracted
 		# @return [Vector] Answer of the operation
 		#
-		substract: ( v ) =>
+		substract: ( v ) ->
 			res = new Vector()
 
 			for i in [0...@length]
@@ -51,7 +51,7 @@ define [
 		# @param scaler [Float] A scaler to apply to the vector
 		# @return [Vector] Answer of the operation
 		#
-		scale: ( scaler ) =>
+		scale: ( scaler ) ->
 			res = new Vector()
 
 			for i in [0...@length]
@@ -63,7 +63,7 @@ define [
 		# @param v [Vector] A Vector to calculate to calculate the distance
 		# @return [Float] Returns the distance
 		#
-		getDistance: ( v ) =>
+		getDistance: ( v ) ->
 			distance = 0
 			for i in [0...@length]
 				difference = @[i] - v[i]
@@ -75,7 +75,7 @@ define [
 		#
 		# @return [Float] Returns the length of an array.
 		#
-		getLength: () =>
+		getLength: () ->
 			distance = 0
 			for i in [0...@length]
 				distance += Math.pow(@[i], 2)
@@ -86,28 +86,18 @@ define [
 		#
 		# @return [Vector] Returns the unit vector
 		#
-		unit: () =>
+		unit: () ->
 			res = new Vector()
 			length = @getLength()
 			for i in [0...@length]
 				res.push( @[i] / length )
 			return res
 
-		# Calculates the force from the tokens. The force constant is hardcoded here
-		#
-		# @return [Vector] Returns the force vector
-		#
-		calculateForce: () =>
-			res = new Vector()
-			for i in [0...@length]
-				res.push(1 / @[i])
-			return res
-
 		# Serializes this vector to a JSON string
 		#
 		# @return [String] the JSON string representing this vector
 		#
-		serialize: ( ) =>
+		serialize: ( ) ->
 			return JSON.stringify(@)
 
 		# Constructs a Zero vector

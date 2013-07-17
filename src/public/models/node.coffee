@@ -32,6 +32,7 @@ define [
 
 		broadcastTimeout = 4000 # Wait for return messages after a node broadcasts that it has a token
 		tokenThreshhold = 1
+		superNodeSwitchThreshhold = 0.8 # Scaler
 
 		# Constructs a new app.
 		#
@@ -64,8 +65,12 @@ define [
 			@_peers.on('token.info', @_onTokenInfo)
 			@_peers.on('token.requestCandidate', @_onTokenRequestCandidate)
 			@_peers.on('token.candidate', @_onTokenCandidate)
+			@_peers.on('peer.ParentCandidate', @_onPeerParentCandidate)
+			@_peers.on('peer.abandonParent', ( peer ) => @removeChild(peer))
+			
 
 			setInterval(@_updateCoordinates, 2500)
+			setInterval(@_lookForBetterSupernode, 10000)
 
 			@runBenchmark()
 
@@ -76,8 +81,7 @@ define [
 			# console.log = ( args... ) ->
 			# 	console.rLog.apply(@, args)
 			# 	App.node.server.emit('debug', args)
-				
-
+			
 		# Attempts to connect to a peer.
 		#
 		# @param id [String] the id of the peer to connect to
@@ -179,10 +183,13 @@ define [
 		#
 		setParent: ( peer, callback ) ->
 			peer.query('peer.requestParent', @id, ( accepted ) =>
+				console.log accepted
 				if accepted
+					@_parent?.emit('peer.abandonParent')
 					@_parent?.role = Peer.Role.None
 					peer.role = Peer.Role.Parent
 					@_parent = peer
+
 				callback(accepted)
 			)
 
@@ -202,7 +209,7 @@ define [
 				@_parent = null
 
 			peer.role = Peer.Role.Child
-			if @getChildren().length > 2
+			if @getChildren().length > 4
 				_(@generateToken).defer()
 
 		# Removes a peer as child node. Does not automatically close 
@@ -365,18 +372,11 @@ define [
 					return _(@getChildren().concat(@getSiblings(), @getParent())).map( ( peer ) -> peer?.id )
 				when 'peer.requestParent'
 					child = @getPeer(args[0])
+					console.log "hier is mijn nieuwe kind", child
 					if child?
 						@addChild(child)
 						return true
 					return false
-
-		###
-
-
-		*** General functions end here ***
-
-
-		###
 
 		# Is called when a node enters a network. This will either
 		# make the current node a supernode, when no other supernodes
@@ -464,8 +464,8 @@ define [
 			token = new Token(null, @id)
 			children = @getChildren()
 			randomChild = children[_.random(0,children.length-1)]
-			randomChild.emit("token.add",token.serialize())
-			console.log  randomChild.id +  " received a token"
+			randomChild.emit('token.add',token.serialize())
+			console.log  randomChild.id +  ' received a token'
 			
 		# Is called when a node receives a token from another Node
 		#	
@@ -521,7 +521,10 @@ define [
 			tokenForce = Vector.createZeroVector(@coordinates.length)
 			for token in @_tokens
 				direction = @coordinates.substract(token.coordinates)	# Difference between self and other Token
-				direction = direction.calculateForce()					# Make Force smaller for bigger distances
+				res = new Vector()										# Make Force smaller for bigger distances
+				for i in [0...direction.length]
+					res.push( 1 / direction[i])
+				direction = res
 				tokenForce = tokenForce.add(direction)					# Sum all token differences
 			@token.position = @coordinates.substract(tokenForce)		# Calculate the new Token Position and save it in Token object
 			tokenMagnitude = @coordinates.getDistance(@token.position)
@@ -553,7 +556,7 @@ define [
 						bestCandidateDistance = distance
 						bestCandidate = child
 				if child?
-					@emitTo(token.nodeId, "token.candidate", distance, child.id)
+					@emitTo(token.nodeId, 'token.candidate', distance, child.id)
 				
 		# Is called when a node holding a token, receives other candidate nodes for the token
 		#
@@ -585,7 +588,7 @@ define [
 			if bestCandidate.nodeId is @id
 				@setSuperNode(true)
 			else
-				@emitTo(bestCandidate.nodeId,"token.add", @token.serialize())
+				@emitTo(bestCandidate.nodeId,'token.add', @token.serialize())
 				@token = null
 			return bestCandidate
 
@@ -602,3 +605,34 @@ define [
 				@coordinates = @coordinates.add( displacement )				# Calculate new coordinates
 								
 				@coordinateDelta = Math.max(0.05, @coordinateDelta - 0.025)
+
+		# Look up for a better supernode for your children
+		#
+		_lookForBetterSupernode: () =>
+			siblings = @getSiblings()
+			children = @getChildren()
+			if @isSuperNode and siblings.length > 0 and children.length > 0
+				for child in children
+					bestCandidateDistance = null
+					for parent in siblings
+						distance = parent.coordinates.getDistance(child.coordinates)
+						if !bestCandidateDistance? or distance < bestCandidateDistance
+							bestCandidateDistance = distance
+							parentCandidate = parent
+					if parentCandidate? and bestCandidateDistance < child.latency * superNodeSwitchThreshhold
+						child.emit('peer.ParentCandidate', parentCandidate.id)
+
+		# Switches a parent when a superNode suggest a better Supernode			
+		#
+		# @param peer [Peer] The last routing peer
+		# @param parentCandidateId [String] Id of the suggested supernode
+		# 
+		_onPeerParentCandidate: (_peer, parentCandidateId) =>
+			peer = @getPeer(parentCandidateId)
+			if peer?
+				@_pickParent([peer])
+			else
+				peer = @connect(parentCandidateId)
+				peer.on('channel.opened', () =>
+					@_pickParent([peer])
+				)
