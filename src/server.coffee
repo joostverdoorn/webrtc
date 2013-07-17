@@ -32,6 +32,13 @@ requirejs [
 			@_initTime = Date.now()
 
 			@_nodes = new Collection()
+			@_logs = []
+
+			@_nodes.on('debug', ( node, args..., message ) =>
+				args = [node.id].concat(args)
+				@_logs.push(args)
+			)
+
 
 			@_app = express()
 			@_server = http.createServer(@_app)
@@ -82,6 +89,13 @@ requirejs [
 								res.end()
 						)
 					) ( node )
+			)
+
+			@_app.get('/log', ( req, res ) =>
+				res.writeHead(200, 'Content-Type': 'text/plain')
+				for log in @_logs
+					res.write("#{log[0]}: #{log[1]} \n")
+				res.end()
 			)
 				
 			@_server.listen(8080)
@@ -159,6 +173,8 @@ requirejs [
 		#
 		query: ( request, args... ) ->
 			switch request
+				when 'ping'
+					return 'pong'
 				when 'nodes' 
 					nodes = (node.serialize() for node in @getNodes())		
 					return nodes
