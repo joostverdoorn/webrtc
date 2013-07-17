@@ -31,7 +31,7 @@ define [
 			cpu: null
 
 		broadcastTimeout = 4000 # Wait for return messages after a node broadcasts that it has a token
-		tokenThreshhold = 0.5
+		tokenThreshhold = 1
 
 		# Constructs a new app.
 		#
@@ -53,7 +53,7 @@ define [
 			@server.on('peer.addIceCandidate', @_onPeerAddIceCandidate)
 			@server.on('connect', @_onServerConnect)
 
-			@coordinates = new Vector(Math.random(), Math.random())
+			@coordinates = new Vector(Math.random(), Math.random(), Math.random())
 			@coordinateDelta = 1
 
 			@_peers.on('peer.setSuperNode', @_onPeerSetSuperNode)
@@ -438,6 +438,8 @@ define [
 		#
 		_tokenReceived: ( peer, tokenString ) =>
 			@token = Token.deserialize(tokenString)
+			console.log @_tokens
+			@_tokens.remove(@token)
 			@token.nodeId = @id
 			@fromTokenToSuperNode()
 
@@ -446,7 +448,7 @@ define [
 		fromTokenToSuperNode: () =>
 			@broadcast('token.hop', @token.serialize(), @coordinates.serialize(), true)
 			@_tokenRestTimeout = setTimeout(( ) =>
-				@calculateTokenMagnitude()
+				@_calculateTokenMagnitude()
 			, @broadcastTimeout)
 
 		# Is called when a token hops. Sends a token information to the initiator
@@ -477,13 +479,14 @@ define [
 		# @param [Token] A token to be removed.
 		#
 		removeToken: (token) ->
-			@_tokens.remove(token)
+			oldToken = _(@_tokens).find( (t) -> token.id is t.id)
+			@_tokens.remove(oldToken)
 
 		# Calculates the magnitude of own token and then broadcasts it to the rest
 		#
 		# #return [Float] Return Magnitude of the token
 		#
-		calculateTokenMagnitude: () =>
+		_calculateTokenMagnitude: () ->
 			tokenForce = Vector.makeZeroVector(@coordinates.length)
 			for token in @_tokens
 				direction = @coordinates.substract(token.coordinates)	# Difference between self and other Token
@@ -540,7 +543,7 @@ define [
 		#
 		# @return[Node] Return a new owner of the token
 		#
-		pickNewTokenOwner: () =>
+		pickNewTokenOwner: () ->
 			bestCandidateDistance = null
 			for candidate in @token.candidates
 				if !bestCandidateDistance? or candidate.distance < bestCandidateDistance
@@ -556,6 +559,8 @@ define [
 				@token = null
 			return bestCandidate
 
+		# Applies Vivaldi alghoritm. Calculates the coordinates of a node
+		#
 		update: ( ) =>
 			for peer in @getPeers()	
 				direction = peer.coordinates.substract(@coordinates)		# Vector to peer

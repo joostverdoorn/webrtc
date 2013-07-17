@@ -4,7 +4,7 @@ define [
 	'underscore'
 	], ( Vector, _ ) ->
 
-	class Token extends Array
+	class Token
 
 		id = null
 		timestamp = null

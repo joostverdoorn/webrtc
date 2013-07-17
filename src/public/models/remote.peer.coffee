@@ -51,7 +51,7 @@ define [
 			@on('channel.opened', @_onChannelOpened)
 			@on('channel.closed', @_onChannelClosed)
 
-			@coordinates = new Vector(Math.random(), Math.random())
+			@coordinates = new Vector(Math.random(), Math.random(), Math.random())
 			@latency = Math.random() * 5
 
 			if instatiate
