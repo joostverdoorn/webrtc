@@ -47,7 +47,7 @@ define [], ( ) ->
 			res = new Vector()
 
 			for i in [0...@length]
-				res[i] = @[i] * scaler
+				res.push( @[i] * scaler )
 			return res
 
 		# Calculates the distance between two Vectors
@@ -67,7 +67,7 @@ define [], ( ) ->
 		#
 		# @return [Float] Returns the length of an array.
 		#
-		getLength: () ->
+		getLength: ( ) ->
 			distance = 0
 			for i in [0...@length]
 				distance += Math.pow(@[i], 2)
@@ -78,19 +78,12 @@ define [], ( ) ->
 		#
 		# @return [Vector] Returns the unit vector
 		#
-		unit: () ->
+		unit: ( ) ->
 			res = new Vector()
 			length = @getLength()
 			for i in [0...@length]
 				res.push( @[i] / length )
 			return res
-
-		# Serializes this vector to a JSON string
-		#
-		# @return [String] the JSON string representing this vector
-		#
-		serialize: ( ) ->
-			return JSON.stringify(@)
 
 		# Constructs a Zero vector
 		#
@@ -103,12 +96,19 @@ define [], ( ) ->
 				res.push(0)
 			return res
 
+		# Serializes this vector to a JSON string
+		#
+		# @return [String] the JSON string representing this vector
+		#
+		serialize: ( ) ->
+			return JSON.stringify(@)
+
 		# Generates a vector from a JSON string and returns this
 		#
 		# @param vectorString [String] a string in JSON format
 		# @return [Vector] a new Vector 
 		#		
-		@deserialize: (vectorString) ->
+		@deserialize: ( vectorString ) ->
 			object = JSON.parse(vectorString)
 			res = new Vector()
 			for i in [0...object.length] by 1

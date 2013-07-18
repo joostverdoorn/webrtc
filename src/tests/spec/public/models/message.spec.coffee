@@ -15,17 +15,14 @@ require [
 
 		describe 'when constructed', ->
 
-			beforeEach ->
-				message = new Message('a', 'b', 'event')
-
 			it 'should have a receiver', ->
-				expect(message.to).not.toBe(undefined)
+				expect(message.to).toBeDefined()
 
 			it 'should have a sender', ->
-				expect(message.from).not.toBe(undefined)
+				expect(message.from).toBeDefined()
 
 			it 'should have an event', ->
-				expect(message.event).not.toBe(undefined)
+				expect(message.event).toBeDefined()
 
 			it 'should have a timestamp', ->
 				expect(message.timestamp).toBeGreaterThan(0)
@@ -39,7 +36,7 @@ require [
 			it 'should be able to be deserialized', ->
 				string = message.serialize()
 				newMessage = Message.deserialize(string)
-				expect(newMessage instanceof Message).toBe(true)
+				expect(newMessage instanceof Message).toBeTruthy()
 
 			it 'should be equal to its deserialized serial', ->
 				string = message.serialize()
