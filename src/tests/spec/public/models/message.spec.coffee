@@ -51,6 +51,24 @@ require [
 			it 'should return a different value than other message\'s hash', ->
 				otherMessage = new Message('c', 'd', 'otherEvent', ['q'])
 				expect(message.hash()).not.toEqual(otherMessage.hash())
+
+		describe 'when its hash is stored', ->
 			
+			it 'should have increased the stored hashes\' length', ->
+				length = Message.hashes.length
+				message.storeHash()
+				expect(Message.hashes.length).toBeGreaterThan(length)
+
+			it 'should not increase the stored hashes\' length to above 1000', ->
+				for i in [0..1001]
+					message = new Message(i, i, i, i)
+					message.storeHash()
+
+				expect(Message.hashes.length).toBeLessThan(1000)
+
+			it 'should say that its message is stored', ->
+				message.storeHash()
+				expect(message.isStored()).toBe(true)
+
 
 

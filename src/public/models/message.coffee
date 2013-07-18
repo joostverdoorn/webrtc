@@ -2,6 +2,8 @@ define [], ( ) ->
 
 	class Message
 
+		@hashes = []
+
 		# Constructs a new message.
 		#
 		# @param to [String] the id string of the intended receiver
@@ -13,6 +15,7 @@ define [], ( ) ->
 			unless @timestamp?
 				@timestamp = Date.now()
 
+			@_hash = @hash()
 			Object.freeze(@)
 
 		# Serializes this message to a JSON string
@@ -44,6 +47,20 @@ define [], ( ) ->
 				hash = ((hash << 5) + hash) + char
 		
 			return hash
+
+		# Stores this message's hash in the static hash array for later lookup
+		#
+		storeHash: ( ) ->
+			Message.hashes.push(@_hash)
+			unless Message.hashes.length < 1000
+				Message.hashes.splice(0, 200)
+
+		# Returns true if and only if this message was already hashed and stored
+		#
+		# @return [Boolean] wether or this message was already stored
+		#
+		isStored: ( ) ->
+			return @_hash in Message.hashes
 
 		# Generates a message from a JSON string and returns this
 		#

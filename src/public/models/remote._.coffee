@@ -42,14 +42,11 @@ define [
 		#
 		_onMessage: ( messageString ) =>
 			message = Message.deserialize(messageString)
-			
-			hash = message.hash()
-			if hash in Remote.hashes
+
+			if message.isStored()
 				return
 
-			Remote.hashes.push(hash)
-			if Remote.hashes.length > 1000
-				Remote.hashes.splice(0, 200)
+			message.storeHash()
 
 			if message.to is @_controller.id
 				args = [message.event].concat(message.args).concat(message)
@@ -86,11 +83,7 @@ define [
 		# @param message [Message] the message to send
 		#
 		send: ( message ) ->
-			hash = message.hash()
-			Remote.hashes.push(hash)
-			if Remote.hashes.length > 1000
-				Remote.hashes.splice(0, 200)
-			
+			message.storeHash()			
 			@_send(message)
 
 		# Queries the remote. Calls the callback function when a response is received.
