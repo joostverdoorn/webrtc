@@ -65,7 +65,7 @@ define [
 			@_peers.on('token.info', @_onTokenInfo)
 			@_peers.on('token.requestCandidate', @_onTokenRequestCandidate)
 			@_peers.on('token.candidate', @_onTokenCandidate)
-			@_peers.on('peer.ParentCandidate', @_onPeerParentCandidate)
+			@_peers.on('peer.parentCandidate', @_onPeerParentCandidate)
 			@_peers.on('peer.abandonParent', ( peer ) => @removeChild(peer))
 			
 
@@ -646,7 +646,7 @@ define [
 							bestCandidateDistance = distance
 							parentCandidate = parent
 					if parentCandidate? and bestCandidateDistance < child.latency * superNodeSwitchThreshhold
-						child.emit('peer.ParentCandidate', parentCandidate.id)
+						child.emit('peer.parentCandidate', parentCandidate.id)
 
 		# Switches a parent when a superNode suggest a better Supernode			
 		#

@@ -129,6 +129,6 @@ define [
 			fn = ( args... ) =>
 				@latency = performance.now() - time
 				args = [@latency].concat(args)
-				callback.apply(@, args)
+				callback?.apply(@, args)
 
 			@query('ping', fn)
