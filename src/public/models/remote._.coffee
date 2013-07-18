@@ -11,8 +11,6 @@ define [
 
 		@concern EventBindings
 
-		@hashes = []
-
 		# Constructs a remote.
 		#
 		# @param parent [Object] the parent object (Server or Node).
@@ -42,7 +40,7 @@ define [
 		#
 		_onMessage: ( messageString ) =>
 			message = Message.deserialize(messageString)
-
+			
 			if message.isStored()
 				return
 
@@ -83,7 +81,9 @@ define [
 		# @param message [Message] the message to send
 		#
 		send: ( message ) ->
-			message.storeHash()			
+			unless message.isStored()
+				message.storeHash()
+
 			@_send(message)
 
 		# Queries the remote. Calls the callback function when a response is received.
@@ -125,3 +125,29 @@ define [
 				callback?.apply(@, args)
 
 			@query('ping', fn)
+
+		# Abstract function to be implemented by another class
+		#
+		# @param message [Message] the message to send
+		#
+		_send: ( message ) ->
+			throw "Not implemented"
+
+		# Abstract function to be implemented by another class
+		#
+		# @param args [Any] any arguments to pass along to subclasses
+		#
+		initialize: ( args... ) ->
+			throw "Not implemented"
+
+		# Abstract function to be implemented by another class to determine if there is a connection
+		#
+		# @return [Boolean] if there is a connection
+		#
+		isConnected: ( ) ->
+			throw "Not implemented"
+
+		# Abstract function to be implemented by another class to kill a connection
+		#
+		disconnect: ( ) ->
+			throw "Not implemented"

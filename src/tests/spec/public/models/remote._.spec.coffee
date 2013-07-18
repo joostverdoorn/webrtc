@@ -23,7 +23,7 @@ require [
 			spyOn(Remote.prototype, 'initialize');
 			spyOn(Remote.prototype, '_send');
 
-			Remote.hashes = []
+			Message.hashes = []
 
 			remote = new Remote(fakeController, 1, 2)
 
@@ -59,10 +59,10 @@ require [
 				message = new Message(to, from, 'testEvent')
 
 				# Trigger twice, hash is the same, so should only be processed once
-				expect(Remote.hashes.length).toBe(0)
+				expect(Message.hashes.length).toBe(0)
 				remote.trigger('message', message.serialize())
 				remote.trigger('message', message.serialize())
-				expect(Remote.hashes.length).toBe(1)
+				expect(Message.hashes.length).toBe(1)
 
 			it 'should trigger the event from the message on our instance if `to` is our controller', ->
 				to = fakeController.id
@@ -136,10 +136,10 @@ require [
 				from = fakeController.id + '1'
 				message = new Message(to, from, 'testEvent')
 
-				expect(Remote.hashes.length).toBe(0)
+				expect(Message.hashes.length).toBe(0)
 				remote.send(message)
 				remote.send(message)
-				expect(Remote.hashes.length).toBe(1)
+				expect(Message.hashes.length).toBe(1)
 				expect(remote._send.callCount).toBe(2)
 
 		describe 'when querying', ->
@@ -181,23 +181,6 @@ require [
 				expect(callArgs[0]).toBe(message.from)
 				expect(callArgs[1]).toBe('query1')
 				expect(callArgs[2]).toBe(true)
-
-		describe 'when adding a hash', ->
-
-			it 'should test if the hash is already cached and add it', ->
-				expect(remote._addHash(1)).toBe(true)
-				expect(remote._addHash(1)).toBe(false)
-				expect(remote._addHash(2)).toBe(true)
-
-			
-
-			it 'should limit the hashtable size to 1000', ->
-				for i in [0...1000]
-					remote._addHash(i)
-				
-				expect(Remote.hashes.length).toBe(1000)
-				remote._addHash(1000)
-				expect(Remote.hashes.length).toBe(801)
 
 		describe 'when pinged', ->
 
