@@ -64,24 +64,6 @@ require [
 				remote.trigger('message', message.serialize())
 				expect(Remote.hashes.length).toBe(1)
 
-			it 'should limit the hashtable size to 1000', ->
-				to = fakeController.id
-				from = fakeController.id + '1'
-
-				expect(Remote.hashes.length).toBe(0)
-				for i in [0...1000]
-					message = new Message(to, from, 'testEvent', i)
-
-					# Trigger twice, hash is the same, so should only be processed once
-					remote.trigger('message', message.serialize())
-				
-				expect(Remote.hashes.length).toBe(1000)
-
-				# The next message should splice of 200 hashes and add this new one
-				message = new Message(to, from, 'testEvent', 1000)
-				remote.trigger('message', message.serialize())
-				expect(Remote.hashes.length).toBe(801)
-
 			it 'should trigger the event from the message on our instance if `to` is our controller', ->
 				to = fakeController.id
 				from = fakeController.id + '1'
@@ -159,3 +141,67 @@ require [
 				remote.send(message)
 				expect(Remote.hashes.length).toBe(1)
 				expect(remote._send.callCount).toBe(2)
+
+		describe 'when querying', ->
+
+			it 'should create a one-time callback for the result and emit the request to the target', ->
+				spyOn(remote, 'emit')
+
+				called = 0
+				remote.query('testQuery', 1, ->
+						called++
+					)
+
+				expect(remote.emit).toHaveBeenCalled()
+				callArgs = remote.emit.mostRecentCall.args
+				expect(callArgs[1]).toBe('testQuery')
+				queryID = callArgs[2]
+				expect(callArgs[3]).toBe(1)
+				expect(callArgs.length).toBe(4)
+
+				remote.trigger(queryID)
+				remote.trigger(queryID)
+				expect(called).toBe(1)
+
+		describe 'when queryied', ->
+
+			it 'should query the controller for the value and send it back to the node querying', ->
+				message = {
+					from: '1'
+				}
+				fakeController.query.andReturn(true)
+				spyOn(remote, 'emitTo')
+
+				remote._onQuery('testQuery', 'query1', 1, message)
+				callArgs = fakeController.query.mostRecentCall.args
+				expect(callArgs[0]).toBe('testQuery')
+				expect(callArgs[1]).toBe(1)
+
+				callArgs = remote.emitTo.mostRecentCall.args
+				expect(callArgs[0]).toBe(message.from)
+				expect(callArgs[1]).toBe('query1')
+				expect(callArgs[2]).toBe(true)
+
+		describe 'when adding a hash', ->
+
+			it 'should test if the hash is already cached and add it', ->
+				expect(remote._addHash(1)).toBe(true)
+				expect(remote._addHash(1)).toBe(false)
+				expect(remote._addHash(2)).toBe(true)
+
+			
+
+			it 'should limit the hashtable size to 1000', ->
+				for i in [0...1000]
+					remote._addHash(i)
+				
+				expect(Remote.hashes.length).toBe(1000)
+				remote._addHash(1000)
+				expect(Remote.hashes.length).toBe(801)
+
+		describe 'when pinged', ->
+
+			it 'should send a ping query', ->
+				spyOn(remote, 'query')
+				remote.ping()
+				remote.query.toHaveBeenCalled()
