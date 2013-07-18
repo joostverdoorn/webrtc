@@ -11,7 +11,8 @@
 		"fs-watch-tree": "*",
 		"mkdirp": "*",
 		"jasmine-node": "*",
-		"performance-now": "*"
+		"performance-now": "*",
+		"adapter": "*"
 	}
 
 }
