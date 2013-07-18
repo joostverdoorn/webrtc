@@ -187,4 +187,4 @@ require [
 			it 'should send a ping query', ->
 				spyOn(remote, 'query')
 				remote.ping()
-				remote.query.toHaveBeenCalled()
+				expect(remote.query).toHaveBeenCalled()
