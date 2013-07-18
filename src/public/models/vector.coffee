@@ -1,17 +1,9 @@
-define [
-	'public/helpers/mixable'
-	'public/helpers/mixin.eventbindings'
-
-	'underscore'
-	], ( Mixable, EventBindings, _ ) ->
+define [], ( ) ->
 
 	# Vector class. Extends Array and as such provides most of it's functionality.
 	# This class is used for all Matrix operations
 	#
 	class Vector extends Array
-
-		_.extend(@, Mixable)
-		@concern EventBindings
 
 		# Constructs a new Vector.
 		#
