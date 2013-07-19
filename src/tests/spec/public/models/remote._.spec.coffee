@@ -18,10 +18,10 @@ require [
 				query: ->
 				relay: ->
 			}
-			spyOn(fakeController, 'query');
-			spyOn(fakeController, 'relay');
-			spyOn(Remote.prototype, 'initialize');
-			spyOn(Remote.prototype, '_send');
+			spyOn(fakeController, 'query')
+			spyOn(fakeController, 'relay')
+			spyOn(Remote.prototype, 'initialize')
+			spyOn(Remote.prototype, '_send')
 
 			Message.hashes = []
 
