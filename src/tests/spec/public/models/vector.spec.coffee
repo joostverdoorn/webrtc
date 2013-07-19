@@ -1,9 +1,9 @@
 require.config
 	paths:
-		'public': '../../public'
+		'public/library': '../../public/library'
 
 require [
-	'public/models/vector'
+	'public/library/models/vector'
 	], ( Vector ) ->
 
 	describe 'Vector', ->

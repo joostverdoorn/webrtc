@@ -10,13 +10,13 @@
 # 			exports: '$'
 
 # 		'bootstrap': [ 'jquery' ]
-# 		'public/vendor/scripts/jquery.plugins': [ 'jquery' ]
+# 		'public/library/vendor/scripts/jquery.plugins': [ 'jquery' ]
 
 # 	# We want the following paths for 
 # 	# code-sharing reasons. Now it doesn't 
 # 	# matter from where we require a module.
 # 	paths:
-# 		'public': './'
+# 		'public/library': './'
 
 # 		'underscore': 'vendor/scripts/underscore'
 # 		'jquery': 'vendor/scripts/jquery'

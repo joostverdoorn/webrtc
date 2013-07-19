@@ -1,9 +1,9 @@
 require.config
 	paths:
-		'public': '../../public'
+		'public/library': '../../public/library'
 
 require [
-	'public/models/token'
+	'public/library/models/token'
 	], ( Token ) ->
 
 	describe 'Token', ->

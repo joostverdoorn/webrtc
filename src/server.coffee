@@ -11,8 +11,8 @@ requirejs.config
 			exports: '_'
 
 requirejs [
-	'public/models/remote.client'
-	'public/models/collection'
+	'public/library/models/remote.client'
+	'public/library/models/collection'
 
 	'express'
 	'http'
@@ -45,9 +45,9 @@ requirejs [
 			@_io = io.listen(@_server)
 			@_io.sockets.on('connection', @login)
 			
-			# Serve static content from ./public
+			# Serve static content from ./public/library
 			@_app.configure =>
-				@_app.use(express.static("#{__dirname}/public"))
+				@_app.use(express.static("#{__dirname}/public/library"))
 
 			@_app.get('/nodes', ( req, res ) =>
 				nodes = @getNodes()

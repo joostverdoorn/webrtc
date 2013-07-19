@@ -1,5 +1,5 @@
 define [
-	'public/models/remote._'
+	'public/library/models/remote._'
 
 	'underscore'
 	], ( Remote, _ ) ->

@@ -1,5 +1,5 @@
 define [
-	'public/models/vector'
+	'public/library/models/vector'
 
 	'underscore'
 	], ( Vector, _ ) ->

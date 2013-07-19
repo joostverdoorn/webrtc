@@ -1,9 +1,9 @@
 require.config
 	paths:
-		'public': '../../public'
+		'public/library': '../../public/library'
 
 require [
-	'public/models/node'
+	'public/library/models/node'
 	], ( Node ) ->
 
 		describe 'Node', ->

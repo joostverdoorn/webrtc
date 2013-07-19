@@ -1,18 +1,18 @@
 define [
-	'public/helpers/mixable'
-	'public/helpers/mixin.eventbindings'
+	'public/library/helpers/mixable'
+	'public/library/helpers/mixin.eventbindings'
 
-	'public/models/remote.server'
-	'public/models/remote.peer'
-	'public/models/message'
-	'public/models/token'
+	'public/library/models/remote.server'
+	'public/library/models/remote.peer'
+	'public/library/models/message'
+	'public/library/models/token'
 
-	'public/models/collection'
-	'public/models/vector'
+	'public/library/models/collection'
+	'public/library/models/vector'
 	
 	'underscore'
 
-	'public/vendor/scripts/crypto'
+	'public/library/vendor/scripts/crypto'
 
 	], ( Mixable, EventBindings, Server, Peer, Message, Token, Collection, Vector, _ ) ->
 

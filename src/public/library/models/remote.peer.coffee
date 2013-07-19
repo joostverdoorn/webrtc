@@ -1,6 +1,6 @@
 define [
-	'public/models/remote._'
-	'public/models/vector'
+	'public/library/models/remote._'
+	'public/library/models/vector'
 	'underscore'
 	'adapter'
 	], ( Remote, Vector, _ ) ->

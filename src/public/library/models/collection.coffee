@@ -1,6 +1,6 @@
 define [
-	'public/helpers/mixable'
-	'public/helpers/mixin.eventbindings'
+	'public/library/helpers/mixable'
+	'public/library/helpers/mixin.eventbindings'
 
 	'underscore'
 	], ( Mixable, EventBindings, _ ) ->

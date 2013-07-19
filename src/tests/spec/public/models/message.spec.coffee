@@ -1,9 +1,9 @@
 require.config
 	paths:
-		'public': '../../public'
+		'public/library': '../../public/library'
 
 require [
-	'public/models/message'
+	'public/library/models/message'
 	], ( Message ) ->
 
 	describe 'Message', ->

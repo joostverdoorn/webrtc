@@ -1,11 +1,11 @@
 require.config
 	paths:
-		'public': '../../public'
+		'public/library': '../../public/library'
 
 require [
-	'public/models/collection'
-	'public/helpers/mixable'
-	'public/helpers/mixin.eventbindings'
+	'public/library/models/collection'
+	'public/library/helpers/mixable'
+	'public/library/helpers/mixin.eventbindings'
 	], ( Collection, Mixable, EventBindings ) ->
 
 	describe 'Collection', ->

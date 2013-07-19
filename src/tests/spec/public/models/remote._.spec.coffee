@@ -1,10 +1,10 @@
 require.config
 	paths:
-		'public': '../../public'
+		'public/library': '../../public/library'
 
 require [
-	'public/models/remote._'
-	'public/models/message'
+	'public/library/models/remote._'
+	'public/library/models/message'
 	], ( Remote, Message ) ->
 
 	describe 'Remote', ->
