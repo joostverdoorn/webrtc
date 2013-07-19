@@ -92,3 +92,21 @@ require [
 				expect(peer._onDisconnect).toHaveBeenCalled()
 				expect(peer._onChannelOpened).toHaveBeenCalled()
 				expect(peer._onChannelClosed).toHaveBeenCalled()
+
+			it 'should instantiate the Vivaldi parameters correctly', ->
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+
+				expect(peer.latency).toBe(0)
+				expect(peer.coordinates.length).toBe(3)
+				expect(peer.coordinates[0]).toBe(0)
+				expect(peer.coordinates[1]).toBe(0)
+				expect(peer.coordinates[2]).toBe(0)
+
+			it 'should actually start a connection (or not) depending on the instantiate parameter', ->
+				spyOn(Peer.prototype, 'connect')
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+				expect(peer.connect).toHaveBeenCalled()
+
+				Peer.prototype.connect.reset()
+				peer = new Peer(fakeController, '1', false, FakeRTCPeerConnection)
+				expect(peer.connect).not.toHaveBeenCalled()
