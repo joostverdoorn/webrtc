@@ -154,3 +154,12 @@ require [
 				callArgs = peer._addChannel.mostRecentCall.args
 				expect(callArgs.length).toBe(1)
 				expect(callArgs[0]).toEqual(fakeChannel)
+
+		describe 'when disconnecting', ->
+			it 'should close the RTCPeerConnection', ->
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+				spyOn(peer._connection, 'close')
+
+				peer.disconnect()
+
+				expect(peer._connection.close).toHaveBeenCalled()
