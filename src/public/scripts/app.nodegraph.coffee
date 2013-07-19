@@ -1,4 +1,6 @@
 requirejs.config
+	baseUrl: '../'
+
 	shim:
 		'underscore':
 			exports: '_'
@@ -21,7 +23,7 @@ requirejs.config
 
 		
 require [
-	'app._'
+	'scripts/app._'
 	'jquery'
 	'underscore'
 	'sigma'

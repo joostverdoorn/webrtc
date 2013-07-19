@@ -1,4 +1,6 @@
 requirejs.config
+	baseUrl: '../'
+
 	shim:
 		'jquery':
 			exports: '$'
@@ -16,7 +18,7 @@ requirejs.config
 		'bootstrap': 'vendor/scripts/bootstrap'
 		
 require [
-	'app._'
+	'scripts/app._'
 	'library/node'
 	'jquery'
 	], ( App, Node, $ ) ->
