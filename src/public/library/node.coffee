@@ -222,7 +222,6 @@ define [
 		addChild: ( peer ) ->
 			if peer is @_parent
 				@_parent = null
-			console.log peer.id
 			peer.role = Peer.Role.Child
 			if @getChildren().length > 4
 				_(@generateToken).defer()
@@ -424,6 +423,7 @@ define [
 		# and pick the one with the lowest latency is parent.
 		#
 		_enterNetwork: ( ) =>
+			console.log "enter"
 			@server.query('nodes', ( nodes ) =>
 				superNodes = _(nodes).filter( ( node ) => node.isSuperNode )
 
@@ -487,7 +487,7 @@ define [
 		# Runs a benchmark to get the available resources on this node.
 		#
 		runBenchmark: () =>
-			startTime = Date.now()			
+			startTime = Date.now()
 			endTime = Date.now()
 			@benchmark.cpu = Math.round(endTime - startTime)
 
