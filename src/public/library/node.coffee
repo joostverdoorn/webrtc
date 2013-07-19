@@ -1,3 +1,19 @@
+requirejs.config
+	shim:
+		'underscore':
+			exports: '_'
+
+		'socket.io':
+			exports: 'io'
+
+	# We want the following paths for 
+	# code-sharing reasons. Now it doesn't 
+	# matter from where we require a module.
+	paths:
+		'underscore': 'library/vendor/scripts/underscore'
+		'adapter' : 'library/vendor/scripts/adapter'
+		'socket.io': 'socket.io/socket.io'
+
 define [
 	'public/library/helpers/mixable'
 	'public/library/helpers/mixin.eventbindings'
@@ -11,8 +27,6 @@ define [
 	'public/library/models/vector'
 	
 	'underscore'
-
-	'public/library/vendor/scripts/crypto'
 
 	], ( Mixable, EventBindings, Server, Peer, Message, Token, Collection, Vector, _ ) ->
 
@@ -474,11 +488,6 @@ define [
 		#
 		runBenchmark: () =>
 			startTime = Date.now()			
-			sha = "4C48nBiE586JGzhptoOV"
-
-			for i in [0...128]
-				sha = CryptoJS.SHA3(sha).toString()
-
 			endTime = Date.now()
 			@benchmark.cpu = Math.round(endTime - startTime)
 

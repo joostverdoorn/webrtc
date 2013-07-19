@@ -1,6 +1,6 @@
 require.config
 	paths:
-		'public/library': '../../public/library'
+		'public': '../../public'
 
 require [
 	'public/library/models/collection'

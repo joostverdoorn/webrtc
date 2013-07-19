@@ -47,7 +47,7 @@ requirejs [
 			
 			# Serve static content from ./public/library
 			@_app.configure =>
-				@_app.use(express.static("#{__dirname}/public/library"))
+				@_app.use(express.static("#{__dirname}/public"))
 
 			@_app.get('/nodes', ( req, res ) =>
 				nodes = @getNodes()

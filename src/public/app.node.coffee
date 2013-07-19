@@ -1,11 +1,5 @@
 requirejs.config
-	shim:		
-		'underscore':
-			exports: '_'
-
-		'socket.io':
-			exports: 'io'
-
+	shim:
 		'jquery':
 			exports: '$'
 
@@ -18,16 +12,12 @@ requirejs.config
 	paths:
 		'public': './'
 
-		'underscore': 'vendor/scripts/underscore'
 		'jquery': 'vendor/scripts/jquery'
-		'jquery.plugins': 'vendor/scripts/jquery.plugins'
 		'bootstrap': 'vendor/scripts/bootstrap'
-		'adapter' : 'vendor/scripts/adapter'
-		'socket.io': 'socket.io/socket.io'
 		
 require [
 	'app._'
-	'models/node'
+	'library/node'
 	'jquery'
 	], ( App, Node, $ ) ->
 
