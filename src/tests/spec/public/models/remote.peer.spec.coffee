@@ -48,7 +48,7 @@ require [
 			constructor: ->		
 				@server = new FakeServer()
 
-			id: '1'
+			id: '2'
 			query: ->
 			relay: ->
 
@@ -110,3 +110,47 @@ require [
 				Peer.prototype.connect.reset()
 				peer = new Peer(fakeController, '1', false, FakeRTCPeerConnection)
 				expect(peer.connect).not.toHaveBeenCalled()
+
+		describe 'when connecting', ->
+			it 'should be a "connector"', ->
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+				expect(peer._isConnector).toBe(true)
+
+			it 'should tell the server about the connection request', ->
+				spyOn(fakeController.server, 'emitTo')
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+
+				expect(fakeController.server.emitTo).toHaveBeenCalled()
+
+				callArgs = fakeController.server.emitTo.mostRecentCall.args
+				expect(callArgs.length).toBe(4)
+				expect(callArgs[0]).toBe('1')
+				expect(callArgs[1]).toBe('peer.connectionRequest')
+				expect(callArgs[2]).toBe(fakeController.id)
+				expect(callArgs[3]).toBe(undefined)		# old type identifier, currently unused but not yet removed
+
+			it 'should create a data channel', ->
+				peer = new Peer(fakeController, '1', false, FakeRTCPeerConnection)
+				spyOn(peer._connection, 'createDataChannel').andCallThrough()
+
+				peer.connect()
+
+				expect(peer._connection.createDataChannel).toHaveBeenCalled()
+				callArgs = peer._connection.createDataChannel.mostRecentCall.args
+				expect(callArgs.length).toBe(2)
+				expect(callArgs[0]).toBe('a')
+				expect(callArgs[1]).toBe(Peer.prototype._channelConfiguration)
+
+			it 'should assign the created channel to itself', ->
+				peer = new Peer(fakeController, '1', false, FakeRTCPeerConnection)
+
+				fakeChannel = new FakeRTCDataChannel()
+				spyOn(peer._connection, 'createDataChannel').andReturn(fakeChannel)
+				spyOn(peer, '_addChannel')
+
+				peer.connect()
+
+				expect(peer._addChannel).toHaveBeenCalled()
+				callArgs = peer._addChannel.mostRecentCall.args
+				expect(callArgs.length).toBe(1)
+				expect(callArgs[0]).toEqual(fakeChannel)
