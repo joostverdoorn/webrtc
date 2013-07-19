@@ -40,9 +40,8 @@ define [
 		# @param id [String] the id of the peer to connect to
 		# @param instantiate [Booelean] wether to instantiate the connection or wait for the remote
 		#
-		initialize: ( @id, instantiate = true ) ->
-			@_connection = new RTCPeerConnection(@_serverConfiguration, @_connectionConfiguration)
-
+		initialize: ( @id, instantiate = true, webRTCObject = RTCPeerConnection ) ->
+			@_connection = new webRTCObject(@_serverConfiguration, @_connectionConfiguration)
 			@_connection.onicecandidate = @_onIceCandidate
 			@_connection.oniceconnectionstatechange = @_onIceConnectionStateChange
 			@_connection.ondatachannel = @_onDataChannel
