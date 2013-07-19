@@ -34,7 +34,7 @@ define [], ( ) ->
 		# Constructs a new app.
 		#
 		constructor: ( ) ->
-			@_initTime = performance.now()
+			@_initTime = Date.now()
 			@initialize()
 
 		# Is called when the app has been constructed. Should be overridden by
@@ -45,4 +45,4 @@ define [], ( ) ->
 		# Returns the time that has passed since the starting of the app.
 		#
 		time: ( ) ->
-			return performance.now() - @_initTime
+			return Date.now() - @_initTime

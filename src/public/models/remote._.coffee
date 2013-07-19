@@ -6,8 +6,7 @@ define [
 
 	'underscore'
 
-	'performance-now'
-	], ( Mixable, EventBindings, Message, _, performance ) ->
+	], ( Mixable, EventBindings, Message, _ ) ->
 
 	class Remote extends Mixable
 
@@ -119,10 +118,10 @@ define [
 		# @param callback [Function] the callback to be called when a pong was received.
 		#
 		ping: ( callback ) =>
-			time = performance()
+			time = Date.now()
 
 			fn = ( args... ) =>
-				@latency = performance() - time
+				@latency = Date.now() - time
 				args = [@latency].concat(args)
 				callback?.apply(@, args)
 

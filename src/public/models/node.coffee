@@ -473,13 +473,13 @@ define [
 		# Runs a benchmark to get the available resources on this node.
 		#
 		runBenchmark: () =>
-			startTime = performance.now()			
+			startTime = Date.now()			
 			sha = "4C48nBiE586JGzhptoOV"
 
 			for i in [0...128]
 				sha = CryptoJS.SHA3(sha).toString()
 
-			endTime = performance.now()
+			endTime = Date.now()
 			@benchmark.cpu = Math.round(endTime - startTime)
 
 		# Generates a new token and gives it to a random child 
