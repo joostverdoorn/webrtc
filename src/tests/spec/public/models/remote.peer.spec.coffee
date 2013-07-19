@@ -3,7 +3,7 @@ require.config
 		'public': '../../public'
 
 require [
-	'public/models/remote.peer'
+	'public/library/models/remote.peer'
 	], ( Peer ) ->
 
 	describe 'Remote.Peer', ->
