@@ -8,7 +8,7 @@ require [
 
 	describe 'Remote.Peer', ->
 
-		remote = null
+		peer = null
 		fakeController = null
 
 		# Fake RTCPeerConnection object to prevent actually connecting with something
@@ -64,7 +64,7 @@ require [
 				constructorSpy = spyOn(global, 'FakeRTCPeerConnection').andCallThrough()
 				FakeRTCPeerConnection.prototype = originalPrototype
 
-				remote = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
 				expect(constructorSpy).toHaveBeenCalled()
 
 				callArgs = FakeRTCPeerConnection.mostRecentCall.args
@@ -72,26 +72,23 @@ require [
 				expect(callArgs[0]).toEqual(Peer.prototype._serverConfiguration)
 				expect(callArgs[1]).toEqual(Peer.prototype._connectionConfiguration)
 
-				expect(remote._connection.onicecandidate).toEqual(remote._onIceCandidate)
-				expect(remote._connection.oniceconnectionstatechange).toEqual(remote._onIceConnectionStateChange)
-				expect(remote._connection.ondatachannel).toEqual(remote._onDataChannel)
+				expect(peer._connection.onicecandidate).toEqual(peer._onIceCandidate)
+				expect(peer._connection.oniceconnectionstatechange).toEqual(peer._onIceConnectionStateChange)
+				expect(peer._connection.ondatachannel).toEqual(peer._onDataChannel)
 
 			it 'should listen on all RTC connection events', ->
-				remote = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+				spyOn(Peer.prototype, '_onConnect')
+				spyOn(Peer.prototype, '_onDisconnect')
+				spyOn(Peer.prototype, '_onChannelOpened')
+				spyOn(Peer.prototype, '_onChannelClosed')
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
 
-				console.log(remote._onConnect.toString())
-				spyOn(remote, '_onConnect')
-				spyOn(remote, '_onDisconnect')
-				spyOn(remote, '_onChannelOpened')
-				spyOn(remote, '_onChannelClosed')
+				peer.trigger('connect')
+				peer.trigger('disconnect')
+				peer.trigger('channel.opened')
+				peer.trigger('channel.closed')
 
-				console.log(remote._onConnect.toString())
-				remote.trigger('connect')
-				remote.trigger('disconnect')
-				remote.trigger('channel.opened')
-				remote.trigger('channel.closed')
-
-				expect(remote._onConnect).toHaveBeenCalled()
-				expect(remote._onDisconnect).toHaveBeenCalled()
-				expect(remote._onChannelOpened).toHaveBeenCalled()
-				expect(remote._onChannelClosed).toHaveBeenCalled()
+				expect(peer._onConnect).toHaveBeenCalled()
+				expect(peer._onDisconnect).toHaveBeenCalled()
+				expect(peer._onChannelOpened).toHaveBeenCalled()
+				expect(peer._onChannelClosed).toHaveBeenCalled()
