@@ -30,10 +30,10 @@ require [
 	'three'
 	], ( App, Node, World, $, Three ) ->
 
-	# Master app class
+	# This game class implements the node structure created in the library.
+	# It uses three.js for the graphics.
 	#
-
-	class App.Master extends App
+	class App.Game extends App
 
 		viewAngle = 45
 		nearClip = 0.1
