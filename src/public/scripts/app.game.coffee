@@ -57,8 +57,8 @@ require [
 			@world = new World(@scene)
 
 			@scene.add(@camera)
-			@camera.position.z = 300;
-			@camera.position.y = 80
+			@camera.position.z = 20;
+			@camera.position.y = 5
 			@camera.rotation.x = -.2
 			@renderer.setSize(width, height)
 
@@ -72,18 +72,15 @@ require [
 		#
 		# @return [[Integer, Integer]] a tuple of the width and height of the container
 		#
-		setDimensions: ( ) ->
+		setDimensions: ( ) =>
 			width = window.innerWidth
 			height = window.innerHeight
 
-			@container.height(height)
-			@container.width(width)
+			@renderer?.setSize(width, height)
 
 			@aspectRatio = width / height
 			@camera?.aspect = @aspectRatio
 			@camera?.updateProjectionMatrix()
-
-			@renderer?.setSize(width, height)
 
 			return [width, height]
 
@@ -98,4 +95,4 @@ require [
 			window.requestAnimationFrame(@update)
 
 				
-	window.App = new App.Master
+	window.App = new App.Game

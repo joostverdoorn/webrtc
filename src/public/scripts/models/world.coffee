@@ -2,8 +2,12 @@ define [
 	'public/scripts/helpers/mixable'
 	'public/scripts/helpers/mixin.eventbindings'
 
+	'public/scripts/models/entity.player'
+	'public/scripts/models/collection'
+
 	'three'
-	], ( Mixable, EventBindings, Three ) ->
+	'public/vendor/scripts/three_lambertoon_a'
+	], ( Mixable, EventBindings, Player, Collection, Three ) ->
 
 	# This class manages the game world.
 	#
@@ -19,35 +23,35 @@ define [
 		#
 		constructor: ( @scene ) ->
 
-			radius = 50
-			segments = 16
-			rings = 16
+			@_entities = new Collection()
 
-			material = new THREE.MeshLambertMaterial
-				color: 0x339933
-				shading: Three.SmoothShading
-
-			light = new THREE.DirectionalLight( 0xefefff, 2 )
+			light = new THREE.DirectionalLight( 0xffffff, 2 )
 			light.position.set( -1, 0, -1 ).normalize()
 			@scene.add(light)
 
-			light = new THREE.DirectionalLight( 0xffefef, 2 )
+			light = new THREE.DirectionalLight( 0xffffff, 2 )
 			light.position.set( 1, 0, -1 ).normalize()
 			@scene.add(light)
 
-			light = new THREE.DirectionalLight( 0x888888, 2 )
+			light = new THREE.DirectionalLight( 0xffffff, 2 )
 			light.position.set( 0, 1, 1 ).normalize()
 			@scene.add(light)
 
-			@loader = new Three.JSONLoader()	
-			@loader.load('/meshes/ufo.js', ( geometry, materials ) =>
-				mesh = new Three.Mesh(geometry, new THREE.MeshFaceMaterial( materials ))
-				mesh.scale.set(25, 25, 25)
-				mesh.rotation.y = Math.PI / 3
-				@scene.add(mesh)
+			light = new THREE.AmbientLight( 0xffffff )
+			scene.add( light )
 
-				@player = mesh
+			@player = new Player( ( ) =>
+				@add(@player)
 			)
+
+
+		add: ( entity ) ->
+			@_entities.add(entity)
+			@scene.add(entity.mesh)
+
+		remove: ( entity ) ->
+			@_entities.remove(entity)
+			@scene.remove(entity.mesh)
 
 
 		# Updates the world.
@@ -55,4 +59,5 @@ define [
 		# @param dt [Float] the time that has elapsed since last update
 		#
 		update: ( dt ) ->
-			@player?.rotation.y += .01
+			entity.update(dt) for entity in @_entities
+			@camera
