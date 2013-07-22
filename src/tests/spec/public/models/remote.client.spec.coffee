@@ -13,10 +13,7 @@ require [
 		client = null
 		fakeController = null
 		fakeConnection = null
-
-		# Fake RTCPeerConnection object to prevent actually connecting with something
-		fakeRTC = null
-
+		
 		class FakeConnection
 			id: '1'
 

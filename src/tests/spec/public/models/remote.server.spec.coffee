@@ -1,0 +1,74 @@
+require.config
+	paths:
+		'public': '../../public'
+		'socket.io': '../mock/socket.io.mock'
+
+require [
+	'public/library/../library/models/remote.server'
+	'public/library/models/message'
+	'socket.io'
+
+	], ( Server, Message, io ) ->
+
+	describe 'Remote.Client', ->
+
+		server = null
+		fakeController = null
+
+		class FakeController
+
+			class FakeServer
+				emitTo: ->
+			
+			constructor: ->		
+				@server = new FakeServer()
+
+			id: '2'
+			query: ->
+			relay: ->
+
+		beforeEach ->
+			fakeController = new FakeController()
+
+		describe 'when initializing', ->
+			it 'should start connecting', ->
+				spyOn(Server.prototype, 'connect')
+				server = new Server(fakeController, '127.0.0.1')
+
+				expect(Server.prototype.connect).toHaveBeenCalled()
+
+			it 'should start listening for the connect event', ->
+				spyOn(Server.prototype, '_onConnect')
+				server = new Server(fakeController, '127.0.0.1')
+
+				server.trigger('connect')
+
+				expect(Server.prototype._onConnect).toHaveBeenCalled()
+
+
+		describe 'when connecting', ->
+			it 'should make a new Socket.IO connection', ->
+				spyOn(io, 'connect').andCallThrough()
+				server = new Server(fakeController, '127.0.0.1')
+
+				expect(io.connect).toHaveBeenCalled()
+				expect(io.connect.mostRecentCall.args).toEqual([
+						'127.0.0.1'
+						 {
+						 	'force new connection': true
+						 }
+					])
+
+			it 'should start listening for message, connect and disconnect events on Socket.IO', ->
+				called = []
+
+				spyOn(io.prototype, 'on').andCallFake( ( query, fn ) ->
+						called.push query
+					)
+
+				server = new Server(fakeController, '127.0.0.1')
+				expect(called).toEqual([
+						'message'
+						'connect'
+						'disconnect'
+					])
