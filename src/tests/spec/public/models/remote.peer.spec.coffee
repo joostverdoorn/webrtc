@@ -219,3 +219,26 @@ require [
 				expect(peer._channel.onclose).toEqual(peer._onChannelClose)
 				expect(peer._channel.onerror).toEqual(peer._onChannelError)
 
+		describe 'when a local description is created', ->
+			it 'should be sent to the remote node via the central server', ->
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+				spyOn(peer._connection, 'setLocalDescription')
+				spyOn(fakeController.server, 'emitTo')
+
+				peer._onLocalDescription('a')
+
+				expect(peer._connection.setLocalDescription).toHaveBeenCalled()
+
+				callArgs = peer._connection.setLocalDescription.mostRecentCall.args
+				expect(callArgs.length).toBe(1)
+				expect(callArgs[0]).toBe('a')
+
+				expect(fakeController.server.emitTo).toHaveBeenCalled()
+
+				callArgs = fakeController.server.emitTo.mostRecentCall.args
+				expect(callArgs.length).toBe(4)
+				expect(callArgs[0]).toBe('1')
+				expect(callArgs[1]).toBe('peer.setRemoteDescription')
+				expect(callArgs[2]).toBe(fakeController.id)
+				expect(callArgs[3]).toBe('a')
+
