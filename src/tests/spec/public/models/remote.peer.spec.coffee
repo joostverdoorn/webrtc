@@ -405,3 +405,45 @@ require [
 						return success
 					, 1000)
 
+		describe 'when the channel is opened', ->
+			it 'should start sending a ping packet every 2500 ms', ->
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+				jasmine.Clock.useMock();
+				spyOn(peer, 'ping')
+				peer._onChannelOpen()
+				jasmine.Clock.tick(1)
+				for i in [0...10]
+					expect(peer.ping.callCount).toBe(i)
+					jasmine.Clock.tick(2500);		# Fake the time passing 2500ms
+				
+			it 'should send queries for benchmark, system and isSuperNode', ->
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+				called = []
+				spyOn(peer, 'query').andCallFake( ( query, fn ) ->
+						called.push query
+					)
+				peer._onChannelOpen()
+				expect(called).toEqual([
+						'benchmark'
+						'system'
+						'isSuperNode'
+					])
+
+			it 'should trigger the channel.opened event', ->
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+				success = false
+
+				fakeEvent = {
+					a: 1
+					b: 2
+				}
+				peer.on('channel.opened', ( thePeer, event ) ->
+						expect(thePeer).toBe(peer)
+						expect(event).toBe(fakeEvent)
+						success = true
+					)
+
+				peer._onChannelOpen(fakeEvent)
+				waitsFor(->
+						return success
+					, 1000)
