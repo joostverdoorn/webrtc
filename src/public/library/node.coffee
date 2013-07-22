@@ -66,10 +66,10 @@ define [
 
 			@server = new Server(@, @serverAddress)
 
+			@server.on('connect', @_enterNetwork)
 			@server.on('peer.connectionRequest', @_onPeerConnectionRequest)
 			@server.on('peer.setRemoteDescription', @_onPeerSetRemoteDescription)
 			@server.on('peer.addIceCandidate', @_onPeerAddIceCandidate)
-			@server.on('connect', @_enterNetwork)
 
 			@coordinates = new Vector(Math.random(), Math.random(), Math.random())
 			@coordinateDelta = 1
@@ -174,6 +174,17 @@ define [
 					(getUnconnected or peer.isConnected())
 
 			return @_peers.filter(fn)
+
+		# Public method to bind a callback on to a peer event
+		#
+		# @param event [String] the string identifier of the event
+		# @param callback [Function] the function to call
+		# @param context [Object] the context on which to apply the callback
+		#
+		onReceive: ( event, callback, context = @ ) ->
+			@_peers.on(event, ( peer, args... ) =>
+				callback.apply(context, args)
+			)
 
 		# Is called when a peer requests a connection with this node. Will
 		# accept this request by establishing a connection.
@@ -443,6 +454,7 @@ define [
 				if superNodes.length is 0
 					@token = new Token(@id, @id)
 					@setSuperNode(true)
+					@trigger('joined')
 
 				# Else connect to a bunch of random supernodes
 				else
@@ -468,7 +480,10 @@ define [
 								peer.ping( ( latency ) => 
 									pingCount++
 									if pingCount is candidates.length
-										@_pickParent()
+										@_pickParent( null, ( joined ) =>
+											if joined
+												@trigger('joined')
+										)
 								)
 							)
 						) ( peer )
@@ -479,21 +494,23 @@ define [
 		# this function calls itself with all candidates that have
 		# not yet refused a parent request. 
 		#
-		_pickParent: ( candidates = null ) =>
+		_pickParent: ( candidates = null, callback ) =>
 			unless candidates?
 				candidates = _(@getPeers()).filter( ( p ) => p.isSuperNode )
 			if candidates.length > 0
+				console.log candidates
 				candidates = _(candidates).sortBy( 'latency' )
 				candidate = candidates.shift()
 				@setParent(candidate, ( accepted ) =>
 					if accepted
 						console.log("parent request to #{candidate.id} accepted")
-						@trigger('hasParent', true)
+						callback?(true)
 					else
 						console.log("parent request to #{candidate.id} denied")
-						@_pickParent(candidates)
+						@_pickParent(candidates, callback)
 				)
 			else
+				callback?(false)
 				@_enterNetwork()
 
 		# Runs a benchmark to get the available resources on this node.

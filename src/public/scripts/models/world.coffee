@@ -5,9 +5,9 @@ define [
 	'public/scripts/models/entity.player'
 	'public/scripts/models/collection'
 
+	'underscore'
 	'three'
-	'public/vendor/scripts/three_lambertoon_a'
-	], ( Mixable, EventBindings, Player, Collection, Three ) ->
+	], ( Mixable, EventBindings, Player, Collection, _, Three ) ->
 
 	# This class manages the game world.
 	#
@@ -25,34 +25,55 @@ define [
 
 			@_entities = new Collection()
 
-			light = new THREE.DirectionalLight( 0xffffff, 2 )
-			light.position.set( -1, 0, -1 ).normalize()
-			@scene.add(light)
+			directionalLight = new Three.DirectionalLight(0xffffff, 2)
+			directionalLight.position.set(0, 1, 1).normalize()
+			@scene.add(directionalLight)
 
-			light = new THREE.DirectionalLight( 0xffffff, 2 )
-			light.position.set( 1, 0, -1 ).normalize()
-			@scene.add(light)
+			ambientLight = new Three.AmbientLight(0xffffff)
+			scene.add(ambientLight)
 
-			light = new THREE.DirectionalLight( 0xffffff, 2 )
-			light.position.set( 0, 1, 1 ).normalize()
-			@scene.add(light)
+			hemisphereLight = new Three.HemisphereLight(0x9999aa, 0x663322, 1)
+			scene.add(hemisphereLight)
 
-			light = new THREE.AmbientLight( 0xffffff )
-			scene.add( light )
-
-			@player = new Player( ( ) =>
-				@add(@player)
+		# Creates and adds a player to the world
+		#
+		# @param id [String] the string id of the player
+		# @param transformations [Object] an object of the player's transformations
+		#
+		addPlayer: ( id, transformations ) ->
+			player = new Player(id, ( ) =>
+				player.applyTransformations(transformations)
+				@addEntity(player)
 			)
 
+		# Updates a player's transformation in the world. If the player doesn't exist, 
+		# it will create the player using addPlayer()
+		#
+		# @param id [String] the string id of the player
+		# @param transformations [Object] an object of the player's tranfomrations
+		#
+		updatePlayer: ( id, transformations ) ->
+			player = _(@_entities).find( ( entity ) -> entity instanceof Player and entity.id is id)
+			if player?
+				player.applyTransformations(transformations)
+			else
+				@addPlayer(id, transformations)
 
-		add: ( entity ) ->
+		# Adds a physics entity to the world
+		#
+		# @param entity [Entity] the entity to add
+		#
+		addEntity: ( entity ) ->
 			@_entities.add(entity)
 			@scene.add(entity.mesh)
 
-		remove: ( entity ) ->
+		# Removes a physics entity from the world
+		#
+		# @param entity [Entity] the entity to remove
+		#
+		removeEntity: ( entity ) ->
 			@_entities.remove(entity)
 			@scene.remove(entity.mesh)
-
 
 		# Updates the world.
 		#
@@ -60,4 +81,4 @@ define [
 		#
 		update: ( dt ) ->
 			entity.update(dt) for entity in @_entities
-			@camera
+			
