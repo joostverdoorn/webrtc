@@ -23,6 +23,7 @@ require [
 
 			emit: ->
 			on: ->
+			disconnect: ->
 
 		class FakeController
 
@@ -79,3 +80,12 @@ require [
 						'system'
 						'isSuperNode'
 					])
+
+		describe 'when disconnecting', ->
+			it 'should disconenct the _connection', ->
+				client = new Client(fakeController, fakeConnection)
+				spyOn(fakeConnection, 'disconnect')
+
+				client.disconnect()
+
+				expect(fakeConnection.disconnect).toHaveBeenCalled()
