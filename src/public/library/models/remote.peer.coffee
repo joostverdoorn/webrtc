@@ -95,15 +95,18 @@ define [
 			maxRetries = 5
 
 			unless @isChannelOpen()
-				return
+				return false
 			
 			try
 				@_channel.send(message.serialize())
+				return true
 			catch error
 				if retries < maxRetries
-					_( => @_send(message, retries + 1)).defer()
+					_( => result = @_send(message, retries + 1)).defer()
+					return undefined
 				else
 					console.log 'failed to send message', message
+					return false
 
 		# Adds a new data channel, and adds event bindings to it.
 		#

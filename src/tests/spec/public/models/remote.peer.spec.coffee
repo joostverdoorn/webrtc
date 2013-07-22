@@ -4,7 +4,8 @@ require.config
 
 require [
 	'public/library/../library/models/remote.peer'
-	], ( Peer ) ->
+	'public/library/models/message'
+	], ( Peer, Message ) ->
 
 	describe 'Remote.Peer', ->
 
@@ -19,6 +20,7 @@ require [
 			onopen: ->
 			onclose: ->
 			onmessage: ->
+			send: ->
 
 		class global.FakeRTCPeerConnection
 			@iceConnectionState: null
@@ -161,3 +163,41 @@ require [
 				peer.disconnect()
 
 				expect(peer._connection.close).toHaveBeenCalled()
+
+		describe 'sending', ->
+			it 'should check if the channel is open before sending', ->
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+				spyOn(peer, 'isChannelOpen').andReturn(false)
+				spyOn(peer._channel, 'send')
+
+				result = peer._send('a')
+
+				expect(peer.isChannelOpen).toHaveBeenCalled()
+				expect(peer._channel.send).not.toHaveBeenCalled()
+				expect(result).toBe(false)
+
+			it 'should send the message when the connection works', ->
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+				spyOn(peer, 'isChannelOpen').andReturn(true)
+				spyOn(peer._channel, 'send')
+
+				message = new Message('a', 'b', 'event')
+				
+				result = peer._send(message)
+
+				expect(result).toBe(true)
+
+			it 'should try to send the message multiple times when there are errors', ->
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+				spyOn(peer, 'isChannelOpen').andReturn(true)
+				spyOn(peer._channel, 'send')
+				spyOn(peer, '_send').andCallThrough()
+				
+				result = peer._send(null)
+
+				expect(result).toBe(undefined)
+				# _send will asynchronous recall itself so we had to spy on it above and now wait for the fail count to rise to 6 (initial call + 5 retries)
+				waitsFor(->
+						return peer._send.callCount is 6
+					, 1000)
+				
