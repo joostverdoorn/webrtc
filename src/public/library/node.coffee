@@ -46,7 +46,7 @@ define [
 
 		broadcastTimeout = 4000 # Wait for return messages after a node broadcasts that it has a token
 		tokenThreshhold = 1
-		superNodeSwitchThreshhold = 0.8 # Scaler
+		superNodeSwitchThreshhold = 0.75 # Scaler: from 0 to 1. More is easier swtiching
 
 		# Constructs a new app.
 		#
@@ -120,6 +120,7 @@ define [
 		# @param peer [Peer] the peer that disconnects
 		#
 		_onPeerDisconnect: ( peer ) =>
+			console.log peer
 			if peer is @getParent()
 				candidates = _(@getPeers()).filter( ( p ) -> p.isSuperNode )
 				@_pickParent(candidates)
@@ -290,16 +291,19 @@ define [
 		# @param superNode [boolean] SuperNode state
 		#
 		setSuperNode: ( superNode = true ) =>
-			@server.emit('setSuperNode', superNode)
-			@trigger('setSuperNode', superNode) # App is listening
-			@broadcast('peer.setSuperNode', @id, superNode)
-			@isSuperNode = superNode
-			if superNode
-				@_triggerStaySuperNodeTimeout()
-			else
-				for sibling in @getSiblings()
-					@removeSibling(sibling)
-				@_pickParent()
+			if superNode is not @isSuperNode
+				if not superNode and @getSiblings().length is 0
+					return
+				@server.emit('setSuperNode', superNode)
+				@trigger('setSuperNode', superNode) # App is listening
+				@broadcast('peer.setSuperNode', @id, superNode)
+				@isSuperNode = superNode
+				if superNode
+					@_triggerStaySuperNodeTimeout()
+				else
+					for sibling in @getSiblings()
+						@removeSibling(sibling)
+					@_pickParent()
 
 		_triggerStaySuperNodeTimeout: () =>
 			if @getChildren().length is 0
@@ -581,7 +585,7 @@ define [
 		# @param tokenString [String] A serialised token
 		#
 		_onTokenRequestCandidate: ( peer, tokenString ) =>
-			if(@isSuperNode)
+			if @isSuperNode
 				token = Token.deserialize(tokenString)
 				bestCandidateDistance = null
 				for child in @getChildren()
@@ -599,31 +603,39 @@ define [
 		# @param nodeId [String] Node id of the candidate
 		#
 		_onTokenCandidate: ( peer, distance, nodeId ) =>
-			unless @token.candidates?
-				@token.candidates = new Array()
-			candidate = new Object()
-			candidate.distance = distance
-			candidate.nodeId = nodeId
-			@token.candidates.push(candidate)
+			if @token?
+				unless @token.candidates?
+					@token.candidates = new Array()
+				candidate = new Object()
+				candidate.distance = distance
+				candidate.nodeId = nodeId
+				@token.candidates.push(candidate)
 
 		# Picks a new owner of the token. If the new owner is self, then it becomes a supernode
 		#
 		# @return[Node] Return a new owner of the token
 		#
 		_pickNewTokenOwner: ( ) ->
-			bestCandidateDistance = null
-			for candidate in @token.candidates ? []
-				if !bestCandidateDistance? or candidate.distance < bestCandidateDistance
-					bestCandidateDistance = candidate.distance
-					bestCandidate = candidate
+			if @token?
+				bestCandidateDistance = null
+				for candidate in @token.candidates ? []
+					if !bestCandidateDistance? or candidate.distance < bestCandidateDistance
+						bestCandidateDistance = candidate.distance
+						bestCandidate = candidate
 
-			console.log "Best Candidate is " + bestCandidate.nodeId + " with distance " + bestCandidateDistance
-			if bestCandidate
-				if bestCandidate.nodeId is @id
-					@setSuperNode(true)
+				if bestCandidate
+					console.log "Best Candidate is " + bestCandidate.nodeId + " with distance " + bestCandidateDistance
+					if bestCandidate.nodeId is @id
+						if not @isSuperNode
+							@setSuperNode(true)
+					else
+						@emitTo(bestCandidate.nodeId,'token.add', @token.serialize())
+						@token = null
+						if @isSuperNode
+							@setSuperNode(false)
 				else
-					@emitTo(bestCandidate.nodeId,'token.add', @token.serialize())
-					@token = null
+					if not @isSuperNode
+						@setSuperNode(true)
 
 		# Applies Vivaldi alghoritm. Calculates the coordinates of a node
 		#
@@ -644,8 +656,7 @@ define [
 		_lookForBetterSupernode: () =>
 			siblings = @getSiblings()
 			children = @getChildren()
-			childrenLength = children.length
-			if @isSuperNode and siblings.length > 0 and childrenLength > 0
+			if @isSuperNode and siblings.length > 0 and children.length > 0
 				for child in children
 					bestCandidateDistance = null
 					for parent in siblings
