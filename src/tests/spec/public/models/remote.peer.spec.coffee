@@ -68,9 +68,10 @@ require [
 				expect(constructorSpy).toHaveBeenCalled()
 
 				callArgs = FakeRTCPeerConnection.mostRecentCall.args
-				expect(callArgs.length).toBe(2)
-				expect(callArgs[0]).toEqual(Peer.prototype._serverConfiguration)
-				expect(callArgs[1]).toEqual(Peer.prototype._connectionConfiguration)
+				expect(callArgs).toEqual([
+						Peer.prototype._serverConfiguration
+						Peer.prototype._connectionConfiguration
+					])
 
 				expect(peer._connection.onicecandidate).toEqual(peer._onIceCandidate)
 				expect(peer._connection.oniceconnectionstatechange).toEqual(peer._onIceConnectionStateChange)
@@ -123,11 +124,12 @@ require [
 				expect(fakeController.server.emitTo).toHaveBeenCalled()
 
 				callArgs = fakeController.server.emitTo.mostRecentCall.args
-				expect(callArgs.length).toBe(4)
-				expect(callArgs[0]).toBe('1')
-				expect(callArgs[1]).toBe('peer.connectionRequest')
-				expect(callArgs[2]).toBe(fakeController.id)
-				expect(callArgs[3]).toBe(undefined)		# old type identifier, currently unused but not yet removed
+				expect(callArgs).toEqual([
+						'1'
+						'peer.connectionRequest'
+						fakeController.id
+						undefined		# old type identifier, currently unused but not yet removed
+					])
 
 			it 'should create a data channel', ->
 				peer = new Peer(fakeController, '1', false, FakeRTCPeerConnection)
@@ -137,9 +139,10 @@ require [
 
 				expect(peer._connection.createDataChannel).toHaveBeenCalled()
 				callArgs = peer._connection.createDataChannel.mostRecentCall.args
-				expect(callArgs.length).toBe(2)
-				expect(callArgs[0]).toBe('a')
-				expect(callArgs[1]).toBe(Peer.prototype._channelConfiguration)
+				expect(callArgs).toEqual([
+						'a'
+						Peer.prototype._channelConfiguration
+					])
 
 			it 'should assign the created channel to itself', ->
 				peer = new Peer(fakeController, '1', false, FakeRTCPeerConnection)
@@ -152,8 +155,9 @@ require [
 
 				expect(peer._addChannel).toHaveBeenCalled()
 				callArgs = peer._addChannel.mostRecentCall.args
-				expect(callArgs.length).toBe(1)
-				expect(callArgs[0]).toEqual(fakeChannel)
+				expect(callArgs).toEqual([
+						fakeChannel
+					])
 
 		describe 'when disconnecting', ->
 			it 'should close the RTCPeerConnection', ->
@@ -230,17 +234,19 @@ require [
 				expect(peer._connection.setLocalDescription).toHaveBeenCalled()
 
 				callArgs = peer._connection.setLocalDescription.mostRecentCall.args
-				expect(callArgs.length).toBe(1)
-				expect(callArgs[0]).toBe('a')
+				expect(callArgs).toEqual([
+						'a'
+					])
 
 				expect(fakeController.server.emitTo).toHaveBeenCalled()
 
 				callArgs = fakeController.server.emitTo.mostRecentCall.args
-				expect(callArgs.length).toBe(4)
-				expect(callArgs[0]).toBe('1')
-				expect(callArgs[1]).toBe('peer.setRemoteDescription')
-				expect(callArgs[2]).toBe(fakeController.id)
-				expect(callArgs[3]).toBe('a')
+				expect(callArgs).toEqual([
+						'1'
+						'peer.setRemoteDescription'
+						fakeController.id
+						'a'
+					])
 
 		describe 'when setting a remote description', ->
 			it 'should set the remote description for RTC connection', ->
@@ -251,8 +257,9 @@ require [
 
 				expect(peer._connection.setRemoteDescription).toHaveBeenCalled()
 				callArgs = peer._connection.setRemoteDescription.mostRecentCall.args
-				expect(callArgs.length).toBe(1)
-				expect(callArgs[0]).toBe('a')
+				expect(callArgs).toEqual([
+						'a'
+					])
 
 			it 'should create an answer if we are not the connector', ->
 				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
@@ -269,10 +276,11 @@ require [
 
 				expect(peer._connection.createAnswer).toHaveBeenCalled()
 				callArgs = peer._connection.createAnswer.mostRecentCall.args
-				expect(callArgs.length).toBe(3)
-				expect(callArgs[0]).toEqual(peer._onLocalDescription)
-				expect(callArgs[1]).toBe(null)
-				expect(callArgs[2]).toEqual({})
+				expect(callArgs).toEqual([
+						peer._onLocalDescription
+						null
+						{}
+					])
 
 		describe 'when receiving an ICE candidate', ->
 			it 'should ignore it if there is not actally no candidate', ->
@@ -295,11 +303,12 @@ require [
 
 				expect(fakeController.server.emitTo).toHaveBeenCalled()
 				callArgs = fakeController.server.emitTo.mostRecentCall.args
-				expect(callArgs.length).toBe(4)
-				expect(callArgs[0]).toBe('1')
-				expect(callArgs[1]).toBe('peer.addIceCandidate')
-				expect(callArgs[2]).toBe(fakeController.id)
-				expect(callArgs[3]).toBe(fakeCandidate)
+				expect(callArgs).toEqual([
+						'1'
+						'peer.addIceCandidate'
+						fakeController.id
+						fakeCandidate
+					])
 
 		describe 'when adding an ICE candidate', ->
 			it 'should relay the candidate to the RTC connection', ->
@@ -310,8 +319,9 @@ require [
 
 				expect(peer._connection.addIceCandidate).toHaveBeenCalled()
 				callArgs = peer._connection.addIceCandidate.mostRecentCall.args
-				expect(callArgs.length).toBe(1)
-				expect(callArgs[0]).toBe('a')
+				expect(callArgs).toEqual([
+						'a'
+					])
 
 		describe 'when the ICE connection state changes', ->
 			it 'should trigger a connect event when connected', ->
