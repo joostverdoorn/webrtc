@@ -4,10 +4,9 @@ require.config
 
 require [
 	'public/library/models/remote.client'
-	'public/library/helpers/mixable'
-	'public/library/helpers/mixin.eventbindings'
+	'public/library/models/message'
 
-	], ( Client, Mixable, EventBindings ) ->
+	], ( Client, Message ) ->
 
 	describe 'Remote.Client', ->
 
@@ -89,3 +88,17 @@ require [
 				client.disconnect()
 
 				expect(fakeConnection.disconnect).toHaveBeenCalled()
+
+		describe 'when sending', ->
+			it 'should relay the message to _connection.emit', ->
+				client = new Client(fakeController, fakeConnection)
+				spyOn(fakeConnection, 'emit')
+
+				fakeMessage = new Message('a', 'b', 'event')
+				client._send(fakeMessage)
+
+				expect(fakeConnection.emit).toHaveBeenCalled()
+				expect(fakeConnection.emit.mostRecentCall.args).toEqual([
+						'message'
+						fakeMessage.serialize()
+					])
