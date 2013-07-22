@@ -46,7 +46,7 @@ define [
 
 		broadcastTimeout = 4000 # Wait for return messages after a node broadcasts that it has a token
 		tokenThreshhold = 1
-		superNodeSwitchThreshhold = 0.75 # Scaler: from 0 to 1. More is easier swtiching
+		superNodeSwitchThreshhold = 0.75 # Scaler: from 0 to 1. More is easier switching
 
 		# Constructs a new app.
 		#
