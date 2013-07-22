@@ -110,4 +110,14 @@ require [
 				expect(client.isSuperNode).toBe(true)
 				client._onSetSuperNode(false)
 				expect(client.isSuperNode).toBe(false)
-				
+
+		describe 'when serialized', ->
+			it 'should return an object with id, system, benchmark and isSuperNode', ->
+				client = new Client(fakeController, fakeConnection)
+
+				expect(client.serialize()).toEqual({
+						id: client.id
+						system: client.system
+						benchmark: client.benchmark
+						isSuperNode: client.isSuperNode
+					})
