@@ -164,7 +164,7 @@ require [
 
 				expect(peer._connection.close).toHaveBeenCalled()
 
-		describe 'sending', ->
+		describe 'when sending', ->
 			it 'should check if the channel is open before sending', ->
 				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
 				spyOn(peer, 'isChannelOpen').andReturn(false)
@@ -200,4 +200,24 @@ require [
 				waitsFor(->
 						return peer._send.callCount is 6
 					, 1000)
-				
+		
+		describe 'when adding a channel', ->
+			it 'should set _channel to the channel', ->
+				fakeChannel = new FakeRTCDataChannel()
+				spyOn(global, 'FakeRTCDataChannel').andReturn(fakeChannel)
+
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+
+				expect(peer._channel).toEqual(fakeChannel)
+
+			it 'should set the channels events to its own callbacks', ->
+				fakeChannel = new FakeRTCDataChannel()
+				spyOn(global, 'FakeRTCDataChannel').andReturn(fakeChannel)
+
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+
+				expect(peer._channel.onmessage).toEqual(peer._onChannelMessage)
+				expect(peer._channel.onopen).toEqual(peer._onChannelOpen)
+				expect(peer._channel.onclose).toEqual(peer._onChannelClose)
+				expect(peer._channel.onerror).toEqual(peer._onChannelError)
+
