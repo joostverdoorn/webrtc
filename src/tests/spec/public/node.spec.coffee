@@ -16,9 +16,10 @@ require [
 			peer = null
 			
 			beforeEach ->
-
 				node = new Node()
 
+			afterEach ->
+				node.removeIntervals()
 
 			describe 'when created', ->
 
@@ -51,11 +52,6 @@ require [
 				beforeEach ->
 					node._enterNetwork()
 
-				it 'should connect to a superNode if a superNode is available', ->					
+				it 'should connect to a superNode if a superNode is available', ->
 					expect(node._peers.length).toBe(1)
 					expect(node.isSuperNode).toBeFalsy()
-
-
-
-
-

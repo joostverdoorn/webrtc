@@ -54,8 +54,10 @@ require [
 			relay: ->
 
 		beforeEach ->
-
 			fakeController = new FakeController()
+
+		afterEach ->
+			peer.removeTimers()
 
 		describe 'when initialized', ->
 			it 'should create a new RTCPeerConnection object with default configurations', ->
@@ -406,7 +408,7 @@ require [
 					, 1000)
 
 		describe 'when the channel is opened', ->
-			it 'should start sending a ping packet every 2500 ms', ->
+			it 'should start sending a ping packet every 7500 ms', ->
 				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
 				jasmine.Clock.useMock();
 				spyOn(peer, 'ping')
@@ -414,7 +416,7 @@ require [
 				jasmine.Clock.tick(1)
 				for i in [0...10]
 					expect(peer.ping.callCount).toBe(i)
-					jasmine.Clock.tick(2500);		# Fake the time passing 2500ms
+					jasmine.Clock.tick(7500);		# Fake the time passing 7500ms
 				
 			it 'should send queries for benchmark, system and isSuperNode', ->
 				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
@@ -474,7 +476,7 @@ require [
 				jasmine.Clock.useMock();
 				spyOn(peer, 'ping')
 				peer._onChannelOpen()
-				jasmine.Clock.tick(2501)
+				jasmine.Clock.tick(7501)
 				peer._onDisconnect()
-				jasmine.Clock.tick(2500 * 10)
+				jasmine.Clock.tick(7500 * 10)
 				expect(peer.ping.callCount).toBe(1)

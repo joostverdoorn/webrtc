@@ -46,7 +46,9 @@ define [
 
 		broadcastTimeout = 4000 # Wait for return messages after a node broadcasts that it has a token
 		tokenThreshhold = 1
-		superNodeSwitchThreshhold = 0.75 # Scaler: from 0 to 1. More is easier switching
+
+		superNodeSwitchThreshhold = 0.6 # Scaler: from 0 to 1. More is easier switching
+		kickstartPeers = 3
 
 		# Constructs a new app.
 		#
@@ -60,6 +62,7 @@ define [
 			# Structured entities
 			@_parent = null
 			@token = null
+			@_timers = []
 
 			@server = new Server(@, @serverAddress)
 
@@ -83,8 +86,8 @@ define [
 			@_peers.on('peer.abandonParent', ( peer ) => @removeChild(peer))
 			
 
-			setInterval(@_updateCoordinates, 2500)
-			setInterval(@_lookForBetterSupernode, 10000)
+			@_timers.push(setInterval(@_updateCoordinates, 7500))
+			@_timers.push(setInterval(@_lookForBetterSupernode, 15000))
 			@staySuperNodeTimeout = null
 
 			@runBenchmark()
@@ -107,6 +110,12 @@ define [
 			@addPeer(peer)
 			return peer
 
+		# Removes all timers
+		#
+		removeIntervals: ( ) ->
+			for timer in @_timers
+				clearTimeout(timer)
+			
 		# Disconects a peer.
 		#
 		# @param id [String] the id of the peer to disconnect
@@ -311,9 +320,9 @@ define [
 				@staySuperNodeTimeout = setTimeout( ( ) =>
 					@_superNodeTimeout()
 				, 20000)
+				@_timers.push(@staySuperNodeTimeout)
 
 		_superNodeTimeout: () =>
-			console.log "Aantal kinderen: ", @getChildren().length
 			if @getChildren().length is 0 and @isSuperNode
 				@setSuperNode(false)
 				clearTimeout(@staySuperNodeTimeout)
@@ -340,7 +349,7 @@ define [
 				peer.once('channel.opened', =>
 					@addSibling(peer)
 				)
-			else if isSuperNode and _(@getPeers()).filter( ( peer ) -> peer.isSuperNode).length < 5
+			else if isSuperNode and _(@getPeers()).filter( ( peer ) -> peer.isSuperNode).length < kickstartPeers
 				@connect(peerId)
 
 		# Attempts to emit to a peer by id. Unreliable.
@@ -438,8 +447,8 @@ define [
 				# Else connect to a bunch of random supernodes
 				else
 					candidates = superNodes.slice(0)
-					n = Math.min(5, superNodes.length)
-					while candidates.length > 5
+					n = Math.min(kickstartPeers, superNodes.length)
+					while candidates.length > kickstartPeers
 						i = Math.floor(candidates.length * Math.random)
 						candidates.splice(i, 1)
 
@@ -519,6 +528,7 @@ define [
 			@_tokenRestTimeout = setTimeout(( ) =>
 				@_calculateTokenMagnitude()
 			, @broadcastTimeout)
+			@_timers.push(@_tokenRestTimeout)
 
 		# Is called when a token hops. Sends a token information to the initiator
 		#
@@ -573,6 +583,7 @@ define [
 				setTimeout( ( ) =>
 					@_pickNewTokenOwner()
 				, @broadcastTimeout)
+				@_timers.push(@broadcastTimeout)
 			else
 				@setSuperNode(true)
 
@@ -623,7 +634,7 @@ define [
 						bestCandidateDistance = candidate.distance
 						bestCandidate = candidate
 
-				if bestCandidate
+				if bestCandidate?
 					console.log "Best Candidate is " + bestCandidate.nodeId + " with distance " + bestCandidateDistance
 					if bestCandidate.nodeId is @id
 						if not @isSuperNode
@@ -640,6 +651,7 @@ define [
 		# Applies Vivaldi alghoritm. Calculates the coordinates of a node
 		#
 		_updateCoordinates: ( ) =>
+			console.log "hi"
 			for peer in @getPeers()	
 				direction = peer.coordinates.substract(@coordinates)		# Vector to peer
 				distance = peer.coordinates.getDistance(@coordinates)		# Distance between node and peer
@@ -654,6 +666,7 @@ define [
 		# Look up for a better supernode for your children
 		#
 		_lookForBetterSupernode: () =>
+			console.log "ho"
 			siblings = @getSiblings()
 			children = @getChildren()
 			if @isSuperNode and siblings.length > 0 and children.length > 0

@@ -193,7 +193,7 @@ define [
 				@ping( ( latency, coordinateString ) => 
 					@coordinates = Vector.deserialize(coordinateString)
 				)
-			, 2500)
+			, 7500)
 
 			@query('benchmark', ( benchmark ) => @benchmark = benchmark)
 			@query('system', ( system ) => @system = system)
@@ -228,3 +228,8 @@ define [
 		#
 		_onChannelClosed: ( ) ->
 			console.log "channel closed to node #{@id}"
+
+		# Removes all timers
+		#
+		removeTimers: ( ) ->
+			clearInterval(@_pingInterval)
