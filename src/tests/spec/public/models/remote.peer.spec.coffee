@@ -283,7 +283,7 @@ require [
 
 				expect(fakeController.server.emitTo).not.toHaveBeenCalled()
 
-			it 'should send valid candidates to the central server'
+			it 'should send valid candidates to the central server', ->
 				fakeCandidate = 'asghlbasv8og348iwb viosu'
 
 				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
@@ -297,9 +297,9 @@ require [
 				callArgs = fakeController.server.emitTo.mostRecentCall.args
 				expect(callArgs.length).toBe(4)
 				expect(callArgs[0]).toBe('1')
-				expect(callArgs[0]).toBe('peer.addIceCandidate')
-				expect(callArgs[0]).toBe(fakeController.id)
-				expect(callArgs[0]).toBe(fakeCandidate)
+				expect(callArgs[1]).toBe('peer.addIceCandidate')
+				expect(callArgs[2]).toBe(fakeController.id)
+				expect(callArgs[3]).toBe(fakeCandidate)
 
 		describe 'when adding an ICE candidate', ->
 			it 'should relay the candidate to the RTC connection', ->
@@ -312,3 +312,48 @@ require [
 				callArgs = peer._connection.addIceCandidate.mostRecentCall.args
 				expect(callArgs.length).toBe(1)
 				expect(callArgs[0]).toBe('a')
+
+		describe 'when the ICE connection state changes', ->
+			it 'should trigger a connect event when connected', ->
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+				peer._connection.iceConnectionState = 'connected'
+
+				fakeEvent = {
+					a: '1'
+					b: '2'
+				}
+
+				success = false
+				peer.on('connect', ( thePeer, event ) ->
+						expect(thePeer).toEqual(peer)
+						expect(event).toEqual(fakeEvent)
+						success = true
+					)
+
+				peer._onIceConnectionStateChange(fakeEvent)
+
+				waitsFor(->
+						return success
+					, 1000)
+
+			it 'should trigger a disconnect event when not connected', ->
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+				peer._connection.iceConnectionState = 'disconnected'
+
+				fakeEvent = {
+					a: '1'
+					b: '2'
+				}
+
+				success = false
+				peer.on('disconnect', ( thePeer, event ) ->
+						expect(thePeer).toEqual(peer)
+						expect(event).toEqual(fakeEvent)
+						success = true
+					)
+
+				peer._onIceConnectionStateChange(fakeEvent)
+
+				waitsFor(->
+						return success
+					, 1000)
