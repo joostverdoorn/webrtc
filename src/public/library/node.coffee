@@ -498,7 +498,6 @@ define [
 			unless candidates?
 				candidates = _(@getPeers()).filter( ( p ) => p.isSuperNode )
 			if candidates.length > 0
-				console.log candidates
 				candidates = _(candidates).sortBy( 'latency' )
 				candidate = candidates.shift()
 				@setParent(candidate, ( accepted ) =>
@@ -668,6 +667,7 @@ define [
 		# Applies Vivaldi alghoritm. Calculates the coordinates of a node
 		#
 		_updateCoordinates: ( ) =>
+			console.log "hi"
 			for peer in @getPeers()	
 				direction = peer.coordinates.substract(@coordinates)		# Vector to peer
 				distance = peer.coordinates.getDistance(@coordinates)		# Distance between node and peer
@@ -682,6 +682,7 @@ define [
 		# Look up for a better supernode for your children
 		#
 		_lookForBetterSupernode: () =>
+			console.log "ho"
 			siblings = @getSiblings()
 			children = @getChildren()
 			if @isSuperNode and siblings.length > 0 and children.length > 0

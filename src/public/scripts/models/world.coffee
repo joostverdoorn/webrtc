@@ -7,7 +7,7 @@ define [
 
 	'underscore'
 	'three'
-	], ( Mixable, EventBindings, Player, Collection, _, Three ) ->
+	], ( Mixable, EventBindings, Player,  Collection, _, Three ) ->
 
 	# This class manages the game world.
 	#
@@ -34,6 +34,7 @@ define [
 
 			hemisphereLight = new Three.HemisphereLight(0x9999aa, 0x663322, 1)
 			scene.add(hemisphereLight)
+
 
 		# Creates and adds a player to the world
 		#

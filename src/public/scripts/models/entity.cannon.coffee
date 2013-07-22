@@ -1,8 +1,9 @@
 define [
 	'public/scripts/models/entity._'
+	'public/scripts/models/entity.projectile'
 
 	'three'
-	], ( Entity, Three ) ->
+	], ( Entity, Projectile, Three ) ->
 
 	# This class implements the cannon hanging from the ufo
 	#
@@ -15,12 +16,13 @@ define [
 		initialize: ( transformations = null ) ->
 			@mass = 10
 			@angularDrag = 3
+			@fireReady = true
 
 			@applyTransformations(transformations)
 
 			@_loader.load('/meshes/cannon.js', ( geometry, material ) =>
 				@mesh.geometry = geometry
-				@mesh.material = new Three.MeshFaceMaterial(material)				
+				@mesh.material = new Three.MeshFaceMaterial(material)
 				@scene.add(@mesh)
 			)
 
@@ -30,4 +32,13 @@ define [
 		#
 		update: ( dt ) ->
 			super(dt, false, true)
+
+		fire: ( playerTransformations, cannonTransformations ) ->
+			if @fireReady
+				projectile = new Projectile(@scene, playerTransformations, cannonTransformations)
+				@fireReady = false
+				setTimeout( =>
+					@fireReady = true
+				, 1000)
+				return projectile
 

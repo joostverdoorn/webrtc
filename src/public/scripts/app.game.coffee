@@ -61,6 +61,8 @@ require [
 			@camera.rotation.y = -1 * Math.PI / 2
 			@scene.add(@camera)
 
+			@lastUpdateTime = 0
+
 			@world = new World(@scene)
 			@node = new Node()
 
@@ -94,13 +96,17 @@ require [
 			)
 
 			broadcastInterval = setInterval( ( ) =>
-				@node.broadcast('player.update', @player.id, @player.getTransformations())
+				if @player?
+					@node.broadcast('player.update', @player.id, @player.getTransformations())
 			, 200)
 
 
 			$(document).keydown( ( event ) =>
 				if event.keyCode is 32
 					@player?.boost = true
+
+				if event.keyCode is 13
+					@_fireKey = true
 
 				if event.keyCode is 37
 					@_leftKey = true
@@ -124,6 +130,9 @@ require [
 			$(document).keyup( ( event ) =>
 				if event.keyCode is 32
 					@player?.boost = false
+
+				if event.keyCode is 13
+					@_fireKey = false
 
 				if event.keyCode is 37
 					@_leftKey = false
@@ -169,13 +178,17 @@ require [
 		# @param timestamp [Integer] the time that has elapsed since the first requestAnimationFrame
 		#
 		update: ( timestamp ) =>
-			dt = (timestamp - @lastUpdateTime) / 1000
+			dt = (timestamp - @lastUpdateTime) / 1000     
 
 			# If any keys are pressed, apply angular forces to the player
 			if @_aKey
 				@player?.cannon.addAngularForce(new Three.Vector3(0, 1, 0))
 			if @_dKey
 				@player?.cannon.addAngularForce(new Three.Vector3(0, -1, 0))
+			if @_fireKey
+				projectile = @player?.cannon.fire(@player.getTransformations(), @player.cannon.getTransformations())
+				if projectile?
+					@world.addEntity(projectile)
 
 			if @_upKey
 				@player?.addAngularForce(new Three.Vector3(0, 0, -2))
@@ -185,6 +198,9 @@ require [
 				@player?.addAngularForce(new Three.Vector3(-2, 0, 0))
 			if @_rightKey
 				@player?.addAngularForce(new Three.Vector3(2, 0, 0))
+
+			# if @_fireKey
+			# 	@player.fire
 
 			@world.update(dt)
 
