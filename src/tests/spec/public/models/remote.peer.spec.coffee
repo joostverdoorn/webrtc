@@ -300,3 +300,15 @@ require [
 				expect(callArgs[0]).toBe('peer.addIceCandidate')
 				expect(callArgs[0]).toBe(fakeController.id)
 				expect(callArgs[0]).toBe(fakeCandidate)
+
+		describe 'when adding an ICE candidate', ->
+			it 'should relay the candidate to the RTC connection', ->
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+				spyOn(peer._connection, 'addIceCandidate')
+
+				peer.addIceCandidate('a')
+
+				expect(peer._connection.addIceCandidate).toHaveBeenCalled()
+				callArgs = peer._connection.addIceCandidate.mostRecentCall.args
+				expect(callArgs.length).toBe(1)
+				expect(callArgs[0]).toBe('a')
