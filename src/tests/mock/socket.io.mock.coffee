@@ -6,5 +6,6 @@ define [], (  ) ->
 				return new IO()
 			on: ->
 			disconnect: ->
+			emit: ->
 
 	

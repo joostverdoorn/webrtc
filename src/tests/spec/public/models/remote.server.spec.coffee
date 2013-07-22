@@ -82,3 +82,18 @@ require [
 				server.disconnect()
 
 				expect(io.prototype.disconnect).toHaveBeenCalled()
+
+		describe 'when sending', ->
+			it 'should relay the message to Socket.IO -> emit event', ->
+				server = new Server(fakeController, '127.0.0.1')
+
+				spyOn(io.prototype, 'emit')
+
+				fakeMessage = new Message('a', 'b', 'event')
+				server._send(fakeMessage)
+
+				expect(io.prototype.emit).toHaveBeenCalled()
+				expect(io.prototype.emit.mostRecentCall.args).toEqual([
+						'message'
+						fakeMessage.serialize()
+					])
