@@ -72,3 +72,13 @@ require [
 						'connect'
 						'disconnect'
 					])
+
+		describe 'when disconnecting', ->
+			it 'should disconnect the Socket.IO connection', ->
+				server = new Server(fakeController, '127.0.0.1')
+
+				spyOn(io.prototype, 'disconnect')
+
+				server.disconnect()
+
+				expect(io.prototype.disconnect).toHaveBeenCalled()

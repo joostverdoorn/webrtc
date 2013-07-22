@@ -5,5 +5,6 @@ define [], (  ) ->
 			@connect: ->
 				return new IO()
 			on: ->
+			disconnect: ->
 
 	
