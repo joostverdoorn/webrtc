@@ -447,3 +447,34 @@ require [
 				waitsFor(->
 						return success
 					, 1000)
+
+		describe 'when closing a channel', ->
+			it 'should trigger a channel.closed event with the event', ->
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+				success = false
+
+				fakeEvent = {
+					a: 1
+					b: 2
+				}
+				peer.on('channel.closed', ( thePeer, event ) ->
+						expect(thePeer).toBe(peer)
+						expect(event).toBe(fakeEvent)
+						success = true
+					)
+
+				peer._onChannelClose(fakeEvent)
+				waitsFor(->
+						return success
+					, 1000)
+
+		describe 'when the channel disconnects', ->
+			it 'should clear the ping interval', ->
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+				jasmine.Clock.useMock();
+				spyOn(peer, 'ping')
+				peer._onChannelOpen()
+				jasmine.Clock.tick(2501)
+				peer._onDisconnect()
+				jasmine.Clock.tick(2500 * 10)
+				expect(peer.ping.callCount).toBe(1)
