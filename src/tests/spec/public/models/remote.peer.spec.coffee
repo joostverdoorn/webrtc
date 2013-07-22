@@ -274,3 +274,29 @@ require [
 				expect(callArgs[1]).toBe(null)
 				expect(callArgs[2]).toEqual({})
 
+		describe 'when receiving an ICE candidate', ->
+			it 'should ignore it if there is not actally no candidate', ->
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+				spyOn(fakeController.server, 'emitTo')
+
+				peer._onIceCandidate({})
+
+				expect(fakeController.server.emitTo).not.toHaveBeenCalled()
+
+			it 'should send valid candidates to the central server'
+				fakeCandidate = 'asghlbasv8og348iwb viosu'
+
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+				spyOn(fakeController.server, 'emitTo')
+
+				peer._onIceCandidate({
+						candidate: fakeCandidate
+					})
+
+				expect(fakeController.server.emitTo).toHaveBeenCalled()
+				callArgs = fakeController.server.emitTo.mostRecentCall.args
+				expect(callArgs.length).toBe(4)
+				expect(callArgs[0]).toBe('1')
+				expect(callArgs[0]).toBe('peer.addIceCandidate')
+				expect(callArgs[0]).toBe(fakeController.id)
+				expect(callArgs[0]).toBe(fakeCandidate)
