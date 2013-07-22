@@ -384,3 +384,24 @@ require [
 				expect(callArgs).toEqual([
 						fakeChannel
 					])
+
+		describe 'when receiving a message', ->
+			it 'should trigger a message event with the message-data', ->
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+
+				success = false
+				message = new Message('a', 'b', 'event')
+
+				peer.on('message', ( data ) ->
+						expect(data).toBe(message.serialize())
+						success = true
+					)
+
+				peer._onChannelMessage({
+						data: message.serialize()
+					})
+
+				waitsFor(->
+						return success
+					, 1000)
+
