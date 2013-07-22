@@ -97,3 +97,11 @@ require [
 						'message'
 						fakeMessage.serialize()
 					])
+
+		describe 'when connecting', ->
+			it 'should set own id to be Socket.IO session ID', ->
+				server = new Server(fakeController, '127.0.0.1')
+
+				server._onConnect()
+
+				expect(fakeController.id).toBe('3')		# value from Mock Socket.IO
