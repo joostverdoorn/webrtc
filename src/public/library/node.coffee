@@ -310,7 +310,7 @@ define [
 
 		_superNodeTimeout: () =>
 			console.log "Aantal kinderen: ", @getChildren().length
-			if @getChildren().length is 0
+			if @getChildren().length is 0 and @isSuperNode
 				@setSuperNode(false)
 				clearTimeout(@staySuperNodeTimeout)
 
@@ -423,7 +423,6 @@ define [
 		# and pick the one with the lowest latency is parent.
 		#
 		_enterNetwork: ( ) =>
-			console.log "enter"
 			@server.query('nodes', ( nodes ) =>
 				superNodes = _(nodes).filter( ( node ) => node.isSuperNode )
 

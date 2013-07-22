@@ -46,14 +46,16 @@ require [
 					node.disconnect(peer.id)
 					expect(node._peers.length).toBe(0)
 
-			# describe 'when entering network', ->
+			describe 'when entering network', ->
 
-			# 	beforeEach ->
-			# 		peer = node.connect("123456")
+				beforeEach ->
+					node._enterNetwork()
 
-			# 	it 'should pass', ->
-			# 		node._enterNetwork()
-			# 		expect(node._peers.length).toBe(1)
+				it 'should connect to a superNode if a superNode is available', ->					
+					expect(node._peers.length).toBe(1)
+					expect(node.isSuperNode).toBeFalsy()
+
+
 
 
 
