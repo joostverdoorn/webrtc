@@ -357,3 +357,20 @@ require [
 				waitsFor(->
 						return success
 					, 1000)
+
+		describe 'when receiving a data channel', ->
+			it 'should add it to itself', ->
+				fakeChannel = new FakeRTCDataChannel()
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+				spyOn(peer, '_addChannel')
+
+				peer._onDataChannel({
+						channel: fakeChannel
+					})
+
+				expect(peer._addChannel).toHaveBeenCalled()
+
+				callArgs = peer._addChannel.mostRecentCall.args
+				expect(callArgs).toEqual([
+						fakeChannel
+					])
