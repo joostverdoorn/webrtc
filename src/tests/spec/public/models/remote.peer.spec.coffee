@@ -242,3 +242,35 @@ require [
 				expect(callArgs[2]).toBe(fakeController.id)
 				expect(callArgs[3]).toBe('a')
 
+		describe 'when setting a remote description', ->
+			it 'should set the remote description for RTC connection', ->
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+				spyOn(peer._connection, 'setRemoteDescription')
+
+				peer.setRemoteDescription('a')
+
+				expect(peer._connection.setRemoteDescription).toHaveBeenCalled()
+				callArgs = peer._connection.setRemoteDescription.mostRecentCall.args
+				expect(callArgs.length).toBe(1)
+				expect(callArgs[0]).toBe('a')
+
+			it 'should create an answer if we are not the connector', ->
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+				spyOn(peer._connection, 'createAnswer')
+				peer._isConnector = true
+
+				peer.setRemoteDescription('a')
+
+				expect(peer._connection.createAnswer).not.toHaveBeenCalled()
+
+				peer._isConnector = false
+
+				peer.setRemoteDescription('a')
+
+				expect(peer._connection.createAnswer).toHaveBeenCalled()
+				callArgs = peer._connection.createAnswer.mostRecentCall.args
+				expect(callArgs.length).toBe(3)
+				expect(callArgs[0]).toEqual(peer._onLocalDescription)
+				expect(callArgs[1]).toBe(null)
+				expect(callArgs[2]).toEqual({})
+
