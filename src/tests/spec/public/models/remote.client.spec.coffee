@@ -102,3 +102,12 @@ require [
 						'message'
 						fakeMessage.serialize()
 					])
+
+		describe 'when setting supernode status', ->
+			it 'should set the local variable to the new one', ->
+				client = new Client(fakeController, fakeConnection)
+				client._onSetSuperNode(true)
+				expect(client.isSuperNode).toBe(true)
+				client._onSetSuperNode(false)
+				expect(client.isSuperNode).toBe(false)
+				
