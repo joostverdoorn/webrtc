@@ -3,7 +3,7 @@ require.config
 		'public': '../../public'
 
 require [
-	'public/library/models/remote.peer'
+	'public/library/../library/models/remote.peer'
 	], ( Peer ) ->
 
 	describe 'Remote.Peer', ->
@@ -19,7 +19,6 @@ require [
 			onopen: ->
 			onclose: ->
 			onmessage: ->
-
 
 		class global.FakeRTCPeerConnection
 			@iceConnectionState: null
@@ -55,7 +54,6 @@ require [
 		beforeEach ->
 
 			fakeController = new FakeController()
-
 
 		describe 'when initialized', ->
 			it 'should create a new RTCPeerConnection object with default configurations', ->
