@@ -203,18 +203,16 @@ require [
 		
 		describe 'when adding a channel', ->
 			it 'should set _channel to the channel', ->
+				peer = new Peer(fakeController, '1', false, FakeRTCPeerConnection)
 				fakeChannel = new FakeRTCDataChannel()
-				spyOn(global, 'FakeRTCDataChannel').andReturn(fakeChannel)
-
-				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+				peer._addChannel(fakeChannel)
 
 				expect(peer._channel).toEqual(fakeChannel)
 
 			it 'should set the channels events to its own callbacks', ->
+				peer = new Peer(fakeController, '1', false, FakeRTCPeerConnection)
 				fakeChannel = new FakeRTCDataChannel()
-				spyOn(global, 'FakeRTCDataChannel').andReturn(fakeChannel)
-
-				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+				peer._addChannel(fakeChannel)
 
 				expect(peer._channel.onmessage).toEqual(peer._onChannelMessage)
 				expect(peer._channel.onopen).toEqual(peer._onChannelOpen)
