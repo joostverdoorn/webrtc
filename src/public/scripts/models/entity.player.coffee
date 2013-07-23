@@ -14,7 +14,7 @@ define [
 		# @param id [String] the string id of the player
 		# @param transformations [Object] an object containing all transformations to apply to the player
 		#
-		initialize: ( @id, transformations ) ->
+		initialize: ( @id, transformations = null ) ->
 			@boost = false
 			@mass = 100
 
@@ -22,7 +22,7 @@ define [
 				@mesh.geometry = geometry
 				@mesh.material = new Three.MeshFaceMaterial(material)
 
-				@applyTransformations(transformations)
+				@applyTransformations(transformations) if transformations
 				@scene.add(@mesh)
 			)
 
@@ -47,12 +47,12 @@ define [
 			else
 				liftVector.multiplyScalar(9.5)
 
-			#liftVector.projectOnPlane(new Three.Vector3(0, 1, 0))
+			liftVector.projectOnPlane(new Three.Vector3(0, 1, 0))
 			@addForce(liftVector)
 
 			# Gravity
 			gravityVector = new Three.Vector3(0, -9.81, 0)
-			@addForce(gravityVector)
+			#@addForce(gravityVector)
 
 			# Attract to stable pitch and roll
 			@addAngularForce(new Three.Vector3(-@rotation.x * 7, 0, 0))
@@ -60,5 +60,13 @@ define [
 			
 			# Call baseclass' update to apply all forces
 			super(dt)
+
+			@mesh.position.x = @position.x
+			@mesh.position.y = @position.y
+			@mesh.position.z = @position.z
+
+			@mesh.rotation.x = @rotation.x
+			@mesh.rotation.y = @rotation.y
+			@mesh.rotation.z = @rotation.z
 
 

@@ -32,8 +32,8 @@ define [
 			@angularForces = []
 
 			@mesh = new Three.Mesh()
-			@position = @mesh.position
-			@rotation = @mesh.rotation
+			@position = new Three.Vector3(0, 0, 0)
+			@rotation = new Three.Vector3(0, 0, 0)
 
 			@initialize?.apply(@, args)
 

@@ -65,7 +65,8 @@ require [
 			@node = new Node()
 
 			@node.server.on('connect', ( ) =>
-				@player = new Player(@node.id, ( ) => @world.addEntity(@player))
+				@player = new Player(@scene, @node.id, null)
+				@world.addEntity(@player)
 			)
 
 			@node.on('joined', =>
@@ -157,6 +158,7 @@ require [
 		#
 		update: ( timestamp ) =>
 			dt = (timestamp - @lastUpdateTime) / 1000
+
 
 			# If any keys are pressed, apply angular forces to the player
 			if @_leftKey
