@@ -13,7 +13,9 @@
 		"mkdirp": "*",
 		"jasmine-node": "*",
 		"performance-now": "*",
-		"adapter": "*"
+		"adapter": "*",
+		"wrench": "*",
+		"coffee-coverage": "*"
 	}
 
 }

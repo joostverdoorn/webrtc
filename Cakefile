@@ -149,7 +149,14 @@ clean = ( ) ->
 # Runs the test suite
 #
 test = ( ) ->
-	startProcess('node lib/tests/runner')
+	startProcess('coffeeCoverage ./src ./lib --exclude node_modules,.git,tests', ->
+		jsCoveragePath = 'src/tests/tools/jscoverage-reporter'
+
+		#wrench.copyDirSyncRecursive(jsCoveragePath + '/template/', './reports/');
+		startProcess('node lib/tests/runner', ->
+			startProcess('node ' + jsCoveragePath + '/tools/report.js ./reports/')
+		)
+	)
 
 # Copies a file to the target. If the path doesn't exist,
 # creates the path.
