@@ -1,6 +1,6 @@
 require.config
 	paths:
-		'public': '../../public'
+		'public': '../../../../public'
 
 require [
 	'public/library/../library/models/remote.peer'

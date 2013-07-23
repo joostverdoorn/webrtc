@@ -1,7 +1,7 @@
 require.config
 	paths:
-		'public': '../../public'
-		'socket.io': '../mock/socket.io.mock'
+		'public': '../../../../public'
+		'socket.io': '../../../mock/socket.io.mock'
 
 require [
 	'public/library/../library/models/remote.server'

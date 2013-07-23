@@ -1,8 +1,8 @@
 require.config
 	paths:
-		'public': '../../public'
-		'public/library/models/remote.server': '../mock/remote.server.mock'
-		'public/library/models/remote.peer': '../mock/remote.peer.mock'
+		'public': '../../../../public'
+		'public/library/models/remote.server': '../../../mock/remote.server.mock'
+		'public/library/models/remote.peer': '../../../mock/remote.peer.mock'
 		
 require [
 	'public/library/node'
