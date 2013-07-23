@@ -1,6 +1,5 @@
 require.config
-	paths:
-		'public': '../../../../public'
+	baseUrl: '../../../../../'
 
 require [
 	'public/library/models/collection'

@@ -1,10 +1,10 @@
 require.config
+	baseUrl: '../../../../../'
 	paths:
-		'public': '../../../../public'
-		'socket.io': '../../../mock/socket.io.mock'
+		'socket.io': 'tests/mock/socket.io.mock'
 
 require [
-	'public/library/../library/models/remote.server'
+	'public//library/models/remote.server'
 	'public/library/models/message'
 	'socket.io'
 

@@ -1,9 +1,8 @@
 require.config
-	paths:
-		'public': '../../../../public'
+	baseUrl: '../../../../../'
 
 require [
-	'public/library/../library/models/remote.peer'
+	'public//library/models/remote.peer'
 	'public/library/models/message'
 	], ( Peer, Message ) ->
 
