@@ -1,9 +1,14 @@
 define [], (  ) ->
 
 	# Mock Remote.Client class
-	class Client
+	class global.Client
 		constructor: ->
 			@id = '1'
-		on: ->
-		emit: ->
+			@on = ->
+			@emit = ->
 
+	originalPrototype = Client.prototype
+	spyOn(global, 'Client').andCallThrough()
+	
+	#Client.prototype = originalPrototype
+	

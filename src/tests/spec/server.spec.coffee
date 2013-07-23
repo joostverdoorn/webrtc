@@ -9,16 +9,64 @@ require.config
 
 require [
 	'server'
-	], ( Server ) ->
+	'public/library/models/remote.client'
+	], ( Server, Client ) ->
 		describe 'Server', ->
 
 			server = null
 			
 			describe 'when constructing', ->
 
-				beforeEach ->
-					server = new Server()
 
-				describe 'logging in', ->
-					it 'should create a new node with the server as controller and a socket as connection', ->
-						
+				describe 'when constructed', ->		# To skip the lengthy initialization
+					beforeEach ->
+						server = new Server()
+
+					describe 'logging in', ->
+						it 'should create a new Remote.Client with the server as controller and a socket as connection', ->
+							testObject = {
+								a: 1
+								b: 2
+							}
+							server.login(testObject)
+
+							expect(Client.mostRecentCall.args).toEqual([
+									server
+									testObject
+								])
+
+						it 'should add the new Remote.Client to itself', ->
+							testObject = {
+								a: 1
+								b: 2
+							}
+							spyOn(server, 'addNode')
+							fakeClient = new Client(server, testObject)
+							Client.andReturn(fakeClient)
+
+							server.login(testObject)
+
+							expect(server.addNode.mostRecentCall.args).toEqual([
+									fakeClient
+								])
+
+						it 'should listen for the disconnect event on the Remote.Client', ->
+							testObject = {
+								a: 1
+								b: 2
+							}
+							fakeClient = new Client(server, testObject)
+							spyOn(fakeClient, 'on')
+							Client.andReturn(fakeClient)
+
+							server.login(testObject)
+
+							callArgs = fakeClient.on.mostRecentCall.args
+							expect(callArgs[0]).toEqual('disconnect')
+
+							spyOn(server, 'removeNode')
+							callArgs[1]()
+
+							expect(server.removeNode.mostRecentCall.args).toEqual([
+									fakeClient
+								])
