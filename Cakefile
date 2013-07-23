@@ -151,7 +151,7 @@ clean = ( ) ->
 #
 test = ( ) ->
 	fs.mkdir('reports', ->
-		startProcess('node ./node_modules/coffee-coverage/bin/coffeecoverage ./src ./lib --exclude node_modules,.git,tests', ->
+		startProcess('node ./node_modules/coffee-coverage/bin/coffeecoverage ./src ./lib --exclude node_modules,.git,tests --path relative', ->
 			jsCoveragePath = 'src/tests/tools/jscoverage-reporter'
 
 			#wrench.copyDirSyncRecursive(jsCoveragePath + '/template/', './reports/');
