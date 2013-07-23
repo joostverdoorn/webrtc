@@ -92,13 +92,15 @@ define [
 
 			@runBenchmark()
 
-			# # This will help us log errors. It makes 
-			# # console.log print to both console and server.
-			# # Logs can be retrieved at /log
-			# console.rLog = console.log
-			# console.log = ( args... ) ->
-			# 	console.rLog.apply(@, args)
-			# 	App.node.server.emit('debug', args)
+			###
+			# This will help us log errors. It makes 
+			# console.log print to both console and server.
+			# Logs can be retrieved at /log
+			console.rLog = console.log
+			console.log = ( args... ) ->
+				console.rLog.apply(@, args)
+				App.node.server.emit('debug', args)
+			###
 			
 		# Attempts to connect to a peer.
 		#
@@ -129,7 +131,6 @@ define [
 		# @param peer [Peer] the peer that disconnects
 		#
 		_onPeerDisconnect: ( peer ) =>
-			console.log peer
 			if peer is @getParent()
 				candidates = _(@getPeers()).filter( ( p ) -> p.isSuperNode )
 				@_pickParent(candidates)
@@ -435,7 +436,6 @@ define [
 				when 'peer.requestParent'
 					if @isSuperNode
 						child = @getPeer(args[0])
-						console.log "hier is mijn nieuwe kind", child
 						if child?
 							@addChild(child)
 							return true
@@ -668,7 +668,6 @@ define [
 		# Applies Vivaldi alghoritm. Calculates the coordinates of a node
 		#
 		_updateCoordinates: ( ) =>
-			console.log "hi"
 			for peer in @getPeers()	
 				direction = peer.coordinates.substract(@coordinates)		# Vector to peer
 				distance = peer.coordinates.getDistance(@coordinates)		# Distance between node and peer
@@ -683,7 +682,6 @@ define [
 		# Look up for a better supernode for your children
 		#
 		_lookForBetterSupernode: () =>
-			console.log "ho"
 			siblings = @getSiblings()
 			children = @getChildren()
 			if @isSuperNode and siblings.length > 0 and children.length > 0
