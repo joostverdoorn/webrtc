@@ -171,7 +171,6 @@ require [
 		update: ( timestamp ) =>
 			dt = (timestamp - @lastUpdateTime) / 1000
 
-
 			# If any keys are pressed, apply angular forces to the player
 			if @_aKey
 				@player?.cannon.addAngularForce(new Three.Vector3(0, 1, 0))
@@ -191,7 +190,10 @@ require [
 
 			# Set the camera to follow the player
 			if @player?
-				@camera.position = @player.position.clone().add(@camera.position.clone().sub(@player.position).normalize().multiplyScalar(30))
+				x = 30 * -Math.cos(@player.cannon.rotation.y)
+				z = 30 * Math.sin(@player.cannon.rotation.y)
+
+				@camera.position.lerp(@player.position.clone().add(new Three.Vector3(x, 2, z)), .05)
 				@camera.lookAt(@player.position)
 
 			# Render the scene
