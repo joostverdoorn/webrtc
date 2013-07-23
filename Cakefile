@@ -5,7 +5,7 @@ fs = require('fs')
 
 sourceDir = 'src'
 targetDir = 'lib'
-noKeep = [targetDir, 'node_modules', 'doc']
+noKeep = [targetDir, 'node_modules', 'doc', 'reports']
 
 # Installs all dependencies and builds all files
 #
@@ -16,6 +16,11 @@ task 'deploy', ->
 #
 task 'build', ->
 	build()
+
+# Runs the server
+#
+task 'run', ->
+	startProcess('node lib/server')
 
 # Clears root directory of all built files
 #
