@@ -34,7 +34,7 @@ To view a graph of all nodes:
 To automatically build the project when a file is changed `cake watch` can be used. This is useful when actively developing to prevent the constant execution of `cake build`.
 
 ##Running
-`node lib/server.js`
+`cake run`
 
 This starts a listenserver on `localhost:8080` which responds to `index.html` for the game, `node.html` for a node that connects to other nodes and `nodegraph.html` for a visualization of the networktopology.
 
