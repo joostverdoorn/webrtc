@@ -1,16 +1,4 @@
-requirejs = require('requirejs')
-
-requirejs.config
-	# Pass the top-level main.js/index.js require
-	# function to requirejs so that node modules
-	# are loaded relative to the top-level JS file.
-	nodeRequire: require
-
-	shim: 
-		'underscore': 
-			exports: '_'
-
-requirejs [
+define [
 	'public/library/models/remote.client'
 	'public/library/models/collection'
 
@@ -28,7 +16,7 @@ requirejs [
 
 		# Constructs a new server.
 		#
-		constructor: ( ) ->
+		constructor: ( dir ) ->
 			@_initTime = Date.now()
 
 			@_nodes = new Collection()
@@ -47,7 +35,7 @@ requirejs [
 			
 			# Serve static content from ./public/library
 			@_app.configure =>
-				@_app.use(express.static("#{__dirname}/public"))
+				@_app.use(express.static("#{dir}/public"))
 
 			@_app.get('/nodes', ( req, res ) =>
 				nodes = @getNodes()
@@ -185,7 +173,3 @@ requirejs [
 		#
 		time: ( ) ->
 			return Date.now() - @_initTime
-
-
-
-	global.Server = new Server()

@@ -17,7 +17,7 @@ require [
 			describe 'when constructing', ->
 
 				beforeEach ->
-					#server = new Server()
+					server = new Server()
 
 				describe 'logging in', ->
 					it 'should create a new node with the server as controller and a socket as connection', ->

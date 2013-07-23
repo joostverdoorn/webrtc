@@ -20,7 +20,7 @@ task 'build', ->
 # Runs the server
 #
 task 'run', ->
-	startProcess('node lib/server')
+	startProcess('node lib/init')
 
 # Clears root directory of all built files
 #
