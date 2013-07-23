@@ -113,6 +113,12 @@ require [
 
 				if event.keyCode is 40
 					@_downKey = true
+
+				if event.keyCode is 65
+					@_aKey = true
+
+				if event.keyCode is 68
+					@_dKey = true
 			)
 
 			$(document).keyup( ( event ) =>
@@ -130,6 +136,12 @@ require [
 
 				if event.keyCode is 40
 					@_downKey = false
+
+				if event.keyCode is 65
+					@_aKey = false
+
+				if event.keyCode is 68
+					@_dKey = false
 			)
 
 			window.requestAnimationFrame(@update)
@@ -161,14 +173,19 @@ require [
 
 
 			# If any keys are pressed, apply angular forces to the player
-			if @_leftKey
-				@player?.addAngularForce(new Three.Vector3(-2, 0, 0))
-			if @_rightKey
-				@player?.addAngularForce(new Three.Vector3(2, 0, 0))
+			if @_aKey
+				@player?.cannon.addAngularForce(new Three.Vector3(0, 1, 0))
+			if @_dKey
+				@player?.cannon.addAngularForce(new Three.Vector3(0, -1, 0))
+
 			if @_upKey
 				@player?.addAngularForce(new Three.Vector3(0, 0, -2))
 			if @_downKey
 				@player?.addAngularForce(new Three.Vector3(0, 0, 2))
+			if @_leftKey
+				@player?.addAngularForce(new Three.Vector3(-2, 0, 0))
+			if @_rightKey
+				@player?.addAngularForce(new Three.Vector3(2, 0, 0))
 
 			@world.update(dt)
 
@@ -184,7 +201,7 @@ require [
 			$('#stats .x').html(@player?.position.x)
 			$('#stats .y').html(@player?.position.y)
 			$('#stats .z').html(@player?.position.z)
-			$('#stats .velocity').html(@player?.momentum.length())
+			$('#stats .velocity').html(@player?.velocity.length())
 			
 			# Request a new animation frame
 			@lastUpdateTime = timestamp

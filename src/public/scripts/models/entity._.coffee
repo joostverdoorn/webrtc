@@ -25,17 +25,22 @@ define [
 			@drag = .5
 			@angularDrag = 1
 
-			@momentum = new Three.Vector3(0, 0, 0)
-			@angularMomentum = new Three.Vector3(0, 0, 0)
+			@velocity = new Three.Vector3(0, 0, 0)
+			@angularVelocity = new Three.Vector3(0, 0, 0)
 			
 			@forces = []
 			@angularForces = []
 
 			@mesh = new Three.Mesh()
-			@position = new Three.Vector3(0, 0, 0)
-			@rotation = new Three.Vector3(0, 0, 0)
+			@position = @mesh.position
+			@rotation = @mesh.rotation
 
 			@initialize?.apply(@, args)
+
+		# Removes the mesh from the scene.
+		#
+		die: ( ) ->
+			@scene.remove(@mesh)
 
 		# Adds a force to the forces stack. Forces will be applied next update.
 		#
@@ -51,46 +56,52 @@ define [
 		addAngularForce: ( vector ) ->
 			@angularForces.push(vector)
 
-		# Updates the entity by applying forces, calculating the resulting momentum
+		# Updates the entity by applying forces, calculating the resulting velocity
 		# and setting the entity's position and rotation.
 		#
 		# @param dt [Float] the time that has elapsed since last update
 		#
-		update: ( dt ) ->
+		update: ( dt, updatePosition = true, updateRotation = true ) ->			
 			# Apply forces ...
-			while force = @forces.pop()
-				acceleration = force.clone().multiplyScalar(force.length() / @mass)
-				@momentum.add(acceleration)
+			if updatePosition				
+				while force = @forces.pop()
+					acceleration = force.clone().multiplyScalar(force.length() / @mass)
+					@velocity.add(acceleration)
 
-			# Calculate the drag force. We assume a fluid density of 1.2 (air at 20 degrees C)
-			# and a cross-sectional area of 10
-			dragForce = @momentum.clone().normalize().negate().multiplyScalar(.5 * 1.2 * @drag * Math.pow(@momentum.length() / @mass, 2) * 10)
-			@momentum.add(dragForce)
+				# Calculate the drag force. We assume a fluid density of 1.2 (air at 20 degrees C)
+				# and a cross-sectional area of 10
+				dragForce = @velocity.clone().normalize().negate().multiplyScalar(.5 * 1.2 * @drag * Math.pow(@velocity.length() / @mass, 2) * 10)
+				@velocity.add(dragForce)
 
-			@position.x += @momentum.x * dt
-			@position.y += @momentum.y * dt
-			@position.z += @momentum.z * dt
+				@position.x += @velocity.x * dt
+				@position.y += @velocity.y * dt
+				@position.z += @velocity.z * dt
 
 			# ... and rotational forces.
-			while force = @angularForces.pop()
-				acceleration = force.clone().multiplyScalar(force.length() / @mass)
-				@angularMomentum.add(acceleration)
+			if updateRotation
+				while force = @angularForces.pop()
+					console.log force
+					acceleration = force.clone().multiplyScalar(force.length() / @mass)
+					@angularVelocity.add(acceleration)
 
-			@angularMomentum.multiplyScalar(1 - @angularDrag * dt)
-			@rotation.x = (@rotation.x + @angularMomentum.x * dt) % (Math.PI * 2)
-			@rotation.y = (@rotation.y + @angularMomentum.y * dt) % (Math.PI * 2)
-			@rotation.z = (@rotation.z + @angularMomentum.z * dt) % (Math.PI * 2)
+				@angularVelocity.multiplyScalar(1 - @angularDrag * dt)
+				@rotation.x = (@rotation.x + @angularVelocity.x * dt) % (Math.PI * 2)
+				@rotation.y = (@rotation.y + @angularVelocity.y * dt) % (Math.PI * 2)
+				@rotation.z = (@rotation.z + @angularVelocity.z * dt) % (Math.PI * 2)
 
 		# Applies transformation information given in an object to the entity.
 		#
 		# @param transformations [Object] an object that contains the transformations
 		#
 		applyTransformations: ( transformations ) ->
-			if transformations.momentum?
-				@momentum.fromArray(transformations.momentum)
+			unless transformations?
+				return
 
-			if transformations.angularMomentum?
-				@angularMomentum.fromArray(transformations.angularMomentum)
+			if transformations.velocity?
+				@velocity.fromArray(transformations.velocity)
+
+			if transformations.angularVelocity?
+				@angularVelocity.fromArray(transformations.angularVelocity)
 			
 			if transformations.position?
 				@position.fromArray(transformations.position)
@@ -104,8 +115,8 @@ define [
 		#
 		getTransformations: ( ) ->
 			transformations = 
-				momentum: @momentum.toArray()
-				angularMomentum: @angularMomentum.toArray()
+				velocity: @velocity.toArray()
+				angularVelocity: @angularVelocity.toArray()
 				position: @position.toArray()
 				rotation: @rotation.toArray()
 
