@@ -149,7 +149,7 @@ clean = ( ) ->
 # Runs the test suite
 #
 test = ( ) ->
-	startProcess('coffeeCoverage ./src ./lib --exclude node_modules,.git,tests', ->
+	startProcess('node ./node_modules/coffee-coverage/bin/coffeecoverage ./src ./lib --exclude node_modules,.git,tests', ->
 		jsCoveragePath = 'src/tests/tools/jscoverage-reporter'
 
 		#wrench.copyDirSyncRecursive(jsCoveragePath + '/template/', './reports/');
