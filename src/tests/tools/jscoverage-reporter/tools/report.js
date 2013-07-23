@@ -16,7 +16,7 @@ var MIME = {
   '.css': 'text/css',
   '.gif': 'image/gif'
 };
-var PORT = process.env.PORT || 8080;
+var PORT = process.env.PORT || 8081;
 
 http.createServer(function(request, response) {
   var parsedUrl = url.parse(request.url);
