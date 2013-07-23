@@ -2,7 +2,7 @@ require.config
 	baseUrl: '../../../../../'
 
 require [
-	'public/library/models/remote.client'
+	'public//library/models/remote.client'
 	'public/library/models/message'
 
 	], ( Client, Message ) ->
