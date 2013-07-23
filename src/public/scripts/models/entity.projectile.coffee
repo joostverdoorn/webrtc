@@ -26,22 +26,22 @@ define [
 					rings)
 				, sphereMaterial)
 
-			@position = @position.fromArray(cannon.position)
+			@position = cannon.position.clone()
 			@position.y -= 0.9
 
+			x = Math.cos(cannon.rotation.y)
+			z = -Math.sin(cannon.rotation.y)
 
+			vector = new Three.Vector3(x, 0, z).multiplyScalar(150)
+			vector.add(player.velocity)
 
-
-			x = Math.cos(cannon.rotation[1])
-			z = -Math.sin(cannon.rotation[1])
-			vector = new Three.Vector3(x, 0, z).multiplyScalar(25)
 			@addForce(vector)
 
 			@scene.add(@mesh)
 
 		update: ( dt ) ->
 			# Gravity
-			gravityVector = new Three.Vector3(0, -1, 0)
+			gravityVector = new Three.Vector3(0, -9.81, 0)
 			@addForce(gravityVector)
 
 			super(dt)

@@ -19,7 +19,7 @@ define [
 			@boost = false
 			@mass = 100
 
-			@cannon = new Cannon(@scene, transformations?.cannon)
+			@cannon = new Cannon(@scene, @, transformations?.cannon)
 			@cannon.position = @position
 			@applyTransformations(transformations)
 
@@ -56,12 +56,12 @@ define [
 			else
 				liftVector.multiplyScalar(9.5)			
 
-			liftVector.projectOnPlane(new Three.Vector3(0, 1, 0))
+			#liftVector.projectOnPlane(new Three.Vector3(0, 1, 0))
 			@addForce(liftVector)
 
 			# Gravity
-			# gravityVector = new Three.Vector3(0, -9.81, 0)
-			# @addForce(gravityVector)
+			gravityVector = new Three.Vector3(0, -9.81, 0)
+			@addForce(gravityVector)
 
 			# Attract to stable pitch and roll
 			@addAngularForce(new Three.Vector3(-@rotation.x * 7, 0, 0))

@@ -13,10 +13,10 @@ define [
 		#
 		# @param transformations [Object] an object containing all transformations to apply to the player
 		#
-		initialize: ( transformations = null ) ->
+		initialize: ( @player, transformations = null ) ->
 			@mass = 10
 			@angularDrag = 3
-			@fireReady = true
+			@_isReady = true
 
 			@applyTransformations(transformations)
 
@@ -34,11 +34,14 @@ define [
 			super(dt, false, true)
 
 		fire: ( playerTransformations, cannonTransformations ) ->
-			if @fireReady
-				projectile = new Projectile(@scene, playerTransformations, cannonTransformations)
-				@fireReady = false
+			if @_isReady
+
+				projectile = new Projectile(@scene, @player, @)
+				@_isReady = false
+
 				setTimeout( =>
-					@fireReady = true
-				, 1000)
+					@_isReady = true
+				, 100)
+
 				return projectile
 

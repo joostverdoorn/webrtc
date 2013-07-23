@@ -21,6 +21,7 @@ requirejs.config
 		'jquery': 'vendor/scripts/jquery'
 		'bootstrap': 'vendor/scripts/bootstrap'
 		'three': 'vendor/scripts/three'
+		'stats': 'vendor/scripts/stats.min'
 		
 require [
 	'public/scripts/app._'
@@ -31,6 +32,7 @@ require [
 
 	'jquery'
 	'three'
+	'stats'
 	], ( App, Node, World, Player, $, Three ) ->
 
 	# This game class implements the node structure created in the library.
@@ -62,6 +64,17 @@ require [
 			@scene.add(@camera)
 
 			@lastUpdateTime = 0
+
+			# Create sky dome
+			sky = new THREE.Mesh( new THREE.SphereGeometry( 1000, 6, 8 ), new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/images/sky.jpg' ) } ) )
+			sky.scale.x = -1;
+			@scene.add( sky )
+
+			@stats = new Stats()
+			@stats.domElement.style.position = 'absolute'
+			@stats.domElement.style.top = '0px'
+			@stats.domElement.style.right = '0px'
+			@container.append(@stats.domElement)
 
 			@world = new World(@scene)
 			@node = new Node()
@@ -186,7 +199,7 @@ require [
 			if @_dKey
 				@player?.cannon.addAngularForce(new Three.Vector3(0, -1, 0))
 			if @_fireKey
-				projectile = @player?.cannon.fire(@player.getTransformations(), @player.cannon.getTransformations())
+				projectile = @player?.cannon.fire()
 				if projectile?
 					@world.addEntity(projectile)
 
@@ -199,9 +212,6 @@ require [
 			if @_rightKey
 				@player?.addAngularForce(new Three.Vector3(2, 0, 0))
 
-			# if @_fireKey
-			# 	@player.fire
-
 			@world.update(dt)
 
 			# Set the camera to follow the player
@@ -209,7 +219,7 @@ require [
 				x = 30 * -Math.cos(@player.cannon.rotation.y)
 				z = 30 * Math.sin(@player.cannon.rotation.y)
 
-				@camera.position.lerp(@player.position.clone().add(new Three.Vector3(x, 2, z)), .05)
+				@camera.position.lerp(@player.position.clone().add(new Three.Vector3(x, 15, z)), .05)
 				@camera.lookAt(@player.position)
 
 			# Render the scene
@@ -221,9 +231,10 @@ require [
 			$('#stats .z').html(@player?.position.z)
 			$('#stats .velocity').html(@player?.velocity.length())
 			
+			@stats.update()
+
 			# Request a new animation frame
 			@lastUpdateTime = timestamp
 			window.requestAnimationFrame(@update)
-
 				
 	window.App = new App.Game
