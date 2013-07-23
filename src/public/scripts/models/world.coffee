@@ -41,10 +41,7 @@ define [
 		# @param transformations [Object] an object of the player's transformations
 		#
 		addPlayer: ( id, transformations ) ->
-			player = new Player(id, ( ) =>
-				player.applyTransformations(transformations)
-				@addEntity(player)
-			)
+			player = new Player(@scene, id, transformations)
 
 		# Updates a player's transformation in the world. If the player doesn't exist, 
 		# it will create the player using addPlayer()
@@ -65,7 +62,6 @@ define [
 		#
 		addEntity: ( entity ) ->
 			@_entities.add(entity)
-			@scene.add(entity.mesh)
 
 		# Removes a physics entity from the world
 		#
@@ -73,7 +69,6 @@ define [
 		#
 		removeEntity: ( entity ) ->
 			@_entities.remove(entity)
-			@scene.remove(entity.mesh)
 
 		# Updates the world.
 		#

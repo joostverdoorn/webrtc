@@ -18,7 +18,7 @@ define [
 		# @param args... [Any] any params to pass onto the subclass
 		# @param callback [Function] the function to call when the entity is loaded
 		#
-		constructor: ( args..., callback = null ) ->
+		constructor: ( @scene, args... ) ->
 			@_loader = new Three.JSONLoader()
 
 			@mass = 1
@@ -35,7 +35,6 @@ define [
 			@position = @mesh.position
 			@rotation = @mesh.rotation
 
-			args = args.concat(callback)
 			@initialize?.apply(@, args)
 
 		# Adds a force to the forces stack. Forces will be applied next update.

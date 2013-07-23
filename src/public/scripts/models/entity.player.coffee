@@ -12,9 +12,9 @@ define [
 		# properties for the entity
 		#
 		# @param id [String] the string id of the player
-		# @param callback [Function] the callback to call when the player finished loading
+		# @param transformations [Object] an object containing all transformations to apply to the player
 		#
-		initialize: ( @id, callback ) ->
+		initialize: ( @id, transformations ) ->
 			@boost = false
 			@mass = 100
 
@@ -22,8 +22,12 @@ define [
 				@mesh.geometry = geometry
 				@mesh.material = new Three.MeshFaceMaterial(material)
 
-				callback?()
+				@applyTransformations(transformations)
+				@scene.add(@mesh)
 			)
+
+		die: ( ) ->
+			@scene.remove(@mesh)
 
 		# Updates the physics state of the player. Adds forces to simulate gravity and 
 		# the propulsion system. Calls baseclass' update after.
