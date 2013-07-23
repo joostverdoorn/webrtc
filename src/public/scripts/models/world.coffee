@@ -42,6 +42,7 @@ define [
 		#
 		addPlayer: ( id, transformations ) ->
 			player = new Player(@scene, id, transformations)
+			@addEntity(player)
 
 		# Updates a player's transformation in the world. If the player doesn't exist, 
 		# it will create the player using addPlayer()

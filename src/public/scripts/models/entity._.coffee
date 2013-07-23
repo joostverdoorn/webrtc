@@ -1,16 +1,16 @@
 define [ 
 	'public/scripts/helpers/mixable'
 	'public/scripts/helpers/mixin.eventbindings'
+	'public/scripts/helpers/mixin.dynamicproperties'
 
 	'three'
-	], ( Mixable, EventBindings, Three ) ->
-
-
+	], ( Mixable, EventBindings, DynamicProperties, Three ) ->
 
 	# Baseclass for all physics entities
 	#
 	class Entity extends Mixable
 		@concern EventBindings
+		@concern DynamicProperties
 
 		# Constructs a new basic physics entity. Baseclass for other entities.
 		# Will call initialize on the subclass.
@@ -32,8 +32,16 @@ define [
 			@angularForces = []
 
 			@mesh = new Three.Mesh()
-			@position = @mesh.position
-			@rotation = @mesh.rotation
+			
+			@getter
+				position: -> @mesh.position
+				rotation: -> @mesh.rotation
+
+			@setter
+				position: ( vector ) -> @mesh.position = vector
+				rotation: ( euler ) -> @mesh.rotation = euler
+
+			@rotation.order = 'YXZ'
 
 			@initialize?.apply(@, args)
 
@@ -80,7 +88,6 @@ define [
 			# ... and rotational forces.
 			if updateRotation
 				while force = @angularForces.pop()
-					console.log force
 					acceleration = force.clone().multiplyScalar(force.length() / @mass)
 					@angularVelocity.add(acceleration)
 
@@ -93,7 +100,7 @@ define [
 		#
 		# @param transformations [Object] an object that contains the transformations
 		#
-		applyTransformations: ( transformations ) ->
+		applyTransformations: ( transformations ) =>
 			unless transformations?
 				return
 
@@ -113,7 +120,7 @@ define [
 		#
 		# @return [Object] an object of all the transformations
 		#
-		getTransformations: ( ) ->
+		getTransformations: ( ) =>
 			transformations = 
 				velocity: @velocity.toArray()
 				angularVelocity: @angularVelocity.toArray()

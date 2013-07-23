@@ -6,12 +6,10 @@ define [
 
 	# This class implements the cannon hanging from the ufo
 	#
-	class Entity.Player extends Entity
+	class Entity.Cannon extends Entity
 
-		# Is called from the baseclass' constructor. Will set up player specific 
-		# properties for the entity
+		# Is called from the baseclass' constructor. 
 		#
-		# @param id [String] the string id of the player
 		# @param transformations [Object] an object containing all transformations to apply to the player
 		#
 		initialize: ( transformations = null ) ->

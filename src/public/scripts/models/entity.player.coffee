@@ -19,6 +19,8 @@ define [
 			@boost = false
 			@mass = 100
 
+			@cannon = new Cannon(@scene, transformations?.cannon)
+			@cannon.position = @position
 			@applyTransformations(transformations)
 
 			@_loader.load('/meshes/ufo.js', ( geometry, material ) =>
@@ -26,9 +28,6 @@ define [
 				@mesh.material = new Three.MeshFaceMaterial(material)				
 				@scene.add(@mesh)
 			)
-
-			@cannon = new Cannon(@scene, transformations?.cannon)
-			@cannon.mesh.position = @position
 
 		# Updates the physics state of the player. Adds forces to simulate gravity and 
 		# the propulsion system. Calls baseclass' update after.
@@ -38,31 +37,38 @@ define [
 		update: ( dt ) ->
 			# Lift
 			liftVector = new Three.Vector3()
+
+			# First, we get the two vectors that span the plane orthogonal to the up vector
 			vector1 = new Three.Vector3(0, Math.sin(@rotation.x), -Math.cos(@rotation.x))
-			vector2 = new Three.Vector3(Math.cos(@rotation.z), Math.sin(@rotation.z), )
+			vector2 = new Three.Vector3(Math.cos(@rotation.z), Math.sin(@rotation.z), 0)
+
 
 			liftVector.crossVectors(vector1, vector2).normalize().negate()
+
+			x = liftVector.x
+			z = liftVector.z
+
+			liftVector.x = x * Math.cos(@rotation.y) + z * Math.sin(@rotation.y)
+			liftVector.z = z * Math.cos(@rotation.y) - x * Math.sin(@rotation.y)
 
 			if @boost
 				liftVector.multiplyScalar(12)
 			else
-				liftVector.multiplyScalar(9.5)
+				liftVector.multiplyScalar(9.5)			
 
 			liftVector.projectOnPlane(new Three.Vector3(0, 1, 0))
 			@addForce(liftVector)
 
 			# Gravity
-			#gravityVector = new Three.Vector3(0, -9.81, 0)
-			#@addForce(gravityVector)
+			# gravityVector = new Three.Vector3(0, -9.81, 0)
+			# @addForce(gravityVector)
 
 			# Attract to stable pitch and roll
 			@addAngularForce(new Three.Vector3(-@rotation.x * 7, 0, 0))
 			@addAngularForce(new Three.Vector3(0, 0, -@rotation.z * 7))
 
-			if @cannon.rotation.y - @rotation.y > (Math.PI / 6)
-				@addAngularForce(new Three.Vector3(0, 2, 0))
-			else if (@cannon.rotation.y - @rotation.y) < -(Math.PI / 6)
-				@addAngularForce(new Three.Vector3(0, -2, 0))
+			# Attract to cannon y rotation
+			@addAngularForce(new Three.Vector3(0, 7 * (@cannon.rotation.y - @rotation.y) % Math.PI * 2, 0))
 			
 			# Call baseclass' update to apply all forces
 			super(dt)
@@ -70,17 +76,11 @@ define [
 			# And update our cannon
 			@cannon.update(dt)
 
-
-			
-
-			console.log @rotation.y
-
-
 		# Applies transformation information given in an object to the entity.
 		#
 		# @param transformations [Object] an object that contains the transformations
 		#
-		applyTransformations: ( transformations ) ->
+		applyTransformations: ( transformations ) =>
 			unless transformations
 				return
 
