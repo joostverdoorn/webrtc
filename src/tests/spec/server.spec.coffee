@@ -108,3 +108,84 @@ require [
 							expect(sendSpy.mostRecentCall.args).toEqual([
 									fakeMessage
 								])
+
+					describe 'when manipulating the nodes-list', ->
+						it 'should be possible to add nodes', ->
+							fakeNode1 = {
+								a: 1
+								b: 2
+							}
+							fakeNode2 = {
+								c: 3
+								d: 4
+							}
+							server.addNode(fakeNode1)
+							server.addNode(fakeNode1)
+							server.addNode(fakeNode2)
+							savedNodes = server.getNodes()
+							expect(savedNodes[0]).toEqual(fakeNode1)
+							expect(savedNodes[1]).toEqual(fakeNode2)
+							expect(savedNodes.length).toEqual(2)
+
+						it 'should be possible to remove nodes', ->
+							fakeNode1 = {
+								a: 1
+								b: 2
+							}
+							fakeNode2 = {
+								c: 3
+								d: 4
+							}
+							server.addNode(fakeNode1)
+							server.addNode(fakeNode2)
+							server.removeNode(fakeNode1)
+							server.removeNode(fakeNode1)
+							savedNodes = server.getNodes()
+							expect(savedNodes[0]).toEqual(fakeNode2)
+							expect(savedNodes.length).toEqual(1)
+
+						it 'should be possible to find nodes by id', ->
+							fakeNode1 = {
+								a: 1
+								b: 2
+								id: '1'
+							}
+							fakeNode2 = {
+								c: 3
+								d: 4
+								id: '2'
+							}
+							server.addNode(fakeNode1)
+							server.addNode(fakeNode2)
+							expect(server.getNode('1')).toEqual(fakeNode1)
+							expect(server.getNode('2')).toEqual(fakeNode2)
+							expect(server.getNode('3')).toEqual(null)
+
+						it 'should be possible to find nodes by type', ->
+							fakeNode1 = {
+								a: 1
+								b: 2
+								type: 'supernode'
+							}
+							fakeNode2 = {
+								c: 3
+								d: 4
+								type: 'node'
+							}
+							fakeNode3 = {
+								e: 5
+								f: 6
+								type: 'node'
+							}
+							server.addNode(fakeNode1)
+							server.addNode(fakeNode2)
+							server.addNode(fakeNode3)
+							expect(server.getNodes('supernode')).toEqual([
+									fakeNode1
+								])
+							expect(server.getNodes('node')).toEqual([
+									fakeNode2
+									fakeNode3
+								])
+							allNodes = server.getNodes()
+							expect(allNodes.length).toEqual(3)
