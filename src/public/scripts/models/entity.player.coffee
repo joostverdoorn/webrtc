@@ -37,6 +37,7 @@ define [
 
 				@scene.add(@mesh)
 				@cannon.position = @position
+				@rotation.order = 'YZX'
 			)
 
 		# Updates the physics state of the player. Adds forces to simulate gravity and 
