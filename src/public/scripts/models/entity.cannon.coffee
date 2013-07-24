@@ -33,6 +33,8 @@ define [
 		update: ( dt ) ->
 			super(dt, false, true)
 
+		# Fires a projectile. Can be fired each second
+		#
 		fire: ( ) ->
 			if @_isReady
 
@@ -44,4 +46,3 @@ define [
 				, 1000)
 
 				return projectile
-
