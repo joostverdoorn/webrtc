@@ -32,8 +32,8 @@ define [
 			x = Math.cos(cannon.rotation.y)
 			z = -Math.sin(cannon.rotation.y)
 
-			vector = new Three.Vector3(x, 0, z).multiplyScalar(250)
-			vector.add(player.velocity)
+			vector = new Three.Vector3(x * @mass, 0, z * @mass).multiplyScalar(25)
+			vector.add(player.velocity.clone().multiplyScalar(@mass))
 
 			@addForce(vector)
 
