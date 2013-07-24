@@ -219,3 +219,9 @@ require [
 									'[1]'
 									'[2]'
 								])
+
+					describe 'when timed', ->
+						it 'should give precise incremental numbers representing the time', ->
+							# Bad test, but Jasmine's mock clock does not allow faking Date.now() results...
+							first = server.time()
+							expect(server.time() - first).not.toBeLessThan(0)
