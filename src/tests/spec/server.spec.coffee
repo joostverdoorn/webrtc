@@ -88,3 +88,23 @@ require [
 									2
 									3
 								])
+
+					describe 'when relaying', ->
+						it 'should check if the node exists and send it accordingly', ->
+							spyOn(server, 'getNode').andReturn(false)
+
+							fakeMessage = {
+								to: '1'
+							}
+
+							server.relay(fakeMessage)
+
+							sendSpy = jasmine.createSpy('send')
+							server.getNode.andReturn({
+									send: sendSpy
+								})
+							server.relay(fakeMessage)
+
+							expect(sendSpy.mostRecentCall.args).toEqual([
+									fakeMessage
+								])
