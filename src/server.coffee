@@ -1,12 +1,13 @@
 define [
 	'public/library/models/remote.client'
 	'public/library/models/collection'
+	'public/library/models/message'
 
 	'express'
 	'http'
 	'socket.io'
 	'underscore'
-	], ( Node, Collection, express, http, io, _ ) ->
+	], ( Node, Collection, Message, express, http, io, _ ) ->
 
 
 	# Server class. This is run on the server and maintains connections to 

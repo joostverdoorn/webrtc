@@ -70,3 +70,21 @@ require [
 							expect(server.removeNode.mostRecentCall.args).toEqual([
 									fakeClient
 								])
+
+					describe 'when emitting', ->
+						it 'should create a new message without a sender and relay it', ->
+							spyOn(server, 'relay')
+
+							server.emitTo('1', 'event', 1, 2, 3)
+
+							expect(server.relay).toHaveBeenCalled()
+
+							message = server.relay.mostRecentCall.args[0]
+							expect(message.to).toBe('1')
+							expect(message.from).toBe(null)
+							expect(message.event).toBe('event')
+							expect(message.args).toEqual([
+									1
+									2
+									3
+								])
