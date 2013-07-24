@@ -1,18 +1,21 @@
 {
 	"name": "webrtc",
 	"description": "A WebRTC library",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"dependencies": {
+		"fs-extra": "*",
+		"fs-watch-tree": "*",
 		"express": "3.x",
 		"underscore": "*",
 		"backbone": "*",
 		"requirejs": "2.1.5",
 		"socket.io": "*",
-		"fs-watch-tree": "*",
 		"mkdirp": "*",
 		"jasmine-node": "*",
 		"performance-now": "*",
-		"adapter": "*"
+		"adapter": "*",
+		"wrench": "*",
+		"coffee-coverage": "*"
 	}
 
 }
