@@ -23,13 +23,20 @@ define [
 			@applyGravity = true
 
 			@cannon = new Cannon(@scene, @, transformations?.cannon)
-			@cannon.position = @position
+
 			@applyTransformations(transformations)
 
 			@_loader.load('/meshes/ufo.js', ( geometry, material ) =>
-				@mesh.geometry = geometry
-				@mesh.material = new Three.MeshFaceMaterial(material)				
+				@mesh = new Three.SkinnedMesh(geometry, new Three.MeshFaceMaterial(material))
+				material.skinning = true for material in @mesh.material.materials
+
+				THREE.AnimationHandler.add(@mesh.geometry.animation)
+				@animation = new Three.Animation(@mesh, 'ArmatureAction', Three.AnimationHandler.CATMULLROM)
+				@animation.play()
+
+
 				@scene.add(@mesh)
+				@cannon.position = @position
 			)
 
 		# Updates the physics state of the player. Adds forces to simulate gravity and 
@@ -73,6 +80,9 @@ define [
 
 			# And update our cannon
 			@cannon.update(dt)
+
+			@animation?.update(dt)
+
 
 		# Applies transformation information given in an object to the entity.
 		#
