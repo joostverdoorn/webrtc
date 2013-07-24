@@ -26,19 +26,30 @@ require [
 				it 'should not be a supernode', ->
 					expect(node.isSuperNode).toBeFalsy()
 
-				it 'should an empty Collection of peers', ->
+				it 'should have an empty Collection of peers', ->
 					expect(node._peers.length).toBe(0)
 					expect(node._peers instanceof Collection ).toBeTruthy()
 
 				it 'should have Vector coordinates', ->
 					expect(node.coordinates instanceof Vector ).toBeTruthy()
 
+				it 'should create a new Remote.Server and register several callbacks on it', ->
+					expect(node.server._mockTriggers.splice(-4, 4)).toEqual([
+							'connect'
+							'peer.connectionRequest'
+							'peer.setRemoteDescription'
+							'peer.addIceCandidate'
+						])
+
 			describe 'when connect and disconnect to other nodes', ->
 
 				beforeEach ->
+					spyOn(node, 'addPeer').andCallThrough()
+					spyOn(node, 'removePeer').andCallThrough()
 					peer = node.connect("123456")
 
 				it 'should add peer to a Peer collection', ->
+					expect(node.addPeer).toHaveBeenCalled()
 					expect(node._peers.length).toBe(1)
 					expect(node.getPeers().length).toBe(1)
 					expect(node.getPeer("123456")).toBe(peer)
@@ -46,6 +57,57 @@ require [
 				it 'should remove peer from a Peer collection', ->
 					node.disconnect(peer.id)
 					expect(node._peers.length).toBe(0)
+
+			describe 'when event based disconnect occurs', ->
+				beforeEach ->
+					spyOn(node, 'removePeer')
+					spyOn(node, 'getParent')
+					peer = node.connect("123456")
+
+				it 'should call the callback for _onPeerDisconnect', ->
+					node.getParent.andReturn(false)
+					node._onPeerDisconnect(peer)
+					expect(node.getParent).toHaveBeenCalled()
+					expect(node.removePeer).toHaveBeenCalled()
+					expect(node.removePeer.mostRecentCall.args).toEqual([
+							peer
+						])
+
+				it 'should pick a new parent if disconnecting node is parent', ->
+					node.getParent.andReturn(peer)
+					spyOn(node, 'getPeers').andReturn([
+							{
+								isSuperNode: false
+							}
+							{
+								isSuperNode: false
+							}
+							{
+								isSuperNode: false
+							}
+							{
+								a: 1
+								isSuperNode: true
+							}
+						])
+					spyOn(node, '_pickParent')
+					node._onPeerDisconnect(peer)
+					expect(node.getParent).toHaveBeenCalled()
+					expect(node.getPeers).toHaveBeenCalled()
+					expect(node._pickParent).toHaveBeenCalled()
+					expect(node._pickParent.mostRecentCall.args).toEqual([
+							[
+								{
+									a: 1
+									isSuperNode: true
+								}
+							]
+						])
+					expect(node.removePeer).toHaveBeenCalled()
+					expect(node.removePeer.mostRecentCall.args).toEqual([
+							peer
+						])
+
 
 			describe 'when entering network', ->
 
