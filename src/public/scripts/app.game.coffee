@@ -219,7 +219,7 @@ require [
 				x = 30 * -Math.cos(@player.cannon.rotation.y)
 				z = 30 * Math.sin(@player.cannon.rotation.y)
 
-				@camera.position.lerp(@player.position.clone().add(new Three.Vector3(x, 15, z)), .05)
+				@camera.position.lerp(@player.position.clone().add(new Three.Vector3(x, 15, z)), .02)
 				@camera.lookAt(@player.position)
 
 			# Render the scene

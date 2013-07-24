@@ -17,7 +17,10 @@ define [
 		#
 		initialize: ( @id, transformations = null ) ->
 			@boost = false
+			
 			@mass = 100
+			@drag = .01
+			@applyGravity = true
 
 			@cannon = new Cannon(@scene, @, transformations?.cannon)
 			@cannon.position = @position
@@ -42,7 +45,6 @@ define [
 			vector1 = new Three.Vector3(0, Math.sin(@rotation.x), -Math.cos(@rotation.x))
 			vector2 = new Three.Vector3(Math.cos(@rotation.z), Math.sin(@rotation.z), 0)
 
-
 			liftVector.crossVectors(vector1, vector2).normalize().negate()
 
 			x = liftVector.x
@@ -52,16 +54,12 @@ define [
 			liftVector.z = z * Math.cos(@rotation.y) - x * Math.sin(@rotation.y)
 
 			if @boost
-				liftVector.multiplyScalar(12)
+				liftVector.multiplyScalar(12 * @mass * dt)
 			else
-				liftVector.multiplyScalar(9.5)			
+				liftVector.multiplyScalar(9.5 * @mass * dt)			
 
 			#liftVector.projectOnPlane(new Three.Vector3(0, 1, 0))
 			@addForce(liftVector)
-
-			# Gravity
-			gravityVector = new Three.Vector3(0, -9.81, 0)
-			@addForce(gravityVector)
 
 			# Attract to stable pitch and roll
 			@addAngularForce(new Three.Vector3(-@rotation.x * 7, 0, 0))

@@ -21,9 +21,10 @@ define [
 		constructor: ( @scene, args... ) ->
 			@_loader = new Three.JSONLoader()
 
+			@applyGravity = false
 			@mass = 1
-			@drag = .5
-			@angularDrag = 1
+			@drag = .01
+			@angularDrag = .5
 
 			@velocity = new Three.Vector3(0, 0, 0)
 			@angularVelocity = new Three.Vector3(0, 0, 0)
@@ -69,17 +70,21 @@ define [
 		#
 		# @param dt [Float] the time that has elapsed since last update
 		#
-		update: ( dt, updatePosition = true, updateRotation = true ) ->			
+		update: ( dt, updatePosition = true, updateRotation = true ) ->
+			if @applyGravity
+				@addForce(new Three.Vector3(0, -9.81 * @mass * dt, 0))
+
 			# Apply forces ...
 			if updatePosition				
 				while force = @forces.pop()
-					acceleration = force.clone().multiplyScalar(force.length() / @mass)
+					acceleration = force.clone().divideScalar(@mass)
 					@velocity.add(acceleration)
 
 				# Calculate the drag force. We assume a fluid density of 1.2 (air at 20 degrees C)
-				# and a cross-sectional area of 10
-				dragForce = @velocity.clone().normalize().negate().multiplyScalar(.5 * 1.2 * @drag * Math.pow(@velocity.length() / @mass, 2) * 10)
-				@velocity.add(dragForce)
+				# and a cross-sectional area of 1. Any larger or smaller area will have to be 
+				# compensated by a larger or small @drag.
+				dragForce = @velocity.clone().normalize().negate().multiplyScalar(.5 * 1.2 * @drag * @velocity.lengthSq())
+				@velocity.add(dragForce.divideScalar(@mass))
 
 				@position.x += @velocity.x * dt
 				@position.y += @velocity.y * dt
@@ -88,7 +93,7 @@ define [
 			# ... and rotational forces.
 			if updateRotation
 				while force = @angularForces.pop()
-					acceleration = force.clone().multiplyScalar(force.length() / @mass)
+					acceleration = force.clone().divideScalar(@mass)
 					@angularVelocity.add(acceleration)
 
 				@angularVelocity.multiplyScalar(1 - @angularDrag * dt)

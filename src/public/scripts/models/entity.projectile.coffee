@@ -10,14 +10,14 @@ define [
 
 
 		initialize: ( player = null, cannon = null ) ->
-			@mass = 100
-			@drag = .5
-			@angularDrag = 1
+			@mass = 10
+			@drag = .0005
+			@applyGravity = true
 
 			sphereMaterial = new Three.MeshLambertMaterial({ color: 0x008000 })
 			radius = 0.4
-			segments = 10
-			rings = 20
+			segments = 6
+			rings = 8
 
 			@mesh = new Three.Mesh(
 				new Three.SphereGeometry(
@@ -32,7 +32,7 @@ define [
 			x = Math.cos(cannon.rotation.y)
 			z = -Math.sin(cannon.rotation.y)
 
-			vector = new Three.Vector3(x, 0, z).multiplyScalar(150)
+			vector = new Three.Vector3(x, 0, z).multiplyScalar(250)
 			vector.add(player.velocity)
 
 			@addForce(vector)
@@ -40,15 +40,7 @@ define [
 			@scene.add(@mesh)
 
 		update: ( dt ) ->
-			# Gravity
-			gravityVector = new Three.Vector3(0, -9.81, 0)
-			@addForce(gravityVector)
-
 			super(dt)
-
-			@mesh.position = @position
-			@mesh.rotation = @rotation
-			
 
 		die: ( ) ->
 			@scene.remove(@mesh)

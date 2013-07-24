@@ -33,7 +33,7 @@ define [
 		update: ( dt ) ->
 			super(dt, false, true)
 
-		fire: ( playerTransformations, cannonTransformations ) ->
+		fire: ( ) ->
 			if @_isReady
 
 				projectile = new Projectile(@scene, @player, @)
@@ -41,7 +41,7 @@ define [
 
 				setTimeout( =>
 					@_isReady = true
-				, 100)
+				, 1000)
 
 				return projectile
 
