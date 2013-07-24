@@ -108,6 +108,10 @@ require [
 				@world.updatePlayer(id, transformations)
 			)
 
+			@node.onReceive('player.fired', ( projectileTransformations ) =>
+				@world.drawProjectiles(projectileTransformations)
+			)
+
 			broadcastInterval = setInterval( ( ) =>
 				if @player?
 					@node.broadcast('player.update', @player.id, @player.getTransformations())
@@ -202,6 +206,8 @@ require [
 				projectile = @player?.cannon.fire()
 				if projectile?
 					@world.addEntity(projectile)
+					projectile.update(dt)
+					@node.broadcast('player.fired', projectile.getTransformations())
 
 			if @_upKey
 				@player?.addAngularForce(new Three.Vector3(0, 0, -2))

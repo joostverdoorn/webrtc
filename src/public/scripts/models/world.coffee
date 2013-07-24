@@ -3,11 +3,12 @@ define [
 	'public/scripts/helpers/mixin.eventbindings'
 
 	'public/scripts/models/entity.player'
+	'public/scripts/models/entity.projectile'
 	'public/scripts/models/collection'
 
 	'underscore'
 	'three'
-	], ( Mixable, EventBindings, Player,  Collection, _, Three ) ->
+	], ( Mixable, EventBindings, Player, Projectile,  Collection, _, Three ) ->
 
 	# This class manages the game world.
 	#
@@ -30,10 +31,10 @@ define [
 			@scene.add(directionalLight)
 
 			ambientLight = new Three.AmbientLight(0xffffff)
-			scene.add(ambientLight)
+			@scene.add(ambientLight)
 
 			hemisphereLight = new Three.HemisphereLight(0x9999aa, 0x663322, 1)
-			scene.add(hemisphereLight)
+			@scene.add(hemisphereLight)
 
 
 		# Creates and adds a player to the world
@@ -58,6 +59,12 @@ define [
 			else
 				@addPlayer(id, transformations)
 
+		drawProjectiles: ( projectileTransformations ) -> 
+			projectile = new Projectile(@scene)
+			@addEntity(projectile)		
+			projectile.applyTransformations(projectileTransformations)
+
+
 		# Adds a physics entity to the world
 		#
 		# @param entity [Entity] the entity to add
@@ -76,6 +83,6 @@ define [
 		#
 		# @param dt [Float] the time that has elapsed since last update
 		#
-		update: ( dt ) ->
+		update: ( @dt ) ->
 			entity.update(dt) for entity in @_entities
 			
