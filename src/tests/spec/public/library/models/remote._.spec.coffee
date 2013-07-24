@@ -185,5 +185,21 @@ require [
 
 			it 'should send a ping query', ->
 				spyOn(remote, 'query')
-				remote.ping()
+
+				callbackCalled = false
+				remote.ping(( args... )->
+						callbackCalled = args
+						expect(args[0]).not.toBeLessThan(0)
+						expect(args).toEqual([
+								remote.latency
+								1
+								2
+								3
+							])
+					)
 				expect(remote.query).toHaveBeenCalled()
+				remote.query.mostRecentCall.args[1](1, 2, 3)
+
+				waitsFor(->
+						return callbackCalled isnt false
+					, 1000)
