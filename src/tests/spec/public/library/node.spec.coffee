@@ -8,8 +8,9 @@ require [
 	'public/library/node'
 	'public/library/models/vector'
 	'public/library/models/collection'
+	'public/library/models/remote.peer'
 
-	], ( Node, Vector, Collection ) ->
+	], ( Node, Vector, Collection, Peer ) ->
 		describe 'Node', ->
 
 			node = null
@@ -42,14 +43,14 @@ require [
 						])
 
 			describe 'when connect and disconnect to other nodes', ->
-
 				beforeEach ->
-					spyOn(node, 'addPeer').andCallThrough()
 					spyOn(node, 'removePeer').andCallThrough()
+					spyOn(node, 'addPeer').andCallThrough()
 					peer = node.connect("123456")
 
 				it 'should add peer to a Peer collection', ->
 					expect(node.addPeer).toHaveBeenCalled()
+					expect(node.addPeer.mostRecentCall.args[0] instanceof Peer).toBe(true)
 					expect(node._peers.length).toBe(1)
 					expect(node.getPeers().length).toBe(1)
 					expect(node.getPeer("123456")).toBe(peer)
@@ -107,7 +108,6 @@ require [
 					expect(node.removePeer.mostRecentCall.args).toEqual([
 							peer
 						])
-
 
 			describe 'when entering network', ->
 

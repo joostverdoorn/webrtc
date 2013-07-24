@@ -1,5 +1,5 @@
 define [
-	'public/library/models/../models/remote.peer'
+	'public/library//models/remote.peer'
 
 	'public/library/models/vector'
 	'public/library/models/collection'
