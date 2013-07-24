@@ -47,14 +47,16 @@ define [
 				if nodes.length is 0
 					res.write '[]'
 					res.end()
+					return
 
 				requestDone = false
 
-				setTimeout(=>
+				waitTimeout = setTimeout(=>
 						unless requestDone
 							res.write JSON.stringify({
 									error: 'ERR_TIMEOUT'
 								})
+							res.end()
 							requestDone = true
 					, 5000);
 
@@ -72,6 +74,7 @@ define [
 							i++
 
 							if i is nodes.length and not requestDone
+								clearTimeout(waitTimeout)
 								requestDone = true
 								res.write(JSON.stringify(result))
 								res.end()
