@@ -28,7 +28,6 @@ define [
 				@_logs.push(args)
 			)
 
-
 			@_app = express()
 			@_server = http.createServer(@_app)
 			@_io = io.listen(@_server)
