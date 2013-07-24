@@ -1,6 +1,7 @@
 lib/
 node_modules/
 doc/
+reports/
 *.log
 *.lyx~
 *lyx#

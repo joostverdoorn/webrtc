@@ -1,24 +1,13 @@
-requirejs = require('requirejs')
-
-requirejs.config
-	# Pass the top-level main.js/index.js require
-	# function to requirejs so that node modules
-	# are loaded relative to the top-level JS file.
-	nodeRequire: require
-
-	shim: 
-		'underscore': 
-			exports: '_'
-
-requirejs [
-	'public/models/remote.client'
-	'public/models/collection'
+define [
+	'public/library/models/remote.client'
+	'public/library/models/collection'
+	'public/library/models/message'
 
 	'express'
 	'http'
 	'socket.io'
 	'underscore'
-	], ( Node, Collection, express, http, io, _ ) ->
+	], ( Node, Collection, Message, express, http, io, _ ) ->
 
 
 	# Server class. This is run on the server and maintains connections to 
@@ -28,7 +17,7 @@ requirejs [
 
 		# Constructs a new server.
 		#
-		constructor: ( ) ->
+		constructor: ( dir ) ->
 			@_initTime = Date.now()
 
 			@_nodes = new Collection()
@@ -39,15 +28,14 @@ requirejs [
 				@_logs.push(args)
 			)
 
-
 			@_app = express()
 			@_server = http.createServer(@_app)
 			@_io = io.listen(@_server)
 			@_io.sockets.on('connection', @login)
 			
-			# Serve static content from ./public
+			# Serve static content from ./public/library
 			@_app.configure =>
-				@_app.use(express.static("#{__dirname}/public"))
+				@_app.use(express.static("#{dir}/public"))
 
 			@_app.get('/nodes', ( req, res ) =>
 				nodes = @getNodes()
@@ -59,14 +47,16 @@ requirejs [
 				if nodes.length is 0
 					res.write '[]'
 					res.end()
+					return
 
 				requestDone = false
 
-				setTimeout(=>
+				waitTimeout = setTimeout(=>
 						unless requestDone
 							res.write JSON.stringify({
 									error: 'ERR_TIMEOUT'
 								})
+							res.end()
 							requestDone = true
 					, 5000);
 
@@ -84,6 +74,7 @@ requirejs [
 							i++
 
 							if i is nodes.length and not requestDone
+								clearTimeout(waitTimeout)
 								requestDone = true
 								res.write(JSON.stringify(result))
 								res.end()
@@ -185,7 +176,3 @@ requirejs [
 		#
 		time: ( ) ->
 			return Date.now() - @_initTime
-
-
-
-	global.Server = new Server()
