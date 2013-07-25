@@ -118,58 +118,8 @@ require [
 					@node.broadcast('player.update', @player.id, @player.getTransformations())
 			, 200)
 
-
-			$(document).keydown( ( event ) =>
-				if event.keyCode is Keyboard.Keys.SPACE
-					@player?.boost = true
-
-				if event.keyCode is Keyboard.Keys.RETURN
-					@_fireKey = true
-
-				if event.keyCode is Keyboard.Keys.LEFT
-					@_leftKey = true
-
-				if event.keyCode is Keyboard.Keys.UP
-					@_upKey = true
-
-				if event.keyCode is Keyboard.Keys.RIGHT
-					@_rightKey = true
-
-				if event.keyCode is Keyboard.Keys.DOWN
-					@_downKey = true
-
-				if event.keyCode is Keyboard.Keys.A
-					@_aKey = true
-
-				if event.keyCode is Keyboard.Keys.D
-					@_dKey = true
-			)
-
-			$(document).keyup( ( event ) =>
-				if event.keyCode is Keyboard.Keys.SPACE
-					@player?.boost = false
-
-				if event.keyCode is Keyboard.Keys.RETURN
-					@_fireKey = false
-
-				if event.keyCode is Keyboard.Keys.LEFT
-					@_leftKey = false
-
-				if event.keyCode is Keyboard.Keys.UP
-					@_upKey = false
-
-				if event.keyCode is Keyboard.Keys.RIGHT
-					@_rightKey = false
-
-				if event.keyCode is Keyboard.Keys.DOWN
-					@_downKey = false
-
-				if event.keyCode is Keyboard.Keys.A
-					@_aKey = false
-
-				if event.keyCode is Keyboard.Keys.D
-					@_dKey = false
-			)
+			context = $(document)
+			@keyHandler = new Keyboard(context, context.keydown, context.keyup)
 
 			window.requestAnimationFrame(@update)
 			$(window).resize(@setDimensions)
@@ -199,24 +149,26 @@ require [
 			dt = (timestamp - @lastUpdateTime) / 1000     
 
 			# If any keys are pressed, apply angular forces to the player
-			if @_aKey
+			@player?.boost = @keyHandler.Keys.SPACE
+
+			if @keyHandler.Keys.A
 				@player?.cannon.addAngularForce(new Three.Vector3(0, 1, 0))
-			if @_dKey
+			if @keyHandler.Keys.D
 				@player?.cannon.addAngularForce(new Three.Vector3(0, -1, 0))
-			if @_fireKey
+			if @keyHandler.Keys.RETURN
 				projectile = @player?.cannon.fire()
 				if projectile?
 					@world.addEntity(projectile)
 					projectile.update(dt)
 					@node.broadcast('player.fired', projectile.getTransformations())
 
-			if @_upKey
+			if @keyHandler.Keys.UP
 				@player?.addAngularForce(new Three.Vector3(0, 0, -2))
-			if @_downKey
+			if @keyHandler.Keys.DOWN
 				@player?.addAngularForce(new Three.Vector3(0, 0, 2))
-			if @_leftKey
+			if @keyHandler.Keys.LEFT
 				@player?.addAngularForce(new Three.Vector3(-2, 0, 0))
-			if @_rightKey
+			if @keyHandler.Keys.RIGHT
 				@player?.addAngularForce(new Three.Vector3(2, 0, 0))
 
 			@world.update(dt)
