@@ -135,6 +135,43 @@ require [
 							return success
 						, 1000)
 
+			describe 'when removing a peer', ->
+				fakePeer = null
+
+				beforeEach ->
+					fakePeer = {
+						a: 1
+						b: 2
+						die: ->
+					}
+
+				it 'should get killed first', ->
+					fakePeer.die = jasmine.createSpy('die')
+					node.removePeer(fakePeer)
+					expect(fakePeer.die).toHaveBeenCalled()
+
+				it 'should get removed from the internal list', ->
+					spyOn(node._peers, 'remove')
+					node.removePeer(fakePeer)
+					expect(node._peers.remove.mostRecentCall.args).toEqual([
+							fakePeer
+						])
+
+				it 'should trigger the peer.removed event', ->
+					success = false
+					node.on('peer.removed', ( peer ) ->
+							success = true
+						)
+					node.removePeer(fakePeer)
+					waitsFor(->
+							return success
+						, 1000)
+
+				it 'should trigger the _triggerStaySuperNodeTimeout()', ->
+					spyOn(node, '_triggerStaySuperNodeTimeout')
+					node.removePeer(fakePeer)
+					expect(node._triggerStaySuperNodeTimeout).toHaveBeenCalled()
+
 			describe 'when entering network', ->
 
 				beforeEach ->
