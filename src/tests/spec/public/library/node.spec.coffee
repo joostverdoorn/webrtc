@@ -109,6 +109,32 @@ require [
 							peer
 						])
 
+			describe 'when adding a peer', ->
+				it 'should get added to the internal list', ->
+					fakePeer = {
+						a: 1
+						b: 2
+					}
+					spyOn(node._peers, 'add')
+					node.addPeer(fakePeer)
+					expect(node._peers.add.mostRecentCall.args).toEqual([
+							fakePeer
+						])
+
+				it 'should trigger the peer.added event', ->
+					fakePeer = {
+						a: 1
+						b: 2
+					}
+					success = false
+					node.on('peer.added', ( peer ) ->
+							success = true
+						)
+					node.addPeer(fakePeer)
+					waitsFor(->
+							return success
+						, 1000)
+
 			describe 'when entering network', ->
 
 				beforeEach ->
