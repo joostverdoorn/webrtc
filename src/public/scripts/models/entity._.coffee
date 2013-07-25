@@ -71,7 +71,8 @@ define [
 		#
 		update: ( dt, updatePosition = true, updateRotation = true ) ->
 			if @applyGravity
-				@addForce(new Three.Vector3(0, -9.81 * @mass * dt, 0))
+				gravityForce = @position.clone().normalize().multiplyScalar(-9.81 * @mass * dt)
+				@addForce(gravityForce)
 
 			# Apply forces ...
 			if updatePosition				
@@ -89,13 +90,14 @@ define [
 				@position.y += @velocity.y * dt
 				@position.z += @velocity.z * dt
 
+				@position.z = 0
+
 			# ... and rotational forces.
 			if updateRotation
 				while force = @angularForces.pop()
 					acceleration = force.clone().divideScalar(@mass)
 					@angularVelocity.add(acceleration)
-
-				@angularVelocity.multiplyScalar(1 - @angularDrag * dt)
+				
 				@rotation.x = (@rotation.x + @angularVelocity.x * dt) % (Math.PI * 2)
 				@rotation.y = (@rotation.y + @angularVelocity.y * dt) % (Math.PI * 2)
 				@rotation.z = (@rotation.z + @angularVelocity.z * dt) % (Math.PI * 2)

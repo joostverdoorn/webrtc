@@ -43,6 +43,6 @@ define [
 
 				setTimeout( =>
 					@_isReady = true
-				, 1000)
+				, 50)
 
 				return projectile

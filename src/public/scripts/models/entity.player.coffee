@@ -24,7 +24,7 @@ define [
 
 			@cannon = new Cannon(@scene, @, transformations?.cannon)
 
-			@applyTransformations(transformations)
+			
 
 			@_loader.load('/meshes/ufo.js', ( geometry, material ) =>
 				@mesh = new Three.SkinnedMesh(geometry, new Three.MeshFaceMaterial(material))
@@ -34,10 +34,12 @@ define [
 				@animation = new Three.Animation(@mesh, 'ArmatureAction', Three.AnimationHandler.CATMULLROM)
 				@animation.play()
 
-
 				@scene.add(@mesh)
 				@cannon.position = @position
-				@rotation.order = 'YZX'
+				@rotation.order = 'ZXY'
+				@applyTransformations(transformations)
+
+				@velocity = new Three.Vector3(4, 0, 4)
 			)
 
 		# Updates the physics state of the player. Adds forces to simulate gravity and 
@@ -46,6 +48,11 @@ define [
 		# @param dt [Float] the time that has elapsed since last update was called.
 		#
 		update: ( dt ) ->
+			
+
+
+			#upVectorSphere = @createDebugSphere(upVector, 0xff0000)
+
 			# Lift
 			liftVector = new Three.Vector3()
 
@@ -64,20 +71,45 @@ define [
 			if @boost
 				liftVector.multiplyScalar(12 * @mass * dt)
 			else
-				liftVector.multiplyScalar(9.5 * @mass * dt)			
+				liftVector.multiplyScalar(5 * @mass * dt)			
 
 			#liftVector.projectOnPlane(new Three.Vector3(0, 1, 0))
 			@addForce(liftVector)
 
 			# Attract to stable pitch and roll
-			@addAngularForce(new Three.Vector3(-@rotation.x * 7, 0, 0))
-			@addAngularForce(new Three.Vector3(0, 0, -@rotation.z * 7))
+			# console.log Math.atan2(upVector.y, upVector.x) - @rotation.x
+
+			gravityVector = @position.clone().normalize().negate()
+			#upVector = 
+
+			vX = new Three.Vector3(Math.cos(@rotation.y), 0, Math.sin(@rotation.y)).projectOnPlane(upVector).normalize()
+			vZ = vX.clone().cross(upVector).normalize()
+
+			vXSphere = @createDebugSphere(vX, 0x00ff00)
+			vZSphere = @createDebugSphere(vZ, 0x0000ff)
+
+			rX = Math.atan2(vZ.y, vZ.z)
+			rZ = Math.atan2(vX.y, vX.x)
+			
+
+			@addAngularForce(new Three.Vector3(rX - @rotation.x, 0, 0))
+			@addAngularForce(new Three.Vector3(0, 0, rZ - @rotation.z))
 
 			# Attract to cannon y rotation
-			@addAngularForce(new Three.Vector3(0, 7 * (@cannon.rotation.y - @rotation.y) % Math.PI * 2, 0))
+			#@addAngularForce(new Three.Vector3(0, 7 * (@cannon.rotation.y - @rotation.y) % Math.PI * 2, 0))
 			
 			# Call baseclass' update to apply all forces
 			super(dt)
+
+			_.defer( => @scene.remove(upVectorSphere))
+			_.defer( => @scene.remove(vXSphere))
+			_.defer( => @scene.remove(vZSphere))
+
+
+			@rotation.x = 0 # rX
+			@rotation.z = rZ
+
+			#@rotation.y += 0.001
 
 			# And update our cannon
 			@cannon.update(dt)
@@ -90,6 +122,8 @@ define [
 		# @param transformations [Object] an object that contains the transformations
 		#
 		applyTransformations: ( transformations ) =>
+			console.log transformations.position
+
 			unless transformations
 				return
 
@@ -105,4 +139,24 @@ define [
 			transformations.cannon = @cannon.getTransformations()
 
 			return transformations
+
+		createDebugSphere: ( vector, color ) ->
+			radius = .2
+			segments = 6
+			rings = 8
+
+			sphereMaterial = new THREE.MeshBasicMaterial( {color: color }) 
+
+
+			sphere = new Three.Mesh(
+				new Three.SphereGeometry(
+					radius,
+					segments,
+					rings)
+				, sphereMaterial)
+
+			sphere.position = @position.clone().add(vector.clone().multiplyScalar(10))
+
+			@scene.add(sphere)
+			return sphere
 

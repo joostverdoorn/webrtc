@@ -81,7 +81,7 @@ require [
 			@node = new Node()
 
 			@node.server.on('connect', ( ) =>
-				@player = new Player(@scene, @node.id, null)
+				@player = new Player(@scene, @node.id, {position: new Three.Vector3(0, 10, 0).toArray()})
 				@world.addEntity(@player)
 			)
 

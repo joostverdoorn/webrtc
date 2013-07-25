@@ -36,6 +36,34 @@ define [
 			hemisphereLight = new Three.HemisphereLight(0x9999aa, 0x663322, 1)
 			@scene.add(hemisphereLight)
 
+			sphereMaterial = new THREE.MeshBasicMaterial( {color:0x00ff00 * Math.random() }) 
+
+			radius = 100
+			segments = 20
+			rings = 20
+
+			planet = new Three.Mesh(
+				new Three.SphereGeometry(
+					radius,
+					segments,
+					rings)
+				, sphereMaterial)
+
+			@scene.add(planet)
+
+			radius = 1
+			segments = 20
+			rings = 20
+
+			planet = new Three.Mesh(
+				new Three.SphereGeometry(
+					radius,
+					segments,
+					rings)
+				, sphereMaterial)
+
+			@scene.add(planet)
+
 
 		# Creates and adds a player to the world
 		#
