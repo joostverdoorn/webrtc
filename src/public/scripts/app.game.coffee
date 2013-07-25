@@ -29,11 +29,12 @@ require [
 
 	'public/scripts/models/world'
 	'public/scripts/models/entity.player'
+	'public/scripts/models/keyboard'
 
 	'jquery'
 	'three'
 	'stats'
-	], ( App, Node, World, Player, $, Three ) ->
+	], ( App, Node, World, Player, Keyboard, $, Three ) ->
 
 	# This game class implements the node structure created in the library.
 	# It uses three.js for the graphics.
@@ -119,54 +120,54 @@ require [
 
 
 			$(document).keydown( ( event ) =>
-				if event.keyCode is 32
+				if event.keyCode is Keyboard.Keys.SPACE
 					@player?.boost = true
 
-				if event.keyCode is 13
+				if event.keyCode is Keyboard.Keys.RETURN
 					@_fireKey = true
 
-				if event.keyCode is 37
+				if event.keyCode is Keyboard.Keys.LEFT
 					@_leftKey = true
 
-				if event.keyCode is 38
+				if event.keyCode is Keyboard.Keys.UP
 					@_upKey = true
 
-				if event.keyCode is 39
+				if event.keyCode is Keyboard.Keys.RIGHT
 					@_rightKey = true
 
-				if event.keyCode is 40
+				if event.keyCode is Keyboard.Keys.DOWN
 					@_downKey = true
 
-				if event.keyCode is 65
+				if event.keyCode is Keyboard.Keys.A
 					@_aKey = true
 
-				if event.keyCode is 68
+				if event.keyCode is Keyboard.Keys.D
 					@_dKey = true
 			)
 
 			$(document).keyup( ( event ) =>
-				if event.keyCode is 32
+				if event.keyCode is Keyboard.Keys.SPACE
 					@player?.boost = false
 
-				if event.keyCode is 13
+				if event.keyCode is Keyboard.Keys.RETURN
 					@_fireKey = false
 
-				if event.keyCode is 37
+				if event.keyCode is Keyboard.Keys.LEFT
 					@_leftKey = false
 
-				if event.keyCode is 38
+				if event.keyCode is Keyboard.Keys.UP
 					@_upKey = false
 
-				if event.keyCode is 39
+				if event.keyCode is Keyboard.Keys.RIGHT
 					@_rightKey = false
 
-				if event.keyCode is 40
+				if event.keyCode is Keyboard.Keys.DOWN
 					@_downKey = false
 
-				if event.keyCode is 65
+				if event.keyCode is Keyboard.Keys.A
 					@_aKey = false
 
-				if event.keyCode is 68
+				if event.keyCode is Keyboard.Keys.D
 					@_dKey = false
 			)
 
