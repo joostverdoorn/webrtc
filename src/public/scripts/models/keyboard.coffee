@@ -35,3 +35,19 @@ define [], ( ) ->
 
 		# NumPad numbers start 48 higher than "normal" numbers
 		@Keys["NUM_#{letter}"] = numbers.charCodeAt(i) + 48 for i, letter of numbers
+
+		@_reverseKeys = {}
+		@_reverseKeys[value] = key for key, value of @Keys
+
+		constructor: ( context, keyDown, keyUp ) ->
+			@Keys = {}
+			@Keys[VK] = false for VK of Keyboard.Keys
+
+			handleButton = ( e ) =>
+				keyName = Keyboard._reverseKeys[e.keyCode]
+				if keyName
+					@Keys[keyName] = e.type is 'keydown'
+
+			keyDown.call(context, handleButton)
+
+			keyUp.call(context, handleButton)
