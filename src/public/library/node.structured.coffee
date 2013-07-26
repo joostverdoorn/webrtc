@@ -344,7 +344,7 @@ define [
 		#
 		_pickParent: ( candidates = null, callback ) =>
 			unless candidates?
-				candidates = _(@getPeers()).filter( ( p ) => p.isSuperNode )
+				candidates = _(@getPeers()).filter( ( p ) -> p.isSuperNode )
 			if candidates.length > 0
 				candidates = _(candidates).sortBy( 'latency' )
 				candidate = candidates.shift()
@@ -358,7 +358,7 @@ define [
 				)
 			else
 				callback?(false)
-				@_enterNetwork()
+				@enterNetwork()
 
 		# Generates a new token and gives it to a random child 
 		#
@@ -435,7 +435,6 @@ define [
 			@token.position = @coordinates.substract(tokenForce)		# Calculate the new Token Position and save it in Token object
 			tokenMagnitude = @coordinates.getDistance(@token.position)
 
-			console.log tokenMagnitude, "magnitude"
 			if (tokenMagnitude > tokenThreshhold)
 				# Ask other supernodes for their best child in neighboorhood of the tokenPosition
 				@broadcast('token.requestCandidate', @token.serialize())
@@ -489,7 +488,6 @@ define [
 			if @token?
 				bestCandidateDistance = null
 				for candidate in @token.candidates ? []
-					console.log  candidate
 					if !bestCandidateDistance? or candidate.distance < bestCandidateDistance
 						bestCandidateDistance = candidate.distance
 						bestCandidate = candidate

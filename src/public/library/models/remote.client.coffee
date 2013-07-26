@@ -14,14 +14,15 @@ define [
 		initialize: ( @_connection ) ->
 			@id = @_connection.id
 
-			@_connection.on('message', ( message ) => @trigger('message', message))
+			@_connection.on('message', ( message ) => @trigger('message', message); console.log message)
 			@_connection.on('disconnect', ( ) => @trigger('disconnect'))
 
 			@on('setSuperNode', @_onSetSuperNode)
 
+			@query('isSuperNode', ( isSuperNode ) => @isSuperNode = isSuperNode)
 			@query('benchmark', ( benchmark ) => @benchmark = benchmark)
 			@query('system', ( system ) => @system = system)
-			@query('isSuperNode', ( isSuperNode ) => @isSuperNode = isSuperNode)
+
 
 
 		# Disconnects from the client.

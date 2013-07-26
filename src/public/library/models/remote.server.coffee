@@ -7,6 +7,8 @@ define [
 
 	class Remote.Server extends Remote
 
+		id: 'server'
+
 		# Initializes this class. Will connect to a remote server using sockets.
 		# Is called from the baseclass' constructor.
 		#

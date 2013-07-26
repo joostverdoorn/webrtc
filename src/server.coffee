@@ -15,6 +15,8 @@ define [
 
 	class Server
 
+		id: 'server'
+
 		# Constructs a new server.
 		#
 		constructor: ( dir ) ->

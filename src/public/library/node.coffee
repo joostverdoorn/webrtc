@@ -59,7 +59,6 @@ define [
 			@_peers.on('disconnect', @_onPeerDisconnect)
 
 
-
 			@runBenchmark()
 			@initialize?.apply(@)
 
@@ -219,7 +218,21 @@ define [
 		# @param message [Message] the message to relay.
 		#
 		relay: ( message ) ->
-			@server.send(message)
+			peer.send(message)
+
+
+		# Responds to a request
+		#
+		# @param request [String] the string identifier of the request
+		# @param args... [Any] any arguments that may be accompanied with the request
+		# @param from [Peer] the peer we received the query from
+		# @return [Object] a response to the query
+		#
+		query: ( request, args... ) ->
+			switch request
+				when 'isStructured'
+					return @isStructured
+			return false
 
 		# Runs a benchmark to get the available resources on this node.
 		#
@@ -228,5 +241,5 @@ define [
 			endTime = Date.now()
 			@benchmark.cpu = Math.round(endTime - startTime)
 
-		_enterNetwork: () ->
+		enterNetwork: () ->
 			console.log "enternetwork method is not implemented"

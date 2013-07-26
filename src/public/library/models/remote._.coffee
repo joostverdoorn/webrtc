@@ -41,7 +41,6 @@ define [
 		#
 		_onMessage: ( messageString ) =>
 			message = Message.deserialize(messageString)
-			
 			if message.isStored()
 				return
 
