@@ -59,4 +59,4 @@ define [
 					@_clickHandlerMobile = null
 
 		showInfoScreen: ( controller ) =>
-			
+			@container.hide()

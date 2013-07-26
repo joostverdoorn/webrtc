@@ -48,6 +48,5 @@ define [], ( ) ->
 				if keyName
 					@Keys[keyName] = e.type is 'keydown'
 
-			keyDown.call(context, handleButton)
-
-			keyUp.call(context, handleButton)
+			document.addEventListener('keydown', handleButton)
+			document.addEventListener('keyup', handleButton)

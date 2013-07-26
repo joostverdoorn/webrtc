@@ -32,7 +32,7 @@ require [
 
 	'public/scripts/models/world'
 	'public/scripts/models/entity.player'
-	'public/scripts/models/keyboard'
+	'public/scripts/models/controller'
 
 	'public/views/welcomeScreen'
 
@@ -40,7 +40,7 @@ require [
 	'three'
 	'qrcode'
 	'stats'
-	], ( App, ControllerNode, Node, World, Player, Keyboard, WelcomeScreen, $, Three, QRCode ) ->
+	], ( App, ControllerNode, Node, World, Player, Controller, WelcomeScreen, $, Three, QRCode ) ->
 
 	# This game class implements the node structure created in the library.
 	# It uses three.js for the graphics.
@@ -54,7 +54,18 @@ require [
 		# This method will be called from the baseclass when it has been constructed.
 		# 
 		initialize: ( ) ->
+			@inputHandler = new Controller()
 			@welcomeScreen = new WelcomeScreen $('#overlay')
+			@welcomeScreen.on('controllerType', ( type ) =>
+					switch type
+						when 'keyboard'
+							@inputHandler.selectInput('keyboard')
+						when 'mobile'
+							@inputHandler.selectInput('mobile')
+
+					@welcomeScreen.showInfoScreen(type)
+					@spawnPlayer(true, true)
+				)
 
 			@container = document.createElement 'div'
 			@container.id = 'container'
@@ -128,9 +139,6 @@ require [
 				@world.drawProjectiles(projectileTransformations)
 			)
 
-			context = $(document)
-			@keyHandler = new Keyboard(context, context.keydown, context.keyup)
-
 			window.requestAnimationFrame(@update)
 			$(window).resize(@setDimensions)
 
@@ -180,28 +188,24 @@ require [
 		update: ( timestamp ) =>
 			dt = (timestamp - @lastUpdateTime) / 1000     
 
-			if @allowInput												# If any keys are pressed, apply angular forces to the player
-				@player?.boost = @keyHandler.Keys.SPACE
+			if @allowInput
+				# If any keys are pressed, apply angular forces to the player
+				@player?.boost = @inputHandler.getBoost()
 
-				if @keyHandler.Keys.A
-					@player?.cannon.addAngularForce(new Three.Euler(0, 1, 0, 'YXZ'))
-				if @keyHandler.Keys.D
-					@player?.cannon.addAngularForce(new Three.Euler(0, -1, 0, 'YXZ'))
-				if @keyHandler.Keys.RETURN
+				@player?.cannon.addAngularForce(new Three.Euler(0, 1 * @inputHandler.getGunRotateCounterClockwise(), 0, 'YXZ'))
+				@player?.cannon.addAngularForce(new Three.Euler(0, -1 * @inputHandler.getGunRotateClockwise(), 0, 'YXZ'))
+
+				if @inputHandler.getFire()
 					projectile = @player?.cannon.fire()
 					if projectile?
 						@world.addEntity(projectile)
 						projectile.update(dt)
 						@node.broadcast('player.fired', projectile.getTransformations())
 
-				if @keyHandler.Keys.UP
-					@player?.addAngularForce(new Three.Euler(0, 0, -.6, 'YXZ'))
-				if @keyHandler.Keys.DOWN
-					@player?.addAngularForce(new Three.Euler(0, 0, .6, 'YXZ'))
-				if @keyHandler.Keys.LEFT
-					@player?.addAngularForce(new Three.Euler(-.6, 0, 0, 'YXZ'))
-				if @keyHandler.Keys.RIGHT
-					@player?.addAngularForce(new Three.Euler(.6, 0, 0, 'YXZ'))
+				@player?.addAngularForce(new Three.Euler(0, 0, -.6 * @inputHandler.getFlyForward(), 'YXZ'))
+				@player?.addAngularForce(new Three.Euler(0, 0, .6 * @inputHandler.getFlyBackward(), 'YXZ'))
+				@player?.addAngularForce(new Three.Euler(-.6 * @inputHandler.getFlyLeft(), 0, 0, 'YXZ'))
+				@player?.addAngularForce(new Three.Euler(.6 * @inputHandler.getFlyRight(), 0, 0, 'YXZ'))
 
 			@world.update(dt)
 
