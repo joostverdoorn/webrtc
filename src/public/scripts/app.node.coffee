@@ -19,7 +19,7 @@ requirejs.config
 		
 require [
 	'scripts/app._'
-	'library/node'
+	'library/node.structured'
 	'jquery'
 	], ( App, Node, $ ) ->
 

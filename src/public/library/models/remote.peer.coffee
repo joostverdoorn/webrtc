@@ -223,7 +223,7 @@ define [
 		# Is called when a connection has been established.
 		#
 		_onConnect: ( ) ->
-			console.log "connected to node #{@id}"
+			#console.log "connected to node #{@id}"
 
 		# Is called when a connection has been broken.
 		#

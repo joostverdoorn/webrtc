@@ -1,7 +1,7 @@
 define [
 
 	'public/library//models/remote.server'
-	'public/library/node'
+	'public/library/node.structured'
 
 	'public/library//models/collection'
 

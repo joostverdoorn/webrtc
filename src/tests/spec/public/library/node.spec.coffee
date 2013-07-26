@@ -5,7 +5,7 @@ require.config
 		'public/library/models/remote.peer': 'tests/mock/remote.peer.mock'
 		
 require [
-	'public/library/node'
+	'public/library/node.structured'
 	'public/library/models/vector'
 	'public/library/models/collection'
 	'public/library/models/remote.peer'

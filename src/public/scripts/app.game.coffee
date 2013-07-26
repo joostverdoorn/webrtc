@@ -25,7 +25,7 @@ requirejs.config
 		
 require [
 	'public/scripts/app._'
-	'public/library/node'
+	'public/library/node.structured'
 
 	'public/scripts/models/world'
 	'public/scripts/models/entity.player'
