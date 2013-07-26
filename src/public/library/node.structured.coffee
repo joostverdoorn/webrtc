@@ -237,7 +237,7 @@ define [
 		# are found, or it connect to a bunch of other supernodes
 		# and pick the one with the lowest latency is parent.
 		#
-		enterNetwork: ( ) =>
+		_enterNetwork: ( ) =>
 			@server.query('nodes', ( nodes ) =>
 				superNodes = _(nodes).filter( ( node ) => node.isSuperNode )
 
@@ -358,7 +358,7 @@ define [
 				)
 			else
 				callback?(false)
-				@enterNetwork()
+				@_enterNetwork()
 
 		# Generates a new token and gives it to a random child 
 		#

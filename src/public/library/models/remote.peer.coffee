@@ -207,9 +207,9 @@ define [
 				)
 			, 7500)
 
-			@query('isSuperNode', ( isSuperNode ) => @isSuperNode = isSuperNode)
 			@query('benchmark', ( benchmark ) => @benchmark = benchmark)
 			@query('system', ( system ) => @system = system)
+			@query('isSuperNode', ( isSuperNode ) => @isSuperNode = isSuperNode)
 
 			@trigger('channel.opened', @, event)
 

@@ -50,7 +50,7 @@ define [
 
 			@server = new Server(@, @serverAddress)
 
-			@server.on('connect', @enterNetwork)
+			@server.on('connect', @_enterNetwork)
 			@server.on('peer.connectionRequest', @_onPeerConnectionRequest)
 			@server.on('peer.setRemoteDescription', @_onPeerSetRemoteDescription)
 			@server.on('peer.addIceCandidate', @_onPeerAddIceCandidate)
@@ -241,5 +241,5 @@ define [
 			endTime = Date.now()
 			@benchmark.cpu = Math.round(endTime - startTime)
 
-		enterNetwork: () ->
-			console.log "enternetwork method is not implemented"
+		_enterNetwork: () ->
+			console.log "_enterNetwork method is not implemented"

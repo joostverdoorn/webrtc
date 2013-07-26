@@ -19,11 +19,9 @@ define [
 
 			@on('setSuperNode', @_onSetSuperNode)
 
-			@query('isSuperNode', ( isSuperNode ) => @isSuperNode = isSuperNode)
 			@query('benchmark', ( benchmark ) => @benchmark = benchmark)
 			@query('system', ( system ) => @system = system)
-
-
+			@query('isSuperNode', ( isSuperNode ) => @isSuperNode = isSuperNode)
 
 		# Disconnects from the client.
 		#
