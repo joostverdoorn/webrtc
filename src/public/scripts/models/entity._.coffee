@@ -55,6 +55,9 @@ define [
 		# @param vector [Three.Vector3] the vector force to add
 		#
 		addForce: ( vector ) ->
+			# rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
+			# vector.applyQuaternion(rotationQuaternion)
+			
 			@forces.push(vector)
 
 		# Adds an angular force to the forces stack. Forces will be applied next update.
@@ -62,6 +65,9 @@ define [
 		# @param vector [Three.Vector3] the vector force to add
 		#
 		addAngularForce: ( vector ) ->
+			# rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
+			# vector.applyQuaternion(rotationQuaternion)
+
 			@angularForces.push(vector)
 
 		# Updates the entity by applying forces, calculating the resulting velocity
@@ -90,13 +96,17 @@ define [
 				@position.y += @velocity.y * dt
 				@position.z += @velocity.z * dt
 
-				@position.z = 0
+				if @position.length() < 100
+					@position.normalize().multiplyScalar(100)
+					@velocity.projectOnPlane(@position)
 
 			# ... and rotational forces.
 			if updateRotation
 				while force = @angularForces.pop()
 					acceleration = force.clone().divideScalar(@mass)
 					@angularVelocity.add(acceleration)
+
+				@angularVelocity.multiplyScalar(1 - @angularDrag * dt)
 				
 				@rotation.x = (@rotation.x + @angularVelocity.x * dt) % (Math.PI * 2)
 				@rotation.y = (@rotation.y + @angularVelocity.y * dt) % (Math.PI * 2)

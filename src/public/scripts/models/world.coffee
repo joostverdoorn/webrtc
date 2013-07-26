@@ -30,13 +30,16 @@ define [
 			directionalLight.position.set(0, 1, 1).normalize()
 			@scene.add(directionalLight)
 
-			ambientLight = new Three.AmbientLight(0xffffff)
-			@scene.add(ambientLight)
+			# ambientLight = new Three.AmbientLight(0xffffff)
+			# @scene.add(ambientLight)
 
-			hemisphereLight = new Three.HemisphereLight(0x9999aa, 0x663322, 1)
-			@scene.add(hemisphereLight)
+			# hemisphereLight = new Three.HemisphereLight(0x9999aa, 0x663322, 1)
+			# @scene.add(hemisphereLight)
 
-			sphereMaterial = new THREE.MeshBasicMaterial( {color:0x00ff00 * Math.random() }) 
+			planetMaterial = new Three.MeshLambertMaterial(
+				color:0x00ff00 
+				shading: Three.NoShading	
+			) 
 
 			radius = 100
 			segments = 20
@@ -47,22 +50,11 @@ define [
 					radius,
 					segments,
 					rings)
-				, sphereMaterial)
+				, planetMaterial)
 
 			@scene.add(planet)
 
-			radius = 1
-			segments = 20
-			rings = 20
-
-			planet = new Three.Mesh(
-				new Three.SphereGeometry(
-					radius,
-					segments,
-					rings)
-				, sphereMaterial)
-
-			@scene.add(planet)
+		
 
 
 		# Creates and adds a player to the world

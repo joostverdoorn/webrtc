@@ -81,7 +81,7 @@ require [
 			@node = new Node()
 
 			@node.server.on('connect', ( ) =>
-				@player = new Player(@scene, @node.id, {position: new Three.Vector3(0, 10, 0).toArray()})
+				@player = new Player(@scene, @node.id, {position: new Three.Vector3(0, 20, 0).toArray()})
 				@world.addEntity(@player)
 			)
 
@@ -175,10 +175,12 @@ require [
 
 			# Set the camera to follow the player
 			if @player?
-				x = 30 * -Math.cos(@player.cannon.rotation.y)
-				z = 30 * Math.sin(@player.cannon.rotation.y)
+				rotationQuaternion = new Three.Quaternion().setFromEuler(@player.rotation)
+				targetPosition = new Three.Vector3(-1, 0, 0).applyQuaternion(rotationQuaternion).multiplyScalar(30)
+				targetPosition.add(@player.position).add(@camera.position.clone().normalize().multiplyScalar(20))
+				@camera.position.lerp(targetPosition, .02)
 
-				@camera.position.lerp(@player.position.clone().add(new Three.Vector3(x, 15, z)), .02)
+				@camera.up.set(@camera.position.x, @camera.position.y, @camera.position.z)
 				@camera.lookAt(@player.position)
 
 			# Render the scene
