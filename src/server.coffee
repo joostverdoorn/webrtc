@@ -89,6 +89,12 @@ define [
 					res.write("#{log[0]}: #{log[1]} \n")
 				res.end()
 			)
+
+			@_app.get('/controller/:nodeId', ( req, res ) =>
+				res.redirect('/controller.html?nodeId=' + req.params.nodeId);
+				res.end()
+			)
+
 				
 			@_server.listen(8080)
 
