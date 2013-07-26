@@ -34,11 +34,13 @@ require [
 	'public/scripts/models/entity.player'
 	'public/scripts/models/keyboard'
 
+	'public/views/welcomeScreen'
+
 	'jquery'
 	'three'
 	'qrcode'
 	'stats'
-	], ( App, ControllerNode, Node, World, Player, Keyboard, $, Three ) ->
+	], ( App, ControllerNode, Node, World, Player, Keyboard, WelcomeScreen, $, Three, QRCode ) ->
 
 	# This game class implements the node structure created in the library.
 	# It uses three.js for the graphics.
@@ -52,6 +54,11 @@ require [
 		# This method will be called from the baseclass when it has been constructed.
 		# 
 		initialize: ( ) ->
+			@welcomeScreen = new WelcomeScreen $('#overlay')
+
+			@container = document.createElement 'div'
+			@container.id = 'container'
+			document.body.appendChild @container
 			@container = $('#container')
 			[width, height] = @setDimensions()
 
@@ -77,20 +84,24 @@ require [
 
 			@stats = new Stats()
 			@stats.domElement.style.position = 'absolute'
-			@stats.domElement.style.top = '0px'
+			@stats.domElement.style.top = '100px'
 			@stats.domElement.style.right = '0px'
 			@container.append(@stats.domElement)
 
 			@world = new World(@scene)
 			@node = new Node()
 
+			@status = 0
+
 			@node.server.on('connect', ( ) =>
-				@player = new Player(@scene, @node.id, {position: new Three.Vector3(0, 300, 0).toArray()})
-				@world.addEntity(@player)
+				# now ready to spawn player
+				@status = 1
 			)
 
 			@node.on('joined', =>
-				@node.broadcast('player.joined', @player.id, @player.getTransformations())
+				# now ready to broadcast player
+				@welcomeScreen.showWelcomeScreen()
+				@status = 2
 			)
 
 			@node.on('left', =>
@@ -117,11 +128,6 @@ require [
 				@world.drawProjectiles(projectileTransformations)
 			)
 
-			broadcastInterval = setInterval( ( ) =>
-				if @player?
-					@node.broadcast('player.update', @player.id, @player.getTransformations())
-			, 200)
-
 			context = $(document)
 			@keyHandler = new Keyboard(context, context.keydown, context.keyup)
 
@@ -147,6 +153,25 @@ require [
 
 			return [width, height]
 
+		spawnPlayer: ( @allowInput = true, @applyGravity = true ) =>
+			console.log 'spawning'
+			if @player
+				return
+
+			console.log 'really'
+			if @status >= 2
+				console.log 'adding player'
+				@player = new Player(@scene, @node.id, {position: new Three.Vector3(0, 300, 0).toArray()})
+				@player.applyGravity = @applyGravity
+				@world.addEntity(@player)
+
+				@node.broadcast('player.joined', @player.id, @player.getTransformations())
+
+				broadcastInterval = setInterval( ( ) =>
+					if @player?
+						@node.broadcast('player.update', @player.id, @player.getTransformations())
+				, 200)
+
 		# Updates the phyics for all objects and renders the scene. Requests a new animation frame 
 		# to repeat this methods.
 		#
@@ -155,28 +180,28 @@ require [
 		update: ( timestamp ) =>
 			dt = (timestamp - @lastUpdateTime) / 1000     
 
-			# If any keys are pressed, apply angular forces to the player
-			@player?.boost = @keyHandler.Keys.SPACE
+			if @allowInput												# If any keys are pressed, apply angular forces to the player
+				@player?.boost = @keyHandler.Keys.SPACE
 
-			if @keyHandler.Keys.A
-				@player?.cannon.addAngularForce(new Three.Euler(0, 1, 0, 'YXZ'))
-			if @keyHandler.Keys.D
-				@player?.cannon.addAngularForce(new Three.Euler(0, -1, 0, 'YXZ'))
-			if @keyHandler.Keys.RETURN
-				projectile = @player?.cannon.fire()
-				if projectile?
-					@world.addEntity(projectile)
-					projectile.update(dt)
-					@node.broadcast('player.fired', projectile.getTransformations())
+				if @keyHandler.Keys.A
+					@player?.cannon.addAngularForce(new Three.Euler(0, 1, 0, 'YXZ'))
+				if @keyHandler.Keys.D
+					@player?.cannon.addAngularForce(new Three.Euler(0, -1, 0, 'YXZ'))
+				if @keyHandler.Keys.RETURN
+					projectile = @player?.cannon.fire()
+					if projectile?
+						@world.addEntity(projectile)
+						projectile.update(dt)
+						@node.broadcast('player.fired', projectile.getTransformations())
 
-			if @keyHandler.Keys.UP
-				@player?.addAngularForce(new Three.Euler(0, 0, -.6, 'YXZ'))
-			if @keyHandler.Keys.DOWN
-				@player?.addAngularForce(new Three.Euler(0, 0, .6, 'YXZ'))
-			if @keyHandler.Keys.LEFT
-				@player?.addAngularForce(new Three.Euler(-.6, 0, 0, 'YXZ'))
-			if @keyHandler.Keys.RIGHT
-				@player?.addAngularForce(new Three.Euler(.6, 0, 0, 'YXZ'))
+				if @keyHandler.Keys.UP
+					@player?.addAngularForce(new Three.Euler(0, 0, -.6, 'YXZ'))
+				if @keyHandler.Keys.DOWN
+					@player?.addAngularForce(new Three.Euler(0, 0, .6, 'YXZ'))
+				if @keyHandler.Keys.LEFT
+					@player?.addAngularForce(new Three.Euler(-.6, 0, 0, 'YXZ'))
+				if @keyHandler.Keys.RIGHT
+					@player?.addAngularForce(new Three.Euler(.6, 0, 0, 'YXZ'))
 
 			@world.update(dt)
 

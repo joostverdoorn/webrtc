@@ -1,0 +1,35 @@
+#overlay > * {
+	font-family: Verdana, Arial, sans-serif;
+}
+
+#welcome {
+	width: 600px;
+	height: 400px;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin: -200px 0 0 -300px;
+
+	border: 1px solid black;
+	text-align: center;
+	background-color: #FFF;
+	padding: 5px;
+}
+
+#controllerSelection > div {
+	width: 45%;
+}
+
+#controllerSelection > #keyboard {
+	float: left;
+}
+#controllerSelection > #keyboard > img {
+	width: 100%;
+}
+
+#controllerSelection > #mobile {
+	float: right;
+}
+#controllerSelection > #mobile > img {
+	height: 300px;
+}
