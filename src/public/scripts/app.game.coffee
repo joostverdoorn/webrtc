@@ -81,7 +81,7 @@ require [
 			@node = new Node()
 
 			@node.server.on('connect', ( ) =>
-				@player = new Player(@scene, @node.id, {position: new Three.Vector3(0, 20, 0).toArray()})
+				@player = new Player(@scene, @node.id, {position: new Three.Vector3(0, 100, 0).toArray()})
 				@world.addEntity(@player)
 			)
 
@@ -152,9 +152,9 @@ require [
 			@player?.boost = @keyHandler.Keys.SPACE
 
 			if @keyHandler.Keys.A
-				@player?.cannon.addAngularForce(new Three.Vector3(0, 1, 0))
+				@player?.cannon.addAngularForce(new Three.Euler(0, 1, 0, 'YXZ'))
 			if @keyHandler.Keys.D
-				@player?.cannon.addAngularForce(new Three.Vector3(0, -1, 0))
+				@player?.cannon.addAngularForce(new Three.Euler(0, -1, 0, 'YXZ'))
 			if @keyHandler.Keys.RETURN
 				projectile = @player?.cannon.fire()
 				if projectile?
@@ -163,23 +163,35 @@ require [
 					@node.broadcast('player.fired', projectile.getTransformations())
 
 			if @keyHandler.Keys.UP
-				@player?.addAngularForce(new Three.Vector3(0, 0, -2))
+				@player?.addAngularForce(new Three.Euler(0, 0, -1, 'YXZ'))
 			if @keyHandler.Keys.DOWN
-				@player?.addAngularForce(new Three.Vector3(0, 0, 2))
+				@player?.addAngularForce(new Three.Euler(0, 0, 1, 'YXZ'))
 			if @keyHandler.Keys.LEFT
-				@player?.addAngularForce(new Three.Vector3(-2, 0, 0))
+				@player?.addAngularForce(new Three.Euler(-1, 0, 0, 'YXZ'))
 			if @keyHandler.Keys.RIGHT
-				@player?.addAngularForce(new Three.Vector3(2, 0, 0))
+				@player?.addAngularForce(new Three.Euler(1, 0, 0, 'YXZ'))
 
 			@world.update(dt)
 
 			# Set the camera to follow the player
 			if @player?
+				# Get the player's rotation quaternion
 				rotationQuaternion = new Three.Quaternion().setFromEuler(@player.rotation)
-				targetPosition = new Three.Vector3(-1, 0, 0).applyQuaternion(rotationQuaternion).multiplyScalar(30)
-				targetPosition.add(@player.position).add(@camera.position.clone().normalize().multiplyScalar(20))
+
+				# Get the two vectors that span the plane perpendicular to the vector 
+				# that points backward from the player
+				playerUpVector = @player.position.clone().normalize()
+				playerZVector = new Three.Vector3(0, 0, 1).applyQuaternion(rotationQuaternion)
+
+				# Get the target position of the camera
+				targetPosition = new Three.Vector3().crossVectors(playerUpVector, playerZVector).negate().multiplyScalar(40)
+				targetPosition.add(@player.position.clone()).add(@player.position.clone().normalize().multiplyScalar(20))
+
+				# Ease the camera to the target position
 				@camera.position.lerp(targetPosition, .02)
 
+				# Set the upvector perpendicular to the planet surface and point the camera
+				# towards the player
 				@camera.up.set(@camera.position.x, @camera.position.y, @camera.position.z)
 				@camera.lookAt(@player.position)
 

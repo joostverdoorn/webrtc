@@ -15,15 +15,18 @@ define [
 		#
 		initialize: ( @player, transformations = null ) ->
 			@mass = 10
-			@angularDrag = 3
-			@_isReady = true
-
-			@applyTransformations(transformations)
+			@angularDrag = 0
+			
+			@_isReady = true			
 
 			@_loader.load('/meshes/cannon.js', ( geometry, material ) =>
 				@mesh.geometry = geometry
 				@mesh.material = new Three.MeshFaceMaterial(material)
 				@scene.add(@mesh)
+
+				@applyTransformations(transformations)
+
+				@loaded = true
 			)
 
 		# Updates the physics state of the cannon. Calls baseclass' update after.

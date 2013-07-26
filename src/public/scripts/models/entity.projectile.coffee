@@ -45,6 +45,8 @@ define [
 				@addForce(@vector)
 			@scene.add(@mesh)
 
+			@loaded = true
+
 		# Removes projectile form the scene
 		#
 		die: ( ) ->

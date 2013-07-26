@@ -30,15 +30,14 @@ define [
 			directionalLight.position.set(0, 1, 1).normalize()
 			@scene.add(directionalLight)
 
-			# ambientLight = new Three.AmbientLight(0xffffff)
-			# @scene.add(ambientLight)
+			ambientLight = new Three.AmbientLight(0xaaaaaa)
+			@scene.add(ambientLight)
 
 			# hemisphereLight = new Three.HemisphereLight(0x9999aa, 0x663322, 1)
 			# @scene.add(hemisphereLight)
 
 			planetMaterial = new Three.MeshLambertMaterial(
-				color:0x00ff00 
-				shading: Three.NoShading	
+				color:0x00ff00
 			) 
 
 			radius = 100

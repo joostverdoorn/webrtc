@@ -18,29 +18,33 @@ define [
 		#
 		initialize: ( @id, transformations = null ) ->
 			@boost = false
-			@loaded = false
 			
 			@mass = 100
 			@drag = .01
 			@applyGravity = true
 
 			@_loader.load('/meshes/ufo.js', ( geometry, material ) =>
+				# Set up skinned geometry mesh.
 				@mesh = new Three.SkinnedMesh(geometry, new Three.MeshFaceMaterial(material))
 				material.skinning = true for material in @mesh.material.materials
 
+				# Set up animations for the mesh.
 				THREE.AnimationHandler.add(@mesh.geometry.animation)
 				@animation = new Three.Animation(@mesh, 'ArmatureAction', Three.AnimationHandler.CATMULLROM)
 				@animation.play()
 
-				@scene.add(@mesh)
+				# Create our cannon.
+				@cannon = new Cannon(@mesh, @, transformations?.cannon)				
 
-				@rotation.order = 'YXZ'
-
-				@cannon = new Cannon(@mesh, @, transformations?.cannon)
+				# Apply passed transformations.
 				@applyTransformations(transformations)
 
-				@loaded = true
+				# Set the rotation axis order to YXZ.
+				@rotation.order = 'YXZ'
 
+				# Add the mesh to the scene and set loaded state.
+				@scene.add(@mesh)
+				@loaded = true			
 			)
 
 		# Updates the physics state of the player. Adds forces to simulate gravity and 
@@ -52,63 +56,57 @@ define [
 			unless @loaded
 				return
 
-			# Lift
-			liftVector = new Three.Vector3()
+			rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
 
-			# First, we get the two vectors that span the plane orthogonal to the up vector
-			vector1 = new Three.Vector3(0, Math.sin(@rotation.x), -Math.cos(@rotation.x))
-			vector2 = new Three.Vector3(Math.cos(@rotation.z), Math.sin(@rotation.z), 0)
-
-			liftVector.crossVectors(vector1, vector2).normalize().negate()
-
-			x = liftVector.x
-			z = liftVector.z
-
-			liftVector.x = x * Math.cos(@rotation.y) + z * Math.sin(@rotation.y)
-			liftVector.z = z * Math.cos(@rotation.y) - x * Math.sin(@rotation.y)
+			# Add thrust straight downward from the player. 
+			thrustVector = new Three.Vector3(0, 1, 0).applyQuaternion(rotationQuaternion)
 
 			if @boost
-				liftVector.multiplyScalar(12 * @mass * dt)
+				thrustVector.multiplyScalar(12 * @mass * dt)
 			else
-				liftVector.multiplyScalar(5 * @mass * dt)			
+				thrustVector.multiplyScalar(5 * @mass * dt)			
 
-			@addForce(liftVector)
-		
-			# Attract to cannon y rotation
-			# @addAngularForce(new Three.Vector3(0, 7 * (@cannon.rotation.y - @rotation.y) % Math.PI * 2, 0))
+			@addForce(thrustVector)
 			
-			# Call baseclass' update to apply all forces
-			super(dt)
+			# Attract player to a straight position with relation to the planet surface.
+			levelRotation = @calculateLevelRotation()
+			levelRotationQuaternion = new Three.Quaternion().setFromEuler(levelRotation)
 
-			# Calculate correct player alignment with respect to gravity source (e.g. planet)
-			# TODO: Use forces instead of setting the rotation directly.
+			forceQuaternion = rotationQuaternion.clone().inverse().multiply(levelRotationQuaternion)
+			force = new Three.Euler().setFromQuaternion(forceQuaternion)
+			@addAngularForce(force)
+
+			# Update physics.
+			super(dt)	
+
+			# Update our cannon.
+			@cannon.update(dt)
+
+			# Update alien animation.
+			@animation.update(dt)
+
+		# Calculates a level rotation with relation to the planet surface and returns
+		# an euler representation of this rotation.
+		#
+		# @return [Three.Euler] the ideal (level) rotation.
+		# 
+		calculateLevelRotation: ( ) ->
 			upVector = @position.clone().normalize()
 			rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
 
 			localXVector = new Three.Vector3(1, 0, 0).applyQuaternion(rotationQuaternion)
 			localZVector = new Three.Vector3().crossVectors(upVector, localXVector)
 
-			rotationMatrix = new Three.Matrix4().lookAt(@position, @position.clone().add(localZVector), upVector)
+			rotationMatrix = new Three.Matrix4().lookAt(@position, localZVector.add(@position), upVector)
 
-			gravityEuler = new Three.Euler().setFromRotationMatrix(rotationMatrix, 'YXZ')
-			gravityQuaternion = new Three.Quaternion().setFromEuler(gravityEuler)
-
-			rotationQuaternion.slerp(gravityQuaternion, .05)
-			@rotation.setFromQuaternion(rotationQuaternion)
-
-			# And update our cannon
-			@cannon.update(dt)
-
-			# Update alien animation
-			@animation.update(dt)
+			levelRotation = new Three.Euler().setFromRotationMatrix(rotationMatrix, 'YXZ')
+			return levelRotation
 
 		# Applies transformation information given in an object to the entity.
 		#
 		# @param transformations [Object] an object that contains the transformations
 		#
 		applyTransformations: ( transformations ) =>
-			console.log transformations.position
-
 			unless transformations
 				return
 
@@ -123,25 +121,25 @@ define [
 			transformations = super()
 			transformations.cannon = @cannon?.getTransformations()
 
-			return transformations
+			return transformations		
 
-		createDebugSphere: ( vector, color ) ->
-			radius = .2
-			segments = 6
-			rings = 8
+		# createDebugSphere: ( vector, color ) ->
+		# 	radius = .2
+		# 	segments = 6
+		# 	rings = 8
 
-			sphereMaterial = new THREE.MeshBasicMaterial( {color: color }) 
+		# 	sphereMaterial = new THREE.MeshBasicMaterial( {color: color }) 
 
 
-			sphere = new Three.Mesh(
-				new Three.SphereGeometry(
-					radius,
-					segments,
-					rings)
-				, sphereMaterial)
+		# 	sphere = new Three.Mesh(
+		# 		new Three.SphereGeometry(
+		# 			radius,
+		# 			segments,
+		# 			rings)
+		# 		, sphereMaterial)
 
-			sphere.position = @position.clone().add(vector.clone().multiplyScalar(10))
+		# 	sphere.position = @position.clone().add(vector.clone().multiplyScalar(15))
 
-			@scene.add(sphere)
-			return sphere
+		# 	@scene.add(sphere)
+		# 	return sphere
 

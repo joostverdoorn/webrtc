@@ -20,19 +20,22 @@ define [
 		#
 		constructor: ( @scene, args... ) ->
 			@_loader = new Three.JSONLoader()
-			@applyGravity = false
+			@_loaded = false
+			
 			@mass = 1
 			@drag = .01
-			@angularDrag = .5
+			@angularDrag = 0
+			@applyGravity = false
 
 			@velocity = new Three.Vector3(0, 0, 0)
-			@angularVelocity = new Three.Vector3(0, 0, 0)
+			@angularVelocity = new Three.Quaternion()
 			
 			@forces = []
 			@angularForces = []
 
 			@mesh = new Three.Mesh()
 			
+			# Create getters and setters for position and rotation.
 			@getter
 				position: -> @mesh.position
 				rotation: -> @mesh.rotation
@@ -55,9 +58,6 @@ define [
 		# @param vector [Three.Vector3] the vector force to add
 		#
 		addForce: ( vector ) ->
-			# rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
-			# vector.applyQuaternion(rotationQuaternion)
-			
 			@forces.push(vector)
 
 		# Adds an angular force to the forces stack. Forces will be applied next update.
@@ -65,9 +65,6 @@ define [
 		# @param vector [Three.Vector3] the vector force to add
 		#
 		addAngularForce: ( vector ) ->
-			# rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
-			# vector.applyQuaternion(rotationQuaternion)
-
 			@angularForces.push(vector)
 
 		# Updates the entity by applying forces, calculating the resulting velocity
@@ -76,41 +73,82 @@ define [
 		# @param dt [Float] the time that has elapsed since last update
 		#
 		update: ( dt, updatePosition = true, updateRotation = true ) ->
+			# Don't update unless we're completely done loading
+			unless @loaded
+				return
+
+			# Add gravitational force pointing toward the origin.
 			if @applyGravity
 				gravityForce = @position.clone().normalize().multiplyScalar(-9.81 * @mass * dt)
 				@addForce(gravityForce)
 
 			# Apply forces ...
-			if updatePosition				
+			if updatePosition
+
+				# Set our last position if we don't have one yet.
+				unless @_lastPosition?
+					@_lastPosition = @position.clone()
+
+				# Calculate our current velocity by subtracting our current position
+				# from our last position, and set our position as lastPosition to
+				# calculate the velocity in the next loop.
+				@velocity = @position.clone().sub(@_lastPosition).divideScalar(dt)
+				@_lastPosition = @position.clone()
+
+				# Loop through all forces and calculate the acceleration.
+				acceleration = new Three.Vector3(0, 0, 0)			
 				while force = @forces.pop()
-					acceleration = force.clone().divideScalar(@mass)
-					@velocity.add(acceleration)
+					acceleration.add(force.clone().divideScalar(@mass))
+
+				# Add the acceleration to the velocity.
+				@velocity.add(acceleration)
 
 				# Calculate the drag force. We assume a fluid density of 1.2 (air at 20 degrees C)
 				# and a cross-sectional area of 1. Any larger or smaller area will have to be 
-				# compensated by a larger or small @drag.
+				# compensated by a larger or smaller @drag.
 				dragForce = @velocity.clone().normalize().negate().multiplyScalar(.5 * 1.2 * @drag * @velocity.lengthSq())
 				@velocity.add(dragForce.divideScalar(@mass))
 
-				@position.x += @velocity.x * dt
-				@position.y += @velocity.y * dt
-				@position.z += @velocity.z * dt
+				# Calculate our new position from the velocity.
+				@position.add(@velocity.clone().multiplyScalar(dt))
 
+				# Rudimentary way to detect of we're on the planet surface. This should
+				# be replaced by collision detection.
 				if @position.length() < 100
 					@position.normalize().multiplyScalar(100)
 					@velocity.projectOnPlane(@position)
 
-			# ... and rotational forces.
+			# ... and apply rotational forces
 			if updateRotation
-				while force = @angularForces.pop()
-					acceleration = force.clone().divideScalar(@mass)
-					@angularVelocity.add(acceleration)
 
-				@angularVelocity.multiplyScalar(1 - @angularDrag * dt)
+				# Set our last rotation if we don't have one yet.
+				unless @_lastRotation?
+					@_lastRotation = @rotation.clone()
+
+				# Calculate our current angular velocity by subtracting our current rotation
+				# from our last rotation, and set our rotation as lastRotation to
+				# calculate the angular velocity in the next loop.
+				rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
+				lastRotationQuaternion = new Three.Quaternion().setFromEuler(@_lastRotation)				
 				
-				@rotation.x = (@rotation.x + @angularVelocity.x * dt) % (Math.PI * 2)
-				@rotation.y = (@rotation.y + @angularVelocity.y * dt) % (Math.PI * 2)
-				@rotation.z = (@rotation.z + @angularVelocity.z * dt) % (Math.PI * 2)
+				@angularVelocity = rotationQuaternion.clone().inverse().multiply(lastRotationQuaternion)
+				@_lastRotation = @rotation.clone()
+
+				# Loop through all angular forces and calculate the angular acceleration.
+				#angularAcceleration = new Three.Quaternion()
+				while force = @angularForces.pop()
+					forceQuaternion = new Three.Quaternion().setFromEuler(force)
+					@angularVelocity.multiply(forceQuaternion)
+
+				# #Calculate the angular velocity after drag.
+				# @angularVelocity.slerp(new Three.Quaternion(), @angularDrag * dt)
+
+				# Calculate our new rotation from the angular velocity
+				targetRotationQuaternion = rotationQuaternion.clone()
+				targetRotationQuaternion.slerp(rotationQuaternion.multiply(@angularVelocity), dt)
+
+				# Calculate and set our new rotation from the angular velocity.				
+				@rotation.setFromQuaternion(targetRotationQuaternion)
 
 		# Applies transformation information given in an object to the entity.
 		#
