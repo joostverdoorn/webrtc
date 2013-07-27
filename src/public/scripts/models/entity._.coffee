@@ -114,8 +114,8 @@ define [
 
 				# Rudimentary way to detect of we're on the planet surface. This should
 				# be replaced by collision detection.
-				if @position.length() < 100
-					@position.normalize().multiplyScalar(100)
+				if @position.length() < 300
+					@position.normalize().multiplyScalar(300)
 					@velocity.projectOnPlane(@position)
 
 			# ... and apply rotational forces
@@ -129,23 +129,24 @@ define [
 				# from our last rotation, and set our rotation as lastRotation to
 				# calculate the angular velocity in the next loop.
 				rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
-				lastRotationQuaternion = new Three.Quaternion().setFromEuler(@_lastRotation)				
+				lastRotationQuaternion = new Three.Quaternion().setFromEuler(@_lastRotation)
 				
-				@angularVelocity = rotationQuaternion.clone().inverse().multiply(lastRotationQuaternion)
+				@angularVelocity = lastRotationQuaternion.clone().inverse().multiply(rotationQuaternion)
 				@_lastRotation = @rotation.clone()
 
 				# Loop through all angular forces and calculate the angular acceleration.
-				#angularAcceleration = new Three.Quaternion()
+				angularAcceleration = new Three.Quaternion()
 				while force = @angularForces.pop()
 					forceQuaternion = new Three.Quaternion().setFromEuler(force)
-					@angularVelocity.multiply(forceQuaternion)
+					angularAcceleration.multiply(forceQuaternion)
 
-				# #Calculate the angular velocity after drag.
-				# @angularVelocity.slerp(new Three.Quaternion(), @angularDrag * dt)
-
-				# Calculate our new rotation from the angular velocity
+				# Calculate our new rotation from the angular velocity and acceleration.
 				targetRotationQuaternion = rotationQuaternion.clone()
-				targetRotationQuaternion.slerp(rotationQuaternion.multiply(@angularVelocity), dt)
+				targetRotationQuaternion.slerp(rotationQuaternion.clone().multiply(angularAcceleration), dt)
+				targetRotationQuaternion.multiply(@angularVelocity)
+
+				# Add drag force to the rotation.
+				targetRotationQuaternion.slerp(rotationQuaternion, @angularDrag * dt)
 
 				# Calculate and set our new rotation from the angular velocity.				
 				@rotation.setFromQuaternion(targetRotationQuaternion)

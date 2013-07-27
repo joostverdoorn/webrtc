@@ -21,6 +21,7 @@ define [
 			
 			@mass = 100
 			@drag = .01
+			@angularDrag = 7
 			@applyGravity = true
 
 			@_loader.load('/meshes/ufo.js', ( geometry, material ) =>

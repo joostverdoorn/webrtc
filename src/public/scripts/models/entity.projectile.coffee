@@ -19,6 +19,7 @@ define [
 		initialize: ( player = null, cannon = null, transformations ) ->
 			@mass = 10
 			@drag = .0005
+			@angularDrag = 10
 			@applyGravity = true
 
 			sphereMaterial = new THREE.MeshBasicMaterial( {color:0x00ff00 * Math.random() }) 

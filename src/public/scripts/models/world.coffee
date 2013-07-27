@@ -40,9 +40,9 @@ define [
 				color:0x00ff00
 			) 
 
-			radius = 100
-			segments = 20
-			rings = 20
+			radius = 300
+			segments = 60
+			rings = 50
 
 			planet = new Three.Mesh(
 				new Three.SphereGeometry(

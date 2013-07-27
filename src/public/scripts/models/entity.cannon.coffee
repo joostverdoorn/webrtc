@@ -15,7 +15,7 @@ define [
 		#
 		initialize: ( @player, transformations = null ) ->
 			@mass = 10
-			@angularDrag = 0
+			@angularDrag = 5
 			
 			@_isReady = true			
 

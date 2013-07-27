@@ -67,9 +67,9 @@ require [
 			@lastUpdateTime = 0
 
 			# Create sky dome
-			sky = new THREE.Mesh( new THREE.SphereGeometry( 1000, 6, 8 ), new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/images/sky.jpg' ) } ) )
-			sky.scale.x = -1;
-			@scene.add( sky )
+			@sky = new THREE.Mesh( new THREE.SphereGeometry( 1000, 6, 8 ), new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/images/sky.jpg' ) } ) )
+			@sky.scale.x = -1;
+			@scene.add( @sky )
 
 			@stats = new Stats()
 			@stats.domElement.style.position = 'absolute'
@@ -81,7 +81,7 @@ require [
 			@node = new Node()
 
 			@node.server.on('connect', ( ) =>
-				@player = new Player(@scene, @node.id, {position: new Three.Vector3(0, 100, 0).toArray()})
+				@player = new Player(@scene, @node.id, {position: new Three.Vector3(0, 300, 0).toArray()})
 				@world.addEntity(@player)
 			)
 
@@ -163,13 +163,13 @@ require [
 					@node.broadcast('player.fired', projectile.getTransformations())
 
 			if @keyHandler.Keys.UP
-				@player?.addAngularForce(new Three.Euler(0, 0, -1, 'YXZ'))
+				@player?.addAngularForce(new Three.Euler(0, 0, -.6, 'YXZ'))
 			if @keyHandler.Keys.DOWN
-				@player?.addAngularForce(new Three.Euler(0, 0, 1, 'YXZ'))
+				@player?.addAngularForce(new Three.Euler(0, 0, .6, 'YXZ'))
 			if @keyHandler.Keys.LEFT
-				@player?.addAngularForce(new Three.Euler(-1, 0, 0, 'YXZ'))
+				@player?.addAngularForce(new Three.Euler(-.6, 0, 0, 'YXZ'))
 			if @keyHandler.Keys.RIGHT
-				@player?.addAngularForce(new Three.Euler(1, 0, 0, 'YXZ'))
+				@player?.addAngularForce(new Three.Euler(.6, 0, 0, 'YXZ'))
 
 			@world.update(dt)
 
@@ -185,15 +185,18 @@ require [
 
 				# Get the target position of the camera
 				targetPosition = new Three.Vector3().crossVectors(playerUpVector, playerZVector).negate().multiplyScalar(40)
-				targetPosition.add(@player.position.clone()).add(@player.position.clone().normalize().multiplyScalar(20))
+				targetPosition.add(@player.position.clone()).add(@player.position.clone().normalize().multiplyScalar(40))
 
 				# Ease the camera to the target position
-				@camera.position.lerp(targetPosition, .02)
+				@camera.position.lerp(targetPosition, .05)
 
 				# Set the upvector perpendicular to the planet surface and point the camera
 				# towards the player
 				@camera.up.set(@camera.position.x, @camera.position.y, @camera.position.z)
 				@camera.lookAt(@player.position)
+
+				# Update sky position
+				@sky.position = @camera.position.clone()
 
 			# Render the scene
 			@renderer.render(@scene, @camera)
