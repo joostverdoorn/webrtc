@@ -36,10 +36,10 @@ require [
 
 				it 'should create a new Remote.Server and register several callbacks on it', ->
 					expect(node.server._mockTriggers.splice(-4, 4)).toEqual([
-							'connect'
 							'peer.connectionRequest'
 							'peer.setRemoteDescription'
 							'peer.addIceCandidate'
+							'connect'
 						])
 
 			describe 'when connect and disconnect to other nodes', ->

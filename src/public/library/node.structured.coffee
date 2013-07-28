@@ -27,9 +27,18 @@ define [
 
 	], ( Mixable, EventBindings, Node, Server, Peer, Message, Token, Collection, Vector, _ ) ->
 
+	# Constructs a new structured node.
+	#
 	class Node.Structured extends Node
 
 		@concern EventBindings
+
+		system: 
+			osName:  'osName'
+			browserName:  'browserName'
+			browserVersion: 'browserVersion'
+		benchmark:
+			cpu: null
 
 		broadcastTimeout = 4000 # Wait for return messages after a node broadcasts that it has a token
 		tokenThreshhold = 1
@@ -39,6 +48,7 @@ define [
 
 		initialize: () ->
 
+			@server.on('connect', @_enterNetwork)
 			@_parent = null
 			@isSuperNode = false
 
@@ -49,7 +59,7 @@ define [
 
 			@coordinates = new Vector(Math.random(), Math.random(), Math.random())
 			@coordinateDelta = 1
-
+			
 			@_peers.on('peer.addSibling', ( peer ) => @addSibling(peer, false))
 			@_peers.on('peer.setSuperNode', @_onPeerSetSuperNode)
 			@_peers.on('token.add', @_onTokenReceived)
@@ -66,7 +76,13 @@ define [
 
 
 			@timers.push(setInterval(@_updateCoordinates, 7500))
+			@runBenchmark()
 
+		# Is called when a peers disconnects. If that peer was 
+		# our parent, we pick a new parent.
+		#
+		# @param peer [Peer] the peer that disconnects
+		#
 		_onPeerDisconnect: ( peer ) =>	
 			if peer is @getParent()
 				candidates = _(@getPeers()).filter( ( p ) -> p.isSuperNode )
@@ -74,6 +90,10 @@ define [
 
 			super(peer)
 
+		# Removes a peer from the peer list
+		#
+		# @param peer [Peer] the peer to remove
+		#
 		removePeer: (peer) ->
 			super(peer)
 			@_triggerStaySuperNodeTimeout()
@@ -96,6 +116,8 @@ define [
 					return @benchmark
 				when 'isSuperNode' 
 					return @isSuperNode
+				when 'isStructured' 
+					return true
 				when 'peers'
 					return _(@getChildren().concat(@getSiblings(), @getParent())).map( ( peer ) -> peer?.id )
 				when 'peer.requestParent'
@@ -299,6 +321,9 @@ define [
 						@removeSibling(sibling)
 					@_pickParent()
 
+		# Triggers a timeout for _superNodeTimeout  method. If a timeout is not cleared from somewhere else
+		# _superNodeTimeout method will be called
+		#
 		_triggerStaySuperNodeTimeout: () =>
 			if @getChildren().length is 0
 				clearTimeout(@staySuperNodeTimeout)
@@ -307,6 +332,8 @@ define [
 				, 20000)
 				@timers.push(@staySuperNodeTimeout)
 
+		# Is called through timeout. If a supernode has not children, it stops being a supernode
+		#
 		_superNodeTimeout: () =>
 			if @getChildren().length is 0 and @isSuperNode
 				@setSuperNode(false)
@@ -536,3 +563,10 @@ define [
 				peer.on('channel.opened', () =>
 					@_pickParent([peer])
 				)
+
+		# Runs a benchmark to get the available resources on this node.
+		#
+		runBenchmark: () ->
+			startTime = Date.now()
+			endTime = Date.now()
+			@benchmark.cpu = Math.round(endTime - startTime)

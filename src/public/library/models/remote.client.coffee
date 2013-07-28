@@ -19,6 +19,7 @@ define [
 
 			@on('setSuperNode', @_onSetSuperNode)
 
+			@query('isStructured', ( isStructured ) => @isStructured = isStructured; @trigger('isStructured', isStructured))
 			@query('benchmark', ( benchmark ) => @benchmark = benchmark)
 			@query('system', ( system ) => @system = system)
 			@query('isSuperNode', ( isSuperNode ) => @isSuperNode = isSuperNode)
@@ -57,4 +58,5 @@ define [
 			node.system = @system
 			node.benchmark = @benchmark
 			node.isSuperNode = @isSuperNode
+			node.isStructured = @isStructured
 			return node

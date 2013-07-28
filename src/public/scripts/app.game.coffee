@@ -25,6 +25,7 @@ requirejs.config
 		
 require [
 	'public/scripts/app._'
+	'public/library/node'
 	'public/library/node.structured'
 
 	'public/scripts/models/world'
@@ -34,7 +35,7 @@ require [
 	'jquery'
 	'three'
 	'stats'
-	], ( App, Node, World, Player, Keyboard, $, Three ) ->
+	], ( App, ControllerNode, Node, World, Player, Keyboard, $, Three ) ->
 
 	# This game class implements the node structure created in the library.
 	# It uses three.js for the graphics.
@@ -124,6 +125,9 @@ require [
 			window.requestAnimationFrame(@update)
 			$(window).resize(@setDimensions)
 
+			# Should be called when a user decides to connect his mobile phone
+			@createControllerNode()
+
 		# Sets the dimensions of the viewport and the aspect ration of the camera
 		#
 		# @return [[Integer, Integer]] a tuple of the width and height of the container
@@ -212,5 +216,9 @@ require [
 			# Request a new animation frame
 			@lastUpdateTime = timestamp
 			window.requestAnimationFrame(@update)
+
+		createControllerNode: () ->
+			@controllerNode = new ControllerNode()
+
 				
 	window.App = new App.Game

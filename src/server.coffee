@@ -70,6 +70,7 @@ define [
 								benchmark: node.benchmark
 								system: node.system
 								latency: node.latency
+								isStructured: node.isStructured
 							}
 
 							i++
@@ -90,6 +91,7 @@ define [
 				res.end()
 			)
 
+			# Redirect a controller url for lees typing
 			@_app.get('/controller/:nodeId', ( req, res ) =>
 				res.redirect('/controller.html?nodeId=' + req.params.nodeId);
 				res.end()
@@ -106,11 +108,14 @@ define [
 		#
 		login: ( socket ) =>
 			node = new Node(@, socket)
-			@addNode(node)
-
-			node.on('disconnect', ( ) =>
-				@removeNode(node)
+			node.on("isStructured", (isStructured) =>
+				if isStructured
+					@addNode(node)
+					node.on('disconnect', ( ) =>
+						@removeNode(node)
+					)
 			)
+			
 
 		# Sends a message to a certain node.
 		#

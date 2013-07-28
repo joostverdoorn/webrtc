@@ -71,6 +71,7 @@ require [
 				client = new Client(fakeController, fakeConnection)
 
 				expect(called).toEqual([
+						'isStructured'
 						'benchmark'
 						'system'
 						'isSuperNode'

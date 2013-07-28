@@ -23,7 +23,7 @@ require [
 	'jquery'
 	], ( App, Node, $ ) ->
 
-	# Master app class
+	# Mobile Controller Class
 	#
 
 	class App.Controller extends App
@@ -38,8 +38,8 @@ require [
 				@node.connect(nodeId)
 			)
 			@node._peers.on('channel.opened', ( ) =>
-				console.log "hoi"
 				@node.server.disconnect()
+				@node.server = null
 			)
 
 

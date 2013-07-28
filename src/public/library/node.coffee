@@ -28,6 +28,8 @@ define [
 
 	], ( Mixable, EventBindings, Server, Peer, Message, Collection, _ ) ->
 
+	# Constructs a new unstructured node.
+	#
 	class Node extends Mixable
 
 		@concern EventBindings
@@ -35,22 +37,13 @@ define [
 		id: null
 		serverAddress: ':8080/'
 
-		system: 
-			osName:  'osName'
-			browserName:  'browserName'
-			browserVersion: 'browserVersion'
-		benchmark:
-			cpu: null
-
-		# Constructs a new app.
-		#
 		constructor: ( ) ->
 
 			@_peers = new Collection()
 
 			@server = new Server(@, @serverAddress)
 
-			@server.on('connect', @_enterNetwork)
+
 			@server.on('peer.connectionRequest', @_onPeerConnectionRequest)
 			@server.on('peer.setRemoteDescription', @_onPeerSetRemoteDescription)
 			@server.on('peer.addIceCandidate', @_onPeerAddIceCandidate)
@@ -58,8 +51,6 @@ define [
 
 			@_peers.on('disconnect', @_onPeerDisconnect)
 
-
-			@runBenchmark()
 			@initialize?.apply(@)
 
 			###
@@ -95,8 +86,7 @@ define [
 		disconnect: ( id ) ->
 			@getPeer(id)?.disconnect()
 
-		# Is called when a peers disconnects. If that peer was 
-		# our parent, we pick a new parent.
+		# Is called when a peers disconnects.
 		#
 		# @param peer [Peer] the peer that disconnects
 		#
@@ -220,26 +210,7 @@ define [
 		relay: ( message ) ->
 			peer.send(message)
 
-
-		# Responds to a request
-		#
-		# @param request [String] the string identifier of the request
-		# @param args... [Any] any arguments that may be accompanied with the request
-		# @param from [Peer] the peer we received the query from
-		# @return [Object] a response to the query
+		# A Query function is implemented in a structured version of Node
 		#
 		query: ( request, args... ) ->
-			switch request
-				when 'isStructured'
-					return @isStructured
 			return false
-
-		# Runs a benchmark to get the available resources on this node.
-		#
-		runBenchmark: () ->
-			startTime = Date.now()
-			endTime = Date.now()
-			@benchmark.cpu = Math.round(endTime - startTime)
-
-		_enterNetwork: () ->
-			console.log "_enterNetwork method is not implemented"
