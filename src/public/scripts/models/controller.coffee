@@ -1,7 +1,10 @@
 define [
+		'public/scripts/helpers/mixable'
+		'public/scripts/helpers/mixin.eventbindings'
 		'public/scripts/models/keyboard'
-	], ( Keyboard ) ->
-		class Controller
+	], ( Mixable, EventBindings, Keyboard ) ->
+		class Controller extends Mixable
+			@concern EventBindings
 
 			@functions = {
 				'UP':		'FlyForward'
@@ -23,6 +26,7 @@ define [
 			_generateKeyboardFunctions: ( ) =>
 				for button, fn of Controller.functions
 					@["_get#{fn}Keyboard"] = @_getKeyboard button
+					@_triggerKeyboard button, fn
 
 			selectInput: ( type ) =>
 				@_inputType = type
@@ -34,6 +38,14 @@ define [
 			_getKeyboard: ( button ) =>
 				=>
 					if @_keyboard.Keys[button]
-						return 1
+						result = 1
 					else
-						return 0
+						result = 0
+
+					return result
+
+			_triggerKeyboard: ( button, fn ) =>
+				@_keyboard.on(button, ( value ) =>
+						if @_inputType is 'keyboard'
+							@trigger(fn, value)
+					)

@@ -60,11 +60,15 @@ require [
 					switch type
 						when 'keyboard'
 							@inputHandler.selectInput('keyboard')
+							@welcomeScreen.showInfoScreen(type)
+
+							@inputHandler.on('Boost', ( value ) =>
+									@inputHandler.off('Boost')
+									@welcomeScreen.hide()
+									@spawnPlayer(true, true)
+								)
 						when 'mobile'
 							@inputHandler.selectInput('mobile')
-
-					@welcomeScreen.showInfoScreen(type)
-					@spawnPlayer(true, true)
 				)
 
 			@container = document.createElement 'div'
@@ -162,13 +166,10 @@ require [
 			return [width, height]
 
 		spawnPlayer: ( @allowInput = true, @applyGravity = true ) =>
-			console.log 'spawning'
 			if @player
 				return
 
-			console.log 'really'
 			if @status >= 2
-				console.log 'adding player'
 				@player = new Player(@scene, @node.id, {position: new Three.Vector3(0, 300, 0).toArray()})
 				@player.applyGravity = @applyGravity
 				@world.addEntity(@player)
@@ -188,7 +189,7 @@ require [
 		update: ( timestamp ) =>
 			dt = (timestamp - @lastUpdateTime) / 1000     
 
-			if @player and @allowInput
+			if @player?.cannon? and @allowInput
 				# If any keys are pressed, apply angular forces to the player
 				@player?.boost = @inputHandler.getBoost()
 

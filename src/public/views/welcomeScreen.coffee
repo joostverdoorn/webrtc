@@ -59,4 +59,7 @@ define [
 					@_clickHandlerMobile = null
 
 		showInfoScreen: ( controller ) =>
+			@_showFromFile "info_#{controller}.html"
+
+		hide: =>
 			@container.hide()
