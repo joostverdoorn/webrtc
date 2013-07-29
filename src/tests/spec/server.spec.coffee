@@ -87,6 +87,7 @@ require [
 
 								spyOn(server, 'getNodes').andReturn([{
 										query: ->
+										isStructured: true
 									}])
 
 								callback(null, fakeRes)
