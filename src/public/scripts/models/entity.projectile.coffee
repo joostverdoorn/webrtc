@@ -48,7 +48,7 @@ define [
 
 				@force = new Three.Vector3(x * @mass, 0, z * @mass)
 				@force.applyQuaternion(new Three.Quaternion().setFromEuler(player.rotation))
-				@force.multiplyScalar(50)
+				@force.multiplyScalar(100)
 
 				# Add the player velocity to the force.
 				@force.add(player.velocity.clone().multiplyScalar(@mass))
@@ -60,7 +60,8 @@ define [
 			@scene.add(@mesh)
 			@loaded = true
 
-		# Removes projectile form the scene
-		#
-		die: ( ) ->
-			@scene.remove(@mesh)
+		update: ( dt ) ->
+			super(dt, true, false)
+
+			if @velocity.length() < 1
+				@die()

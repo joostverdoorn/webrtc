@@ -20,7 +20,7 @@ define [
 		#
 		constructor: ( @scene, args... ) ->
 			@_loader = new Three.JSONLoader()
-			@_loaded = false
+			@loaded = false
 			
 			@mass = 1
 			@drag = .01
