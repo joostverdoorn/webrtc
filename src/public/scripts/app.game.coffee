@@ -71,12 +71,15 @@ require [
 							@inputHandler.selectInput('mobile')
 							# Should be called when a user decides to connect his mobile phone
 							@createControllerNode()
-							console.log '/controller/' + @controllerNode.id
-							@controllerNode.on('peer.added', ( peer ) =>
-									console.log 'CONNECTED WITH PHONE'
-								)
-							@controllerNode.on('joined', ( peer ) =>
-									console.log 'JUST TESTING'
+							@inputHandler.showLoadingScreen()
+							@controllerNode.server.on('connect', ( peer ) =>
+									@controllerNode.server.off('connect')
+									#getQRCode @controllerNode.id
+									@inputHandler.showMobileConnectScreen(@controllerNode.id)
+									@controllerNode.on('peer.added', ( peer ) =>
+											@controllerNode.off('peer.added')
+											@inputHandler.showInfoScreen(type)
+										)
 								)
 				)
 
@@ -119,11 +122,13 @@ require [
 
 			@node.server.on('connect', ( ) =>
 				# now ready to spawn player
+				@node.server.off('connect')
 				@status = 1
 			)
 
 			@node.on('joined', =>
 				# now ready to broadcast player
+				@node.off('joined')
 				@welcomeScreen.showWelcomeScreen()
 				@status = 2
 			)
