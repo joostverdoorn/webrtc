@@ -23,6 +23,7 @@ define [
 		# @param scene [Three.Scene] the scene to draw upon
 		#
 		constructor: ( @scene ) ->
+			@_loader = new Three.JSONLoader()
 
 			@_entities = new Collection()
 
@@ -36,25 +37,27 @@ define [
 			# hemisphereLight = new Three.HemisphereLight(0x9999aa, 0x663322, 1)
 			# @scene.add(hemisphereLight)
 
-			planetMaterial = new Three.MeshLambertMaterial(
-				color:0x00ff00
-			) 
+			# planetMaterial = new Three.MeshLambertMaterial(
+			# 	color:0x00ff00
+			# ) 
 
-			radius = 300
-			segments = 60
-			rings = 50
+			# radius = 300
+			# segments = 60
+			# rings = 50
 
-			planet = new Three.Mesh(
-				new Three.SphereGeometry(
-					radius,
-					segments,
-					rings)
-				, planetMaterial)
+			# planet = new Three.Mesh(
+			# 	new Three.SphereGeometry(
+			# 		radius,
+			# 		segments,
+			# 		rings)
+			# 	, planetMaterial)
 
-			@scene.add(planet)
+			# @scene.add(planet)
 
-		
-
+			@_loader.load('/meshes/planet.js', ( geometry, material ) =>
+				@planet = new Three.Mesh(geometry, new Three.MeshFaceMaterial(material))
+				@scene.add(@planet)
+			)
 
 		# Creates and adds a player to the world
 		#
@@ -104,4 +107,3 @@ define [
 		#
 		update: ( @dt ) ->
 			entity.update(dt) for entity in @_entities
-			
