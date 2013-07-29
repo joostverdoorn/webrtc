@@ -50,17 +50,23 @@ require [
 					setTimeout( @sendDeviceOrientation, 100)
 
 				$('#boost').on('touchstart', (  ) =>
-					@_boost = true
+					@sendBoostEvent(true)
 				)
 				$('#boost').on('touchend', (  ) =>
-					@_boost = false
+					@sendBoostEvent(false)
 				)
 				$('#fire').on('touchstart', (  ) =>
-					@_fire = true
+					@sendFireEvent(true)
 				)
 				$('#fire').on('touchend', (  ) =>
-					@_fire = false
+					@sendFireEvent(false)
 				)
+
+				$('#poke').on('touchmove', ( event ) =>
+					touch = event.originalEvent.touches[0]
+					console.log touch.pageY
+				)
+
 
 
 			)
@@ -79,25 +85,29 @@ require [
 			window.addEventListener('deviceorientation', (eventData) =>
 				@_roll = Math.round(eventData.gamma)
 				@_pitch = Math.round(eventData.beta)
-				@_yaw = Math.round(eventData.alpha)
 
 				orientation =
 					roll: @_roll
 					pitch: @_pitch
-					yaw: @_yaw
 
 
-				sendBoost = null
-				if @_boost is not @_lastBoost
-					sendBoost = @_lastBoost = @_boost
-
-				sendFire = null
-				if @_fire is not @_lastFire
-					sendFire = @_lastFire = @_fire
 				
 
-				@node.getPeers()[0].emit('controller.orientation', orientation, sendBoost, sendFire)
+				
+				
+
+				@node.getPeers()[0].emit('controller.orientation', orientation)
 			)
+
+		sendBoostEvent: ( boost ) ->
+			if boost is not @_lastBoost
+				@_lastBoost = boost
+				@node.getPeers()[0].emit('controller.boost', boost)
+
+		sendFireEvent: ( fire ) ->
+			if fire is not @_lastFire
+				@_lastFire = fire
+				@node.getPeers()[0].emit('controller.fire', fire)
 
 
 			

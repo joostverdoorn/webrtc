@@ -248,11 +248,14 @@ require [
 
 		createControllerNode: () ->
 			@controllerNode = new ControllerNode()
-			@controllerNode._peers.on('controller.orientation', ( peer, orientation, boost, fire ) =>
-				if boost?
-					console.warn "Boost", boost
-				if fire?
-					console.warn "Fire", fire
+			@controllerNode._peers.on('controller.orientation', ( peer, orientation ) =>
+				console.log orientation
+			)
+			@controllerNode._peers.on('controller.boost', ( peer, boost ) =>
+				console.log boost
+			)
+			@controllerNode._peers.on('controller.orientation', ( peer, fire ) =>
+				console.log fire
 			)
 			@welcomeScreen.showLoadingScreen()
 			@controllerNode.server.on('connect', ( peer ) =>
