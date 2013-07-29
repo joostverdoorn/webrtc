@@ -28,7 +28,7 @@ define [
 			@applyGravity = false
 
 			@velocity = new Three.Vector3(0, 0, 0)
-			@angularVelocity = new Three.Quaternion()
+			@angularVelocity = new Three.Euler(0, 0, 0, 'YXZ')
 			
 			@forces = []
 			@angularForces = []
@@ -85,15 +85,14 @@ define [
 			# Apply forces ...
 			if updatePosition
 
-				# Set our last position if we don't have one yet.
-				unless @_lastPosition?
-					@_lastPosition = @position.clone()
+				# Calculate our new position from the velocity.
+				@position.add(@velocity.clone().multiplyScalar(dt))
 
-				# Calculate our current velocity by subtracting our current position
-				# from our last position, and set our position as lastPosition to
-				# calculate the velocity in the next loop.
-				@velocity = @position.clone().sub(@_lastPosition).divideScalar(dt)
-				@_lastPosition = @position.clone()
+				# Rudimentary way to detect of we're on the planet surface. This should
+				# be replaced by collision detection.
+				if @position.length() < 300
+					@position.normalize().multiplyScalar(300)
+					@velocity.projectOnPlane(@position)
 
 				# Loop through all forces and calculate the acceleration.
 				acceleration = new Three.Vector3(0, 0, 0)			
@@ -109,47 +108,43 @@ define [
 				dragForce = @velocity.clone().normalize().negate().multiplyScalar(.5 * 1.2 * @drag * @velocity.lengthSq())
 				@velocity.add(dragForce.divideScalar(@mass))
 
-				# Calculate our new position from the velocity.
-				@position.add(@velocity.clone().multiplyScalar(dt))
-
-				# Rudimentary way to detect of we're on the planet surface. This should
-				# be replaced by collision detection.
-				if @position.length() < 300
-					@position.normalize().multiplyScalar(300)
-					@velocity.projectOnPlane(@position)
-
-			# ... and apply rotational forces
+			# ... and apply rotational forces. The method of applying rotational forces and 
+			# mainly for using angular velocity may look a bit strange, but this does really
+			# seem to be the best way of doing it.
 			if updateRotation
 
-				# Set our last rotation if we don't have one yet.
-				unless @_lastRotation?
-					@_lastRotation = @rotation.clone()
+				# Calculate the change of rotation for this time step ...
+				angularDelta = @angularVelocity.clone()
 
-				# Calculate our current angular velocity by subtracting our current rotation
-				# from our last rotation, and set our rotation as lastRotation to
-				# calculate the angular velocity in the next loop.
-				rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
-				lastRotationQuaternion = new Three.Quaternion().setFromEuler(@_lastRotation)
-				
-				@angularVelocity = lastRotationQuaternion.clone().inverse().multiply(rotationQuaternion)
-				@_lastRotation = @rotation.clone()
+				angularDelta.x *= dt
+				angularDelta.y *= dt
+				angularDelta.z *= dt
+
+				angularDeltaQuaternion = new Three.Quaternion().setFromEuler(angularDelta)
+
+				# ... and multiply this delta with the current rotation to get the new rotation.
+				rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)		
+				rotationQuaternion.multiply(angularDeltaQuaternion)
+				@rotation.setFromQuaternion(rotationQuaternion)
 
 				# Loop through all angular forces and calculate the angular acceleration.
-				angularAcceleration = new Three.Quaternion()
+				angularAccelerationQuaternion = new Three.Quaternion()
 				while force = @angularForces.pop()
 					forceQuaternion = new Three.Quaternion().setFromEuler(force)
-					angularAcceleration.multiply(forceQuaternion)
+					angularAccelerationQuaternion.multiply(forceQuaternion)
 
-				# Calculate our new rotation from the angular velocity and acceleration.
-				targetRotationQuaternion = rotationQuaternion.clone()
-				targetRotationQuaternion.slerp(rotationQuaternion.clone().multiply(angularAcceleration), dt)
-				targetRotationQuaternion.multiply(@angularVelocity)
+				angularAcceleration = new Three.Euler().setFromQuaternion(angularAccelerationQuaternion, 'YXZ')
 
-				# Add drag force to the rotation.
-				targetRotationQuaternion.slerp(rotationQuaternion, @angularDrag * dt)
+				# Apply the acceleration to the angular velocity
+				@angularVelocity.x += angularAcceleration.x
+				@angularVelocity.y += angularAcceleration.y
+				@angularVelocity.z += angularAcceleration.z
 
-				# Calculate and set our new rotation from the angular velocity.				
-				@rotation.setFromQuaternion(targetRotationQuaternion)
+				# Apply drag force to the angular velocity. This way of doing it is pretty
+				# basic, but should be sufficient.
+				@angularVelocity.x *= 1 - @angularDrag * dt
+				@angularVelocity.y *= 1 - @angularDrag * dt
+				@angularVelocity.z *= 1 - @angularDrag * dt
 
 		# Applies transformation information given in an object to the entity.
 		#
