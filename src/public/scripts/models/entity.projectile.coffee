@@ -23,7 +23,7 @@ define [
 			@applyGravity = true
 
 			sphereMaterial = new THREE.MeshPhongMaterial( {color:0xff0000 })
-			radius = 0.3
+			radius = 0.45
 			segments = 6
 			rings = 8
 
@@ -38,7 +38,7 @@ define [
 				playerRotationQuaternion = new Three.Quaternion().setFromEuler(player.rotation)
 
 				# Get the starting position of the projectile.
-				offset = new Three.Vector3(0, -1.15, 0)
+				offset = new Three.Vector3(0, -1.10, 0)
 				offset.applyQuaternion(playerRotationQuaternion)
 				@position = player.position.clone().add(offset)
 
