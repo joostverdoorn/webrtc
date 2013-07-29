@@ -200,8 +200,8 @@ require [
 				# If any keys are pressed, apply angular forces to the player
 				@player?.boost = @inputHandler.getBoost()
 
-				@player?.cannon.addAngularForce(new Three.Euler(0, 1 * @inputHandler.getGunRotateCounterClockwise(), 0, 'YXZ'))
-				@player?.cannon.addAngularForce(new Three.Euler(0, -1 * @inputHandler.getGunRotateClockwise(), 0, 'YXZ'))
+				@player?.cannon.addAngularForce(new Three.Euler(0, .6 * @inputHandler.getGunRotateCounterClockwise(), 0, 'YXZ'))
+				@player?.cannon.addAngularForce(new Three.Euler(0, -.6 * @inputHandler.getGunRotateClockwise(), 0, 'YXZ'))
 
 				if @inputHandler.getFire()
 					projectile = @player?.cannon.fire()

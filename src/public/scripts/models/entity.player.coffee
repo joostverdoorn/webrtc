@@ -63,7 +63,7 @@ define [
 			thrustVector = new Three.Vector3(0, 1, 0).applyQuaternion(rotationQuaternion)
 
 			if @boost
-				thrustVector.multiplyScalar(12 * @mass * dt)
+				thrustVector.multiplyScalar(16 * @mass * dt)
 			else
 				thrustVector.multiplyScalar(5 * @mass * dt)			
 
@@ -76,6 +76,10 @@ define [
 			forceQuaternion = rotationQuaternion.clone().inverse().multiply(levelRotationQuaternion)
 			force = new Three.Euler().setFromQuaternion(forceQuaternion)
 			@addAngularForce(force)
+
+			# Attract player y rotation to cannon y rotation
+			@addAngularForce(new Three.Euler(0, @cannon.rotation.y / 2, 0, 'YXZ'))
+			@cannon.addAngularForce(new Three.Euler(0, -@cannon.rotation.y / 2, 0, 'YXZ'))
 
 			# Update physics.
 			super(dt)	
