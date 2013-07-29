@@ -188,7 +188,7 @@ require [
 		update: ( timestamp ) =>
 			dt = (timestamp - @lastUpdateTime) / 1000     
 
-			if @allowInput
+			if @player and @allowInput
 				# If any keys are pressed, apply angular forces to the player
 				@player?.boost = @inputHandler.getBoost()
 
