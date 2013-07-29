@@ -69,6 +69,15 @@ require [
 								)
 						when 'mobile'
 							@inputHandler.selectInput('mobile')
+							# Should be called when a user decides to connect his mobile phone
+							@createControllerNode()
+							console.log '/controller/' + @controllerNode.id
+							@controllerNode.on('peer.added', ( peer ) =>
+									console.log 'CONNECTED WITH PHONE'
+								)
+							@controllerNode.on('joined', ( peer ) =>
+									console.log 'JUST TESTING'
+								)
 				)
 
 			@container = document.createElement 'div'
@@ -145,9 +154,6 @@ require [
 
 			window.requestAnimationFrame(@update)
 			$(window).resize(@setDimensions)
-
-			# Should be called when a user decides to connect his mobile phone
-			@createControllerNode()
 
 		# Sets the dimensions of the viewport and the aspect ration of the camera
 		#
