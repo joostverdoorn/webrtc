@@ -269,8 +269,8 @@ require [
 
 		setQRCode: () =>
 			link = window.location.origin + "/controller/" + @controllerNode.id
-			$('#controllerQRCode').qrcode(link);
-
+			$('#controllerQRCodeImage').qrcode(link)
+			$('#controllerQRCodeLink').html("<a href=\"#{link}\">#{link}</a>")
 
 				
 	window.App = new App.Game
