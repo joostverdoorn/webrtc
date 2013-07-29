@@ -9,6 +9,7 @@ requirejs.config
 			exports: 'THREE'
 
 		'bootstrap': [ 'jquery' ]
+		'qrcode': [ 'jquery' ]
 		'jquery.plugins': [ 'jquery' ]
 
 	# We want the following paths for 
@@ -37,7 +38,7 @@ require [
 	'three'
 	'qrcode'
 	'stats'
-	], ( App, ControllerNode, Node, World, Player, Keyboard, $, Three, QRCode ) ->
+	], ( App, ControllerNode, Node, World, Player, Keyboard, $, Three ) ->
 
 	# This game class implements the node structure created in the library.
 	# It uses three.js for the graphics.
@@ -222,8 +223,9 @@ require [
 		createControllerNode: () ->
 			@controllerNode = new ControllerNode()
 
-		getQRCode: () ->
-			new QRCode($("document"), "http://jindo.dev.naver.com/collie")
+		setQRCode: () ->
+			link = "http://" + window.location.origin + "/controller/" + @controllerNode.id
+			$('#controllerQRCode').qrcode(link);
 
 
 				
