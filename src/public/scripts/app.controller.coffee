@@ -32,15 +32,37 @@ require [
 		# 
 		initialize: ( ) ->
 			@node = new Node()
+			@_boost = false
+			@_lastBoost = false
+			@_fire = false
+			@_lastFire = false
 
 			nodeId =  @getURLParameter("nodeId")
 			@node.server.on('connect', ( ) =>
 				@node.connect(nodeId)
 			)
 			@node._peers.on('channel.opened', ( ) =>
+
 				@node.server.disconnect()
 				@node.server = null
-				setTimeout( @sendDeviceOrientation, 100)
+
+				if window.DeviceOrientationEvent
+					setTimeout( @sendDeviceOrientation, 100)
+
+				$('#boost').on('touchstart', (  ) =>
+					@_boost = true
+				)
+				$('#boost').on('touchend', (  ) =>
+					@_boost = false
+				)
+				$('#fire').on('touchstart', (  ) =>
+					@_fire = true
+				)
+				$('#fire').on('touchend', (  ) =>
+					@_fire = false
+				)
+
+
 			)
 
 			
@@ -54,20 +76,28 @@ require [
 				return results[1] || 0
 
 		sendDeviceOrientation: ( ) =>
-			if window.DeviceOrientationEvent
-				window.addEventListener('deviceorientation', (eventData) =>
-					@_roll = Math.round(eventData.gamma)
-					@_pitch = Math.round(eventData.beta)
-					@_yaw = Math.round(eventData.alpha)
+			window.addEventListener('deviceorientation', (eventData) =>
+				@_roll = Math.round(eventData.gamma)
+				@_pitch = Math.round(eventData.beta)
+				@_yaw = Math.round(eventData.alpha)
+
+				orientation =
+					roll: @_roll
+					pitch: @_pitch
+					yaw: @_yaw
 
 
-					orientation =
-						roll: @_roll
-						pitch: @_pitch
-						yaw: @_yaw
+				sendBoost = null
+				if @_boost is not @_lastBoost
+					sendBoost = @_lastBoost = @_boost
 
-					@node.getPeers()[0].emit('controller.orientation', orientation)
-				)
+				sendFire = null
+				if @_fire is not @_lastFire
+					sendFire = @_lastFire = @_fire
+				
+
+				@node.getPeers()[0].emit('controller.orientation', orientation, sendBoost, sendFire)
+			)
 
 
 			
