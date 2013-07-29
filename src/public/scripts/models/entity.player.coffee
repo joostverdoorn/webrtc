@@ -35,7 +35,7 @@ define [
 				@animation.play()
 
 				# Create our cannon.
-				@cannon = new Cannon(@mesh, @, transformations?.cannon)				
+				@cannon = new Cannon(@scene, @, transformations?.cannon)
 
 				# Apply passed transformations.
 				@applyTransformations(transformations)
@@ -122,25 +122,4 @@ define [
 			transformations = super()
 			transformations.cannon = @cannon?.getTransformations()
 
-			return transformations		
-
-		# createDebugSphere: ( vector, color ) ->
-		# 	radius = .2
-		# 	segments = 6
-		# 	rings = 8
-
-		# 	sphereMaterial = new THREE.MeshBasicMaterial( {color: color }) 
-
-
-		# 	sphere = new Three.Mesh(
-		# 		new Three.SphereGeometry(
-		# 			radius,
-		# 			segments,
-		# 			rings)
-		# 		, sphereMaterial)
-
-		# 	sphere.position = @position.clone().add(vector.clone().multiplyScalar(15))
-
-		# 	@scene.add(sphere)
-		# 	return sphere
-
+			return transformations

@@ -22,7 +22,7 @@ define [
 			@_loader.load('/meshes/cannon.js', ( geometry, material ) =>
 				@mesh.geometry = geometry
 				@mesh.material = new Three.MeshFaceMaterial(material)
-				@scene.add(@mesh)
+				@player.mesh.add(@mesh)
 
 				@applyTransformations(transformations)
 
@@ -46,6 +46,6 @@ define [
 
 				setTimeout( =>
 					@_isReady = true
-				, 50)
+				, 500)
 
 				return projectile

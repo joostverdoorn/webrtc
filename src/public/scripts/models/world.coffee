@@ -30,7 +30,7 @@ define [
 			directionalLight.position.set(0, 1, 1).normalize()
 			@scene.add(directionalLight)
 
-			ambientLight = new Three.AmbientLight(0xaaaaaa)
+			ambientLight = new Three.AmbientLight(0x777777)
 			@scene.add(ambientLight)
 
 			# hemisphereLight = new Three.HemisphereLight(0x9999aa, 0x663322, 1)

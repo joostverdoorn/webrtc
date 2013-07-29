@@ -92,7 +92,7 @@ define [
 				# be replaced by collision detection.
 				if @position.length() < 300
 					@position.normalize().multiplyScalar(300)
-					@velocity.projectOnPlane(@position)
+					@velocity = new Three.Vector3()
 
 				# Loop through all forces and calculate the acceleration.
 				acceleration = new Three.Vector3(0, 0, 0)			

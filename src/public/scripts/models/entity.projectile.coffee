@@ -22,8 +22,8 @@ define [
 			@angularDrag = 10
 			@applyGravity = true
 
-			sphereMaterial = new THREE.MeshBasicMaterial( {color:0x00ff00 * Math.random() }) 
-			radius = 0.4
+			sphereMaterial = new THREE.MeshPhongMaterial( {color:0xff0000 })
+			radius = 0.3
 			segments = 6
 			rings = 8
 
@@ -35,17 +35,29 @@ define [
 				, sphereMaterial)
 
 			if cannon? and player?
-				@position = cannon.position.clone()
-				@position.y -= 0.9
+				playerRotationQuaternion = new Three.Quaternion().setFromEuler(player.rotation)
 
+				# Get the starting position of the projectile.
+				offset = new Three.Vector3(0, -1.15, 0)
+				offset.applyQuaternion(playerRotationQuaternion)
+				@position = player.position.clone().add(offset)
+
+				# Calculate the angle at which the projectile will be fired.
 				x = Math.cos(cannon.rotation.y)
 				z = -Math.sin(cannon.rotation.y)
 
-				@vector = new Three.Vector3(x * @mass, 0, z * @mass).multiplyScalar(50)
-				@vector.add(player.velocity.clone().multiplyScalar(@mass))
-				@addForce(@vector)
-			@scene.add(@mesh)
+				@force = new Three.Vector3(x * @mass, 0, z * @mass)
+				@force.applyQuaternion(new Three.Quaternion().setFromEuler(player.rotation))
+				@force.multiplyScalar(50)
 
+				# Add the player velocity to the force.
+				@force.add(player.velocity.clone().multiplyScalar(@mass))
+
+				# Add the force to the pending forces
+				@addForce(@force)
+
+			# Add the projectile to the scene
+			@scene.add(@mesh)
 			@loaded = true
 
 		# Removes projectile form the scene
