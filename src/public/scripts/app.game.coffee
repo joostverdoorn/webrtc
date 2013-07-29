@@ -247,6 +247,7 @@ require [
 			window.requestAnimationFrame(@update)
 
 		createControllerNode: () ->
+			###
 			@controllerNode = new ControllerNode()
 			@controllerNode._peers.on('controller.orientation', ( peer, orientation ) =>
 				console.log orientation
@@ -268,6 +269,19 @@ require [
 							@startGame()
 						)
 				)
+			###
+			@welcomeScreen.showLoadingScreen()
+			@inputHandler._generateRemoteMobile()
+			@inputHandler.on('mobile.initialized', ( id ) =>
+					@_controllerID = id
+					@inputHandler.selectInput('mobile')
+					@welcomeScreen.showMobileConnectScreen(@setQRCode)
+				)
+
+			@inputHandler.on('mobile.connected', ( id ) =>
+					@welcomeScreen.showInfoScreen('mobile')
+					@startGame()
+				)
 
 		startGame: () =>
 			@inputHandler.on('Boost', ( value ) =>
@@ -277,7 +291,7 @@ require [
 				)
 
 		setQRCode: () =>
-			link = window.location.origin + "/controller/" + @controllerNode.id
+			link = window.location.origin + "/controller/" + @_controllerID
 			$('#controllerQRCodeImage').qrcode(link)
 			$('#controllerQRCodeLink').html("<a href=\"#{link}\">#{link}</a>")
 

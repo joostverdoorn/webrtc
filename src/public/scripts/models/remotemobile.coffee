@@ -7,9 +7,16 @@ define [
 			@concern EventBindings
 
 			constructor: ( ) ->
+				@_orientationPitch = 0
+				@_orientationYaw = 0
+				@_orientationRoll = 0
+
+				@_fire = false
+				@_boost = false
+
 				@_node = new ControllerNode()
 				@_node.server.on('connect', ( peer ) =>
-						@trigger('initialized')
+						@trigger('initialized', @_node.id)
 						@_node.server.off('connect')
 
 						@_node.on('peer.added', ( peer ) =>
@@ -19,6 +26,35 @@ define [
 					)
 
 				@_node._peers.on('controller.orientation', ( peer, orientation ) =>
-					@trigger('orientation', orientation)
+					if orientation.roll > 180
+						orientation.roll -= 360
+					if orientation.roll < -180
+						orientation.roll += 360
+					if orientation.pitch > 180
+						orientation.pitch -= 360
+					if orientation.pitch < -180
+						orientation.pitch += 360
+
+					if orientation.roll isnt @_orientationRoll
+						@trigger('orientationRoll', orientation.roll)
+						@_orientationRoll = orientation.roll
+
+					if orientation.pitch isnt @_orientationPitch
+						@trigger('orientationPitch', orientation.pitch)
+						@_orientationPitch = orientation.pitch
+
+					if orientation.yaw isnt @_orientationYaw
+						@trigger('orientationYaw', orientation.yaw)
+						@_orientationYaw = orientation.yaw
+				)
+
+				@_node._peers.on('controller.boost', ( peer, value ) =>
+					@trigger('boost', value)
+					@_boost = boost
+				)
+
+				@_node._peers.on('controller.fire', ( peer, value ) =>
+					@trigger('fire', value)
+					@_fire = fire
 				)
 			

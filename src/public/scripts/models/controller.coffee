@@ -8,14 +8,52 @@ define [
 			@concern EventBindings
 
 			@functions = {
-				'UP':		'FlyForward'
-				'LEFT':		'FlyLeft'
-				'DOWN':		'FlyBackward'
-				'RIGHT':	'FlyRight'
-				'A':		'GunRotateCounterClockwise'
-				'D':		'GunRotateClockwise'
-				'SPACE':	'Boost'
-				'RETURN':	'Fire'
+				'FlyForward': {
+					keyboard: 'UP'
+					mobile: {
+						event: 'orientationRoll'
+						sign: +1
+					}
+				}
+				'FlyLeft': {
+					keyboard: 'LEFT'
+					mobile: {
+						event: 'orientationPitch'
+						sign: -1
+					}
+				}
+				'FlyBackward': {
+					keyboard: 'DOWN'
+					mobile: {
+						event: 'orientationRoll'
+						sign: -1
+					}
+				}
+				'FlyRight': {
+					keyboard: 'RIGHT'
+					mobile: {
+						event: 'orientationPitch'
+						sign: +1
+					}
+				}
+				'GunRotateCounterClockwise': {
+					keyboard: 'A'
+				}
+				'GunRotateClockwise': {
+					keyboard: 'D'
+				}
+				'Boost': {
+					keyboard: 'SPACE'
+					mobile: {
+						event: 'boost'
+					}
+				}
+				'Fire': {
+					keyboard: 'RETURN'
+					mobile: {
+						event: 'fire'
+					}
+				}
 			}
 
 			constructor: ( ) ->
@@ -26,27 +64,35 @@ define [
 				@_generateKeyboardFunctions()
 
 			_generateKeyboardFunctions: ( ) =>
-				for button, fn of Controller.functions
+				for fn, button of Controller.functions
+					unless button.keyboard
+						return
+
+					button = button.keyboard
 					@["_get#{fn}Keyboard"] = @_getKeyboard button
 					@_triggerKeyboard button, fn
 
 				@_initializedTypes['keyboard'] = true
 
 			_generateRemoteMobileFunctions: ( ) =>
-				for button, fn of Controller.functions
-					@["_get#{fn}Keyboard"] = @_getKeyboard button
-					@_triggerKeyboard button, fn
+				for fn, data of Controller.functions
+					unless data.mobile
+						continue
+
+					data = data.mobile
+					@["_get#{fn}Mobile"] = @_getMobile data
+					@_triggerMobile data, fn
 
 				@_initializedTypes['mobile'] = true
 
 			_generateRemoteMobile: () =>
 				@_remoteMobile = new RemoteMobile()
-				@_remoteMobile.on('initialized', =>
-						@trigger('initialized')
+				@_generateRemoteMobileFunctions()
+				@_remoteMobile.on('initialized', ( id ) =>
+						@trigger('mobile.initialized', id)
 					)
 				@_remoteMobile.on('connected', =>
-						@trigger('connected')
-						@_generateRemoteMobileFunctions()
+						@trigger('mobile.connected')
 					)
 
 			selectInput: ( type ) =>
@@ -56,7 +102,7 @@ define [
 				@_inputType = type
 				localType = type.charAt(0).toUpperCase() + type.slice(1)
 
-				for key, fn of Controller.functions
+				for fn, key of Controller.functions
 					@["get#{fn}"] = @["_get#{fn}#{localType}"]
 
 			_getKeyboard: ( button ) =>
@@ -68,8 +114,31 @@ define [
 
 					return result
 
+			_getMobile: ( data ) =>
+				=>
+					result = @_remoteMobile["_#{data.event}"] * data.sign / 90
+					if result > 1
+						result = 1
+					else if result < 0
+						result = 0
+
+					return result
+
 			_triggerKeyboard: ( button, fn ) =>
 				@_keyboard.on(button, ( value ) =>
 						if @_inputType is 'keyboard'
+							@trigger(fn, value)
+					)
+
+			_triggerMobile: ( data, fn ) =>
+				@_remoteMobile.on(data.event, ( value ) =>
+						if @_inputType is 'mobile'
+							result = value * data.sign / 90
+							if result > 1
+								result = 1
+							else if result < 0
+								result = 0
+								return
+
 							@trigger(fn, value)
 					)
