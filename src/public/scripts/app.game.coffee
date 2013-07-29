@@ -259,6 +259,9 @@ require [
 
 		createControllerNode: () ->
 			@controllerNode = new ControllerNode()
+			@controllerNode._peers.on('controller.orientation', ( peer, orientation ) =>
+				console.log orientation
+			)
 
 		startGame: () =>
 			@inputHandler.on('Boost', ( value ) =>

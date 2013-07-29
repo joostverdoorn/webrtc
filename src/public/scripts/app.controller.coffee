@@ -40,7 +40,10 @@ require [
 			@node._peers.on('channel.opened', ( ) =>
 				@node.server.disconnect()
 				@node.server = null
+				setTimeout( @sendDeviceOrientation, 100)
 			)
+
+			
 
 
 		getURLParameter: (name) ->
@@ -49,6 +52,22 @@ require [
 				return null
 			else
 				return results[1] || 0
+
+		sendDeviceOrientation: ( ) =>
+			if window.DeviceOrientationEvent
+				window.addEventListener('deviceorientation', (eventData) =>
+					@_roll = Math.round(eventData.gamma)
+					@_pitch = Math.round(eventData.beta)
+					@_yaw = Math.round(eventData.alpha)
+
+
+					orientation =
+						roll: @_roll
+						pitch: @_pitch
+						yaw: @_yaw
+
+					@node.getPeers()[0].emit('controller.orientation', orientation)
+				)
 
 
 			

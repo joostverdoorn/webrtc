@@ -66,7 +66,7 @@ define [
 		# Attempts to connect to a peer.
 		#
 		# @param id [String] the id of the peer to connect to
-		# @param instantiate [Boolean] wether to instantiate the connection
+		# @param instantiate [Boolean] whether to instantiate the connection
 		#
 		connect: ( id, instantiate = true ) ->
 			peer = new Peer(@, id, instantiate)
@@ -79,7 +79,7 @@ define [
 			for timer in @timers
 				clearTimeout(timer)
 			
-		# Disconects a peer.
+		# Disconnects a peer.
 		#
 		# @param id [String] the id of the peer to disconnect
 		#
@@ -90,7 +90,7 @@ define [
 		#
 		# @param peer [Peer] the peer that disconnects
 		#
-		_onPeerDisconnect: ( peer ) ->			
+		_onPeerDisconnect: ( peer ) =>
 			@removePeer(peer)
 
 		# Adds a peer to the peer list
@@ -201,8 +201,8 @@ define [
 			message = new Message('*', @id, event, args)
 			@relay(message)
 		
-		# Relays a mesage to other nodes. If the intended receiver is not a direct 
-		# neighbour, we route the message through other nodes in an attempt to reach 
+		# Relays a message to other nodes. If the intended receiver is not a direct 
+		# neighbor, we route the message through other nodes in an attempt to reach 
 		# the destination.
 		#
 		# @param message [Message] the message to relay.

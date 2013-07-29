@@ -31,8 +31,6 @@ define [
 	#
 	class Node.Structured extends Node
 
-		@concern EventBindings
-
 		system: 
 			osName:  'osName'
 			browserName:  'browserName'
@@ -128,8 +126,8 @@ define [
 							return true
 					return false
 
-		# Relays a mesage to other nodes. If the intended receiver is not a direct 
-		# neighbour, we route the message through other nodes in an attempt to reach 
+		# Relays a message to other nodes. If the intended receiver is not a direct 
+		# neighbor, we route the message through other nodes in an attempt to reach 
 		# the destination.
 		#
 		# @param message [Message] the message to relay.
@@ -239,7 +237,7 @@ define [
 		getSiblings: ( ) ->
 			return @getPeers(Peer.Role.Sibling)
 
-		# Applies Vivaldi alghoritm. Calculates the coordinates of a node
+		# Applies Vivaldi algorithm. Calculates the coordinates of a node
 		#
 		_updateCoordinates: ( ) =>
 			for peer in @getPeers()	
@@ -417,8 +415,8 @@ define [
 			# Is called when a token hops. Sends a token information to the initiator
 		#
 		# @param peer [Peer] The last routing peer
-		# @param tokenString [String] A serialised token
-		# @param vectorString [String] Serialised coordinates of the holder of the token
+		# @param tokenString [String] A serialized token
+		# @param vectorString [String] Serialized coordinates of the holder of the token
 		#
 		_onTokenInfo: ( peer, tokenString, vectorString, instantiate = true ) =>
 			token = Token.deserialize(tokenString)
@@ -463,7 +461,7 @@ define [
 			tokenMagnitude = @coordinates.getDistance(@token.position)
 
 			if (tokenMagnitude > tokenThreshhold)
-				# Ask other supernodes for their best child in neighboorhood of the tokenPosition
+				# Ask other supernodes for their best child in neighborhood of the tokenPosition
 				@broadcast('token.requestCandidate', @token.serialize())
 				setTimeout( ( ) =>
 					@_pickNewTokenOwner()
@@ -478,7 +476,7 @@ define [
 		# best child as candidate for the token
 		#
 		# @param peer [Peer] The last routing peer
-		# @param tokenString [String] A serialised token
+		# @param tokenString [String] A serialized token
 		#
 		_onTokenRequestCandidate: ( peer, tokenString ) =>
 			if @isSuperNode
@@ -549,11 +547,11 @@ define [
 					if parentCandidate? and bestCandidateDistance < child.latency * superNodeSwitchThreshhold
 						child.emit('peer.parentCandidate', parentCandidate.id)
 
-		# Switches a parent when a superNode suggest a better Supernode			
+		# Switches a parent when a superNode suggest a better supernode			
 		#
 		# @param peer [Peer] The last routing peer
 		# @param parentCandidateId [String] Id of the suggested supernode
-		# 
+		#
 		_onPeerParentCandidate: (_peer, parentCandidateId) =>
 			peer = @getPeer(parentCandidateId)
 			if peer?
