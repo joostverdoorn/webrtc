@@ -6,7 +6,7 @@ define [
 
 		@concern EventBindings
 
-		constructor: ( context ) ->
+		constructor: ( context, @forceKeyboard = false ) ->
 			@views = {}
 			$('head').append('<link rel="stylesheet" type="text/css" href="../stylesheets/welcomeScreen.css">');
 
@@ -33,7 +33,11 @@ define [
 		showLoadingScreen: =>
 			@_showFromFile 'loading.html'
 
-		showWelcomeScreen: =>
+		showWelcomeScreen: ( ) =>
+			if @forceKeyboard
+				@trigger 'controllerType', 'keyboard'
+				return
+
 			@_showFromFile 'welcome.html', =>
 					@_clickHandler = =>
 						@showControllerSelection()
@@ -59,6 +63,10 @@ define [
 					@_clickHandlerMobile = null
 
 		showInfoScreen: ( controller ) =>
+			if @forceKeyboard
+				@hide
+				return
+
 			@_showFromFile "info_#{controller}.html"
 
 		showMobileConnectScreen: ( callback ) =>

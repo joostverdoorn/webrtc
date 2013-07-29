@@ -55,7 +55,7 @@ require [
 		# 
 		initialize: ( ) ->
 			@inputHandler = new Controller()
-			@welcomeScreen = new WelcomeScreen $('#overlay')
+			@welcomeScreen = new WelcomeScreen $('#overlay'), false
 			@welcomeScreen.on('controllerType', ( type ) =>
 					switch type
 						when 'keyboard'
@@ -66,17 +66,6 @@ require [
 						when 'mobile'
 							# Should be called when a user decides to connect his mobile phone
 							@createControllerNode()
-							@welcomeScreen.showLoadingScreen()
-							@controllerNode.server.on('connect', ( peer ) =>
-									@controllerNode.server.off('connect')
-									@welcomeScreen.showMobileConnectScreen(@setQRCode)
-									@controllerNode.on('peer.added', ( peer ) =>
-											@controllerNode.off('peer.added')
-											@inputHandler.selectInput('mobile')
-											@welcomeScreen.showInfoScreen(type)
-											@startGame()
-										)
-								)
 				)
 
 			@container = document.createElement 'div'
@@ -262,6 +251,17 @@ require [
 			@controllerNode._peers.on('controller.orientation', ( peer, orientation ) =>
 				console.log orientation
 			)
+			@welcomeScreen.showLoadingScreen()
+			@controllerNode.server.on('connect', ( peer ) =>
+					@controllerNode.server.off('connect')
+					@welcomeScreen.showMobileConnectScreen(@setQRCode)
+					@controllerNode.on('peer.added', ( peer ) =>
+							@controllerNode.off('peer.added')
+							@inputHandler.selectInput('mobile')
+							@welcomeScreen.showInfoScreen(type)
+							@startGame()
+						)
+				)
 
 		startGame: () =>
 			@inputHandler.on('Boost', ( value ) =>

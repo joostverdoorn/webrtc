@@ -2,7 +2,8 @@ define [
 		'public/scripts/helpers/mixable'
 		'public/scripts/helpers/mixin.eventbindings'
 		'public/scripts/models/keyboard'
-	], ( Mixable, EventBindings, Keyboard ) ->
+		'public/scripts/models/remotemobile'
+	], ( Mixable, EventBindings, Keyboard, RemoteMobile ) ->
 		class Controller extends Mixable
 			@concern EventBindings
 
@@ -19,6 +20,7 @@ define [
 
 			constructor: ( ) ->
 				@_inputType = null
+				@_initializedTypes = {}
 				@_keyboard = new Keyboard()
 
 				@_generateKeyboardFunctions()
@@ -28,7 +30,29 @@ define [
 					@["_get#{fn}Keyboard"] = @_getKeyboard button
 					@_triggerKeyboard button, fn
 
+				@_initializedTypes['keyboard'] = true
+
+			_generateRemoteMobileFunctions: ( ) =>
+				for button, fn of Controller.functions
+					@["_get#{fn}Keyboard"] = @_getKeyboard button
+					@_triggerKeyboard button, fn
+
+				@_initializedTypes['mobile'] = true
+
+			_generateRemoteMobile: () =>
+				@_remoteMobile = new RemoteMobile()
+				@_remoteMobile.on('initialized', =>
+						@trigger('initialized')
+					)
+				@_remoteMobile.on('connected', =>
+						@trigger('connected')
+						@_generateRemoteMobileFunctions()
+					)
+
 			selectInput: ( type ) =>
+				unless @_initializedTypes[type]
+					throw "Inputtype #{type} not initialized; impossible to select as input"
+
 				@_inputType = type
 				localType = type.charAt(0).toUpperCase() + type.slice(1)
 
