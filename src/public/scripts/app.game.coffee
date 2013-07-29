@@ -62,23 +62,19 @@ require [
 							@inputHandler.selectInput('keyboard')
 							@welcomeScreen.showInfoScreen(type)
 
-							@inputHandler.on('Boost', ( value ) =>
-									@inputHandler.off('Boost')
-									@welcomeScreen.hide()
-									@spawnPlayer(true, true)
-								)
+							@startGame()
 						when 'mobile'
-							@inputHandler.selectInput('mobile')
 							# Should be called when a user decides to connect his mobile phone
 							@createControllerNode()
-							@inputHandler.showLoadingScreen()
+							@welcomeScreen.showLoadingScreen()
 							@controllerNode.server.on('connect', ( peer ) =>
 									@controllerNode.server.off('connect')
-									#getQRCode @controllerNode.id
-									@inputHandler.showMobileConnectScreen(@controllerNode.id)
+									@welcomeScreen.showMobileConnectScreen(@setQRCode)
 									@controllerNode.on('peer.added', ( peer ) =>
 											@controllerNode.off('peer.added')
-											@inputHandler.showInfoScreen(type)
+											@inputHandler.selectInput('mobile')
+											@welcomeScreen.showInfoScreen(type)
+											@startGame()
 										)
 								)
 				)
@@ -264,8 +260,15 @@ require [
 		createControllerNode: () ->
 			@controllerNode = new ControllerNode()
 
-		setQRCode: () ->
-			link = "http://" + window.location.origin + "/controller/" + @controllerNode.id
+		startGame: () =>
+			@inputHandler.on('Boost', ( value ) =>
+					@inputHandler.off('Boost')
+					@welcomeScreen.hide()
+					@spawnPlayer(true, true)
+				)
+
+		setQRCode: () =>
+			link = window.location.origin + "/controller/" + @controllerNode.id
 			$('#controllerQRCode').qrcode(link);
 
 

@@ -61,5 +61,9 @@ define [
 		showInfoScreen: ( controller ) =>
 			@_showFromFile "info_#{controller}.html"
 
+		showMobileConnectScreen: ( callback ) =>
+			@_showFromFile "mobile_qr.html",
+				callback
+
 		hide: =>
 			@container.hide()
