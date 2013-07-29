@@ -38,9 +38,17 @@ define [
 				}
 				'GunRotateCounterClockwise': {
 					keyboard: 'A'
+					mobile: {
+						event: 'NONE'
+						sign: 0
+					}
 				}
 				'GunRotateClockwise': {
 					keyboard: 'D'
+					mobile: {
+						event: 'NONE'
+						sign: 0
+					}
 				}
 				'Boost': {
 					keyboard: 'SPACE'
@@ -116,11 +124,17 @@ define [
 
 			_getMobile: ( data ) =>
 				=>
-					result = @_remoteMobile["_#{data.event}"] * data.sign / 90
-					if result > 1
-						result = 1
-					else if result < 0
-						result = 0
+					if data.sign
+						result = @_remoteMobile["_#{data.event}"] * data.sign / 90
+						if result > 1
+							result = 1
+						else if result < 0
+							result = 0
+					else
+						if @_remoteMobile["_#{data.event}"]
+							result = 1
+						else
+							result = 0
 
 					return result
 
@@ -133,12 +147,18 @@ define [
 			_triggerMobile: ( data, fn ) =>
 				@_remoteMobile.on(data.event, ( value ) =>
 						if @_inputType is 'mobile'
-							result = value * data.sign / 90
-							if result > 1
-								result = 1
-							else if result < 0
-								result = 0
-								return
+							if data.sign
+								result = value * data.sign / 90
+								if result > 1
+									result = 1
+								else if result < 0
+									result = 0
+									return
+							else
+								if value
+									value = 1
+								else
+									value = 0
 
 							@trigger(fn, value)
 					)

@@ -90,12 +90,6 @@ require [
 					roll: @_roll
 					pitch: @_pitch
 
-
-				
-
-				
-				
-
 				@node.getPeers()[0].emit('controller.orientation', orientation)
 			)
 
@@ -110,5 +104,4 @@ require [
 				@node.getPeers()[0].emit('controller.fire', fire)
 
 
-			
 	window.App = new App.Controller

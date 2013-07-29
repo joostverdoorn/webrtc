@@ -26,6 +26,7 @@ define [
 					)
 
 				@_node._peers.on('controller.orientation', ( peer, orientation ) =>
+
 					if orientation.roll > 180
 						orientation.roll -= 360
 					if orientation.roll < -180
@@ -50,11 +51,11 @@ define [
 
 				@_node._peers.on('controller.boost', ( peer, value ) =>
 					@trigger('boost', value)
-					@_boost = boost
+					@_boost = value
 				)
 
 				@_node._peers.on('controller.fire', ( peer, value ) =>
 					@trigger('fire', value)
-					@_fire = fire
+					@_fire = value
 				)
 			
