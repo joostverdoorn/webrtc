@@ -41,7 +41,8 @@ define [
 
 			@_app.get('/nodes', ( req, res ) =>
 				nodes = @getNodes()
-				
+				nodes  = _(nodes).filter( ( node ) => node.isStructured ) # Get only structured nodes
+
 				res.writeHead(200, 'Content-Type': 'application/json')
 				i = 0
 				result = {}
@@ -108,13 +109,13 @@ define [
 		#
 		login: ( socket ) =>
 			node = new Node(@, socket)
-			node.on("isStructured", (isStructured) =>
-				if isStructured
-					@addNode(node)
-					node.on('disconnect', ( ) =>
-						@removeNode(node)
-					)
+			#node.on("isStructured", (isStructured) =>
+			#if isStructured
+			@addNode(node)
+			node.on('disconnect', ( ) =>
+				@removeNode(node)
 			)
+			#)
 			
 
 		# Sends a message to a certain node.

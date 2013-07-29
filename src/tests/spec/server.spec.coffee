@@ -110,6 +110,7 @@ require [
 									id: '1'
 									type: 'supernode'
 									isSuperNode: true
+									isStructured: true
 									benchmark: 1
 									latency: 1
 									system: 'test1'
@@ -125,6 +126,7 @@ require [
 									id: '2'
 									type: 'node'
 									isSuperNode: false
+									isStructured: true
 									benchmark: 2
 									latency: 2
 									system: 'test2'
@@ -142,7 +144,7 @@ require [
 									])
 								callback(null, fakeRes)
 								expect(fakeRes.write.mostRecentCall.args).toEqual([
-										'{"1":{"peers":["2"],"isSuperNode":true,"benchmark":1,"system":"test1","latency":1},"2":{"peers":["1"],"isSuperNode":false,"benchmark":2,"system":"test2","latency":2}}'
+										'{"1":{"peers":["2"],"isSuperNode":true,"benchmark":1,"system":"test1","latency":1,"isStructured":true},"2":{"peers":["1"],"isSuperNode":false,"benchmark":2,"system":"test2","latency":2,"isStructured":true}}'
 									])
 
 						describe 'when /log is requested', ->
@@ -192,27 +194,22 @@ require [
 								testObject
 							])
 
-					it 'should listen for the isStructured event on the Remote.Client', ->
+					it 'should add the new Remote.Client to itself', ->
 						testObject = {
 							a: 1
 							b: 2
 						}
+						spyOn(server, 'addNode')
 						fakeClient = new Client(server, testObject)
-						spyOn(fakeClient, 'on')
 						Client.andReturn(fakeClient)
 
 						server.login(testObject)
 
-						callArgs = fakeClient.on.mostRecentCall.args
-						expect(callArgs[0]).toEqual('isStructured')
-
-						spyOn(server, 'addNode')
-						callArgs[1](true)
 						expect(server.addNode.mostRecentCall.args).toEqual([
 								fakeClient
 							])
 
-					it 'should to disconnect event on the Remote.Client', ->
+					it 'should listen for the disconnect event on the Remote.Client', ->
 						testObject = {
 							a: 1
 							b: 2
@@ -222,15 +219,13 @@ require [
 						Client.andReturn(fakeClient)
 
 						server.login(testObject)
-
-						callArgs = fakeClient.on.mostRecentCall.args
-						callArgs[1](true) # isStructured trigger
 
 						callArgs = fakeClient.on.mostRecentCall.args
 						expect(callArgs[0]).toEqual('disconnect')
 
 						spyOn(server, 'removeNode')
-						callArgs[1](true) # disconnect trigger
+						callArgs[1]()
+
 						expect(server.removeNode.mostRecentCall.args).toEqual([
 								fakeClient
 							])

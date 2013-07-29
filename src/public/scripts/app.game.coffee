@@ -21,6 +21,7 @@ requirejs.config
 		'jquery': 'vendor/scripts/jquery'
 		'bootstrap': 'vendor/scripts/bootstrap'
 		'three': 'vendor/scripts/three'
+		'qrcode': 'vendor/scripts/qrcode.min'
 		'stats': 'vendor/scripts/stats.min'
 		
 require [
@@ -34,8 +35,9 @@ require [
 
 	'jquery'
 	'three'
+	'qrcode'
 	'stats'
-	], ( App, ControllerNode, Node, World, Player, Keyboard, $, Three ) ->
+	], ( App, ControllerNode, Node, World, Player, Keyboard, $, Three, QRCode ) ->
 
 	# This game class implements the node structure created in the library.
 	# It uses three.js for the graphics.
@@ -219,6 +221,10 @@ require [
 
 		createControllerNode: () ->
 			@controllerNode = new ControllerNode()
+
+		getQRCode: () ->
+			new QRCode($("document"), "http://jindo.dev.naver.com/collie")
+
 
 				
 	window.App = new App.Game
