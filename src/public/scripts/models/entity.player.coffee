@@ -65,7 +65,10 @@ define [
 			if @boost
 				thrustVector.multiplyScalar(16 * @mass * dt)
 			else
-				thrustVector.multiplyScalar(5 * @mass * dt)			
+				thrustVector.multiplyScalar(5 * @mass * dt)
+
+			if @position.length() > 1000
+				thrustVector.divideScalar(@position.length() - 1000)
 
 			@addForce(thrustVector)
 			
