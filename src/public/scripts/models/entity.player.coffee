@@ -63,9 +63,9 @@ define [
 			thrustVector = new Three.Vector3(0, 1, 0).applyQuaternion(rotationQuaternion)
 
 			if @boost
-				thrustVector.multiplyScalar(16 * @mass * dt)
+				thrustVector.multiplyScalar(19 * @mass * dt)
 			else
-				thrustVector.multiplyScalar(5 * @mass * dt)
+				thrustVector.multiplyScalar(3 * @mass * dt)
 
 			if @position.length() > 1000
 				thrustVector.divideScalar(@position.length() - 1000)
@@ -81,8 +81,8 @@ define [
 			@addAngularForce(force)
 
 			# Attract player y rotation to cannon y rotation
-			@addAngularForce(new Three.Euler(0, @cannon.rotation.y / 2, 0, 'YXZ'))
-			@cannon.addAngularForce(new Three.Euler(0, -@cannon.rotation.y / 2, 0, 'YXZ'))
+			@addAngularForce(new Three.Euler(0, @cannon.rotation.y * 20 * dt, 0, 'YXZ'))
+			@cannon.addAngularForce(new Three.Euler(0, -@cannon.rotation.y * 20 * dt, 0, 'YXZ'))
 
 			# Update physics.
 			super(dt)
@@ -120,6 +120,7 @@ define [
 				return
 
 			super(transformations)
+			@boost = transformations.boost
 			@cannon.applyTransformations(transformations.cannon)
 			
 		# Returns the current transformation information in an object.
@@ -129,5 +130,6 @@ define [
 		getTransformations: ( ) ->
 			transformations = super()
 			transformations.cannon = @cannon?.getTransformations()
+			transformations.boost = @boost
 
 			return transformations
