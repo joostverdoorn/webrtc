@@ -11,6 +11,9 @@ define [
 				@_orientationYaw = 0
 				@_orientationRoll = 0
 
+				@_cannonX = 0
+				@_cannonY = 0
+
 				@_fire = false
 				@_boost = false
 
@@ -57,5 +60,12 @@ define [
 				@_node._peers.on('controller.fire', ( peer, value ) =>
 					@trigger('fire', value)
 					@_fire = value
+				)
+
+				@_node._peers.on('controller.cannon', ( peer, value ) =>
+					@trigger('cannonX', value.x)
+					@_cannonX = value.x
+					@trigger('cannonY', value.y)
+					@_cannonY = value.y
 				)
 			

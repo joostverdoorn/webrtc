@@ -59,8 +59,8 @@ define [
 						sign: -1
 					}
 					mobile: {
-						event: 'NONE'
-						sign: 0
+						event: 'cannonX'
+						sign: -1
 					}
 				}
 				'GunRotateClockwise': {
@@ -70,8 +70,8 @@ define [
 						sign: +1
 					}
 					mobile: {
-						event: 'NONE'
-						sign: 0
+						event: 'cannonX'
+						sign: +1
 					}
 				}
 				'GunRotateUpward': {
@@ -81,8 +81,8 @@ define [
 						sign: -1
 					}
 					mobile: {
-						event: 'NONE'
-						sign: 0
+						event: 'cannonY'
+						sign: -1
 					}
 				}
 				'GunRotateDownward': {
@@ -92,8 +92,8 @@ define [
 						sign: +1
 					}
 					mobile: {
-						event: 'NONE'
-						sign: 0
+						event: 'cannonY'
+						sign: +1
 					}
 				}
 				'Boost': {
@@ -209,6 +209,9 @@ define [
 							result = 1
 						else
 							result = 0
+
+					if data.sign? and result > 0
+						@_remoteMobile["_#{data.event}"] = 0
 
 					return result
 
