@@ -220,7 +220,7 @@ require [
 				targetPosition = @player.position.clone().add(cameraDirection.multiplyScalar(80))
 
 				# Ease the camera to the target position
-				@camera.position.lerp(targetPosition, .03)
+				@camera.position.lerp(targetPosition, 1.5 * dt)
 
 				# Set the upvector perpendicular to the planet surface and point the camera
 				# towards the player
