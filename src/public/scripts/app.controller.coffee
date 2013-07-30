@@ -39,6 +39,7 @@ require [
 			@boost = null
 			@fire = null
 			@poke = {}
+			@pokeCanvas = null
 
 			@drawControllers()
 
@@ -63,29 +64,29 @@ require [
 				@boost.bind("touchend", () => @sendBoostEvent(false))
 				@boost.bind("touchcancel", () => @sendBoostEvent(false))
 
-				@fire.bind("touchstart", () => @sendFireEvent(true))
+				@fire.bind("touchenter", () => @sendFireEvent(true))
 				@fire.bind("touchend", () => @sendFireEvent(false))
 				@fire.bind("touchcancel", () => @sendFireEvent(false))
 				
 			)
 
-			$(window).on('orientationchange', () => 
+			$(window).on('orientationchange resize', () =>
 				@drawControllers()
 			)
 			
 		drawControllers: () =>
 			
-			canvas = oCanvas.create({
+			@canvas = oCanvas.create({
 				canvas: "#canvas"
 				disableScrolling : true
 			})
 
-			width = canvas.width  = $(window).width()
-			height = canvas.height = $(window).height()
+			width = @canvas.width  = $(window).width()
+			height = @canvas.height = $(window).height()
 
 			if width > height
 
-				@boost = canvas.display.rectangle({
+				@boost = @canvas.display.rectangle({
 					x: width / 4,
 					y: height / 2,
 					origin: { x: "center", y: "center" },
@@ -93,7 +94,7 @@ require [
 					height: height,
 					fill: "#0aa"
 				})
-				@fire = canvas.display.rectangle({
+				@fire = @canvas.display.rectangle({
 					x: width * 3 / 4,
 					y: height / 2,
 					origin: { x: "center", y: "center" },
@@ -104,7 +105,7 @@ require [
 
 			else
 
-				@boost = canvas.display.rectangle({
+				@boost = @canvas.display.rectangle({
 					x: width / 2,
 					y: height / 4,
 					origin: { x: "center", y: "center" },
@@ -112,7 +113,7 @@ require [
 					height: height / 2,
 					fill: "#0aa"
 				})
-				@fire = canvas.display.rectangle({
+				@fire = @canvas.display.rectangle({
 					x: width / 2,
 					y: height * 3 / 4,
 					origin: { x: "center", y: "center" },
@@ -121,7 +122,7 @@ require [
 					fill: "#f21"
 				})
 
-			boostText = canvas.display.text({
+			boostText = @canvas.display.text({
 				x: 0,
 				y: 0,
 				origin: { x: "center", y: "top" },
@@ -130,38 +131,47 @@ require [
 				fill: "#000"
 			})
 
-			fireText = canvas.display.text({
+			@pokeCanvas = fireText = @canvas.display.ellipse({
 				x: 0,
 				y: 0,
-				origin: { x: "center", y: "top" },
+				origin: { x: "center", y: "center" },
 				font: "bold 25px/1.5 sans-serif",
-				text: "Fire",
+				radius: 48,
 				fill: "#000"
 			})
 
-			canvas.addChild(@boost)
+			@canvas.addChild(@boost)
 			@boost.addChild(boostText)
 
-			canvas.addChild(@fire)
+			@canvas.addChild(@fire)
 			@fire.addChild(fireText)
 
-			fireText.bind("touchenter", @initiatePoke, false )
-			fireText.bind("touchmove", @handlePoke, false )
-			fireText.bind("touchleave", @stopPoke, false )
+			@fire.bind("touchenter", @initiatePoke, false )
+			@fire.bind("touchmove", @handlePoke, false )
+			@fire.bind("touchend", @stopPoke, false )
+			@fire.bind("touchcancel", @stopPoke, false )
 
 		initiatePoke: (event) =>
+			console.log "start: ", event.x, event.y
 			@poke.x = event.x
 			@poke.y = event.y
 
 		handlePoke: (event) =>
+			sendPoke = {}
+			sendPoke.x = event.x - @poke.x
+			sendPoke.y = event.y - @poke.y
+			console.log sendPoke
+			@node.getPeers()[0].emit('controller.cannon', sendPoke)
+
 			poke = {}
-			poke.x = event.x - @poke.x
-			poke.y = event.y - @poke.y
-			console.log poke
-			@node.getPeers()[0].emit('controller.canon', poke)
+			poke.x = @fire.x - event.x
+			poke.y = @fire.y - event.y
+			@pokeCanvas.moveTo(-poke.x, -poke.y)
+			@canvas.redraw()
 
 		stopPoke: (event) =>
-			# asf
+			@pokeCanvas.moveTo(0, 0)
+			@canvas.redraw()
 			
 		# Get values stored in the url of the controller
 		#
