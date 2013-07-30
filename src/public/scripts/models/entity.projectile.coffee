@@ -40,7 +40,7 @@ define [
 			if cannon? and player?
 				# Get the starting position of the projectile.
 				@position = cannon.position.clone()
-				cannon.mesh.localToWorld(@position)
+				player.mesh.localToWorld(@position)
 
 				# Generate the projectile force.
 				@force = new Three.Vector3(@_projectileVelocity * @mass, 0, 0)
