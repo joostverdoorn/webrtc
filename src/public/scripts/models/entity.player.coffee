@@ -85,7 +85,7 @@ define [
 			@cannon.addAngularForce(new Three.Euler(0, -@cannon.rotation.y / 2, 0, 'YXZ'))
 
 			# Update physics.
-			super(dt)	
+			super(dt)
 
 			# Update our cannon.
 			@cannon.update(dt)
@@ -102,10 +102,11 @@ define [
 			upVector = @position.clone().normalize()
 			rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
 
-			localXVector = new Three.Vector3(1, 0, 0).applyQuaternion(rotationQuaternion)
-			localZVector = new Three.Vector3().crossVectors(upVector, localXVector)
+			localZVector = new Three.Vector3(0, 0, -1).applyQuaternion(rotationQuaternion)
+			localUpVector = localZVector.clone().projectOnVector(upVector)
+			worldZVector = localZVector.clone().sub(localUpVector)
 
-			rotationMatrix = new Three.Matrix4().lookAt(@position, localZVector.add(@position), upVector)
+			rotationMatrix = new Three.Matrix4().lookAt(@position, worldZVector.add(@position), upVector)
 
 			levelRotation = new Three.Euler().setFromRotationMatrix(rotationMatrix, 'YXZ')
 			return levelRotation
