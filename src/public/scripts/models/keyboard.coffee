@@ -44,7 +44,7 @@ define [
 			@_reverseKeys = {}
 			@_reverseKeys[value] = key for key, value of @Keys
 
-			constructor: ( context, keyDown, keyUp ) ->
+			constructor: ( ) ->
 				@Keys = {}
 				@Keys[VK] = false for VK of Keyboard.Keys
 

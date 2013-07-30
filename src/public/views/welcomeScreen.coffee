@@ -51,7 +51,7 @@ define [
 					_clickHandler = ( controller ) =>
 						=>
 							@trigger 'controllerType', controller
-					@_clickHandlerKeyboard = _clickHandler 'keyboard'
+					@_clickHandlerKeyboard = _clickHandler 'mouse'
 					@_clickHandlerMobile = _clickHandler 'mobile'
 
 					$('#keyboard').click @_clickHandlerKeyboard

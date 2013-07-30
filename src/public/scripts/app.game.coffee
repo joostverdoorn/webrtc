@@ -58,9 +58,9 @@ require [
 			@welcomeScreen = new WelcomeScreen $('#overlay'), false
 			@welcomeScreen.on('controllerType', ( type ) =>
 					switch type
-						when 'keyboard'
-							@inputHandler.selectInput('keyboard')
-							@welcomeScreen.showInfoScreen(type)
+						when 'mouse'
+							@inputHandler.selectInput(type)
+							@welcomeScreen.showInfoScreen('keyboard')
 
 							@startGame()
 						when 'mobile'
