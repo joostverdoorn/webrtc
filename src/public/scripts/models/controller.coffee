@@ -208,19 +208,29 @@ define [
 
 					return result
 
+			_evaluateScaled: ( data, value ) =>
+				if data.sign
+					result = value * data.sign / data.scale
+					if result > 1
+						result = 1
+					else if result < 0
+						result = 0
+				else
+					if value
+						result = 1
+					else
+						result = 0
+
+				return result
+
+			_triggerScaled: ( data, fn, value ) =>
+				value = @_evaluateScaled(data, value)
+
+				@trigger(fn, value)
+
 			_getMobile: ( data ) =>
 				=>
-					if data.sign
-						result = @_remoteMobile["_#{data.event}"] * data.sign / data.scale
-						if result > 1
-							result = 1
-						else if result < 0
-							result = 0
-					else
-						if @_remoteMobile["_#{data.event}"]
-							result = 1
-						else
-							result = 0
+					result = @_evaluateScaled(data, @_remoteMobile["_#{data.event}"])
 
 					if data.sign? and result > 0
 						@_remoteMobile["_#{data.event}"] = 0
@@ -229,17 +239,7 @@ define [
 
 			_getMouse: ( data ) =>
 				=>
-					if data.sign
-						result = @_mouse["_#{data.event}"] * data.sign / data.scale
-						if result > 1
-							result = 1
-						else if result < 0
-							result = 0
-					else
-						if @_mouse["_#{data.event}"]
-							result = 1
-						else
-							result = 0
+					result = @_evaluateScaled(data, @_mouse["_#{data.event}"])
 
 					if data.sign? and result > 0
 						@_mouse["_#{data.event}"] = 0
@@ -248,45 +248,19 @@ define [
 
 			_triggerKeyboard: ( button, fn ) =>
 				@_keyboard.on(button, ( value ) =>
-						#if @_inputType is 'keyboard'
+						if @["get#{fn}"] is @["_get#{fn}Keyboard"]
 							@trigger(fn, value)
 					)
 
 			_triggerMobile: ( data, fn ) =>
 				@_remoteMobile.on(data.event, ( value ) =>
-						if @_inputType is 'mobile'
-							if data.sign
-								result = value * data.sign / data.scale
-								if result > 1
-									result = 1
-								else if result < 0
-									result = 0
-									return
-							else
-								if value
-									value = 1
-								else
-									value = 0
-
-							@trigger(fn, value)
+						if @["get#{fn}"] is @["_get#{fn}Mobile"]
+							@_triggerScaled(data, fn, value)
 					)
 
 
 			_triggerMouse: ( data, fn ) =>
 				@_mouse.on(data.event, ( value ) =>
-						if @_inputType is 'mouse'
-							if data.sign
-								result = value * data.sign / data.scale
-								if result > 1
-									result = 1
-								else if result < 0
-									result = 0
-									return
-							else
-								if value
-									value = 1
-								else
-									value = 0
-
-							@trigger(fn, value)
+						if @["get#{fn}"] is @["_get#{fn}Mouse"]
+							@_triggerScaled(data, fn, value)
 					)
