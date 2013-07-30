@@ -9,7 +9,7 @@ define [
 			@concern EventBindings
 
 			_mobileAngleMax: 40
-			_mouseThreshold: 2
+			_mouseThreshold: 10
 
 			@functions = {
 				'FlyForward': {
