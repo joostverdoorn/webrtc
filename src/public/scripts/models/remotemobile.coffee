@@ -58,6 +58,7 @@ define [
 				)
 
 				@_node._peers.on('controller.fire', ( peer, value ) =>
+					console.log value
 					@trigger('fire', value)
 					@_fire = value
 				)

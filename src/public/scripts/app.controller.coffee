@@ -35,17 +35,7 @@ require [
 		initialize: ( ) ->
 			@node = new Node()
 
-			# Set canvas controls
-			@boost = null
-			@fire = null
-			@poke = {}
-			@pokeCanvas = null
 
-			@drawControllers()
-
-
-			@_lastBoost = false
-			@_lastFire = false
 
 			nodeId =  @getURLParameter("nodeId")
 			@node.server.on('connect', ( ) =>
@@ -56,6 +46,18 @@ require [
 				@node.server.disconnect()
 				@node.server = null
 
+				# Set canvas controls
+				@boost = null
+				@fire = null
+				@poke = {}
+				@pokeCanvas = null
+
+				@drawControllers()
+
+
+				@_lastBoost = false
+				@_lastFire = false
+
 				# Send the device orientation 10 times a second
 				if window.DeviceOrientationEvent
 					setTimeout( @sendDeviceOrientation, 100)
@@ -64,9 +66,10 @@ require [
 				@boost.bind("touchend", () => @sendBoostEvent(false))
 				@boost.bind("touchcancel", () => @sendBoostEvent(false))
 
-				@fire.bind("touchenter", () => @sendFireEvent(true))
-				@fire.bind("touchend", () => @sendFireEvent(false))
-				@fire.bind("touchcancel", () => @sendFireEvent(false))
+				@shoot.bind("touchstart", () => @sendShootEvent(true))
+				@shoot.bind("touchend", () => @sendShootEvent(false))
+				@shoot.bind("touchcancel", () => @sendShootEvent(false))
+
 				
 			)
 
@@ -88,11 +91,19 @@ require [
 
 				@boost = @canvas.display.rectangle({
 					x: width / 4,
-					y: height / 2,
+					y: height / 4,
 					origin: { x: "center", y: "center" },
-					width: width /2,
-					height: height,
+					width: width / 2,
+					height: height / 2,
 					fill: "#0aa"
+				})
+				@shoot = @canvas.display.rectangle({
+					x: width / 4,
+					y: height * 3 / 4,
+					origin: { x: "center", y: "center" },
+					width: width / 2,
+					height: height / 2,
+					fill: "#0ef"
 				})
 				@fire = @canvas.display.rectangle({
 					x: width * 3 / 4,
@@ -106,12 +117,20 @@ require [
 			else
 
 				@boost = @canvas.display.rectangle({
-					x: width / 2,
+					x: width / 4,
 					y: height / 4,
 					origin: { x: "center", y: "center" },
-					width: width,
+					width: width / 2,
 					height: height / 2,
 					fill: "#0aa"
+				})
+				@shoot = @canvas.display.rectangle({
+					x: width * 3 / 4,
+					y: height / 4,
+					origin: { x: "center", y: "center" },
+					width: width / 2,
+					height: height / 2,
+					fill: "#0ef"
 				})
 				@fire = @canvas.display.rectangle({
 					x: width / 2,
@@ -146,15 +165,19 @@ require [
 			@canvas.addChild(@fire)
 			@fire.addChild(fireText)
 
+			@canvas.addChild(@shoot)
+
+			#@fire.bind("tap click",  , false )
 			@fire.bind("touchenter", @initiatePoke, false )
 			@fire.bind("touchmove", @handlePoke, false )
 			@fire.bind("touchend", @stopPoke, false )
-			@fire.bind("touchcancel", @stopPoke, false )
+			#@fire.bind("touchcancel", @stopPoke, false )
 
 		initiatePoke: (event) =>
 			console.log "start: ", event.x, event.y
 			@poke.x = event.x
 			@poke.y = event.y
+			#@sendFireEvent()
 
 		handlePoke: (event) =>
 			sendPoke = {}
@@ -172,6 +195,7 @@ require [
 		stopPoke: (event) =>
 			@pokeCanvas.moveTo(0, 0)
 			@canvas.redraw()
+			#@sendFireEvent( false )
 			
 		# Get values stored in the url of the controller
 		#
@@ -194,7 +218,7 @@ require [
 				@_pitch = Math.round(eventData.beta)
 
 				orientation =
-					roll: @_roll
+					roll: @_roll + 45 # Tilting
 					pitch: @_pitch
 
 				@node.getPeers()[0].emit('controller.orientation', orientation)
@@ -213,8 +237,9 @@ require [
 		#
 		# @param fire [Boolean] The incoming touchevent
 		# 
-		sendFireEvent: ( fire ) ->
+		sendShootEvent: ( fire = true ) ->
 			if fire isnt @_lastFire
+				console.log "fire ", fire
 				@_lastFire = fire
 				@node.getPeers()[0].emit('controller.fire', fire)
 
