@@ -210,21 +210,17 @@ require [
 			@world.update(dt)
 
 			# Set the camera to follow the player
-			if @player?
-				# Get the player's rotation quaternion
-				rotationQuaternion = new Three.Quaternion().setFromEuler(@player.rotation)
-
-				# Get the two vectors that span the plane perpendicular to the vector 
-				# that points backward from the player
-				playerUpVector = @player.position.clone().normalize()
-				playerZVector = new Three.Vector3(0, 0, 1).applyQuaternion(rotationQuaternion)
+			if @player? and @player.cannon?
+				# Get the direction of the camera, and apply cannon and player rotations to it.
+				cameraDirection = new Three.Vector3(-1, 0, 0)
+				cameraDirection.applyQuaternion(new Three.Quaternion().setFromEuler(@player.cannon.rotation))
+				cameraDirection.applyQuaternion(new Three.Quaternion().setFromEuler(@player.rotation))
 
 				# Get the target position of the camera
-				targetPosition = new Three.Vector3().crossVectors(playerUpVector, playerZVector).negate().multiplyScalar(40)
-				targetPosition.add(@player.position.clone()).add(@player.position.clone().normalize().multiplyScalar(40))
+				targetPosition = @player.position.clone().add(cameraDirection.multiplyScalar(80))
 
 				# Ease the camera to the target position
-				@camera.position.lerp(targetPosition, .05)
+				@camera.position.lerp(targetPosition, .03)
 
 				# Set the upvector perpendicular to the planet surface and point the camera
 				# towards the player
