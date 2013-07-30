@@ -78,6 +78,9 @@ define [
 			else if @rotation.y < -Math.PI / 2
 				@rotation.y = -Math.PI / 2
 
+			if @rotation.x isnt 0
+				@rotation.x = 0
+
 		# Fires a projectile. Can be fired each second
 		#
 		fire: ( ) ->
