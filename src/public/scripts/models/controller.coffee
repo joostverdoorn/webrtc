@@ -75,14 +75,22 @@ define [
 					}
 				}
 				'GunRotateUpward': {
-					keyboard: 'W'
+					keyboard: 'NONE'
+					mouse: {
+						event: 'y'
+						sign: -1
+					}
 					mobile: {
 						event: 'NONE'
 						sign: 0
 					}
 				}
 				'GunRotateDownward': {
-					keyboard: 'S'
+					keyboard: 'NONE'
+					mouse: {
+						event: 'y'
+						sign: +1
+					}
 					mobile: {
 						event: 'NONE'
 						sign: 0
