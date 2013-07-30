@@ -8,7 +8,7 @@ define [
 		class Controller extends Mixable
 			@concern EventBindings
 
-			_mobileThreshold: 40
+			_mobileAngleMax: 40
 			_mouseThreshold: 2
 
 			@functions = {
@@ -20,6 +20,7 @@ define [
 					mobile: {
 						event: 'orientationRoll'
 						sign: +1
+						scale: Controller.prototype._mobileAngleMax
 					}
 				}
 				'FlyLeft': {
@@ -30,6 +31,7 @@ define [
 					mobile: {
 						event: 'orientationPitch'
 						sign: -1
+						scale: Controller.prototype._mobileAngleMax
 					}
 				}
 				'FlyBackward': {
@@ -40,6 +42,7 @@ define [
 					mobile: {
 						event: 'orientationRoll'
 						sign: -1
+						scale: Controller.prototype._mobileAngleMax
 					}
 				}
 				'FlyRight': {
@@ -50,6 +53,7 @@ define [
 					mobile: {
 						event: 'orientationPitch'
 						sign: +1
+						scale: Controller.prototype._mobileAngleMax
 					}
 				}
 				'GunRotateCounterClockwise': {
@@ -57,10 +61,12 @@ define [
 					mouse: {
 						event: 'x'
 						sign: -1
+						scale: Controller.prototype._mouseThreshold
 					}
 					mobile: {
 						event: 'cannonX'
 						sign: -1
+						scale: Controller.prototype._mouseThreshold
 					}
 				}
 				'GunRotateClockwise': {
@@ -68,10 +74,12 @@ define [
 					mouse: {
 						event: 'x'
 						sign: +1
+						scale: Controller.prototype._mouseThreshold
 					}
 					mobile: {
 						event: 'cannonX'
 						sign: +1
+						scale: Controller.prototype._mouseThreshold
 					}
 				}
 				'GunRotateUpward': {
@@ -79,10 +87,12 @@ define [
 					mouse: {
 						event: 'y'
 						sign: -1
+						scale: Controller.prototype._mouseThreshold
 					}
 					mobile: {
 						event: 'cannonY'
 						sign: -1
+						scale: Controller.prototype._mouseThreshold
 					}
 				}
 				'GunRotateDownward': {
@@ -90,10 +100,12 @@ define [
 					mouse: {
 						event: 'y'
 						sign: +1
+						scale: Controller.prototype._mouseThreshold
 					}
 					mobile: {
 						event: 'cannonY'
 						sign: +1
+						scale: Controller.prototype._mouseThreshold
 					}
 				}
 				'Boost': {
@@ -122,7 +134,7 @@ define [
 				@_keyboard = new Keyboard()
 
 				@_mouse = new Mouse(document.getElementById('container'))
-
+				console.log Controller.functions
 				@_generateKeyboardFunctions()
 				@_generateMouseFunctions()
 
@@ -199,7 +211,7 @@ define [
 			_getMobile: ( data ) =>
 				=>
 					if data.sign
-						result = @_remoteMobile["_#{data.event}"] * data.sign / @_mobileThreshold
+						result = @_remoteMobile["_#{data.event}"] * data.sign / data.scale
 						if result > 1
 							result = 1
 						else if result < 0
@@ -218,7 +230,7 @@ define [
 			_getMouse: ( data ) =>
 				=>
 					if data.sign
-						result = @_mouse["_#{data.event}"] * data.sign / @_mouseThreshold
+						result = @_mouse["_#{data.event}"] * data.sign / data.scale
 						if result > 1
 							result = 1
 						else if result < 0
@@ -244,7 +256,7 @@ define [
 				@_remoteMobile.on(data.event, ( value ) =>
 						if @_inputType is 'mobile'
 							if data.sign
-								result = value * data.sign / @_mobileThreshold
+								result = value * data.sign / data.scale
 								if result > 1
 									result = 1
 								else if result < 0
@@ -264,7 +276,7 @@ define [
 				@_mouse.on(data.event, ( value ) =>
 						if @_inputType is 'mouse'
 							if data.sign
-								result = value * data.sign / @_mouseThreshold
+								result = value * data.sign / data.scale
 								if result > 1
 									result = 1
 								else if result < 0
