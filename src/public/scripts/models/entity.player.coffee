@@ -19,7 +19,7 @@ define [
 		initialize: ( @id, transformations = null ) ->
 			@boost = false
 			
-			@mass = 100
+			@mass = 300
 			@drag = .01
 			@angularDrag = 7
 			@applyGravity = true

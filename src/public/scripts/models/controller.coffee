@@ -74,6 +74,20 @@ define [
 						sign: 0
 					}
 				}
+				'GunRotateUpward': {
+					keyboard: 'W'
+					mobile: {
+						event: 'NONE'
+						sign: 0
+					}
+				}
+				'GunRotateDownward': {
+					keyboard: 'S'
+					mobile: {
+						event: 'NONE'
+						sign: 0
+					}
+				}
 				'Boost': {
 					keyboard: 'SPACE'
 					mouse: {

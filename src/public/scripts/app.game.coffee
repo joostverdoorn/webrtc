@@ -86,6 +86,7 @@ require [
 			@camera.position.y = 0
 			@camera.rotation.y = -1 * Math.PI / 2
 			@scene.add(@camera)
+			@scene.fog = new Three.FogExp2( 0xaabbff, 0.0012 );
 
 			@lastUpdateTime = 0
 
@@ -189,8 +190,10 @@ require [
 				# If any keys are pressed, apply angular forces to the player
 				@player?.boost = @inputHandler.getBoost()
 
-				@player?.cannon.addAngularForce(new Three.Euler(0, .6 * @inputHandler.getGunRotateCounterClockwise(), 0, 'YXZ'))
-				@player?.cannon.addAngularForce(new Three.Euler(0, -.6 * @inputHandler.getGunRotateClockwise(), 0, 'YXZ'))
+				@player?.cannon.addAngularForce(new Three.Euler(0, .4 * @inputHandler.getGunRotateCounterClockwise(), 0, 'YXZ'))
+				@player?.cannon.addAngularForce(new Three.Euler(0, -.4 * @inputHandler.getGunRotateClockwise(), 0, 'YXZ'))
+				@player?.cannon.addAngularForce(new Three.Euler(0, 0, .4 * @inputHandler.getGunRotateUpward(), 'YXZ'))
+				@player?.cannon.addAngularForce(new Three.Euler(0, 0, -.4 * @inputHandler.getGunRotateDownward(), 'YXZ'))
 
 				if @inputHandler.getFire()
 					projectile = @player?.cannon.fire()

@@ -31,28 +31,8 @@ define [
 			directionalLight.position.set(0, 1, 1).normalize()
 			@scene.add(directionalLight)
 
-			ambientLight = new Three.AmbientLight(0x777777)
+			ambientLight = new Three.AmbientLight(0xaaaaaa)
 			@scene.add(ambientLight)
-
-			# hemisphereLight = new Three.HemisphereLight(0x9999aa, 0x663322, 1)
-			# @scene.add(hemisphereLight)
-
-			# planetMaterial = new Three.MeshLambertMaterial(
-			# 	color:0x00ff00
-			# ) 
-
-			# radius = 300
-			# segments = 60
-			# rings = 50
-
-			# planet = new Three.Mesh(
-			# 	new Three.SphereGeometry(
-			# 		radius,
-			# 		segments,
-			# 		rings)
-			# 	, planetMaterial)
-
-			# @scene.add(planet)
 
 			@_loader.load('/meshes/planet.js', ( geometry, material ) =>
 				@planet = new Three.Mesh(geometry, new Three.MeshFaceMaterial(material))
