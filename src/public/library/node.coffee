@@ -35,33 +35,23 @@ define [
 		@concern EventBindings
 
 		id: null
+		type: 'node'
 		serverAddress: ':8080/'
 
-		constructor: ( ) ->
-
-			@_peers = new Collection()
-
+		# Constructs a new node. Calls initialize on any subclass.
+		#
+		# @param serverAddress [String] the uri address of the server
+		#
+		constructor: ( @serverAddress = @serverAddress ) ->
 			@server = new Server(@, @serverAddress)
-
-
 			@server.on('peer.connectionRequest', @_onPeerConnectionRequest)
 			@server.on('peer.setRemoteDescription', @_onPeerSetRemoteDescription)
 			@server.on('peer.addIceCandidate', @_onPeerAddIceCandidate)
 
-
-			@_peers.on('disconnect', @_onPeerDisconnect)
+			@_peers = new Collection()
+			@_peers.on('disconnect', ( peer ) => @removePeer(peer))
 
 			@initialize?.apply(@)
-
-			###
-			# This will help us log errors. It makes 
-			# console.log print to both console and server.
-			# Logs can be retrieved at /log
-			console.rLog = console.log
-			console.log = ( args... ) ->
-				console.rLog.apply(@, args)
-				App.node.server.emit('debug', args)
-			###
 			
 		# Attempts to connect to a peer.
 		#
@@ -73,25 +63,12 @@ define [
 			@addPeer(peer)
 			return peer
 
-		# Removes all timers
-		#
-		removeIntervals: ( ) ->
-			for timer in @timers
-				clearTimeout(timer)
-			
 		# Disconnects a peer.
 		#
 		# @param id [String] the id of the peer to disconnect
 		#
 		disconnect: ( id ) ->
 			@getPeer(id)?.disconnect()
-
-		# Is called when a peers disconnects.
-		#
-		# @param peer [Peer] the peer that disconnects
-		#
-		_onPeerDisconnect: ( peer ) =>
-			@removePeer(peer)
 
 		# Adds a peer to the peer list
 		#
@@ -142,33 +119,6 @@ define [
 				callback.apply(context, args)
 			)
 
-		# Is called when a peer requests a connection with this node. Will
-		# accept this request by establishing a connection.
-		#
-		# @param id [String] the id of the peer
-		# @param type [String] the type of the peer
-		#
-		_onPeerConnectionRequest: ( id, type ) =>
-			@connect(id, false)
-
-		# Is called when a remote peer wants to set a remote description.
-		#
-		# @param id [String] the id string of the peer
-		# @param data [Object] a plain object representation of an RTCSessionDescription
-		#
-		_onPeerSetRemoteDescription: ( id, data ) =>
-			description = new RTCSessionDescription(data)
-			@getPeer(id, null, true)?.setRemoteDescription(description)
-
-		# Is called when a peer wants to add an ICE candidate
-		#
-		# @param id [String] the id string of the peer
-		# @param data [Object] a plain object representation of an RTCIceCandidate
-		#
-		_onPeerAddIceCandidate: ( id, data ) =>
-			candidate = new RTCIceCandidate(data)
-			@getPeer(id, null, true)?.addIceCandidate(candidate)
-
 		# Attempts to emit to a peer by id. Unreliable.
 		#
 		# @param to [String] the id of the peer to pass the message to
@@ -208,13 +158,59 @@ define [
 		# @param message [Message] the message to relay.
 		#
 		relay: ( message ) ->
-			peer.send(message)
+			if message.to is '*'
+				peer.send(message) for peer in @getPeers()
+			else if peer = @getPeer(message.to)
+				peer.send(message)
 
-		# A Query function is implemented in a structured version of Node
+		# Responds to a request
+		#
+		# @param request [String] the string identifier of the request
+		# @param args... [Any] any arguments that may be accompanied with the request
+		# @param callback [Function] the callback to call with the response
 		#
 		query: ( request, args..., callback ) ->
 			switch request
 				when 'ping'
 					callback 'pong'
+				when 'type'
+					callback @type
+				when 'info'
+					info =
+						id: @id
+						type: @type
+						peers: @getPeers().map( ( peer ) ->
+							id: peer.id
+							role: peer.role
+						)
+
+					callback info
 				else
-					callback undefined
+					callback null
+
+		# Is called when a peer requests a connection with this node. Will
+		# accept this request by establishing a connection.
+		#
+		# @param id [String] the id of the peer
+		# @param type [String] the type of the peer
+		#
+		_onPeerConnectionRequest: ( id, type ) =>
+			@connect(id, false)
+
+		# Is called when a remote peer wants to set a remote description.
+		#
+		# @param id [String] the id string of the peer
+		# @param data [Object] a plain object representation of an RTCSessionDescription
+		#
+		_onPeerSetRemoteDescription: ( id, data ) =>
+			description = new RTCSessionDescription(data)
+			@getPeer(id, null, true)?.setRemoteDescription(description)
+
+		# Is called when a peer wants to add an ICE candidate
+		#
+		# @param id [String] the id string of the peer
+		# @param data [Object] a plain object representation of an RTCIceCandidate
+		#
+		_onPeerAddIceCandidate: ( id, data ) =>
+			candidate = new RTCIceCandidate(data)
+			@getPeer(id, null, true)?.addIceCandidate(candidate)

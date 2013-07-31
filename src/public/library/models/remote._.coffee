@@ -107,9 +107,9 @@ define [
 		# @param args... [Any] any other arguments to be passed along with the query
 		#
 		_onQuery: ( request, queryID, args..., message ) =>
-			callback = ( args... ) =>
-				args = [message.from, queryID].concat(args)
-				@emitTo.apply(@, args)
+			callback = ( argms... ) =>
+				argms = [message.from, queryID].concat(argms)
+				@emitTo.apply(@, argms)
 
 			args = [request].concat(args).concat(callback)
 			@_controller.query.apply(@_controller, args)
@@ -124,7 +124,6 @@ define [
 
 			# First argument is the string 'pong'
 			fn = ( pong, args... ) =>
-				console.log args
 				unless pong is 'pong'
 					return
 

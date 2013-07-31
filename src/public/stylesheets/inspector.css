@@ -1,0 +1,20 @@
+html, body {
+	width:  100%;
+	height: 100%;
+	margin: 0px;
+	padding: 0px;
+
+	overflow:hidden;
+}
+
+body {
+	background: #34363a; /* Old browsers */
+	background: -moz-radial-gradient(center, ellipse cover,  #34363a 0%, #282730 100%); /* FF3.6+ */
+	background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,#34363a), color-stop(100%,#282730)); /* Chrome,Safari4+ */
+	background: -webkit-radial-gradient(center, ellipse cover,  #34363a 0%,#282730 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-radial-gradient(center, ellipse cover,  #34363a 0%,#282730 100%); /* Opera 12+ */
+	background: -ms-radial-gradient(center, ellipse cover,  #34363a 0%,#282730 100%); /* IE10+ */
+	background: radial-gradient(ellipse at center,  #34363a 0%,#282730 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#34363a', endColorstr='#282730',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+

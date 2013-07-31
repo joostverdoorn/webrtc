@@ -1,3 +1,19 @@
+requirejs.config
+	shim:
+		'underscore':
+			exports: '_'
+
+		'socket.io':
+			exports: 'io'
+
+	# We want the following paths for 
+	# code-sharing reasons. Now it doesn't 
+	# matter from where we require a module.
+	paths:
+		'underscore': 'library/vendor/scripts/underscore'
+		'adapter' : 'library/vendor/scripts/adapter'
+		'socket.io': 'socket.io/socket.io'
+
 define [
 	'public/library/helpers/mixable'
 	'public/library/helpers/mixin.eventbindings'
@@ -18,6 +34,8 @@ define [
 	# Constructs a new structured node.
 	#
 	class Node.Structured extends Node
+
+		type: 'node.structured'
 
 		broadcastTimeout = 4000 # Wait for return messages after a node broadcasts that it has a token
 		tokenThreshhold = 1
@@ -41,14 +59,14 @@ define [
 			
 			@_peers.on('peer.addSibling', ( peer ) => @addSibling(peer, false))
 			@_peers.on('peer.setSuperNode', @_onPeerSetSuperNode)
+			@_peers.on('peer.parentCandidate', @_onPeerParentCandidate)
+			@_peers.on('peer.abandonParent', ( peer ) => @removeChild(peer))
+
 			@_peers.on('token.add', @_onTokenReceived)
 			@_peers.on('token.hop', @_onTokenInfo)
 			@_peers.on('token.info', @_onTokenInfo)
 			@_peers.on('token.requestCandidate', @_onTokenRequestCandidate)
 			@_peers.on('token.candidate', @_onTokenCandidate)
-			@_peers.on('peer.parentCandidate', @_onPeerParentCandidate)
-			@_peers.on('peer.abandonParent', ( peer ) => @removeChild(peer))
-			
 
 			@timers.push(setInterval(@_lookForBetterSupernode, 15000))
 			@staySuperNodeTimeout = null
@@ -75,33 +93,38 @@ define [
 			super(peer)
 			@_triggerStaySuperNodeTimeout()
 
-
 		# Responds to a request
 		#
 		# @param request [String] the string identifier of the request
 		# @param args... [Any] any arguments that may be accompanied with the request
-		# @param from [Peer] the peer we received the query from
-		# @return [Object] a response to the query
+		# @param callback [Function] the callback to call with the response
 		#
 		query: ( request, args..., callback ) ->
 			switch request
 				when 'ping'
 					callback 'pong', @coordinates.serialize()
-				when 'isSuperNode' 
+				when 'isSuperNode'
 					callback @isSuperNode
-				when 'isStructured' 
-					callback true
-				when 'peers'
-					callback _(@getChildren().concat(@getSiblings(), @getParent())).map( ( peer ) -> peer?.id )
 				when 'peer.requestParent'
-					if @isSuperNode
-						child = @getPeer(args[0])
-						if child?
-							@addChild(child)
-							callback true
-					callback false
+					if @isSuperNode and child = @getPeer(args[0])
+						@addChild(child)
+						callback true
+					else
+						callback false
+				when 'info'
+					info =
+						id: @id
+						type: @type
+						coordinates: @coordinates
+						isSuperNode: @isSuperNode
+						peers: @getPeers().map( ( peer ) ->
+							id: peer.id
+							role: peer.role
+						)
+
+					callback info
 				else
-					callback undefined
+					super
 
 		# Relays a message to other nodes. If the intended receiver is not a direct 
 		# neighbor, we route the message through other nodes in an attempt to reach 
@@ -235,7 +258,7 @@ define [
 		# and pick the one with the lowest latency is parent.
 		#
 		_enterNetwork: ( ) =>
-			@server.query('nodes', ( nodes ) =>
+			@server.query('nodes', 'node.structured', ( nodes ) =>
 				superNodes = _(nodes).filter( ( node ) => node.isSuperNode )
 
 				# If no supernodes present, become a supernode
@@ -538,3 +561,9 @@ define [
 				peer.on('channel.opened', () =>
 					@_pickParent([peer])
 				)
+
+		# Removes all timers
+		#
+		removeIntervals: ( ) ->
+			for timer in @timers
+				clearTimeout(timer)
