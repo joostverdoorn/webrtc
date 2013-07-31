@@ -212,5 +212,9 @@ define [
 
 		# A Query function is implemented in a structured version of Node
 		#
-		query: ( request, args... ) ->
-			return false
+		query: ( request, args..., callback ) ->
+			switch request
+				when 'ping'
+					callback 'pong'
+				else
+					callback undefined

@@ -175,13 +175,15 @@ define [
 		# @param args... [Any] any arguments that may be accompanied with the request
 		# @return [Object] a response to the query
 		#
-		query: ( request, args... ) ->
+		query: ( request, args..., callback ) ->
 			switch request
 				when 'ping'
-					return 'pong'
-				when 'nodes' 
+					callback 'pong'
+				when 'nodes'
 					nodes = (node.serialize() for node in @getNodes())		
-					return nodes
+					callback nodes
+				else
+					callback undefined
 
 		# Returns the time that has passed since the starting of the server.
 		#

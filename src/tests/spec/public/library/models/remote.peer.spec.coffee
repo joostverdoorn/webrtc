@@ -456,8 +456,6 @@ require [
 					)
 				peer._onChannelOpen()
 				expect(called).toEqual([
-						'benchmark'
-						'system'
 						'isSuperNode'
 					])
 

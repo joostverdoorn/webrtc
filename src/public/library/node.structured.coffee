@@ -1,15 +1,3 @@
-requirejs.config
-	shim:
-		'underscore':
-			exports: '_'
-
-	# We want the following paths for 
-	# code-sharing reasons. Now it doesn't 
-	# matter from where we require a module.
-	paths:
-		'underscore': 'library/vendor/scripts/underscore'
-		'adapter' : 'library/vendor/scripts/adapter'
-
 define [
 	'public/library/helpers/mixable'
 	'public/library/helpers/mixin.eventbindings'
@@ -30,13 +18,6 @@ define [
 	# Constructs a new structured node.
 	#
 	class Node.Structured extends Node
-
-		system: 
-			osName:  'osName'
-			browserName:  'browserName'
-			browserVersion: 'browserVersion'
-		benchmark:
-			cpu: null
 
 		broadcastTimeout = 4000 # Wait for return messages after a node broadcasts that it has a token
 		tokenThreshhold = 1
@@ -72,9 +53,7 @@ define [
 			@timers.push(setInterval(@_lookForBetterSupernode, 15000))
 			@staySuperNodeTimeout = null
 
-
 			@timers.push(setInterval(@_updateCoordinates, 7500))
-			@runBenchmark()
 
 		# Is called when a peers disconnects. If that peer was 
 		# our parent, we pick a new parent.
@@ -104,27 +83,25 @@ define [
 		# @param from [Peer] the peer we received the query from
 		# @return [Object] a response to the query
 		#
-		query: ( request, args... ) ->
+		query: ( request, args..., callback ) ->
 			switch request
 				when 'ping'
-					return @coordinates.serialize()
-				when 'system' 
-					return @system
-				when 'benchmark'
-					return @benchmark
+					callback 'pong', @coordinates.serialize()
 				when 'isSuperNode' 
-					return @isSuperNode
+					callback @isSuperNode
 				when 'isStructured' 
-					return true
+					callback true
 				when 'peers'
-					return _(@getChildren().concat(@getSiblings(), @getParent())).map( ( peer ) -> peer?.id )
+					callback _(@getChildren().concat(@getSiblings(), @getParent())).map( ( peer ) -> peer?.id )
 				when 'peer.requestParent'
 					if @isSuperNode
 						child = @getPeer(args[0])
 						if child?
 							@addChild(child)
-							return true
-					return false
+							callback true
+					callback false
+				else
+					callback undefined
 
 		# Relays a message to other nodes. If the intended receiver is not a direct 
 		# neighbor, we route the message through other nodes in an attempt to reach 
@@ -561,10 +538,3 @@ define [
 				peer.on('channel.opened', () =>
 					@_pickParent([peer])
 				)
-
-		# Runs a benchmark to get the available resources on this node.
-		#
-		runBenchmark: () ->
-			startTime = Date.now()
-			endTime = Date.now()
-			@benchmark.cpu = Math.round(endTime - startTime)

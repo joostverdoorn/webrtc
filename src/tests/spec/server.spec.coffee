@@ -352,8 +352,15 @@ require [
 
 				describe 'when queried', ->
 					it 'should reply "pong" to a "ping" query', ->
-						result = server.query('ping')
-						expect(result).toBe('pong')
+						callback = jasmine.createSpy('callback').andCallFake(( result ) ->
+							expect(result).toBe('pong')
+						)
+
+						result = server.query('ping', callback)
+
+						waitsFor(->
+							return callback.wasCalled
+						)						
 
 					it 'should reply all serialized nodes on a "nodes" query', ->
 						fakeNode1 = {
@@ -370,16 +377,24 @@ require [
 							serialize: =>
 								return '[2]'
 						}
-						server.addNode(fakeNode1)
-						server.addNode(fakeNode2)
 
-						result = server.query('nodes')
-
-						expect(result).toEqual([
+						callback = jasmine.createSpy('callback').andCallFake(( result ) ->
+							expect(result).toEqual([
 								'[1]'
 								'[2]'
 							])
+						)
 
+						server.addNode(fakeNode1)
+						server.addNode(fakeNode2)
+
+						result = server.query('nodes', callback)
+
+						waitsFor(->
+							return callback.wasCalled
+						)
+
+						
 				describe 'when timed', ->
 					it 'should give precise incremental numbers representing the time', ->
 						# Bad test, but Jasmine's mock clock does not allow faking Date.now() results...

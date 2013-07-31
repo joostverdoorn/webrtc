@@ -107,9 +107,12 @@ define [
 		# @param args... [Any] any other arguments to be passed along with the query
 		#
 		_onQuery: ( request, queryID, args..., message ) =>
-			args = [request].concat(args).concat(@)
-			result = @_controller.query.apply(@_controller, args)
-			@emitTo(message.from, queryID, result)
+			callback = ( args... ) =>
+				args = [message.from, queryID].concat(args)
+				@emitTo.apply(@, args)
+
+			args = [request].concat(args).concat(callback)
+			@_controller.query.apply(@_controller, args)
 
 		# Pings the server. A callback function should be provided to do anything
 		# with the ping.
@@ -119,7 +122,12 @@ define [
 		ping: ( callback ) =>
 			time = Date.now()
 
-			fn = ( args... ) =>
+			# First argument is the string 'pong'
+			fn = ( pong, args... ) =>
+				console.log args
+				unless pong is 'pong'
+					return
+
 				@latency = Date.now() - time
 				args = [@latency].concat(args)
 				callback?.apply(@, args)
