@@ -85,6 +85,8 @@ require [
 			@camera.position.z = 0
 			@camera.position.y = 0
 			@camera.rotation.y = -1 * Math.PI / 2
+			@cameraRaycaster = new Three.Raycaster(@camera.position.clone(), @camera.position.clone().negate(), 0, 10)
+
 			@scene.add(@camera)
 			@scene.fog = new Three.FogExp2( 0xaabbff, 0.0012 );
 
@@ -219,12 +221,14 @@ require [
 				# Get the target position of the camera
 				targetPosition = @player.position.clone().add(cameraDirection.multiplyScalar(80))
 
-				# Ease the camera to the target position
-				@camera.position.lerp(targetPosition, 1.5 * dt)
+				@cameraRaycaster.set(targetPosition, targetPosition.clone().negate())
+				if @cameraRaycaster.intersectObject(@world.planet).length is 0
+					# Ease the camera to the target position
+					@camera.position.lerp(targetPosition, 1.5 * dt)
 
-				# Set the upvector perpendicular to the planet surface and point the camera
-				# towards the player
-				@camera.up.set(@camera.position.x, @camera.position.y, @camera.position.z)
+					# Set the upvector perpendicular to the planet surface and point the camera
+					# towards the player
+					@camera.up.set(@camera.position.x, @camera.position.y, @camera.position.z)
 				@camera.lookAt(@player.position)
 
 				# Update sky position
@@ -246,29 +250,6 @@ require [
 			window.requestAnimationFrame(@update)
 
 		createControllerNode: () ->
-			###
-			@controllerNode = new ControllerNode()
-			@controllerNode._peers.on('controller.orientation', ( peer, orientation ) =>
-				console.log orientation
-			)
-			@controllerNode._peers.on('controller.boost', ( peer, boost ) =>
-				console.log boost
-			)
-			@controllerNode._peers.on('controller.orientation', ( peer, fire ) =>
-				console.log fire
-			)
-			@welcomeScreen.showLoadingScreen()
-			@controllerNode.server.on('connect', ( peer ) =>
-					@controllerNode.server.off('connect')
-					@welcomeScreen.showMobileConnectScreen(@setQRCode)
-					@controllerNode.on('peer.added', ( peer ) =>
-							@controllerNode.off('peer.added')
-							@inputHandler.selectInput('mobile')
-							@welcomeScreen.showInfoScreen(type)
-							@startGame()
-						)
-				)
-			###
 			@welcomeScreen.showLoadingScreen()
 			@inputHandler._generateRemoteMobile()
 			@inputHandler.on('mobile.initialized', ( id ) =>
