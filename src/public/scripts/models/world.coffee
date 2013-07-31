@@ -36,6 +36,9 @@ define [
 
 			@_loader.load('/meshes/planet.js', ( geometry, material ) =>
 				@planet = new Three.Mesh(geometry, new Three.MeshFaceMaterial(material))
+				if @planet.geometry.boundingSphere is null
+					@planet.geometry.computeBoundingSphere()
+				@planet.geometry.computeMorphNormals()
 				@scene.add(@planet)
 			)
 

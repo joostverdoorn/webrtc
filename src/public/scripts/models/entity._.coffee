@@ -20,6 +20,7 @@ define [
 		#
 		constructor: ( @scene, args... ) ->
 			@_loader = new Three.JSONLoader()
+			@cameraRaycaster = new Three.Raycaster()
 			@loaded = false
 			
 			@mass = 1
@@ -90,9 +91,24 @@ define [
 
 				# Rudimentary way to detect of we're on the planet surface. This should
 				# be replaced by collision detection.
-				if @position.length() < 300
-					@position.normalize().multiplyScalar(300)
-					@velocity = new Three.Vector3()
+				#if @position.length() < 300
+				#	@position.normalize().multiplyScalar(300)
+				#	@velocity = new Three.Vector3()
+
+				currentLength = @position.length()
+				planetRadius = App.world.planet.geometry.boundingSphere.radius# + 20
+				if currentLength < planetRadius
+					position2 = @position.clone().normalize().multiplyScalar(planetRadius)
+					@cameraRaycaster.set(position2, position2.clone().negate())
+					intersects = @cameraRaycaster.intersectObject(App.world.planet)
+					for key, intersect of intersects
+						surface = planetRadius - intersect.distance
+						#surface += 1.2		# Safe distance
+						if currentLength < surface - 0.2
+							@position.normalize().multiplyScalar(surface)
+
+							@velocity = new Three.Vector3()
+						break
 
 				# Loop through all forces and calculate the acceleration.
 				acceleration = new Three.Vector3(0, 0, 0)			

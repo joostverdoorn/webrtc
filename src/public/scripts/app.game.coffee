@@ -85,7 +85,7 @@ require [
 			@camera.position.z = 0
 			@camera.position.y = 0
 			@camera.rotation.y = -1 * Math.PI / 2
-			@cameraRaycaster = new Three.Raycaster(@camera.position.clone(), @camera.position.clone().negate(), 0, 10)
+			@cameraRaycaster = new Three.Raycaster()
 
 			@scene.add(@camera)
 			@scene.fog = new Three.FogExp2( 0xaabbff, 0.0012 );
@@ -215,20 +215,30 @@ require [
 			if @player? and @player.cannon?
 				# Get the direction of the camera, and apply cannon and player rotations to it.
 				cameraDirection = new Three.Vector3(-1, 0, 0)
-				cameraDirection.applyQuaternion(new Three.Quaternion().setFromEuler(@player.cannon.rotation))
-				cameraDirection.applyQuaternion(new Three.Quaternion().setFromEuler(@player.rotation))
+				cameraDirection.applyQuaternion(new Three.Quaternion().setFromEuler(@player.cannon.rotation.clone()))
+				cameraDirection.applyQuaternion(new Three.Quaternion().setFromEuler(@player.rotation.clone()))
 
 				# Get the target position of the camera
 				targetPosition = @player.position.clone().add(cameraDirection.multiplyScalar(80))
 
-				@cameraRaycaster.set(targetPosition, targetPosition.clone().negate())
-				if @cameraRaycaster.intersectObject(@world.planet).length is 0
-					# Ease the camera to the target position
-					@camera.position.lerp(targetPosition, 1.5 * dt)
+				currentLength = targetPosition.length()
+				planetRadius = @world.planet.geometry.boundingSphere.radius + 20
+				if currentLength < planetRadius
+					targetPosition2 = targetPosition.clone().multiplyScalar((planetRadius) / currentLength)
+					@cameraRaycaster.set(targetPosition2, targetPosition2.clone().negate())
+					intersects = @cameraRaycaster.intersectObject(@world.planet)
+					for key, intersect of intersects
+						surface = planetRadius - intersect.distance
+						surface += 20		# Safe distance
+						targetPosition.multiplyScalar(surface / currentLength)
+						break
 
-					# Set the upvector perpendicular to the planet surface and point the camera
-					# towards the player
-					@camera.up.set(@camera.position.x, @camera.position.y, @camera.position.z)
+				# Ease the camera to the target position
+				@camera.position.lerp(targetPosition, 1.5 * dt)
+
+				# Set the upvector perpendicular to the planet surface and point the camera
+				# towards the player
+				@camera.up.set(@camera.position.x, @camera.position.y, @camera.position.z)
 				@camera.lookAt(@player.position)
 
 				# Update sky position
