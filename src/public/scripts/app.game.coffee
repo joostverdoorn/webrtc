@@ -87,12 +87,12 @@ require [
 			@cameraRaycaster = new Three.Raycaster()
 
 			@scene.add(@camera)
-			@scene.fog = new Three.FogExp2( 0xaabbff, 0.0012 );
+			@scene.fog = new Three.FogExp2( 0xaabbff, 0.0015 );
 
 			@lastUpdateTime = 0
 
 			# Create sky dome
-			@sky = new THREE.Mesh( new THREE.SphereGeometry( 1000, 6, 8 ), new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/images/sky.jpg' ) } ) )
+			@sky = new THREE.Mesh( new THREE.SphereGeometry( 1500, 6, 8 ), new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/images/sky.jpg' ) } ) )
 			@sky.scale.x = -1;
 			@scene.add( @sky )
 
