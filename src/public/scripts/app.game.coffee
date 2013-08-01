@@ -213,7 +213,7 @@ require [
 				@player.flyLeft = @inputHandler.getFlyLeft()
 				@player.flyRight = @inputHandler.getFlyRight()
 				@player.flyForward = @inputHandler.getFlyForward()
-				@player.flyBackward = @inputHandler.getFlyBackward()				
+				@player.flyBackward = @inputHandler.getFlyBackward()
 
 				@player.cannon.rotateLeft = @inputHandler.getCannonRotateLeft()
 				@player.cannon.rotateRight = @inputHandler.getCannonRotateRight()

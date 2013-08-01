@@ -72,10 +72,10 @@ define [
 			rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
 
 			# Add tilt forces
-			@addAngularForce(new Three.Euler(-.6 * @flyLeft, 0, 0, 'YXZ'))
-			@addAngularForce(new Three.Euler(.6 * @flyRight, 0, 0, 'YXZ'))
 			@addAngularForce(new Three.Euler(0, 0, -.6 * @flyForward, 'YXZ'))
 			@addAngularForce(new Three.Euler(0, 0, .6 * @flyBackward, 'YXZ'))
+			@addAngularForce(new Three.Euler(-.6 * @flyLeft, 0, 0, 'YXZ'))
+			@addAngularForce(new Three.Euler(.6 * @flyRight, 0, 0, 'YXZ'))
 
 			# Add thrust straight downward from the player. 
 			thrustVector = new Three.Vector3(0, 1, 0).applyQuaternion(rotationQuaternion)

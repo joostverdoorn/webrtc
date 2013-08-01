@@ -176,7 +176,6 @@ define [
 		#
 		applyInfo: ( info ) =>
 			unless info?
-				console.log 'wtf'
 				return
 
 			if info.velocity?
