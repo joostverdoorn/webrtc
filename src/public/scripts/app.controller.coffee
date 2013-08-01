@@ -61,15 +61,6 @@ require [
 				# Send the device orientation 10 times a second
 				if window.DeviceOrientationEvent
 					setTimeout( @sendDeviceOrientation, 100)
-
-				@boost.bind("touchstart", () => @sendBoostEvent(true))
-				@boost.bind("touchend", () => @sendBoostEvent(false))
-				@boost.bind("touchcancel", () => @sendBoostEvent(false))
-
-				@shoot.bind("touchstart", () => @sendShootEvent(true))
-				@shoot.bind("touchend", () => @sendShootEvent(false))
-				@shoot.bind("touchcancel", () => @sendShootEvent(false))
-
 				
 			)
 
@@ -89,21 +80,21 @@ require [
 
 			if width > height
 
-				@boost = @canvas.display.rectangle({
+				@shoot = @canvas.display.rectangle({
 					x: width / 4,
 					y: height / 4,
 					origin: { x: "center", y: "center" },
 					width: width / 2,
 					height: height / 2,
-					fill: "#0aa"
+					fill: "#0ef"
 				})
-				@shoot = @canvas.display.rectangle({
+				@boost = @canvas.display.rectangle({
 					x: width / 4,
-					y: height * 3 / 4,
+					y: height *3 / 4,
 					origin: { x: "center", y: "center" },
 					width: width / 2,
 					height: height / 2,
-					fill: "#0ef"
+					fill: "#0aa"
 				})
 				@fire = @canvas.display.rectangle({
 					x: width * 3 / 4,
@@ -116,21 +107,21 @@ require [
 
 			else
 
-				@boost = @canvas.display.rectangle({
+				@shoot = @canvas.display.rectangle({
 					x: width / 4,
 					y: height / 4,
 					origin: { x: "center", y: "center" },
 					width: width / 2,
 					height: height / 2,
-					fill: "#0aa"
+					fill: "#0ef"
 				})
-				@shoot = @canvas.display.rectangle({
+				@boost = @canvas.display.rectangle({
 					x: width * 3 / 4,
 					y: height / 4,
 					origin: { x: "center", y: "center" },
 					width: width / 2,
 					height: height / 2,
-					fill: "#0ef"
+					fill: "#0aa"
 				})
 				@fire = @canvas.display.rectangle({
 					x: width / 2,
@@ -140,6 +131,15 @@ require [
 					height: height / 2,
 					fill: "#f21"
 				})
+
+			shootText = @canvas.display.text({
+				x: 0,
+				y: 0,
+				origin: { x: "center", y: "top" },
+				font: "bold 25px/1.5 sans-serif",
+				text: "Fire",
+				fill: "#000"
+			})
 
 			boostText = @canvas.display.text({
 				x: 0,
@@ -159,30 +159,43 @@ require [
 				fill: "#000"
 			})
 
+			@canvas.addChild(@shoot)
+			@shoot.addChild(shootText)
+
 			@canvas.addChild(@boost)
 			@boost.addChild(boostText)
 
 			@canvas.addChild(@fire)
 			@fire.addChild(fireText)
 
-			@canvas.addChild(@shoot)
+			window.requestAnimationFrame(@bindEvents())
 
-			#@fire.bind("tap click",  , false )
+		bindEvents: () =>
+
+			@boost.bind("touchstart", () => @sendBoostEvent(true))
+			@boost.bind("touchend", () => @sendBoostEvent(false))
+			@boost.bind("touchcancel", () => @sendBoostEvent(false))
+
+			@shoot.bind("touchstart", () => @sendShootEvent(true))
+			@shoot.bind("touchend", () => @sendShootEvent(false))
+			@shoot.bind("touchcancel", () => @sendShootEvent(false))
+
 			@fire.bind("touchenter", @initiatePoke, false )
 			@fire.bind("touchmove", @handlePoke, false )
 			@fire.bind("touchend", @stopPoke, false )
 			#@fire.bind("touchcancel", @stopPoke, false )
 
+			#window.requestAnimationFrame(@bindEvents())
+
 		initiatePoke: (event) =>
 			console.log "start: ", event.x, event.y
 			@poke.x = event.x
 			@poke.y = event.y
-			#@sendFireEvent()
 
 		handlePoke: (event) =>
 			sendPoke = {}
-			sendPoke.x = event.x - @poke.x
-			sendPoke.y = event.y - @poke.y
+			sendPoke.x = Math.round((event.x - @poke.x) / 4)
+			sendPoke.y = Math.round((event.y - @poke.y) / 4)
 			console.log sendPoke
 			@node.getPeers()[0].emit('controller.cannon', sendPoke)
 
@@ -230,6 +243,7 @@ require [
 		# 
 		sendBoostEvent: ( boost ) ->
 			if boost isnt @_lastBoost
+				console.log "boost ", boost
 				@_lastBoost = boost
 				@node.getPeers()[0].emit('controller.boost', boost)
 
