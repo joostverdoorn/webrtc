@@ -45,20 +45,19 @@ define [
 				player.mesh.localToWorld(@position)
 
 				# Generate the projectile force.
-				@force = new Three.Vector3(@_projectileVelocity * @mass, 0, 0)
+				@velocity = new Three.Vector3(@_projectileVelocity, 0, 0)
 
 				# Apply the cannon rotation to the force vector.
-				@force.applyQuaternion(new Three.Quaternion().setFromEuler(cannon.rotation))
+				@velocity.applyQuaternion(new Three.Quaternion().setFromEuler(cannon.rotation))
 
 				# Apply the player rotation to the force vector.
-				@force.applyQuaternion(new Three.Quaternion().setFromEuler(player.rotation))
+				@velocity.applyQuaternion(new Three.Quaternion().setFromEuler(player.rotation))
 
 				# Add the player velocity to the force.
-				@force.add(player.velocity.clone().multiplyScalar(@mass))
+				@velocity.add(player.velocity)
 
 				# Add the force to the pending forces
-				@addForce(@force)
-				player.addForce(@force.clone().negate())
+				player.addForce(@velocity.clone().negate().multiplyScalar(@mass))
 			else @applyInfo(info)
 
 			# Add the projectile to the scene

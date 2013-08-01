@@ -117,7 +117,6 @@ define [
 			if @_cannonReady
 
 				projectile = new Projectile(@world, @owner, @, @cannon)
-				projectile.update(0)
 				@trigger('fire', projectile)
 				@_cannonReady = false
 
