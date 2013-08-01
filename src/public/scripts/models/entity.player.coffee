@@ -30,7 +30,7 @@ define [
 				material.skinning = true for material in @mesh.material.materials
 
 				# Set up animations for the mesh.
-				THREE.AnimationHandler.add(@mesh.geometry.animation)
+				Three.AnimationHandler.add(@mesh.geometry.animation)
 				@animation = new Three.Animation(@mesh, 'ArmatureAction', Three.AnimationHandler.CATMULLROM)
 				@animation.play()
 
@@ -48,16 +48,8 @@ define [
 				@loaded = true			
 			)
 
-			@on('impact.world', (position, velocity) =>
-					# CRASH!
-					# Check impact speed
-
-					newPos = position.clone().add(velocity)
-					downVelocity = newPos.length() - position.length()
-
-					if downVelocity < -20
-						@die()
-				)
+			# Add listeners to common events.
+			@on('impact.world', @_onImpactWorld)
 
 		# Updates the physics state of the player. Adds forces to simulate gravity and 
 		# the propulsion system. Calls baseclass' update after.
@@ -121,6 +113,17 @@ define [
 
 			levelRotation = new Three.Euler().setFromRotationMatrix(rotationMatrix, 'YXZ')
 			return levelRotation
+
+		# Is called when the player impacts the world. Used to determine if the 
+		# player should systain damage.
+		#
+		# @param position [Three.Vector3] the position of the player at the moment of impact
+		# @param velocity [Three.Vector3] the velocity of the player at the moment of impact
+		#
+		_onImpactWorld: ( position, velocity ) ->
+			downVelocity = velocity.projectOnVector(position)
+			if downVelocity.length() > 20
+				@die()
 
 		# Applies transformation information given in an object to the entity.
 		#

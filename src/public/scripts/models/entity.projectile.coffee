@@ -62,15 +62,13 @@ define [
 			@scene.add(@mesh)
 			@loaded = true
 
+			# Add listeners to common events.
+			@on('impact.world', @_onImpactWorld)
 
-			@on('impact.world', (position, velocity) =>
-					@die()
-				)
-
-		###
-		update: ( dt ) ->
-			super(dt, true, false)
-
-			if @velocity.length() < 1
-				@die()
-		###
+		# Is called when the projectile impacts the world.
+		#
+		# @param position [Three.Vector3] the position of the projectile at the moment of impact
+		# @param velocity [Three.Vector3] the velocity of the projectile at the moment of impact
+		#
+		_onImpactWorld: ( position, velocity ) =>
+			@die()
