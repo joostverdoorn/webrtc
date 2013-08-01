@@ -56,7 +56,7 @@ define [
 						scale: Controller.prototype._mobileAngleMax
 					}
 				}
-				'GunRotateCounterClockwise': {
+				'CannonRotateLeft': {
 					keyboard: 'NONE'
 					mouse: {
 						event: 'x'
@@ -69,7 +69,7 @@ define [
 						scale: Controller.prototype._mouseThreshold
 					}
 				}
-				'GunRotateClockwise': {
+				'CannonRotateRight': {
 					keyboard: 'NONE'
 					mouse: {
 						event: 'x'
@@ -82,7 +82,7 @@ define [
 						scale: Controller.prototype._mouseThreshold
 					}
 				}
-				'GunRotateUpward': {
+				'CannonRotateUpward': {
 					keyboard: 'NONE'
 					mouse: {
 						event: 'y'
@@ -95,7 +95,7 @@ define [
 						scale: Controller.prototype._mouseThreshold
 					}
 				}
-				'GunRotateDownward': {
+				'CannonRotateDownward': {
 					keyboard: 'NONE'
 					mouse: {
 						event: 'y'

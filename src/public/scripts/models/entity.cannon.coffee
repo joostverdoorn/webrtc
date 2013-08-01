@@ -1,9 +1,8 @@
 define [
 	'public/scripts/models/entity._'
-	'public/scripts/models/entity.projectile'
 
 	'three'
-	], ( Entity, Projectile, Three ) ->
+	], ( Entity, Three ) ->
 
 	# This class implements the cannon hanging from the ufo
 	#
@@ -11,19 +10,22 @@ define [
 
 		# Is called from the baseclass' constructor. 
 		#
-		# @param transformations [Object] an object containing all transformations to apply to the player
+		# @param info [Object] an object containing all info to apply to the player
 		#
-		initialize: ( @player, transformations = null ) ->
+		initialize: ( @player, info = null ) ->
 			@_cannonLoaded = false
 			@_cannonBaseLoaded = false
 
-			@_cannonBase = new Three.Mesh()
-
 			@mass = 10
 			@angularDrag = 5
-			
-			@_isReady = true			
 
+			@rotateLeft = 0
+			@rotateRight = 0
+			@rotateUpward = 0
+			@rotateDownward = 0
+
+			@_cannonBase = new Three.Mesh()
+			
 			# Load the cannon mesh.
 			@_loader.load('/meshes/cannon.js', ( geometry, material ) =>
 				@mesh.geometry = geometry
@@ -37,7 +39,7 @@ define [
 				@position.y -= 1.1
 
 				# Apply transformations
-				@applyTransformations(transformations)
+				@applyInfo(info)
 
 				# Set the loaded state.
 				@_cannonLoaded = true
@@ -62,6 +64,16 @@ define [
 		# @param dt [Float] the time that has elapsed since last update was called.
 		#
 		update: ( dt ) ->
+			unless @loaded
+				return
+
+			# Add rotational forces.
+			@addAngularForce(new Three.Euler(0, .4 * @rotateLeft, 0, 'YXZ'))
+			@addAngularForce(new Three.Euler(0, -.4 * @rotateRight, 0, 'YXZ'))
+			@addAngularForce(new Three.Euler(0, 0, .4 * @rotateUpward, 'YXZ'))
+			@addAngularForce(new Three.Euler(0, 0, -.4 * @rotateDownward, 'YXZ'))
+
+			# Update physics.
 			super(dt, false, true)
 
 			# Rotate cannon base y to cannon y
@@ -78,19 +90,35 @@ define [
 			else if @rotation.y < -Math.PI / 2
 				@rotation.y = -Math.PI / 2
 
+			# X axis rotation should not be possible.
 			if @rotation.x isnt 0
 				@rotation.x = 0
 
-		# Fires a projectile. Can be fired each second
+		# Applies information given in an object to the entity.
 		#
-		fire: ( ) ->
-			if @_isReady
+		# @param info [Object] an object that contains the transformations
+		#
+		applyInfo: ( info ) =>
+			unless info
+				return
 
-				projectile = new Projectile(@scene, @world, @owner, @player, @)
-				@_isReady = false
+			super(info)
+			
+			@rotateLeft = info.rotateLeft
+			@rotateRight = info.rotateRight
+			@rotateUpward = info.rotateUpward
+			@rotateDownward = info.rotateDownward	
+			
+		# Returns the current info in an object.
+		#
+		# @return [Object] an object of all the info
+		#
+		getInfo: ( ) ->
+			info = super()
+			
+			info.rotateLeft = @rotateLeft
+			info.rotateRight = @rotateRight
+			info.rotateUpward = @rotateUpward
+			info.rotateDownward = @rotateDownward			
 
-				setTimeout( =>
-					@_isReady = true
-				, 500)
-
-				return projectile
+			return info

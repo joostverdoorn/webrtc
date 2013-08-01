@@ -18,11 +18,10 @@ define [
 		# @param args... [Any] any params to pass onto the subclass
 		# @param callback [Function] the function to call when the entity is loaded
 		#
-		constructor: ( @scene, @world, @owner, args... ) ->
-			@_dead = false
-
+		constructor: ( @world, @owner, args... ) ->
+			@scene = @world.scene
 			@_loader = new Three.JSONLoader()
-			@cameraRaycaster = new Three.Raycaster()
+			@_raycaster = new Three.Raycaster()
 			@loaded = false
 			
 			@mass = 1
@@ -33,8 +32,9 @@ define [
 			@velocity = new Three.Vector3(0, 0, 0)
 			@angularVelocity = new Three.Euler(0, 0, 0, 'YXZ')
 			
-			@forces = []
-			@angularForces = []
+			@_forces = []
+			@_angularForces = []
+			@_dead = false
 
 			@mesh = new Three.Mesh()
 			
@@ -56,21 +56,21 @@ define [
 		die: ( ) ->
 			@_dead = true
 			@scene.remove(@mesh)
-			@trigger('died')
+			@trigger('die')
 
 		# Adds a force to the forces stack. Forces will be applied next update.
 		#
 		# @param vector [Three.Vector3] the vector force to add
 		#
 		addForce: ( vector ) ->
-			@forces.push(vector)
+			@_forces.push(vector)
 
 		# Adds an angular force to the forces stack. Forces will be applied next update.
 		#
 		# @param vector [Three.Vector3] the vector force to add
 		#
 		addAngularForce: ( vector ) ->
-			@angularForces.push(vector)
+			@_angularForces.push(vector)
 
 		# Updates the entity by applying forces, calculating the resulting velocity
 		# and setting the entity's position and rotation.
@@ -107,8 +107,8 @@ define [
 					planetRadius = @world.planet.geometry.boundingSphere.radius
 					if currentLength < planetRadius
 						position2 = @position.clone().normalize().multiplyScalar(planetRadius)
-						@cameraRaycaster.set(position2, position2.clone().negate())
-						intersects = @cameraRaycaster.intersectObject(@world.planet)
+						@_raycaster.set(position2, position2.clone().negate())
+						intersects = @_raycaster.intersectObject(@world.planet)
 						for key, intersect of intersects
 							surface = planetRadius - intersect.distance
 
@@ -121,7 +121,7 @@ define [
 
 				# Loop through all forces and calculate the acceleration.
 				acceleration = new Three.Vector3(0, 0, 0)			
-				while force = @forces.pop()
+				while force = @_forces.pop()
 					acceleration.add(force.clone().divideScalar(@mass))
 
 				# Add the acceleration to the velocity.
@@ -154,7 +154,7 @@ define [
 
 				# Loop through all angular forces and calculate the angular acceleration.
 				angularAccelerationQuaternion = new Three.Quaternion()
-				while force = @angularForces.pop()
+				while force = @_angularForces.pop()
 					forceQuaternion = new Three.Quaternion().setFromEuler(force)
 					angularAccelerationQuaternion.multiply(forceQuaternion)
 
@@ -171,35 +171,36 @@ define [
 				@angularVelocity.y *= 1 - @angularDrag * dt
 				@angularVelocity.z *= 1 - @angularDrag * dt
 
-		# Applies transformation information given in an object to the entity.
+		# Applies information given in an object to the entity.
 		#
-		# @param transformations [Object] an object that contains the transformations
+		# @param info [Object] an object that contains the transformations
 		#
-		applyTransformations: ( transformations ) =>
-			unless transformations?
+		applyInfo: ( info ) =>
+			unless info?
+				console.log 'wtf'
 				return
 
-			if transformations.velocity?
-				@velocity.fromArray(transformations.velocity)
+			if info.velocity?
+				@velocity.fromArray(info.velocity)
 
-			if transformations.angularVelocity?
-				@angularVelocity.fromArray(transformations.angularVelocity)
+			if info.angularVelocity?
+				@angularVelocity.fromArray(info.angularVelocity)
 			
-			if transformations.position?
-				@position.fromArray(transformations.position)
+			if info.position?
+				@position.fromArray(info.position)
 			
-			if transformations.rotation?
-				@rotation.fromArray(transformations.rotation)
+			if info.rotation?
+				@rotation.fromArray(info.rotation)
 
-		# Returns the current transformation information in an object.
+		# Returns the current info in an object.
 		#
-		# @return [Object] an object of all the transformations
+		# @return [Object] an object of all the info
 		#
-		getTransformations: ( ) =>
-			transformations = 
+		getInfo: ( ) =>
+			info = 
 				velocity: @velocity.toArray()
 				angularVelocity: @angularVelocity.toArray()
 				position: @position.toArray()
 				rotation: @rotation.toArray()
 
-			return transformations
+			return info

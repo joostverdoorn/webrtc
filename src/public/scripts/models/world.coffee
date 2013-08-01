@@ -26,7 +26,9 @@ define [
 			@_loader = new Three.JSONLoader()
 
 			@_entities = new Collection()
+			@_entities.on('die', ( entity ) => @removeEntity(entity))
 
+			# Add lights to the scene.
 			directionalLight = new Three.DirectionalLight(0xffffff, 2)
 			directionalLight.position.set(0, 1, 1).normalize()
 			@scene.add(directionalLight)
@@ -34,41 +36,17 @@ define [
 			ambientLight = new Three.AmbientLight(0xaaaaaa)
 			@scene.add(ambientLight)
 
+			# Load planet mesh.
 			@_loader.load('/meshes/planet.js', ( geometry, material ) =>
 				@planet = new Three.Mesh(geometry, new Three.MeshFaceMaterial(material))
-				if @planet.geometry.boundingSphere is null
-					@planet.geometry.computeBoundingSphere()
+				
+				# Compute normals and bounding sphere to aid collision detection
+				@planet.geometry.computeBoundingSphere()
 				@planet.geometry.computeMorphNormals()
+
+				# Add planet to the scene
 				@scene.add(@planet)
 			)
-
-		# Creates and adds a player to the world
-		#
-		# @param id [String] the string id of the player
-		# @param transformations [Object] an object of the player's transformations
-		#
-		addPlayer: ( id, transformations ) ->
-			player = new Player(@scene, @world, false, id, transformations)
-			@addEntity(player)
-
-		# Updates a player's transformation in the world. If the player doesn't exist, 
-		# it will create the player using addPlayer()
-		#
-		# @param id [String] the string id of the player
-		# @param transformations [Object] an object of the player's tranfomrations
-		#
-		updatePlayer: ( id, transformations ) ->
-			player = _(@_entities).find( ( entity ) -> entity instanceof Player and entity.id is id)
-			if player?
-				player.applyTransformations(transformations)
-			else
-				@addPlayer(id, transformations)
-
-		drawProjectiles: ( projectileTransformations ) -> 
-			projectile = new Projectile(@scene, @, false)
-			@addEntity(projectile)		
-			projectile.applyTransformations(projectileTransformations)
-
 
 		# Adds a physics entity to the world
 		#
@@ -76,10 +54,6 @@ define [
 		#
 		addEntity: ( entity ) ->
 			@_entities.add(entity)
-			entity.on('died', () =>
-					if entity isnt @player
-						@removeEntity(entity)
-				)
 
 		# Removes a physics entity from the world
 		#
@@ -87,6 +61,62 @@ define [
 		#
 		removeEntity: ( entity ) ->
 			@_entities.remove(entity)
+
+		# Creates and adds a player to the world.
+		#
+		# @param id [String] the string id of the player
+		# @param info [Object] an object of the player's info
+		#
+		createPlayer: ( id, owner, info ) ->
+			player = new Player(@, owner, id, info)
+
+			if owner
+				player.on('fire', ( projectile ) => @addEntity(projectile))
+
+			@addEntity(player)
+			return player
+
+		# Removes a player from the world.
+		#
+		# @param id [String] the id string of the player
+		#
+		removePlayer: ( id ) ->
+			if player = @getPlayer(id)
+				player.die()
+
+		# Finds a player by id and returns it.
+		#
+		# @param id [String] the id string of the player
+		# @return [Entity.Player] the player when found or null otherwise
+		#
+		getPlayer: ( id ) ->
+			return _(@getPlayers()).find( ( player ) -> player.id is id)
+
+		# Returns all players added to the world.
+		#
+		# @return [Array] an array of all players in the world
+		#
+		getPlayers: ( ) ->
+			return _(@_entities).filter( ( entity ) -> entity instanceof Player)
+
+		# Updates a player's info. If the player doesn't exist, 
+		# it will create the player using addPlayer().
+		#
+		# @param id [String] the string id of the player
+		# @param info [Object] an object of the player's info
+		#
+		applyPlayerInfo: ( id, info ) ->
+			if player = @getPlayer(id)
+				player.applyInfo(info)
+			else @createPlayer(id, false, info)
+
+		# Creates a new projectile.
+		# 
+		# @param info [Object] the object containing the projectile info
+		#
+		createProjectile: ( info ) ->
+			projectile = new Projectile(@, false, null, null, info)
+			@addEntity(projectile)
 
 		# Updates the world.
 		#

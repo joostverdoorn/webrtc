@@ -1,10 +1,11 @@
 define [
 	'public/scripts/models/entity._'
 	'public/scripts/models/entity.cannon'
+	'public/scripts/models/entity.projectile'
 
 	'three'
 	'jquery'
-	], ( Entity, Cannon, Three, $ ) ->
+	], ( Entity, Cannon, Projectile, Three, $ ) ->
 
 	# This class implements player-specific properties for the entity physics object.
 	#
@@ -14,15 +15,21 @@ define [
 		# properties for the entity
 		#
 		# @param id [String] the string id of the player
-		# @param transformations [Object] an object containing all transformations to apply to the player
+		# @param info [Object] an object containing all info to apply to the player
 		#
-		initialize: ( @id, transformations = null ) ->
-			@boost = false
-			
+		initialize: ( @id, info = null ) ->		
 			@mass = 300
 			@drag = .01
 			@angularDrag = 7
 			@applyGravity = true
+
+			@flyLeft = 0
+			@flyRight = 0
+			@flyForward = 0
+			@flyBackward = 0
+
+			@boost = false
+			@_cannonReady = true
 
 			@_loader.load('/meshes/ufo.js', ( geometry, material ) =>
 				# Set up skinned geometry mesh.
@@ -35,10 +42,10 @@ define [
 				@animation.play()
 
 				# Create our cannon.
-				@cannon = new Cannon(@scene, @world, @owner, @, transformations?.cannon)
+				@cannon = new Cannon(@world, @owner, @)
 
-				# Apply passed transformations.
-				@applyTransformations(transformations)
+				# Apply passed info.
+				@applyInfo(info)
 
 				# Set the rotation axis order to YXZ.
 				@rotation.order = 'YXZ'
@@ -61,6 +68,12 @@ define [
 				return
 
 			rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
+
+			# Add tilt forces
+			@addAngularForce(new Three.Euler(-.6 * @flyLeft, 0, 0, 'YXZ'))
+			@addAngularForce(new Three.Euler(.6 * @flyRight, 0, 0, 'YXZ'))
+			@addAngularForce(new Three.Euler(0, 0, -.6 * @flyForward, 'YXZ'))
+			@addAngularForce(new Three.Euler(0, 0, .6 * @flyBackward, 'YXZ'))
 
 			# Add thrust straight downward from the player. 
 			thrustVector = new Three.Vector3(0, 1, 0).applyQuaternion(rotationQuaternion)
@@ -96,6 +109,20 @@ define [
 			# Update alien animation.
 			@animation.update(dt)
 
+		# Fires a projectile.
+		#
+		fire: ( ) ->
+			if @_cannonReady
+
+				projectile = new Projectile(@world, @owner, @, @cannon)
+				projectile.update(0)
+				@trigger('fire', projectile)
+				@_cannonReady = false
+
+				setTimeout( =>
+					@_cannonReady = true
+				, 500)
+
 		# Calculates a level rotation with relation to the planet surface and returns
 		# an euler representation of this rotation.
 		#
@@ -125,25 +152,39 @@ define [
 			if downVelocity.length() > 20
 				@die()
 
-		# Applies transformation information given in an object to the entity.
+		# Applies information given in an object to the entity.
 		#
-		# @param transformations [Object] an object that contains the transformations
+		# @param info [Object] an object that contains the transformations
 		#
-		applyTransformations: ( transformations ) =>
-			unless transformations
+		applyInfo: ( info ) =>
+			unless info
 				return
 
-			super(transformations)
-			@boost = transformations.boost
-			@cannon.applyTransformations(transformations.cannon)
-			
-		# Returns the current transformation information in an object.
-		#
-		# @return [Object] an object of all the transformations
-		#
-		getTransformations: ( ) ->
-			transformations = super()
-			transformations.cannon = @cannon?.getTransformations()
-			transformations.boost = @boost
+			super(info)
 
-			return transformations
+			@boost = info.boost
+			
+			@flyLeft = info.flyLeft
+			@flyRight = info.flyRight
+			@flyForward = info.flyForward
+			@flyBackward = info.flyBackward		
+
+			@cannon.applyInfo(info.cannon)
+			
+		# Returns the current info in an object.
+		#
+		# @return [Object] an object of all the info
+		#
+		getInfo: ( ) ->
+			info = super()
+			
+			info.boost = @boost
+
+			info.flyLeft = @flyLeft
+			info.flyRight = @flyRight
+			info.flyForward = @flyForward
+			info.flyBackward = @flyBackward			
+
+			info.cannon = @cannon?.getInfo()
+
+			return info

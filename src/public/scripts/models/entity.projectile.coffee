@@ -14,9 +14,9 @@ define [
 		#
 		# @param player [Player] Player who fires the projectile
 		# @param cannon [Cannon] Cannon which fires the projectile
-		# @param transformations [Object] an object containing all transformations to apply to the player
+		# @param info [Object] an object containing all info to apply to the player
 		#
-		initialize: ( player = null, cannon = null, transformations ) ->
+		initialize: ( player = null, cannon = null, info = null ) ->
 			@mass = 10
 			@drag = .0005
 			@angularDrag = 10
@@ -57,6 +57,7 @@ define [
 				# Add the force to the pending forces
 				@addForce(@force)
 				player.addForce(@force.clone().negate())
+			else @applyInfo(info)
 
 			# Add the projectile to the scene
 			@scene.add(@mesh)

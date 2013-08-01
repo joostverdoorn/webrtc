@@ -84,10 +84,6 @@ require [
 
 			@aspectRatio = width / height
 			@camera = new Three.PerspectiveCamera(@viewAngle, @aspectRatio, @nearClip, @farClip)
-			@camera.position.x = -30
-			@camera.position.z = 0
-			@camera.position.y = 0
-			@camera.rotation.y = -1 * Math.PI / 2
 			@cameraRaycaster = new Three.Raycaster()
 
 			@scene.add(@camera)
@@ -112,13 +108,11 @@ require [
 			@status = 0
 
 			@node.server.on('connect', ( ) =>
-				# now ready to spawn player
 				@node.server.off('connect')
 				@status = 1
 			)
 
 			@node.on('joined', =>
-				# now ready to broadcast player
 				@node.off('joined')
 				@welcomeScreen.showWelcomeScreen()
 				@status = 2
@@ -129,23 +123,23 @@ require [
 			)
 
 			@node.onReceive('player.list', ( list ) =>
-				@world.addPlayer(id, transformations) for id, transformations in list
+				@world.createPlayer(id, info) for id, info in list
 			)
 
-			@node.onReceive('player.joined', ( id, transformations ) =>
-				@world.addPlayer(id, transformations)
+			@node.onReceive('player.joined', ( id, info ) =>
+				@world.createPlayer(id, info)
 			)
 
 			@node.onReceive('player.left', ( id ) =>
 				@world.removePlayer(id)
 			)
 
-			@node.onReceive('player.update', (id, transformations ) =>
-				@world.updatePlayer(id, transformations)
+			@node.onReceive('player.update', ( id, info ) =>
+				@world.applyPlayerInfo(id, info)
 			)
 
-			@node.onReceive('player.fired', ( projectileTransformations ) =>
-				@world.drawProjectiles(projectileTransformations)
+			@node.onReceive('player.fire', ( id, info ) =>
+				@world.createProjectile(info)
 			)
 
 			window.requestAnimationFrame(@update)
@@ -167,21 +161,25 @@ require [
 
 			return [width, height]
 
-		spawnPlayer: ( @allowInput = true, @applyGravity = true ) =>
+		# Spawns the player in the world.
+		#
+		# @param position [Three.Vector3] the position at which to spawn the player
+		#
+		createPlayer: ( position = null ) =>
 			if @player
 				return
 
-			if @status >= 2
-				@player = new Player(@scene, @world, true, @node.id, {position: new Three.Vector3(0, 300, 0).toArray()})
-				@player.applyGravity = @applyGravity
-				@world.addEntity(@player)
+			position = new Three.Vector3(0, 300, 0) unless position?
+			info = 
+				position: new Three.Vector3(0, 300, 0).toArray()
 
-				@node.broadcast('player.joined', @player.id, @player.getTransformations())
+			@player = @world.createPlayer(@node.id, true, info)
+			@player.on('fire', ( projectile ) => @node.broadcast('player.fire', @player.id, projectile.getInfo()))
+			@node.broadcast('player.joined', @player.id, @player.getInfo())
 
-				broadcastInterval = setInterval( ( ) =>
-					if @player?
-						@node.broadcast('player.update', @player.id, @player.getTransformations())
-				, 200)
+			broadcastInterval = setInterval( ( ) =>
+				@node.broadcast('player.update', @player.id, @player.getInfo())
+			, 200)
 
 		# Updates the phyics for all objects and renders the scene. Requests a new animation frame 
 		# to repeat this methods.
@@ -191,27 +189,22 @@ require [
 		update: ( timestamp ) =>
 			dt = (timestamp - @lastUpdateTime) / 1000     
 
-			if @player?.cannon? and @allowInput
-				# If any keys are pressed, apply angular forces to the player
-				@player?.boost = @inputHandler.getBoost()
+			# Apply input to player.
+			if @player?.cannon?			
+				@player.fire() if @inputHandler.getFire()
+				@player.boost = @inputHandler.getBoost()
 
-				@player?.cannon.addAngularForce(new Three.Euler(0, .4 * @inputHandler.getGunRotateCounterClockwise(), 0, 'YXZ'))
-				@player?.cannon.addAngularForce(new Three.Euler(0, -.4 * @inputHandler.getGunRotateClockwise(), 0, 'YXZ'))
-				@player?.cannon.addAngularForce(new Three.Euler(0, 0, .4 * @inputHandler.getGunRotateUpward(), 'YXZ'))
-				@player?.cannon.addAngularForce(new Three.Euler(0, 0, -.4 * @inputHandler.getGunRotateDownward(), 'YXZ'))
+				@player.flyLeft = @inputHandler.getFlyLeft()
+				@player.flyRight = @inputHandler.getFlyRight()
+				@player.flyForward = @inputHandler.getFlyForward()
+				@player.flyBackward = @inputHandler.getFlyBackward()				
 
-				if @inputHandler.getFire()
-					projectile = @player?.cannon.fire()
-					if projectile?
-						@world.addEntity(projectile)
-						projectile.update(dt)
-						@node.broadcast('player.fired', projectile.getTransformations())
+				@player.cannon.rotateLeft = @inputHandler.getCannonRotateLeft()
+				@player.cannon.rotateRight = @inputHandler.getCannonRotateRight()
+				@player.cannon.rotateUpward = @inputHandler.getCannonRotateUpward()
+				@player.cannon.rotateDownward = @inputHandler.getCannonRotateDownward()
 
-				@player?.addAngularForce(new Three.Euler(0, 0, -.6 * @inputHandler.getFlyForward(), 'YXZ'))
-				@player?.addAngularForce(new Three.Euler(0, 0, .6 * @inputHandler.getFlyBackward(), 'YXZ'))
-				@player?.addAngularForce(new Three.Euler(-.6 * @inputHandler.getFlyLeft(), 0, 0, 'YXZ'))
-				@player?.addAngularForce(new Three.Euler(.6 * @inputHandler.getFlyRight(), 0, 0, 'YXZ'))
-
+			# Update the world
 			@world.update(dt)
 
 			# Set the camera to follow the player
@@ -247,25 +240,13 @@ require [
 				# Update sky position
 				@sky.position = @camera.position.clone()
 
-			# Render the scene
+			# Render the scene.
 			@renderer.render(@scene, @camera)
 
-			# Update the location statistics
-			$('#stats .x').html(@player?.position.x)
-			$('#stats .y').html(@player?.position.y)
-			$('#stats .z').html(@player?.position.z)
-			$('#stats .velocity').html(@player?.velocity.length())
-
-			if @player?
-				oldPos = @player.position.clone()
-				newPos = oldPos.clone().add(@player.velocity)
-				downVelocity = newPos.length() - oldPos.length()
-				
-				$('#stats .velocityDown').html(downVelocity)
-			
+			# Update stats.			
 			@stats.update()
 
-			# Request a new animation frame
+			# Request a new animation frame.
 			@lastUpdateTime = timestamp
 			window.requestAnimationFrame(@update)
 
@@ -287,7 +268,7 @@ require [
 			@inputHandler.on('Boost', ( value ) =>
 					@inputHandler.off('Boost')
 					@welcomeScreen.hide()
-					@spawnPlayer(true, true)
+					@createPlayer()
 				)
 
 		setQRCode: () =>
