@@ -65,9 +65,9 @@ require [
 					spyOn(node, 'getParent')
 					peer = node.connect("123456")
 
-				it 'should call the callback for _onPeerDisconnect', ->
+				it 'should call the callback when the peer disconnects', ->
 					node.getParent.andReturn(false)
-					node._onPeerDisconnect(peer)
+					peer.trigger('disconnect')
 					expect(node.getParent).toHaveBeenCalled()
 					expect(node.removePeer).toHaveBeenCalled()
 					expect(node.removePeer.mostRecentCall.args).toEqual([
@@ -92,7 +92,7 @@ require [
 							}
 						])
 					spyOn(node, '_pickParent')
-					node._onPeerDisconnect(peer)
+					peer.trigger('disconnect')
 					expect(node.getParent).toHaveBeenCalled()
 					expect(node.getPeers).toHaveBeenCalled()
 					expect(node._pickParent).toHaveBeenCalled()
@@ -108,6 +108,12 @@ require [
 					expect(node.removePeer.mostRecentCall.args).toEqual([
 							peer
 						])
+
+
+				it 'should trigger the _triggerStaySuperNodeTimeout()', ->
+					spyOn(node, '_triggerStaySuperNodeTimeout')
+					peer.trigger('disconnect')
+					expect(node._triggerStaySuperNodeTimeout).toHaveBeenCalled()
 
 			describe 'when adding a peer', ->
 				it 'should get added to the internal list', ->
@@ -166,11 +172,6 @@ require [
 					waitsFor(->
 							return success
 						, 1000)
-
-				it 'should trigger the _triggerStaySuperNodeTimeout()', ->
-					spyOn(node, '_triggerStaySuperNodeTimeout')
-					node.removePeer(fakePeer)
-					expect(node._triggerStaySuperNodeTimeout).toHaveBeenCalled()
 
 			describe 'when entering network', ->
 
