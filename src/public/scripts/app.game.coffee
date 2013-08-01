@@ -98,8 +98,8 @@ require [
 
 			@stats = new Stats()
 			@stats.domElement.style.position = 'absolute'
-			@stats.domElement.style.top = '150px'
-			@stats.domElement.style.right = '0px'
+			@stats.domElement.style.top = '20px'
+			@stats.domElement.style.left = '20px'
 			@container.append(@stats.domElement)
 
 			@world = new World(@scene)
