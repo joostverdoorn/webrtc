@@ -210,12 +210,12 @@ define [
 		#
 		# @return [Boolean] whether or not a collision has been found
 		isColliding: ( objects ) ->
-			unless @mesh?.geometry
+			unless @mesh?.geometry?.boundingSphere?.radius
 				return false
 
 			selfRadius = @mesh.geometry.boundingSphere.radius
 			for object in objects
-				unless object.mesh?.geometry
+				unless object.mesh?.geometry?.boundingSphere?.radius
 					continue
 
 				objectRadius = object.mesh.geometry.boundingSphere.radius

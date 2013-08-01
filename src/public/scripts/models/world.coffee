@@ -122,5 +122,10 @@ define [
 		#
 		# @param dt [Float] the time that has elapsed since last update
 		#
-		update: ( @dt ) ->
+		update: ( @dt, ownPlayer ) ->
 			entity?.update(dt) for entity in @_entities
+
+			entities = _(@_entities).filter( ( entity ) -> entity instanceof Projectile and not entity.owner)
+			if entities
+				if ownPlayer?.isColliding(entities)
+					ownPlayer.die()

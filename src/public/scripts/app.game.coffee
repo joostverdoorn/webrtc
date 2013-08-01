@@ -218,7 +218,7 @@ require [
 				@player.cannon.rotateDownward = @inputHandler.getCannonRotateDownward()
 
 			# Update the world
-			@world.update(dt)
+			@world.update(dt, @player)
 
 			# Set the camera to follow the player
 			if @player? and @player.cannon?
