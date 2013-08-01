@@ -5,7 +5,7 @@
 \textclass article
 \use_default_options true
 \maintain_unincluded_children false
-\language dutch
+\language english
 \language_package default
 \inputencoding auto
 \fontencoding global
@@ -79,7 +79,43 @@ WebRTC, or Web Real-Time Communication, is an API definition that enables
 Peer-to-Peer
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Standard
+A peer-to-peer network is a decentralized distributed network architecture.
+ It means that the nodes in this network can communicate with each other
+ without any interaction with the server which keeps a track of all nodes.
+ The nodes in the network can communicate with each other without any interactio
+n with a central server.
+ This advantage brings a disadvantage that there is no global clock.
+\end_layout
+
+\begin_layout Subsubsection
+Infrastructure
+\end_layout
+
+\begin_layout Standard
+The simplest form of a peer to peer network is an 
+\emph on
+unstructured
+\emph default
+ network.
+ Nodes are randomly connected with each other and share data inefficiently.
+ All nodes have the same roles in this network.
+ It is usually better to implement some kind of overlay network to help
+ the nodes find each other and transmit data, to create a 
+\emph on
+structured
+\emph default
+ network.
+ For example the nodes with more bandwidth operate as super nodes and help
+ the other nodes to communicate with each other.
+ Geo location can also be one of the ways to structure the network.
+\end_layout
+
+\begin_layout Subsubsection
+Applications
+\end_layout
+
+\begin_layout Paragraph
 MMOG
 \end_layout
 

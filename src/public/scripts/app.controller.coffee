@@ -35,8 +35,6 @@ require [
 		initialize: ( ) ->
 			@node = new Node()
 
-
-
 			nodeId =  @getURLParameter("nodeId")
 			@node.server.on('connect', ( ) =>
 				@node.connect(nodeId)
@@ -54,20 +52,20 @@ require [
 
 				@drawControllers()
 
-
 				@_lastBoost = false
 				@_lastFire = false
 
 				# Send the device orientation 10 times a second
 				if window.DeviceOrientationEvent
 					setTimeout( @sendDeviceOrientation, 100)
+
+				$(window).on('orientationchange resize', () =>
+					@drawControllers()
+				)
 				
 			)
 
-			$(window).on('orientationchange resize', () =>
-				@drawControllers()
-			)
-			
+		
 		drawControllers: () =>
 			
 			@canvas = oCanvas.create({
@@ -101,7 +99,7 @@ require [
 					y: height / 2,
 					origin: { x: "center", y: "center" },
 					width: width / 2,
-					height: height,
+					height: height / 2,
 					fill: "#f21"
 				})
 
@@ -184,8 +182,6 @@ require [
 			@fire.bind("touchmove", @handlePoke, false )
 			@fire.bind("touchend", @stopPoke, false )
 			#@fire.bind("touchcancel", @stopPoke, false )
-
-			#window.requestAnimationFrame(@bindEvents())
 
 		initiatePoke: (event) =>
 			console.log "start: ", event.x, event.y
