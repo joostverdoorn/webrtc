@@ -32,8 +32,8 @@ define [
 			@velocity = new Three.Vector3(0, 0, 0)
 			@angularVelocity = new Three.Euler(0, 0, 0, 'YXZ')
 			
-			@forces = []
-			@angularForces = []
+			@_forces = []
+			@_angularForces = []
 
 			@mesh = new Three.Mesh()
 			

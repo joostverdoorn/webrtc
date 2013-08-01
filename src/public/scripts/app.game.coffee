@@ -134,12 +134,16 @@ require [
 				@world.removePlayer(id)
 			)
 
-			@node.onReceive('player.update', (id, transformations ) =>
-				@world.updatePlayer(id, transformations)
+			@node.onReceive('player.died', ( id ) =>
+				@world.removePlayer(id)
 			)
 
-			@node.onReceive('player.fired', ( projectileTransformations ) =>
-				@world.drawProjectiles(projectileTransformations)
+			@node.onReceive('player.update', ( id, info ) =>
+				@world.applyPlayerInfo(id, info)
+			)
+
+			@node.onReceive('player.fire', ( id, info ) =>
+				@world.createProjectile(info)
 			)
 
 			window.requestAnimationFrame(@update)
@@ -165,13 +169,12 @@ require [
 		#
 		# @param position [Three.Vector3] the position at which to spawn the player
 		#
-		createPlayer: ( position = null ) =>
+		createPlayer: ( position = new Three.Vector3(0, 300, 0) ) =>
 			if @player
 				return
 
-			position = new Three.Vector3(0, 300, 0) unless position?
 			info = 
-				position: new Three.Vector3(0, 300, 0).toArray()
+				position: position.toArray()
 
 			@player = @world.createPlayer(@node.id, true, info)
 			@player.on('fire', ( projectile ) => @node.broadcast('player.fire', @player.id, projectile.getInfo()))
@@ -181,9 +184,9 @@ require [
 				@node.broadcast('player.update', @player.id, @player.getInfo())
 			, 200)
 
-				@player.on('died', ( position, velocity ) =>
-						@_playerDied(broadcastInterval, position, velocity)
-					)
+			@player.on('die', ( position, velocity ) =>
+					@_playerDied(broadcastInterval, position, velocity)
+				)
 
 		_playerDied: ( interval, position, velocity ) ->
 			clearInterval(interval)
