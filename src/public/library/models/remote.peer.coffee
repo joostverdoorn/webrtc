@@ -201,12 +201,6 @@ define [
 		# @param event [Event] the channel open event
 		#
 		_onChannelOpen: ( event ) =>
-			@_pingInterval = setInterval( ( ) =>
-				@ping( ( latency, coordinateString ) => 
-					@coordinates = Vector.deserialize(coordinateString)
-				)
-			, 7500)
-
 			@query('isSuperNode', ( isSuperNode ) => @isSuperNode = isSuperNode)
 			@trigger('channel.opened', @, event)
 
@@ -225,7 +219,7 @@ define [
 		# Is called when a connection has been broken.
 		#
 		_onDisconnect: ( ) ->
-			clearInterval(@_pingInterval)
+			clearInterval(@pingInterval)
 			console.log "disconnected from node #{@id}"
 
 		# Is called when the channel has opened.
@@ -241,4 +235,4 @@ define [
 		# Removes all timers
 		#
 		removeTimers: ( ) ->
-			clearInterval(@_pingInterval)
+			clearInterval(@pingInterval)

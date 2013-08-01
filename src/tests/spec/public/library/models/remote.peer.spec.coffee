@@ -55,9 +55,6 @@ require [
 		beforeEach ->
 			fakeController = new FakeController()
 
-		afterEach ->
-			peer.removeTimers()
-
 		describe 'when initialized', ->
 			it 'should create a new RTCPeerConnection object with default configurations', ->
 				# Jasmine will remove the original prototype so we need to restore it later

@@ -55,6 +55,7 @@ require [
 				@_lastBoost = false
 				@_lastFire = false
 
+
 				# Send the device orientation 10 times a second
 				if window.DeviceOrientationEvent
 					setTimeout( @sendDeviceOrientation, 100)
@@ -67,7 +68,6 @@ require [
 
 		
 		drawControllers: () =>
-			
 			@canvas = oCanvas.create({
 				canvas: "#canvas"
 				disableScrolling : true
@@ -84,7 +84,7 @@ require [
 					origin: { x: "center", y: "center" },
 					width: width / 2,
 					height: height / 2,
-					fill: "#0ef"
+					fill: "#48ef48"
 				})
 				@boost = @canvas.display.rectangle({
 					x: width / 4,
@@ -99,9 +99,12 @@ require [
 					y: height / 2,
 					origin: { x: "center", y: "center" },
 					width: width / 2,
-					height: height / 2,
+					height: height,
 					fill: "#f21"
 				})
+
+				@poke.x = $(window).width() * 3 / 4
+				@poke.y = $(window).height() / 2
 
 			else
 
@@ -126,9 +129,12 @@ require [
 					y: height * 3 / 4,
 					origin: { x: "center", y: "center" },
 					width: width,
-					height: height / 2,
+					height: height /2,
 					fill: "#f21"
 				})
+
+				@poke.x = $(window).width() / 2
+				@poke.y = $(window).height() * 3 / 4
 
 			shootText = @canvas.display.text({
 				x: 0,
@@ -166,7 +172,7 @@ require [
 			@canvas.addChild(@fire)
 			@fire.addChild(fireText)
 
-			window.requestAnimationFrame(@bindEvents())
+			@bindEvents()
 
 		bindEvents: () =>
 
@@ -178,33 +184,37 @@ require [
 			@shoot.bind("touchend", () => @sendShootEvent(false))
 			@shoot.bind("touchcancel", () => @sendShootEvent(false))
 
-			@fire.bind("touchenter", @initiatePoke, false )
 			@fire.bind("touchmove", @handlePoke, false )
 			@fire.bind("touchend", @stopPoke, false )
 			#@fire.bind("touchcancel", @stopPoke, false )
 
-		initiatePoke: (event) =>
-			console.log "start: ", event.x, event.y
-			@poke.x = event.x
-			@poke.y = event.y
+
 
 		handlePoke: (event) =>
-			sendPoke = {}
-			sendPoke.x = Math.round((event.x - @poke.x) / 4)
-			sendPoke.y = Math.round((event.y - @poke.y) / 4)
-			console.log sendPoke
-			@node.getPeers()[0].emit('controller.cannon', sendPoke)
-
-			poke = {}
-			poke.x = @fire.x - event.x
-			poke.y = @fire.y - event.y
-			@pokeCanvas.moveTo(-poke.x, -poke.y)
-			@canvas.redraw()
+			unless @pokePosition?
+				window.requestAnimationFrame(@sendPoke)
+			
+			@pokePosition = {}
+			@pokePosition.x = Math.round((event.x - @poke.x) / 8)
+			@pokePosition.y = Math.round((event.y - @poke.y) / 8)		
+		
+			@pokeController = {}
+			@pokeController.x = @fire.x - event.x
+			@pokeController.y = @fire.y - event.y
 
 		stopPoke: (event) =>
-			@pokeCanvas.moveTo(0, 0)
-			@canvas.redraw()
-			#@sendFireEvent( false )
+
+			@pokePosition = null
+			@pokeController = {0,0}
+
+		sendPoke: () =>
+			if @pokePosition?
+				@node.getPeers()[0].emit('controller.cannon', @pokePosition)
+				window.requestAnimationFrame(@sendPoke)
+			if @pokeController?
+				@pokeCanvas.moveTo(-@pokeController.x, -@pokeController.y)
+				@canvas.redraw()
+
 			
 		# Get values stored in the url of the controller
 		#

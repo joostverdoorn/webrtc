@@ -23,7 +23,7 @@ define [
 			@on('message', @_onMessage)
 			@on('ping', @_onPing)
 			@on('query', @_onQuery)
-			@on('emitTo', @_onEmitTo)			
+			@on('emitTo', @_onEmitTo)
 			@on('log', ( args... ) => console.log(args))
 
 		# Disconnects the remote and removes all bindings.

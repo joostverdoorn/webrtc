@@ -57,6 +57,7 @@ define [
 			@coordinates = new Vector(Math.random(), Math.random(), Math.random())
 			@coordinateDelta = 1
 			
+			@_peers.on('channel.opened', ( peer ) => @ping(peer))
 			@_peers.on('disconnect', @_onPeerDisconnect)
 			@_peers.on('peer.addSibling', ( peer ) => @addSibling(peer, false))
 			@_peers.on('peer.setSuperNode', @_onPeerSetSuperNode)
@@ -73,6 +74,15 @@ define [
 			@staySuperNodeTimeout = null
 
 			@timers.push(setInterval(@_updateCoordinates, 7500))
+
+		ping: (peer) =>
+			peer.pingInterval = setInterval( ( ) =>
+				peer.ping( ( latencyW, coordinateString ) => 
+					peer.coordinates = Vector.deserialize(coordinateString)
+					console.log peer.coordinates
+				)
+			, 7500)
+
 
 		# Change a SuperNode state of a node
 		#
@@ -372,6 +382,7 @@ define [
 		# @param peer [Peer] the peer that disconnects
 		#
 		_onPeerDisconnect: ( peer ) =>
+			peer.removeTimers()
 			@_triggerStaySuperNodeTimeout()
 			if peer is @getParent()
 				candidates = _(@getPeers()).filter( ( p ) -> p.isSuperNode )
