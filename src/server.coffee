@@ -52,24 +52,6 @@ define [
 			node = new Node(@, socket)
 			@addNode(node)
 
-		# Sends a message to a certain node.
-		#
-		# @param to [String] the id of the node to pass the message to
-		# @param event [String] the event to pass to the node 
-		# @param args... [Any] any arguments to pass along 
-		#
-		emitTo: ( to, event, args... ) ->
-			message = new Message(to, null, event, args)	
-			@relay(message)
-
-		# Relays a composed message to a certain node.
-		#
-		# @param message [Message] the message to relay
-		#
-		relay: ( message ) ->
-			if node = @getNode(message.to)
-				node.send(message)
-
 		# Adds a node to the node list
 		#
 		# @param node [Node] the node to add
@@ -102,6 +84,24 @@ define [
 				return _(@_nodes).filter( ( node ) -> node.type is type )
 			else
 				return @_nodes
+
+		# Sends a message to a certain node.
+		#
+		# @param to [String] the id of the node to pass the message to
+		# @param event [String] the event to pass to the node 
+		# @param args... [Any] any arguments to pass along 
+		#
+		emitTo: ( to, event, args... ) ->
+			message = new Message(to, null, event, args)	
+			@relay(message)
+
+		# Relays a composed message to a certain node.
+		#
+		# @param message [Message] the message to relay
+		#
+		relay: ( message ) ->
+			if node = @getNode(message.to)
+				node.send(message)
 
 		# Responds to a request
 		#
