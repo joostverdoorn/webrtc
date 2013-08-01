@@ -32,6 +32,8 @@ define [
 			@_cannonReady = true
 
 			@_loader.load('/meshes/ufo.js', ( geometry, material ) =>
+				geometry.computeBoundingSphere()
+				
 				# Set up skinned geometry mesh.
 				@mesh = new Three.SkinnedMesh(geometry, new Three.MeshFaceMaterial(material))
 				material.skinning = true for material in @mesh.material.materials

@@ -182,7 +182,6 @@ require [
 			, 200)
 
 				@player.on('died', ( position, velocity ) =>
-						console.log 'DIED App'
 						@_playerDied(broadcastInterval, position, velocity)
 					)
 

@@ -28,8 +28,10 @@ define [
 			
 			# Load the cannon mesh.
 			@_loader.load('/meshes/cannon.js', ( geometry, material ) =>
+				geometry.computeBoundingSphere()
 				@mesh.geometry = geometry
 				@mesh.material = new Three.MeshFaceMaterial(material)
+
 				@player.mesh.add(@mesh)
 
 				# Set the correct rotation order.

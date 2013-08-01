@@ -36,6 +36,8 @@ define [
 					rings)
 				, sphereMaterial)
 
+			@mesh.geometry.computeBoundingSphere()
+
 			# If both cannon and player are defined, instantiate the projectile forces.
 			if cannon? and player?
 				# Get the starting position of the projectile.

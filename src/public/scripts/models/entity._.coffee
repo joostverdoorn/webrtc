@@ -203,3 +203,23 @@ define [
 				rotation: @rotation.toArray()
 
 			return info
+
+		# Returns if the bounding sphere of this entity is colliding with a bounding sphere of a given set of objects
+		#
+		# @param [Entities] An Array of entities to be checked against
+		#
+		# @return [Boolean] whether or not a collision has been found
+		isColliding: ( objects ) ->
+			unless @mesh?.geometry
+				return false
+
+			selfRadius = @mesh.geometry.boundingSphere.radius
+			for object in objects
+				unless object.mesh?.geometry
+					continue
+
+				objectRadius = object.mesh.geometry.boundingSphere.radius
+				if @position.distanceTo(object.position) < (objectRadius + selfRadius)
+					return true
+
+			return false
