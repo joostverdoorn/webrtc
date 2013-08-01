@@ -103,20 +103,26 @@ define [
 
 				if @owner
 					currentLength = @position.length()
-					planetRadius = @world.planet.geometry.boundingSphere.radius
-					if currentLength < planetRadius
-						position2 = @position.clone().normalize().multiplyScalar(planetRadius)
-						@_raycaster.set(position2, position2.clone().negate())
-						intersects = @_raycaster.intersectObject(@world.planet)
-						for key, intersect of intersects
-							surface = planetRadius - intersect.distance
+					if currentLength < 250
+						@trigger('impact.world', @position.clone(), @velocity.clone())
+						@position.normalize().multiplyScalar(surface)
 
-							if currentLength < surface
-								@trigger('impact.world', @position.clone(), @velocity.clone())
-								@position.normalize().multiplyScalar(surface)
+						@velocity = new Three.Vector3()
+					else
+						planetRadius = @world.planet.geometry.boundingSphere.radius
+						if currentLength < planetRadius
+							position2 = @position.clone().normalize().multiplyScalar(planetRadius)
+							@_raycaster.set(position2, position2.clone().negate())
+							intersects = @_raycaster.intersectObject(@world.planet)
+							for key, intersect of intersects
+								surface = planetRadius - intersect.distance
 
-								@velocity = new Three.Vector3()
-							break
+								if currentLength < surface
+									@trigger('impact.world', @position.clone(), @velocity.clone())
+									@position.normalize().multiplyScalar(surface)
+
+									@velocity = new Three.Vector3()
+								break
 
 				# Loop through all forces and calculate the acceleration.
 				acceleration = new Three.Vector3(0, 0, 0)			
