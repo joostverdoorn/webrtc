@@ -40,9 +40,6 @@ require [
 	'underscore'
 	], ( App, Server, Three, Stats, $, _ ) ->
 
-	console.log Stats
-
-
 	# Inspector app class. This will create and draw a 3d scene
 	# containing all nodes and their connections.
 	#
@@ -61,6 +58,7 @@ require [
 			farClip = 10000
 
 			@_zoom = 1
+
 			@_deltaX = 0
 			@_deltaY = 0
 			@_lastMouseX = 0
@@ -94,6 +92,14 @@ require [
 			hemisphereLight = new THREE.HemisphereLight( 0xffffff, 0xaaaaaa, 1 );
 			@scene.add(hemisphereLight)
 
+			# Create projector for tracking mouse in 3d world
+			@projector = new THREE.Projector();
+			@label = $('<div class="label"></div>')
+			$('body').append(@label)
+			
+			@label.hide()
+			@label.css('position', 'absolute')
+
 			# Set the last updated time to 0
 			@_lastUpdateTime = 0
 
@@ -110,11 +116,28 @@ require [
 			
 			$(window).mousemove ( event ) =>
 				if @_mouseDown
-					@_deltaX = event.offsetX - @_lastMouseX
-					@_deltaY = event.offsetY - @_lastMouseY
+					@_deltaX = event.clientX - @_lastMouseX
+					@_deltaY = event.clientY - @_lastMouseY
 
-					@_lastMouseX = event.offsetX
-					@_lastMouseY = event.offsetY
+					@_lastMouseX = event.clientX
+					@_lastMouseY = event.clientY
+
+				# Detect mouse intersects
+				mouseX = ( event.clientX / window.innerWidth ) * 2 - 1
+				mouseY = - ( event.clientY / window.innerHeight ) * 2 + 1
+				vector = new THREE.Vector3( mouseX, mouseY, 0.5 )
+				
+				@projector.unprojectVector( vector, @camera )
+				raycaster = new THREE.Raycaster( @camera.position, vector.sub( @camera.position ).normalize() )
+				intersects = raycaster.intersectObjects( node.mesh for node in @nodes )
+				
+				if node = _(@nodes).find( ( node ) -> node.mesh is intersects[0]?.object )
+					@label.html(node.id)
+					@label.css('left', event.clientX)
+					@label.css('top', event.clientY - 20)
+					@label.show()
+				else
+					@label.hide()
 
 			$(window).mousedown ( ) => 
 				@_mouseDown = true
@@ -266,8 +289,8 @@ require [
 						geometry.vertices.push(node.mesh.position)
 
 						material = new Three.LineBasicMaterial(
-							color: 0xff0000
-							linewidth: 2
+							color: 0xff2222
+							linewidth: 1
 						)
 						
 						edge = new Three.Line(geometry, material)
@@ -282,10 +305,12 @@ require [
 		setInfo: ( nodeInfo ) ->
 			@id = nodeInfo.id
 			@isSuperNode = nodeInfo.isSuperNode
+			@token = nodeInfo.token
 			@peers = nodeInfo.peers
 
 			# Set supernodes to display as red, normal nodes as green.
 			if @isSuperNode then material = new THREE.MeshLambertMaterial( color:0xff0000 )
+			else if @token then material = new THREE.MeshLambertMaterial( color:0xffff00 )
 			else material = new Three.MeshLambertMaterial( color:0x00ff00 )
 
 			@mesh.material = material

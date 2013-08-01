@@ -210,6 +210,7 @@ define [
 						type: @type
 						coordinates: @coordinates
 						isSuperNode: @isSuperNode
+						token: @token
 						peers: @getPeers().map( ( peer ) ->
 							id: peer.id
 							role: peer.role

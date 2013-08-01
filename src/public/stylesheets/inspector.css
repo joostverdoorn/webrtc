@@ -18,3 +18,17 @@ body {
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#34363a', endColorstr='#282730',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
 }
 
+.label {	
+	color: #000;
+	font-family: Arial, sans-serif;
+	font-size: 10px;
+	font-weight:bold;
+
+	border-radius: 4px;
+	padding:4px;
+	background: #fff;
+
+	opacity:.8;
+
+}
+
