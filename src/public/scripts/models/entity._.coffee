@@ -32,9 +32,8 @@ define [
 			@velocity = new Three.Vector3(0, 0, 0)
 			@angularVelocity = new Three.Euler(0, 0, 0, 'YXZ')
 			
-			@_forces = []
-			@_angularForces = []
-			@_dead = false
+			@forces = []
+			@angularForces = []
 
 			@mesh = new Three.Mesh()
 			
@@ -56,7 +55,7 @@ define [
 		die: ( ) ->
 			@_dead = true
 			@scene.remove(@mesh)
-			@trigger('die')
+			@trigger('die', @position.clone(), @velocity.clone())
 
 		# Adds a force to the forces stack. Forces will be applied next update.
 		#

@@ -134,12 +134,12 @@ require [
 				@world.removePlayer(id)
 			)
 
-			@node.onReceive('player.update', ( id, info ) =>
-				@world.applyPlayerInfo(id, info)
+			@node.onReceive('player.update', (id, transformations ) =>
+				@world.updatePlayer(id, transformations)
 			)
 
-			@node.onReceive('player.fire', ( id, info ) =>
-				@world.createProjectile(info)
+			@node.onReceive('player.fired', ( projectileTransformations ) =>
+				@world.drawProjectiles(projectileTransformations)
 			)
 
 			window.requestAnimationFrame(@update)
@@ -180,6 +180,20 @@ require [
 			broadcastInterval = setInterval( ( ) =>
 				@node.broadcast('player.update', @player.id, @player.getInfo())
 			, 200)
+
+				@player.on('died', ( position, velocity ) =>
+						console.log 'DIED App'
+						@_playerDied(broadcastInterval, position, velocity)
+					)
+
+		_playerDied: ( interval, position, velocity ) ->
+			clearInterval(interval)
+			@node.broadcast('player.died', @player.id)
+			@player = null
+
+			@welcomeScreen.show()
+			@welcomeScreen.showPlayerDiedScreen()
+			@startGame(position)
 
 		# Updates the phyics for all objects and renders the scene. Requests a new animation frame 
 		# to repeat this methods.
@@ -264,11 +278,11 @@ require [
 					@startGame()
 				)
 
-		startGame: () =>
+		startGame: ( position = new Three.Vector3(0, 300, 0) ) =>
 			@inputHandler.on('Boost', ( value ) =>
 					@inputHandler.off('Boost')
 					@welcomeScreen.hide()
-					@createPlayer()
+					@createPlayer(position)
 				)
 
 		setQRCode: () =>

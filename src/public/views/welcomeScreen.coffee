@@ -73,5 +73,11 @@ define [
 			@_showFromFile "mobile_qr.html",
 				callback
 
+		showPlayerDiedScreen: ( ) =>
+			@_showFromFile "player_died.html"
+
+		show: =>
+			@container.show()
+
 		hide: =>
 			@container.hide()
