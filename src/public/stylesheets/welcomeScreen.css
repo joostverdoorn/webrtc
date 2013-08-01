@@ -1,0 +1,66 @@
+#overlay > * {
+	font-family: Armata, Arial, sans-serif;
+	color: #fff;
+
+	line-height:28px;
+}
+
+#welcome {
+	width: 600px;
+	height: 400px;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+
+	margin: -250px 0 0 -350px;
+
+	text-align: center;
+	background-color: rgba(0, 0, 0, .3);
+	padding: 50px;
+
+	border-radius:10px;
+}
+
+#controllerSelection > #keyboard {
+	float: left;
+}
+#controllerSelection > #keyboard > img {
+	position: absolute;
+	top: 50%;
+	width: 270px;
+	height: 128px;
+	margin: -64px 0 0 0px;
+}
+
+#controllerSelection > #mobile {
+	float: right;
+	top: 50%;
+}
+#controllerSelection > #mobile > img {
+	width: 159px;
+	height: 300px;
+}
+
+#welcome h3 {
+	font-size:30px;
+}
+
+#welcome .key {
+	border: 1px solid #fff;
+	border-bottom-width:2px;
+	border-radius:3px;
+
+	box-shadow:0px 1px 3px rgba(0, 0, 0, .5);
+
+	background: rgba(255, 255, 255, .2);
+
+	padding:0 3px;
+	margin:3px;
+
+	min-width:20px;
+	min-height:20px;
+
+	display:inline-block;
+	font-weight:normal;
+
+}

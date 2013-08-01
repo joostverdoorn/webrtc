@@ -19,10 +19,13 @@ define [
 		initialize: ( player = null, cannon = null, transformations ) ->
 			@mass = 10
 			@drag = .0005
+			@angularDrag = 10
 			@applyGravity = true
 
-			sphereMaterial = new THREE.MeshBasicMaterial( {color:0x00ff00 * Math.random() }) 
-			radius = 0.4
+			@_projectileVelocity = 100
+
+			sphereMaterial = new THREE.MeshPhongMaterial( {color:0xff0000 })
+			radius = 0.45
 			segments = 6
 			rings = 8
 
@@ -33,19 +36,34 @@ define [
 					rings)
 				, sphereMaterial)
 
+			# If both cannon and player are defined, instantiate the projectile forces.
 			if cannon? and player?
+				# Get the starting position of the projectile.
 				@position = cannon.position.clone()
-				@position.y -= 0.9
+				player.mesh.localToWorld(@position)
 
-				x = Math.cos(cannon.rotation.y)
-				z = -Math.sin(cannon.rotation.y)
+				# Generate the projectile force.
+				@force = new Three.Vector3(@_projectileVelocity * @mass, 0, 0)
 
-				@vector = new Three.Vector3(x * @mass, 0, z * @mass).multiplyScalar(50)
-				@vector.add(player.velocity.clone().multiplyScalar(@mass))
-				@addForce(@vector)
+				# Apply the cannon rotation to the force vector.
+				@force.applyQuaternion(new Three.Quaternion().setFromEuler(cannon.rotation))
+
+				# Apply the player rotation to the force vector.
+				@force.applyQuaternion(new Three.Quaternion().setFromEuler(player.rotation))
+
+				# Add the player velocity to the force.
+				@force.add(player.velocity.clone().multiplyScalar(@mass))
+
+				# Add the force to the pending forces
+				@addForce(@force)
+				player.addForce(@force.clone().negate())
+
+			# Add the projectile to the scene
 			@scene.add(@mesh)
+			@loaded = true
 
-		# Removes projectile form the scene
-		#
-		die: ( ) ->
-			@scene.remove(@mesh)
+		update: ( dt ) ->
+			super(dt, true, false)
+
+			if @velocity.length() < 1
+				@die()

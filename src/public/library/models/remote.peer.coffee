@@ -96,7 +96,7 @@ define [
 
 			unless @isChannelOpen()
 				return false
-			
+
 			try
 				@_channel.send(message.serialize())
 				return true
@@ -120,12 +120,24 @@ define [
 			@_channel.onclose = @_onChannelClose
 			@_channel.onerror = @_onChannelError
 
+		# Ups bandwidth limit on SDP. Meant to be called during offer/answer.
+		_higherBandwidthSDP: ( sdp ) ->
+			# AS stands for Application-Specific Maximum.
+			# Bandwidth number is in kilobits / sec.
+			# See RFC for more info: http://www.ietf.org/rfc/rfc2327.txt
+			parts = sdp.split 'b=AS:30'
+			replace = 'b=AS:102400' # 100 Mbps
+			if parts.length > 1
+				return parts[0] + replace + parts[1]
+			return sdp
+
 		# Is called when a local description has been added. Will send this description
 		# to the remote.
 		#
 		# @param description [RTCSessionDescription] the local session description
 		#
 		_onLocalDescription: ( description ) =>
+			description.sdp = @_higherBandwidthSDP(description.sdp)
 			@_connection.setLocalDescription(description)
 			@_controller.server.emitTo(@id, 'peer.setRemoteDescription', @_controller.id, description)
 
@@ -195,10 +207,7 @@ define [
 				)
 			, 7500)
 
-			@query('benchmark', ( benchmark ) => @benchmark = benchmark)
-			@query('system', ( system ) => @system = system)
 			@query('isSuperNode', ( isSuperNode ) => @isSuperNode = isSuperNode)
-
 			@trigger('channel.opened', @, event)
 
 		# Is called when the data channel is closed.
@@ -211,7 +220,7 @@ define [
 		# Is called when a connection has been established.
 		#
 		_onConnect: ( ) ->
-			console.log "connected to node #{@id}"
+			#console.log "connected to node #{@id}"
 
 		# Is called when a connection has been broken.
 		#

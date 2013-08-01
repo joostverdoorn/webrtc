@@ -63,7 +63,7 @@ require [
 
 				expect(Client.prototype._onSetSuperNode).toHaveBeenCalled()
 
-			it 'should send queries for benchmark, system and isSuperNode', ->
+			it 'should send queries for type and isSuperNode', ->
 				called = []
 				spyOn(Client.prototype, 'query').andCallFake( ( query, fn ) ->
 						called.push query
@@ -71,8 +71,7 @@ require [
 				client = new Client(fakeController, fakeConnection)
 
 				expect(called).toEqual([
-						'benchmark'
-						'system'
+						'type'
 						'isSuperNode'
 					])
 
@@ -108,12 +107,11 @@ require [
 				expect(client.isSuperNode).toBe(false)
 
 		describe 'when serialized', ->
-			it 'should return an object with id, system, benchmark and isSuperNode', ->
+			it 'should return an object with id, type and isSuperNode', ->
 				client = new Client(fakeController, fakeConnection)
 
 				expect(client.serialize()).toEqual({
 						id: client.id
-						system: client.system
-						benchmark: client.benchmark
+						type: client.type
 						isSuperNode: client.isSuperNode
 					})

@@ -15,77 +15,28 @@ define [
 
 	class Server
 
+		id: 'server'
+
 		# Constructs a new server.
 		#
 		constructor: ( dir ) ->
 			@_initTime = Date.now()
 
 			@_nodes = new Collection()
-			@_logs = []
-
-			@_nodes.on('debug', ( node, args..., message ) =>
-				args = [node.id].concat(args)
-				@_logs.push(args)
-			)
+			@_nodes.on('disconnect', ( node ) => @removeNode(node))
 
 			@_app = express()
 			@_server = http.createServer(@_app)
-			@_io = io.listen(@_server)
+			@_io = io.listen(@_server, log: false)
 			@_io.sockets.on('connection', @login)
 			
 			# Serve static content from ./public/library
 			@_app.configure =>
 				@_app.use(express.static("#{dir}/public"))
 
-			@_app.get('/nodes', ( req, res ) =>
-				nodes = @getNodes()
-
-				res.writeHead(200, 'Content-Type': 'application/json')
-				i = 0
-				result = {}
-				console.log nodes.length
-				if nodes.length is 0
-					res.write '[]'
-					res.end()
-					return
-
-				requestDone = false
-
-				waitTimeout = setTimeout(=>
-						unless requestDone
-							res.write JSON.stringify({
-									error: 'ERR_TIMEOUT'
-								})
-							res.end()
-							requestDone = true
-					, 5000);
-
-				for node in nodes
-					( (node) ->
-						node.query('peers', ( peers ) ->
-							result[node.id] = {
-								peers: peers
-								isSuperNode: node.isSuperNode
-								benchmark: node.benchmark
-								system: node.system
-								latency: node.latency
-							}
-
-							i++
-
-							if i is nodes.length and not requestDone
-								clearTimeout(waitTimeout)
-								requestDone = true
-								res.write(JSON.stringify(result))
-								res.end()
-						)
-					) ( node )
-			)
-
-			@_app.get('/log', ( req, res ) =>
-				res.writeHead(200, 'Content-Type': 'text/plain')
-				for log in @_logs
-					res.write("#{log[0]}: #{log[1]} \n")
+			# Redirect a controller url for lees typing
+			@_app.get('/controller/:nodeId', ( req, res ) =>
+				res.redirect('/controller.html?nodeId=' + req.params.nodeId);
 				res.end()
 			)
 				
@@ -100,28 +51,6 @@ define [
 		login: ( socket ) =>
 			node = new Node(@, socket)
 			@addNode(node)
-
-			node.on('disconnect', ( ) =>
-				@removeNode(node)
-			)
-
-		# Sends a message to a certain node.
-		#
-		# @param to [String] the id of the node to pass the message to
-		# @param event [String] the event to pass to the node 
-		# @param args... [Any] any arguments to pass along 
-		#
-		emitTo: ( to, event, args... ) ->
-			message = new Message(to, null, event, args)	
-			@relay(message)
-
-		# Relays a composed message to a certain node.
-		#
-		# @param message [Message] the message to relay
-		#
-		relay: ( message ) ->
-			if node = @getNode(message.to)
-				node.send(message)
 
 		# Adds a node to the node list
 		#
@@ -156,19 +85,54 @@ define [
 			else
 				return @_nodes
 
+		# Sends a message to a certain node.
+		#
+		# @param to [String] the id of the node to pass the message to
+		# @param event [String] the event to pass to the node 
+		# @param args... [Any] any arguments to pass along 
+		#
+		emitTo: ( to, event, args... ) ->
+			message = new Message(to, null, event, args)	
+			@relay(message)
+
+		# Relays a composed message to a certain node.
+		#
+		# @param message [Message] the message to relay
+		#
+		relay: ( message ) ->
+			if node = @getNode(message.to)
+				node.send(message)
+
 		# Responds to a request
 		#
 		# @param request [String] the string identifier of the request
 		# @param args... [Any] any arguments that may be accompanied with the request
-		# @return [Object] a response to the query
+		# @param callback [Function] the callback to call with the response
 		#
-		query: ( request, args... ) ->
+		query: ( request, args..., callback ) ->
 			switch request
 				when 'ping'
-					return 'pong'
-				when 'nodes' 
-					nodes = (node.serialize() for node in @getNodes())		
-					return nodes
+					callback 'pong'
+				when 'nodes'
+					type = args[0]
+					extensive = args[1]
+
+					unless extensive?
+						nodes = (node.serialize() for node in @getNodes(type))
+						callback nodes
+					else
+						nodes = @getNodes(type)
+						nodesInfo = []
+						for node in nodes
+							( ( node ) ->
+								node.query('info', ( info ) =>
+									nodesInfo.push(info)
+									if nodesInfo.length is nodes.length
+										callback(nodesInfo)
+								)
+							) ( node )
+				else
+					callback null
 
 		# Returns the time that has passed since the starting of the server.
 		#
