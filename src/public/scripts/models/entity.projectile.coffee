@@ -24,7 +24,7 @@ define [
 
 			@_projectileVelocity = 100
 
-			sphereMaterial = new THREE.MeshPhongMaterial( {color:0xff0000 })
+			sphereMaterial = new THREE.MeshPhongMaterial( {color:0x333333 })
 			radius = 0.45
 			segments = 6
 			rings = 8

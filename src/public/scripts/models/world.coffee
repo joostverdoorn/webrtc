@@ -33,8 +33,8 @@ define [
 			directionalLight.position.set(0, 1, 1).normalize()
 			@scene.add(directionalLight)
 
-			ambientLight = new Three.AmbientLight(0xaaaaaa)
-			@scene.add(ambientLight)
+			hemisphereLight = new Three.HemisphereLight(0x555555, 0x555555)
+			@scene.add(hemisphereLight)
 
 			# Load planet mesh.
 			@_loader.load('/meshes/planet.js', ( geometry, material ) =>
