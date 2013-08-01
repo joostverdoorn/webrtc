@@ -14,6 +14,9 @@ requirejs.config
 		'three':
 			exports: 'THREE'
 
+		'stats':
+			exports: 'Stats'
+
 	# We want the following paths for 
 	# code-sharing reasons. Now it doesn't 
 	# matter from where we require a module.
@@ -36,6 +39,9 @@ require [
 	'jquery'
 	'underscore'
 	], ( App, Server, Three, Stats, $, _ ) ->
+
+	console.log Stats
+
 
 	# Inspector app class. This will create and draw a 3d scene
 	# containing all nodes and their connections.
@@ -90,6 +96,13 @@ require [
 
 			# Set the last updated time to 0
 			@_lastUpdateTime = 0
+
+			# Add debug stats
+			@stats = new Stats()
+			@stats.domElement.style.position = 'absolute'
+			@stats.domElement.style.top = '0px'
+			@stats.domElement.style.left = '0px'
+			container.appendChild(@stats.domElement)
 
 			# Various callbacks and the like.
 			window.requestAnimationFrame(@update)
@@ -163,6 +176,9 @@ require [
 
 			# Render the scene.
 			@renderer.render(@scene, @camera)
+
+			# Update stats.
+			@stats.update()
 
 			# Set last update time and request a new animation frame.
 			@_lastUpdateTime = timestamp
