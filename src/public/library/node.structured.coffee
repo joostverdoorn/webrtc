@@ -57,6 +57,7 @@ define [
 			@coordinates = new Vector(Math.random(), Math.random(), Math.random())
 			@coordinateDelta = 1
 			
+			@_peers.on('disconnect', @_onPeerDisconnect)
 			@_peers.on('peer.addSibling', ( peer ) => @addSibling(peer, false))
 			@_peers.on('peer.setSuperNode', @_onPeerSetSuperNode)
 			@_peers.on('peer.parentCandidate', @_onPeerParentCandidate)
@@ -73,76 +74,24 @@ define [
 
 			@timers.push(setInterval(@_updateCoordinates, 7500))
 
-		# Is called when a peers disconnects. If that peer was 
-		# our parent, we pick a new parent.
+		# Change a SuperNode state of a node
 		#
-		# @param peer [Peer] the peer that disconnects
+		# @param superNode [boolean] SuperNode state
 		#
-		_onPeerDisconnect: ( peer ) =>	
-			if peer is @getParent()
-				candidates = _(@getPeers()).filter( ( p ) -> p.isSuperNode )
-				@_pickParent(candidates)
-
-			super(peer)
-
-		# Removes a peer from the peer list
-		#
-		# @param peer [Peer] the peer to remove
-		#
-		removePeer: (peer) ->
-			super(peer)
-			@_triggerStaySuperNodeTimeout()
-
-		# Responds to a request
-		#
-		# @param request [String] the string identifier of the request
-		# @param args... [Any] any arguments that may be accompanied with the request
-		# @param callback [Function] the callback to call with the response
-		#
-		query: ( request, args..., callback ) ->
-			switch request
-				when 'ping'
-					callback 'pong', @coordinates.serialize()
-				when 'isSuperNode'
-					callback @isSuperNode
-				when 'peer.requestParent'
-					if @isSuperNode and child = @getPeer(args[0])
-						@addChild(child)
-						callback true
-					else
-						callback false
-				when 'info'
-					info =
-						id: @id
-						type: @type
-						coordinates: @coordinates
-						isSuperNode: @isSuperNode
-						peers: @getPeers().map( ( peer ) ->
-							id: peer.id
-							role: peer.role
-						)
-
-					callback info
+		setSuperNode: ( superNode = true ) =>
+			if superNode is not @isSuperNode
+				if not superNode and @getSiblings().length is 0
+					return
+				@server.emit('setSuperNode', superNode)
+				@trigger('setSuperNode', superNode) # App is listening
+				@broadcast('peer.setSuperNode', @id, superNode)
+				@isSuperNode = superNode
+				if superNode
+					@_triggerStaySuperNodeTimeout()
 				else
-					super
-
-		# Relays a message to other nodes. If the intended receiver is not a direct 
-		# neighbor, we route the message through other nodes in an attempt to reach 
-		# the destination.
-		#
-		# @param message [Message] the message to relay.
-		#
-		relay: ( message ) ->
-			if message.to is '*'
-				peer.send(message) for peer in @getSiblings().concat(@getChildren()).concat(@getParent()) when peer?
-			else if peer = @getChild(message.to) or peer = @getSibling(message.to)
-				peer.send(message)
-			else if parent = @getParent()
-				parent.send(message)
-			else if @isSuperNode
-				sibling.send(message) for sibling in @getSiblings() when sibling.id isnt message.from
-			else
-				@server.send(message)
+					for sibling in @getSiblings()
+						@removeSibling(sibling)
+					@_pickParent()		
 
 		# Sets a peer as the parent node of this node.
 		#
@@ -237,6 +186,57 @@ define [
 		getSiblings: ( ) ->
 			return @getPeers(Peer.Role.Sibling)
 
+		# Responds to a request
+		#
+		# @param request [String] the string identifier of the request
+		# @param args... [Any] any arguments that may be accompanied with the request
+		# @param callback [Function] the callback to call with the response
+		#
+		query: ( request, args..., callback ) ->
+			switch request
+				when 'ping'
+					callback 'pong', @coordinates.serialize()
+				when 'isSuperNode'
+					callback @isSuperNode
+				when 'peer.requestParent'
+					if @isSuperNode and child = @getPeer(args[0])
+						@addChild(child)
+						callback true
+					else
+						callback false
+				when 'info'
+					info =
+						id: @id
+						type: @type
+						coordinates: @coordinates
+						isSuperNode: @isSuperNode
+						peers: @getPeers().map( ( peer ) ->
+							id: peer.id
+							role: peer.role
+						)
+
+					callback info
+				else
+					super
+
+		# Relays a message to other nodes. If the intended receiver is not a direct 
+		# neighbor, we route the message through other nodes in an attempt to reach 
+		# the destination.
+		#
+		# @param message [Message] the message to relay.
+		#
+		relay: ( message ) ->
+			if message.to is '*'
+				peer.send(message) for peer in @getSiblings().concat(@getChildren()).concat(@getParent()) when peer?
+			else if peer = @getChild(message.to) or peer = @getSibling(message.to)
+				peer.send(message)
+			else if parent = @getParent()
+				parent.send(message)
+			else if @isSuperNode
+				sibling.send(message) for sibling in @getSiblings() when sibling.id isnt message.from
+			else
+				@server.send(message)
+
 		# Applies Vivaldi algorithm. Calculates the coordinates of a node
 		#
 		_updateCoordinates: ( ) =>
@@ -300,25 +300,6 @@ define [
 						) ( peer )
 			)
 
-		# Change a SuperNode state of a node
-		#
-		# @param superNode [boolean] SuperNode state
-		#
-		setSuperNode: ( superNode = true ) =>
-			if superNode is not @isSuperNode
-				if not superNode and @getSiblings().length is 0
-					return
-				@server.emit('setSuperNode', superNode)
-				@trigger('setSuperNode', superNode) # App is listening
-				@broadcast('peer.setSuperNode', @id, superNode)
-				@isSuperNode = superNode
-				if superNode
-					@_triggerStaySuperNodeTimeout()
-				else
-					for sibling in @getSiblings()
-						@removeSibling(sibling)
-					@_pickParent()
-
 		# Triggers a timeout for _superNodeTimeout  method. If a timeout is not cleared from somewhere else
 		# _superNodeTimeout method will be called
 		#
@@ -336,7 +317,6 @@ define [
 			if @getChildren().length is 0 and @isSuperNode
 				@setSuperNode(false)
 				clearTimeout(@staySuperNodeTimeout)
-
 
 		# Is called when a peer becomes a supernode
 		#
@@ -385,6 +365,17 @@ define [
 				callback?(false)
 				@_enterNetwork()
 
+		# Is called when a peers disconnects. If that peer was 
+		# our parent, we pick a new parent.
+		#
+		# @param peer [Peer] the peer that disconnects
+		#
+		_onPeerDisconnect: ( peer ) =>
+			@_triggerStaySuperNodeTimeout()
+			if peer is @getParent()
+				candidates = _(@getPeers()).filter( ( p ) -> p.isSuperNode )
+				@_pickParent(candidates)
+
 		# Generates a new token and gives it to a random child 
 		#
 		# @return [String] Returns id of the selected Child which will receive a token
@@ -395,36 +386,6 @@ define [
 			randomChild = children[_.random(0,children.length-1)]
 			randomChild.emit('token.add',token.serialize())
 			console.log  randomChild.id +  ' received a token'
-			
-		# Is called when a node receives a token from another Node
-		#	
-		# @param peer [Peer] The last routing peer
-		# @param tokenString [String] A serialized token
-		#
-		_onTokenReceived: ( peer, tokenString ) =>
-			@token = Token.deserialize(tokenString)
-			@removeToken(@token)
-			@token.nodeId = @id
-
-			@broadcast('token.hop', @token.serialize(), @coordinates.serialize(), true)
-			@_tokenRestTimeout = setTimeout(( ) =>
-				@_calculateTokenMagnitude()
-			, @broadcastTimeout)
-			@timers.push(@_tokenRestTimeout)
-
-			# Is called when a token hops. Sends a token information to the initiator
-		#
-		# @param peer [Peer] The last routing peer
-		# @param tokenString [String] A serialized token
-		# @param vectorString [String] Serialized coordinates of the holder of the token
-		#
-		_onTokenInfo: ( peer, tokenString, vectorString, instantiate = true ) =>
-			token = Token.deserialize(tokenString)
-			console.log "Received info about token ", token
-			token.coordinates = Vector.deserialize(vectorString)
-			@addToken(token)
-			if @token? and instantiate
-				@emitTo(token.nodeId, 'token.info', @token.serialize(), @coordinates.serialize(), false)
 
 		# Adds a token to the collection of foreign tokens
 		#
@@ -471,7 +432,37 @@ define [
 				@setSuperNode(true)
 
 			return tokenMagnitude
-		
+
+		# Is called when a node receives a token from another Node
+		#	
+		# @param peer [Peer] The last routing peer
+		# @param tokenString [String] A serialized token
+		#
+		_onTokenReceived: ( peer, tokenString ) =>
+			@token = Token.deserialize(tokenString)
+			@removeToken(@token)
+			@token.nodeId = @id
+
+			@broadcast('token.hop', @token.serialize(), @coordinates.serialize(), true)
+			@_tokenRestTimeout = setTimeout(( ) =>
+				@_calculateTokenMagnitude()
+			, @broadcastTimeout)
+			@timers.push(@_tokenRestTimeout)
+
+			# Is called when a token hops. Sends a token information to the initiator
+		#
+		# @param peer [Peer] The last routing peer
+		# @param tokenString [String] A serialized token
+		# @param vectorString [String] Serialized coordinates of the holder of the token
+		#
+		_onTokenInfo: ( peer, tokenString, vectorString, instantiate = true ) =>
+			token = Token.deserialize(tokenString)
+			console.log "Received info about token ", token
+			token.coordinates = Vector.deserialize(vectorString)
+			@addToken(token)
+			if @token? and instantiate
+				@emitTo(token.nodeId, 'token.info', @token.serialize(), @coordinates.serialize(), false)
+
 		# Is called when a token magnitude is calculated. A supernode selects his 
 		# best child as candidate for the token
 		#
@@ -489,7 +480,7 @@ define [
 						bestCandidate = child
 				if child?
 					@emitTo(token.nodeId, 'token.candidate', distance, child.id)
-				
+
 		# Is called when a node holding a token, receives other candidate nodes for the token
 		#
 		# @param peer [Peer] The last routing peer
