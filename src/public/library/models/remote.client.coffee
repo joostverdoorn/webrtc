@@ -19,10 +19,8 @@ define [
 
 			@on('setSuperNode', @_onSetSuperNode)
 
-			@query('benchmark', ( benchmark ) => @benchmark = benchmark)
-			@query('system', ( system ) => @system = system)
+			@query('type', ( type ) => @type = type)
 			@query('isSuperNode', ( isSuperNode ) => @isSuperNode = isSuperNode)
-
 
 		# Disconnects from the client.
 		#
@@ -53,9 +51,9 @@ define [
 		# Serialize a node object to send to new nodes. Is called from the server
 		#
 		serialize: () ->
-			node = new Object()
-			node.id = @id
-			node.system = @system
-			node.benchmark = @benchmark
-			node.isSuperNode = @isSuperNode
+			node =
+				id: @id
+				type: @type
+				isSuperNode: @isSuperNode
+
 			return node

@@ -1,7 +1,7 @@
 define [
 
 	'public/library//models/remote.server'
-	'public/library/node'
+	'public/library/node.structured'
 
 	'public/library//models/collection'
 
@@ -27,7 +27,7 @@ define [
 
 		connect: ( ) ->
 
-		query: ( request, callback ) ->
+		query: ( request, args..., callback ) ->
 			callback( @_nodes )
 
 

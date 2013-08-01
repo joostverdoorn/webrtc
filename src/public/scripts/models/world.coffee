@@ -23,6 +23,7 @@ define [
 		# @param scene [Three.Scene] the scene to draw upon
 		#
 		constructor: ( @scene ) ->
+			@_loader = new Three.JSONLoader()
 
 			@_entities = new Collection()
 
@@ -30,12 +31,16 @@ define [
 			directionalLight.position.set(0, 1, 1).normalize()
 			@scene.add(directionalLight)
 
-			ambientLight = new Three.AmbientLight(0xffffff)
+			ambientLight = new Three.AmbientLight(0xaaaaaa)
 			@scene.add(ambientLight)
 
-			hemisphereLight = new Three.HemisphereLight(0x9999aa, 0x663322, 1)
-			@scene.add(hemisphereLight)
-
+			@_loader.load('/meshes/planet.js', ( geometry, material ) =>
+				@planet = new Three.Mesh(geometry, new Three.MeshFaceMaterial(material))
+				if @planet.geometry.boundingSphere is null
+					@planet.geometry.computeBoundingSphere()
+				@planet.geometry.computeMorphNormals()
+				@scene.add(@planet)
+			)
 
 		# Creates and adds a player to the world
 		#
@@ -85,4 +90,3 @@ define [
 		#
 		update: ( @dt ) ->
 			entity.update(dt) for entity in @_entities
-			

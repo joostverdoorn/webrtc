@@ -5,7 +5,7 @@ require.config
 		'public/library/models/remote.peer': 'tests/mock/remote.peer.mock'
 		
 require [
-	'public/library/node'
+	'public/library/node.structured'
 	'public/library/models/vector'
 	'public/library/models/collection'
 	'public/library/models/remote.peer'
@@ -36,10 +36,10 @@ require [
 
 				it 'should create a new Remote.Server and register several callbacks on it', ->
 					expect(node.server._mockTriggers.splice(-4, 4)).toEqual([
-							'connect'
 							'peer.connectionRequest'
 							'peer.setRemoteDescription'
 							'peer.addIceCandidate'
+							'connect'
 						])
 
 			describe 'when connect and disconnect to other nodes', ->
@@ -65,9 +65,9 @@ require [
 					spyOn(node, 'getParent')
 					peer = node.connect("123456")
 
-				it 'should call the callback for _onPeerDisconnect', ->
+				it 'should call the callback when the peer disconnects', ->
 					node.getParent.andReturn(false)
-					node._onPeerDisconnect(peer)
+					peer.trigger('disconnect')
 					expect(node.getParent).toHaveBeenCalled()
 					expect(node.removePeer).toHaveBeenCalled()
 					expect(node.removePeer.mostRecentCall.args).toEqual([
@@ -92,7 +92,7 @@ require [
 							}
 						])
 					spyOn(node, '_pickParent')
-					node._onPeerDisconnect(peer)
+					peer.trigger('disconnect')
 					expect(node.getParent).toHaveBeenCalled()
 					expect(node.getPeers).toHaveBeenCalled()
 					expect(node._pickParent).toHaveBeenCalled()
@@ -108,6 +108,70 @@ require [
 					expect(node.removePeer.mostRecentCall.args).toEqual([
 							peer
 						])
+
+
+				it 'should trigger the _triggerStaySuperNodeTimeout()', ->
+					spyOn(node, '_triggerStaySuperNodeTimeout')
+					peer.trigger('disconnect')
+					expect(node._triggerStaySuperNodeTimeout).toHaveBeenCalled()
+
+			describe 'when adding a peer', ->
+				it 'should get added to the internal list', ->
+					fakePeer = {
+						a: 1
+						b: 2
+					}
+					spyOn(node._peers, 'add')
+					node.addPeer(fakePeer)
+					expect(node._peers.add.mostRecentCall.args).toEqual([
+							fakePeer
+						])
+
+				it 'should trigger the peer.added event', ->
+					fakePeer = {
+						a: 1
+						b: 2
+					}
+					success = false
+					node.on('peer.added', ( peer ) ->
+							success = true
+						)
+					node.addPeer(fakePeer)
+					waitsFor(->
+							return success
+						, 1000)
+
+			describe 'when removing a peer', ->
+				fakePeer = null
+
+				beforeEach ->
+					fakePeer = {
+						a: 1
+						b: 2
+						die: ->
+					}
+
+				it 'should get killed first', ->
+					fakePeer.die = jasmine.createSpy('die')
+					node.removePeer(fakePeer)
+					expect(fakePeer.die).toHaveBeenCalled()
+
+				it 'should get removed from the internal list', ->
+					spyOn(node._peers, 'remove')
+					node.removePeer(fakePeer)
+					expect(node._peers.remove.mostRecentCall.args).toEqual([
+							fakePeer
+						])
+
+				it 'should trigger the peer.removed event', ->
+					success = false
+					node.on('peer.removed', ( peer ) ->
+							success = true
+						)
+					node.removePeer(fakePeer)
+					waitsFor(->
+							return success
+						, 1000)
 
 			describe 'when entering network', ->
 

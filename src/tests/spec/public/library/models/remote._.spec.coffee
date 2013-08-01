@@ -14,10 +14,10 @@ require [
 		beforeEach ->
 			fakeController = {
 				id: '1'
-				query: ->
+				query: (request, args..., callback) -> callback(true)
 				relay: ->
 			}
-			spyOn(fakeController, 'query')
+			spyOn(fakeController, 'query').andCallThrough()
 			spyOn(fakeController, 'relay')
 			spyOn(Remote.prototype, 'initialize')
 			spyOn(Remote.prototype, '_send')
@@ -162,13 +162,12 @@ require [
 				remote.trigger(queryID)
 				expect(called).toBe(1)
 
-		describe 'when queryied', ->
+		describe 'when queried', ->
 
 			it 'should query the controller for the value and send it back to the node querying', ->
 				message = {
 					from: '1'
 				}
-				fakeController.query.andReturn(true)
 				spyOn(remote, 'emitTo')
 
 				remote._onQuery('testQuery', 'query1', 1, message)
@@ -176,10 +175,18 @@ require [
 				expect(callArgs[0]).toBe('testQuery')
 				expect(callArgs[1]).toBe(1)
 
-				callArgs = remote.emitTo.mostRecentCall.args
-				expect(callArgs[0]).toBe(message.from)
-				expect(callArgs[1]).toBe('query1')
-				expect(callArgs[2]).toBe(true)
+				assertions = ( ) ->
+					callArgs = remote.emitTo.mostRecentCall.args
+					expect(callArgs[0]).toBe(message.from)
+					expect(callArgs[1]).toBe('query1')
+					expect(callArgs[2]).toBe(true)
+
+				waitsFor(->
+						called = remote.emitTo.wasCalled
+						if called
+							assertions()
+						return called
+					, 1000)
 
 		describe 'when pinged', ->
 
@@ -198,7 +205,7 @@ require [
 							])
 					)
 				expect(remote.query).toHaveBeenCalled()
-				remote.query.mostRecentCall.args[1](1, 2, 3)
+				remote.query.mostRecentCall.args[1]('pong', 1, 2, 3)
 
 				waitsFor(->
 						return callbackCalled isnt false

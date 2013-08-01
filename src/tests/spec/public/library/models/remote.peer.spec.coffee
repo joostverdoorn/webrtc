@@ -230,13 +230,20 @@ require [
 				spyOn(peer._connection, 'setLocalDescription')
 				spyOn(fakeController.server, 'emitTo')
 
-				peer._onLocalDescription('a')
+				spyOn(peer, '_higherBandwidthSDP')
+
+				fakeOffer = {
+					sdp: 'ABC'
+				}
+				peer._onLocalDescription(fakeOffer)
+
+				expect(peer._higherBandwidthSDP).toHaveBeenCalled()
 
 				expect(peer._connection.setLocalDescription).toHaveBeenCalled()
 
 				callArgs = peer._connection.setLocalDescription.mostRecentCall.args
 				expect(callArgs).toEqual([
-						'a'
+						fakeOffer
 					])
 
 				expect(fakeController.server.emitTo).toHaveBeenCalled()
@@ -246,8 +253,18 @@ require [
 						'1'
 						'peer.setRemoteDescription'
 						fakeController.id
-						'a'
+						fakeOffer
 					])
+
+			it 'should try to increase the bandwidth to 100MBit/s', ->
+				# Actual SDP token
+				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
+				sdp = 'v=0\no=- 418980071693499176 2 IN IP4 127.0.0.1\ns=-\nt=0 0\na=group:BUNDLE audio data\na=msid-semantic: WMS\nm=audio 1 RTP/SAVPF 111 103 104 0 8 107 106 105 13 126\nc=IN IP4 0.0.0.0\na=rtcp:1 IN IP4 0.0.0.0\na=ice-ufrag:7d6ymINVFC/MqySG\na=ice-pwd:FeYvTRr73rUpFG8O/19+aKuD\na=fingerprint:sha-256 0E:24:01:32:4B:F1:61:D9:5E:45:8A:0C:60:43:43:B8:3E:CE:FD:D1:FE:0B:91:1A:43:B8:05:E0:BB:6E:85:A5\na=extmap:1 urn:ietf:params:rtp-hdrext:ssrc-audio-level\na=sendonly\na=mid:audio\na=rtcp-mux\na=rtpmap:111 opus/48000/2\na=fmtp:111 minptime=10\na=rtpmap:103 ISAC/16000\na=rtpmap:104 ISAC/32000\na=rtpmap:0 PCMU/8000\na=rtpmap:8 PCMA/8000\na=rtpmap:107 CN/48000\na=rtpmap:106 CN/32000\na=rtpmap:105 CN/16000\na=rtpmap:13 CN/8000\na=rtpmap:126 telephone-event/8000\na=maxptime:60\nm=application 1 RTP/SAVPF 101\nc=IN IP4 0.0.0.0\na=rtcp:1 IN IP4 0.0.0.0\na=ice-ufrag:7d6ymINVFC/MqySG\na=ice-pwd:FeYvTRr73rUpFG8O/19+aKuD\na=fingerprint:sha-256 0E:24:01:32:4B:F1:61:D9:5E:45:8A:0C:60:43:43:B8:3E:CE:FD:D1:FE:0B:91:1A:43:B8:05:E0:BB:6E:85:A5\na=sendrecv\na=mid:data\nb=AS:30\na=rtcp-mux\na=rtpmap:101 google-data/90000\na=ssrc:1361580366 cname:cVdOR7KCd2tHuVtL\na=ssrc:1361580366 msid:a a\na=ssrc:1361580366 mslabel:a\na=ssrc:1361580366 label:a\n '
+
+				result = peer._higherBandwidthSDP(sdp)
+
+				expect(result.indexOf('b=AS:102400')).toBeGreaterThan(-1)
+				expect(result.indexOf('b=AS:30')).toBe(-1)
 
 		describe 'when setting a remote description', ->
 			it 'should set the remote description for RTC connection', ->
@@ -439,8 +456,6 @@ require [
 					)
 				peer._onChannelOpen()
 				expect(called).toEqual([
-						'benchmark'
-						'system'
 						'isSuperNode'
 					])
 
