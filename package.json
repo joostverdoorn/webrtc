@@ -1,7 +1,7 @@
 {
 	"name": "webrtc",
 	"description": "A WebRTC library",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"dependencies": {
 		"fs-extra": "*",
 		"fs-watch-tree": "*",
