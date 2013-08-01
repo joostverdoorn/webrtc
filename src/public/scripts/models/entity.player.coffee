@@ -48,6 +48,17 @@ define [
 				@loaded = true			
 			)
 
+			@on('impact.world', (position, velocity) =>
+					# CRASH!
+					# Check impact speed
+
+					newPos = position.clone().add(velocity)
+					downVelocity = newPos.length() - position.length()
+
+					if downVelocity < -20
+						@die()
+				)
+
 		# Updates the physics state of the player. Adds forces to simulate gravity and 
 		# the propulsion system. Calls baseclass' update after.
 		#

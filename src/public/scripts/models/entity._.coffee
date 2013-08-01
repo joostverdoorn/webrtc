@@ -19,6 +19,8 @@ define [
 		# @param callback [Function] the function to call when the entity is loaded
 		#
 		constructor: ( @scene, @world, @owner, args... ) ->
+			@_dead = false
+
 			@_loader = new Three.JSONLoader()
 			@cameraRaycaster = new Three.Raycaster()
 			@loaded = false
@@ -52,7 +54,9 @@ define [
 		# Removes the mesh from the scene.
 		#
 		die: ( ) ->
+			@_dead = true
 			@scene.remove(@mesh)
+			@trigger('died')
 
 		# Adds a force to the forces stack. Forces will be applied next update.
 		#
@@ -78,6 +82,9 @@ define [
 			unless @loaded
 				return
 
+			if @_dead
+				return
+
 			# Add gravitational force pointing toward the origin.
 			if @applyGravity
 				gravityForce = @position.clone().normalize().multiplyScalar(-9.81 * @mass * dt)
@@ -97,15 +104,16 @@ define [
 
 				if @owner
 					currentLength = @position.length()
-					planetRadius = App.world.planet.geometry.boundingSphere.radius# + 20
+					planetRadius = @world.planet.geometry.boundingSphere.radius
 					if currentLength < planetRadius
 						position2 = @position.clone().normalize().multiplyScalar(planetRadius)
 						@cameraRaycaster.set(position2, position2.clone().negate())
-						intersects = @cameraRaycaster.intersectObject(App.world.planet)
+						intersects = @cameraRaycaster.intersectObject(@world.planet)
 						for key, intersect of intersects
 							surface = planetRadius - intersect.distance
-							#surface += 1.2		# Safe distance
-							if currentLength < surface - 0.2
+
+							if currentLength < surface
+								@trigger('impact.world', @position.clone(), @velocity.clone())
 								@position.normalize().multiplyScalar(surface)
 
 								@velocity = new Three.Vector3()

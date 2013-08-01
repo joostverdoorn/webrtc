@@ -62,8 +62,15 @@ define [
 			@scene.add(@mesh)
 			@loaded = true
 
+
+			@on('impact.world', (position, velocity) =>
+					@die()
+				)
+
+		###
 		update: ( dt ) ->
 			super(dt, true, false)
 
 			if @velocity.length() < 1
 				@die()
+		###

@@ -102,7 +102,7 @@ require [
 
 			@stats = new Stats()
 			@stats.domElement.style.position = 'absolute'
-			@stats.domElement.style.top = '100px'
+			@stats.domElement.style.top = '150px'
 			@stats.domElement.style.right = '0px'
 			@container.append(@stats.domElement)
 
@@ -225,7 +225,7 @@ require [
 				targetPosition = @player.position.clone().add(cameraDirection.multiplyScalar(80))
 
 				currentLength = targetPosition.length()
-				planetRadius = @world.planet.geometry.boundingSphere.radius + 20
+				planetRadius = @world.planet.geometry.boundingSphere.radius
 				if currentLength < planetRadius
 					targetPosition2 = targetPosition.clone().multiplyScalar((planetRadius) / currentLength)
 					@cameraRaycaster.set(targetPosition2, targetPosition2.clone().negate())
@@ -255,6 +255,13 @@ require [
 			$('#stats .y').html(@player?.position.y)
 			$('#stats .z').html(@player?.position.z)
 			$('#stats .velocity').html(@player?.velocity.length())
+
+			if @player?
+				oldPos = @player.position.clone()
+				newPos = oldPos.clone().add(@player.velocity)
+				downVelocity = newPos.length() - oldPos.length()
+				
+				$('#stats .velocityDown').html(downVelocity)
 			
 			@stats.update()
 

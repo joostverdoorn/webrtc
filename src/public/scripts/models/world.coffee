@@ -76,6 +76,10 @@ define [
 		#
 		addEntity: ( entity ) ->
 			@_entities.add(entity)
+			entity.on('died', () =>
+					if entity isnt @player
+						@removeEntity(entity)
+				)
 
 		# Removes a physics entity from the world
 		#
@@ -89,4 +93,4 @@ define [
 		# @param dt [Float] the time that has elapsed since last update
 		#
 		update: ( @dt ) ->
-			entity.update(dt) for entity in @_entities
+			entity?.update(dt) for entity in @_entities
