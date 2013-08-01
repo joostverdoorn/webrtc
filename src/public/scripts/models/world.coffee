@@ -39,7 +39,8 @@ define [
 			# Load planet mesh.
 			@_loader.load('/meshes/planet.js', ( geometry, material ) =>
 				@planet = new Three.Mesh(geometry, new Three.MeshFaceMaterial(material))
-				
+				@planet.castShadow = true
+
 				# Compute normals and bounding sphere to aid collision detection
 				@planet.geometry.computeBoundingSphere()
 				@planet.geometry.computeMorphNormals()

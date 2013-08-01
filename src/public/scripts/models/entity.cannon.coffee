@@ -24,6 +24,8 @@ define [
 			@rotateUpward = 0
 			@rotateDownward = 0
 
+			@extended = false
+
 			@_cannonBase = new Three.Mesh()
 			
 			# Load the cannon mesh.
@@ -36,9 +38,6 @@ define [
 
 				# Set the correct rotation order.
 				@rotation.order = 'YZX'
-
-				# Hang the cannon 1.1 meters below the UFO.
-				@position.y -= 1.1
 
 				# Apply transformations
 				@applyInfo(info)
@@ -96,6 +95,14 @@ define [
 			if @rotation.x isnt 0
 				@rotation.x = 0
 
+			# Retract or extend the cannon
+			if @extended
+				@position.lerp(new Three.Vector3(0, -1.1, 0), dt * 2)
+				@_cannonBase.position.lerp(new Three.Vector3(0, 0, 0), dt * 2)
+			else
+				@position.lerp(new Three.Vector3(0, .5, 0), dt * 5)
+				@_cannonBase.position.lerp(new Three.Vector3(0, 1.6, 0), dt * 5)
+
 		# Applies information given in an object to the entity.
 		#
 		# @param info [Object] an object that contains the transformations
@@ -106,10 +113,20 @@ define [
 
 			super(info)
 			
-			@rotateLeft = info.rotateLeft
-			@rotateRight = info.rotateRight
-			@rotateUpward = info.rotateUpward
-			@rotateDownward = info.rotateDownward	
+			if info.rotateLeft?
+				@rotateLeft = info.rotateLeft
+
+			if info.rotateRight?
+				@rotateRight = info.rotateRight
+
+			if info.rotateUpward?
+				@rotateUpward = info.rotateUpward
+
+			if info.rotateDownward?
+				@rotateDownward = info.rotateDownward
+
+			if info.extended?
+				@extended = info.extended
 			
 		# Returns the current info in an object.
 		#
@@ -121,6 +138,8 @@ define [
 			info.rotateLeft = @rotateLeft
 			info.rotateRight = @rotateRight
 			info.rotateUpward = @rotateUpward
-			info.rotateDownward = @rotateDownward			
+			info.rotateDownward = @rotateDownward
+
+			info.extended = @extended
 
 			return info

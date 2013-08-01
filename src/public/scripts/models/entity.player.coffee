@@ -29,13 +29,20 @@ define [
 			@flyBackward = 0
 
 			@boost = false
+			@landed = false
+			@landedPosition = new Three.Vector3()
+			@baseExtended = false
+
 			@_cannonReady = true
+
+			@_ufoBase = new Three.Mesh()
 
 			@_loader.load('/meshes/ufo.js', ( geometry, material ) =>
 				geometry.computeBoundingSphere()
 
 				# Set up skinned geometry mesh.
 				@mesh = new Three.SkinnedMesh(geometry, new Three.MeshFaceMaterial(material))
+				@mesh.receiveShadow = true
 				material.skinning = true for material in @mesh.material.materials
 
 				# Set up animations for the mesh.
@@ -54,7 +61,14 @@ define [
 
 				# Add the mesh to the scene and set loaded state.
 				@scene.add(@mesh)
-				@loaded = true			
+
+				@_loader.load('/meshes/ufoBase.js', ( geometry, material ) =>
+					@_ufoBase.geometry = geometry
+					@_ufoBase.material = new Three.MeshFaceMaterial(material)
+					@mesh.add(@_ufoBase)
+
+					@loaded = true
+				)
 			)
 
 			# Add listeners to common events.
@@ -71,16 +85,35 @@ define [
 
 			rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
 
-			# Add tilt forces
-			@addAngularForce(new Three.Euler(0, 0, -.6 * @flyForward, 'YXZ'))
-			@addAngularForce(new Three.Euler(0, 0, .6 * @flyBackward, 'YXZ'))
-			@addAngularForce(new Three.Euler(-.6 * @flyLeft, 0, 0, 'YXZ'))
-			@addAngularForce(new Three.Euler(.6 * @flyRight, 0, 0, 'YXZ'))
+			# Check if the player is within landing range of the planet.
+			if intersect = @getIntersect(@world.planet, 1, 2)
+				@baseExtended = true
+				@cannon.extended = false
+				surfaceNormal = intersect.face.normal
+			else
+				@baseExtended = false
+				@cannon.extended = true
+				surfaceNormal = @position
 
-			# Add thrust straight downward from the player. 
+				# Add tilt forces
+				@addAngularForce(new Three.Euler(0, 0, -.6 * @flyForward, 'YXZ'))
+				@addAngularForce(new Three.Euler(0, 0, .6 * @flyBackward, 'YXZ'))
+				@addAngularForce(new Three.Euler(-.6 * @flyLeft, 0, 0, 'YXZ'))
+				@addAngularForce(new Three.Euler(.6 * @flyRight, 0, 0, 'YXZ'))
+
+			# Attract player to a straight position with relation to the planet surface.
+			levelRotation = @calculateLevelRotation(surfaceNormal)
+			levelRotationQuaternion = new Three.Quaternion().setFromEuler(levelRotation)
+
+			forceQuaternion = rotationQuaternion.clone().inverse().multiply(levelRotationQuaternion)
+			force = new Three.Euler().setFromQuaternion(forceQuaternion)
+			@addAngularForce(force)
+
+			# Add thrust straight downward from the player.
 			thrustVector = new Three.Vector3(0, 1, 0).applyQuaternion(rotationQuaternion)
 
 			if @boost
+				@landed = false
 				thrustVector.multiplyScalar(19 * @mass * dt)
 			else
 				thrustVector.multiplyScalar(3 * @mass * dt)
@@ -90,20 +123,24 @@ define [
 
 			@addForce(thrustVector)
 			
-			# Attract player to a straight position with relation to the planet surface.
-			levelRotation = @calculateLevelRotation()
-			levelRotationQuaternion = new Three.Quaternion().setFromEuler(levelRotation)
-
-			forceQuaternion = rotationQuaternion.clone().inverse().multiply(levelRotationQuaternion)
-			force = new Three.Euler().setFromQuaternion(forceQuaternion)
-			@addAngularForce(force)
-
-			# Attract player y rotation to cannon y rotation
-			@addAngularForce(new Three.Euler(0, @cannon.rotation.y * 20 * dt, 0, 'YXZ'))
-			@cannon.addAngularForce(new Three.Euler(0, -@cannon.rotation.y * 20 * dt, 0, 'YXZ'))
-
 			# Update physics.
-			super(dt)
+			super(dt, not @landed)
+			
+			# Make the ufo bounce upward a bit when landed.
+			if @landed
+				targetPosition = @landedPosition.clone().add(@landedPosition.clone().setLength(.8))
+				@position.lerp(targetPosition, dt * 8)
+
+			# Retract or extend the base
+			if @baseExtended
+				@_ufoBase.position.lerp(new Three.Vector3(0, 0, 0), dt * 8)
+				@_ufoBase.scale.lerp(new Three.Vector3(1, 2, 1), dt * 8)
+			else
+				@_ufoBase.position.lerp(new Three.Vector3(0, 1, 0), dt * 5)
+				@_ufoBase.scale.lerp(new Three.Vector3(1, 0, 1), dt * 5)
+
+				@addAngularForce(new Three.Euler(0, @cannon.rotation.y * 20 * dt, 0, 'YXZ'))
+				@cannon.addAngularForce(new Three.Euler(0, -@cannon.rotation.y * 20 * dt, 0, 'YXZ'))
 
 			# Update our cannon.
 			@cannon.update(dt)
@@ -114,7 +151,7 @@ define [
 		# Fires a projectile.
 		#
 		fire: ( ) ->
-			if @_cannonReady
+			if @_cannonReady and @cannon.extended
 
 				projectile = new Projectile(@world, @owner, @, @cannon)
 				@trigger('fire', projectile)
@@ -127,10 +164,11 @@ define [
 		# Calculates a level rotation with relation to the planet surface and returns
 		# an euler representation of this rotation.
 		#
+		# @param vector [Three.Vector3] the normal vector.
 		# @return [Three.Euler] the ideal (level) rotation.
 		# 
-		calculateLevelRotation: ( ) ->
-			upVector = @position.clone().normalize()
+		calculateLevelRotation: ( vector = @position ) ->
+			upVector = vector.clone().normalize()
 			rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
 
 			localZVector = new Three.Vector3(0, 0, -1).applyQuaternion(rotationQuaternion)
@@ -150,8 +188,11 @@ define [
 		#
 		_onImpactWorld: ( position, velocity ) ->
 			downVelocity = velocity.projectOnVector(position)
-			if downVelocity.length() > 20
+			if downVelocity.length() > 30
 				@die()
+			else
+				@landed = true
+				@landedPosition = position
 
 		# Applies information given in an object to the entity.
 		#
@@ -162,13 +203,30 @@ define [
 				return
 
 			super(info)
-
-			@boost = info.boost
 			
-			@flyLeft = info.flyLeft
-			@flyRight = info.flyRight
-			@flyForward = info.flyForward
-			@flyBackward = info.flyBackward		
+			if info.flyLeft?
+				@flyLeft = info.flyLeft
+
+			if info.flyRight?
+				@flyRight = info.flyRight
+
+			if info.flyForward?
+				@flyForward = info.flyForward
+
+			if info.flyBackward?
+				@flyBackward = info.flyBackward
+
+			if info.boost?
+				@boost = info.boost
+
+			if info.landed?
+				@landed = info.landed
+
+			if info.landedPosition?
+				@landedPosition = @landedPosition.fromArray(info.landedPosition)
+
+			if info.baseExtended?
+				@baseExtended = info.baseExtended
 
 			@cannon.applyInfo(info.cannon)
 			
@@ -178,13 +236,16 @@ define [
 		#
 		getInfo: ( ) ->
 			info = super()
-			
-			info.boost = @boost
 
 			info.flyLeft = @flyLeft
 			info.flyRight = @flyRight
 			info.flyForward = @flyForward
-			info.flyBackward = @flyBackward			
+			info.flyBackward = @flyBackward
+
+			info.boost = @boost
+			info.landed = @landed
+			info.landedPosition = @landedPosition.toArray()
+			info.baseExtended = @baseExtended
 
 			info.cannon = @cannon?.getInfo()
 

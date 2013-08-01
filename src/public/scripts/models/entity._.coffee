@@ -21,7 +21,6 @@ define [
 		constructor: ( @world, @owner, args... ) ->
 			@scene = @world.scene
 			@_loader = new Three.JSONLoader()
-			@_raycaster = new Three.Raycaster()
 			@loaded = false
 			
 			@mass = 1
@@ -95,34 +94,13 @@ define [
 				# Calculate our new position from the velocity.
 				@position.add(@velocity.clone().multiplyScalar(dt))
 
-				# Rudimentary way to detect of we're on the planet surface. This should
-				# be replaced by collision detection.
-				#if @position.length() < 300
-				#	@position.normalize().multiplyScalar(300)
-				#	@velocity = new Three.Vector3()
-
+				# Check if the player intersects with the planet.
 				if @owner
-					currentLength = @position.length()
-					if currentLength < 250
+					if intersect = @getIntersect(@world.planet, 4, 0)
 						@trigger('impact.world', @position.clone(), @velocity.clone())
-						@position.normalize().multiplyScalar(surface)
-
+						
+						@position = intersect.point
 						@velocity = new Three.Vector3()
-					else
-						planetRadius = @world.planet.geometry.boundingSphere.radius
-						if currentLength < planetRadius
-							position2 = @position.clone().normalize().multiplyScalar(planetRadius)
-							@_raycaster.set(position2, position2.clone().negate())
-							intersects = @_raycaster.intersectObject(@world.planet)
-							for key, intersect of intersects
-								surface = planetRadius - intersect.distance
-
-								if currentLength < surface
-									@trigger('impact.world', @position.clone(), @velocity.clone())
-									@position.normalize().multiplyScalar(surface)
-
-									@velocity = new Three.Vector3()
-								break
 
 				# Loop through all forces and calculate the acceleration.
 				acceleration = new Three.Vector3(0, 0, 0)			
@@ -176,6 +154,10 @@ define [
 				@angularVelocity.y *= 1 - @angularDrag * dt
 				@angularVelocity.z *= 1 - @angularDrag * dt
 
+			# Reset force queues
+			@_forces = []
+			@_angularForces = []
+
 		# Applies information given in an object to the entity.
 		#
 		# @param info [Object] an object that contains the transformations
@@ -209,22 +191,46 @@ define [
 
 			return info
 
-		# Returns if the bounding sphere of this entity is colliding with a bounding sphere of a given set of objects
+		# Checks if this entity's origin intersects with a mesh, and returns the intersect
+		# object. Specify behind and ahead values to broaden intersection check.
 		#
-		# @param [Entities] An Array of entities to be checked against
+		# @param mesh [Three.Mesh] the mesh to check against
+		# @param behind [Float] the distance behind this entity to check from
+		# @param ahead [Float] the distance in ahead of this entity to check to
+		# @return [Object] the intersect object
 		#
+		getIntersect: ( mesh, behind, ahead ) ->
+			meshRadius = mesh.geometry.boundingSphere.radius
+			
+			if @position.distanceTo(mesh.position) <= meshRadius
+				direction = mesh.position.clone().sub(@position).normalize()
+				origin = @position.clone().add(@position.clone().setLength(behind))
+				raycaster = new Three.Raycaster(origin, direction, 0, behind + ahead)
+				
+				intersects = raycaster.intersectObject(mesh)
+				if intersect = intersects[0]
+					intersect.distance -= behind
+					return intersect
+				else
+					return null
+
+		# Returns if the bounding sphere of this entity is colliding with a bounding sphere
+		# of a given set of objects.
+		#
+		# @param [Array<Entity>] an array of entities to be checked against
 		# @return [Boolean] whether or not a collision has been found
-		isColliding: ( objects ) ->
+		#
+		isColliding: ( entities ) ->
 			unless @mesh?.geometry?.boundingSphere?.radius
 				return false
 
 			selfRadius = @mesh.geometry.boundingSphere.radius
-			for object in objects
-				unless object.mesh?.geometry?.boundingSphere?.radius
+			for entity in entities
+				unless entity.mesh?.geometry?.boundingSphere?.radius
 					continue
 
-				objectRadius = object.mesh.geometry.boundingSphere.radius
-				if @position.distanceTo(object.position) < (objectRadius + selfRadius)
+				entityRadius = entity.mesh.geometry.boundingSphere.radius
+				if @position.distanceTo(entity.position) < (entityRadius + selfRadius)
 					return true
 
 			return false
