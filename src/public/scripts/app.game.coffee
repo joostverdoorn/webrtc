@@ -8,6 +8,9 @@ requirejs.config
 		'three':
 			exports: 'THREE'
 
+		'stats':
+			exports: 'Stats'
+
 		'bootstrap': [ 'jquery' ]
 		'qrcode': [ 'jquery' ]
 		'jquery.plugins': [ 'jquery' ]
@@ -38,9 +41,9 @@ require [
 
 	'jquery'
 	'three'
-	'qrcode'
 	'stats'
-	], ( App, ControllerNode, Node, World, Player, Controller, WelcomeScreen, $, Three, QRCode ) ->
+	'qrcode'
+	], ( App, ControllerNode, Node, World, Player, Controller, WelcomeScreen, $, Three, Stats, QRCode ) ->
 
 	# This game class implements the node structure created in the library.
 	# It uses three.js for the graphics.
