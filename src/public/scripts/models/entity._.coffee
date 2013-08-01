@@ -18,7 +18,7 @@ define [
 		# @param args... [Any] any params to pass onto the subclass
 		# @param callback [Function] the function to call when the entity is loaded
 		#
-		constructor: ( @scene, args... ) ->
+		constructor: ( @scene, @world, @owner, args... ) ->
 			@_loader = new Three.JSONLoader()
 			@cameraRaycaster = new Three.Raycaster()
 			@loaded = false
@@ -95,20 +95,21 @@ define [
 				#	@position.normalize().multiplyScalar(300)
 				#	@velocity = new Three.Vector3()
 
-				currentLength = @position.length()
-				planetRadius = App.world.planet.geometry.boundingSphere.radius# + 20
-				if currentLength < planetRadius
-					position2 = @position.clone().normalize().multiplyScalar(planetRadius)
-					@cameraRaycaster.set(position2, position2.clone().negate())
-					intersects = @cameraRaycaster.intersectObject(App.world.planet)
-					for key, intersect of intersects
-						surface = planetRadius - intersect.distance
-						#surface += 1.2		# Safe distance
-						if currentLength < surface - 0.2
-							@position.normalize().multiplyScalar(surface)
+				if @owner
+					currentLength = @position.length()
+					planetRadius = App.world.planet.geometry.boundingSphere.radius# + 20
+					if currentLength < planetRadius
+						position2 = @position.clone().normalize().multiplyScalar(planetRadius)
+						@cameraRaycaster.set(position2, position2.clone().negate())
+						intersects = @cameraRaycaster.intersectObject(App.world.planet)
+						for key, intersect of intersects
+							surface = planetRadius - intersect.distance
+							#surface += 1.2		# Safe distance
+							if currentLength < surface - 0.2
+								@position.normalize().multiplyScalar(surface)
 
-							@velocity = new Three.Vector3()
-						break
+								@velocity = new Three.Vector3()
+							break
 
 				# Loop through all forces and calculate the acceleration.
 				acceleration = new Three.Vector3(0, 0, 0)			

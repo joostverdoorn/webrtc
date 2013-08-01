@@ -86,7 +86,7 @@ define [
 		fire: ( ) ->
 			if @_isReady
 
-				projectile = new Projectile(@scene, @player, @)
+				projectile = new Projectile(@scene, @world, @owner, @player, @)
 				@_isReady = false
 
 				setTimeout( =>

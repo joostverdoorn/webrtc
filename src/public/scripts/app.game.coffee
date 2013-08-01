@@ -172,7 +172,7 @@ require [
 				return
 
 			if @status >= 2
-				@player = new Player(@scene, @node.id, {position: new Three.Vector3(0, 300, 0).toArray()})
+				@player = new Player(@scene, @world, true, @node.id, {position: new Three.Vector3(0, 300, 0).toArray()})
 				@player.applyGravity = @applyGravity
 				@world.addEntity(@player)
 

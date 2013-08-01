@@ -35,7 +35,7 @@ define [
 				@animation.play()
 
 				# Create our cannon.
-				@cannon = new Cannon(@scene, @, transformations?.cannon)
+				@cannon = new Cannon(@scene, @world, @owner, @, transformations?.cannon)
 
 				# Apply passed transformations.
 				@applyTransformations(transformations)

@@ -48,7 +48,7 @@ define [
 		# @param transformations [Object] an object of the player's transformations
 		#
 		addPlayer: ( id, transformations ) ->
-			player = new Player(@scene, id, transformations)
+			player = new Player(@scene, @world, false, id, transformations)
 			@addEntity(player)
 
 		# Updates a player's transformation in the world. If the player doesn't exist, 
@@ -65,7 +65,7 @@ define [
 				@addPlayer(id, transformations)
 
 		drawProjectiles: ( projectileTransformations ) -> 
-			projectile = new Projectile(@scene)
+			projectile = new Projectile(@scene, @, false)
 			@addEntity(projectile)		
 			projectile.applyTransformations(projectileTransformations)
 
