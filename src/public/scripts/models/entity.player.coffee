@@ -85,11 +85,17 @@ define [
 
 			rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
 
-			# Check if the player is within landing range of the planet.
-			if intersect = @getIntersect(@world.planet, 1, 2)
-				@baseExtended = true
-				@cannon.extended = false
-				surfaceNormal = intersect.face.normal
+			# Check if the player is within landing range of the planet. If she is,
+			# retract the cannon, extend the landing gear, and set the ufo to attract
+			# to a level position with relation to the normal of the surface below it.
+			if intersect = @getIntersect(@world.planet, 1, 3)
+				if intersect.distance < 2
+					@cannon.extended = false
+					surfaceNormal = intersect.face.normal
+				else
+					@cannon.extended = true
+					surfaceNormal = @position
+				@baseExtended = true				
 			else
 				@baseExtended = false
 				@cannon.extended = true
@@ -102,6 +108,9 @@ define [
 				@addAngularForce(new Three.Euler(19 * @flyRight * dt, 0, 0, 'YXZ'))
 
 			# Attract player to a straight position with relation to the planet surface.
+			# The normal is determined in the previous step: when the player's close to
+			# the surface, the normal will be calculated from the surface normal. Else,
+			# the normal will be perpendicular to the planet sphere.
 			levelRotation = @calculateLevelRotation(surfaceNormal)
 			levelRotationQuaternion = new Three.Quaternion().setFromEuler(levelRotation)
 
@@ -109,7 +118,8 @@ define [
 			force = new Three.Euler().setFromQuaternion(forceQuaternion)
 			@addAngularForce(force)
 
-			# Add thrust straight downward from the player.
+			# Add thrust straight downward from the player. If the player's boosting,
+			# the thrust will be significantly higher than then she's not.
 			thrustVector = new Three.Vector3(0, 1, 0).applyQuaternion(rotationQuaternion)
 
 			if @boost
@@ -125,13 +135,16 @@ define [
 			
 			# Update physics.
 			super(dt, not @landed)
-			
+
+			# Update our cannon.
+			@cannon.update(dt)
+
 			# Make the ufo bounce upward a bit when landed.
 			if @landed
 				targetPosition = @landedPosition.clone().add(@landedPosition.clone().setLength(.8))
 				@position.lerp(targetPosition, dt * 8)
 
-			# Retract or extend the base
+			# Retract or extend the base.
 			if @baseExtended
 				@_ufoBase.position.lerp(new Three.Vector3(0, 0, 0), dt * 8)
 				@_ufoBase.scale.lerp(new Three.Vector3(1, 2, 1), dt * 8)
@@ -142,13 +155,11 @@ define [
 				@addAngularForce(new Three.Euler(0, @cannon.rotation.y * 20 * dt, 0, 'YXZ'))
 				@cannon.addAngularForce(new Three.Euler(0, -@cannon.rotation.y * 20 * dt, 0, 'YXZ'))
 
-			# Update our cannon.
-			@cannon.update(dt)
-
 			# Update alien animation.
-			@animation.update(dt)
+			@animation.update(dt)			
 
-		# Fires a projectile.
+		# Fires a projectile when the cannon is ready, which is a fixed amount of time
+		# after the last shot.
 		#
 		fire: ( ) ->
 			if @_cannonReady and @cannon.extended
