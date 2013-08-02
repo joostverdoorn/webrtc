@@ -5,7 +5,7 @@
 	line-height:28px;
 }
 
-#welcome {
+#info {
 	width: 600px;
 	height: 400px;
 	position: absolute;
@@ -41,11 +41,11 @@
 	height: 300px;
 }
 
-#welcome h3 {
+#info h3 {
 	font-size:30px;
 }
 
-#welcome .key {
+#info .key {
 	border: 1px solid #fff;
 	border-bottom-width:2px;
 	border-radius:3px;

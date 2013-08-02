@@ -2,16 +2,16 @@ define [
 	'public/library/helpers/mixable'
 	'public/library/helpers/mixin.eventbindings'
 	], ( Mixable, EventBindings ) ->
-	class WelcomeScreen extends Mixable
+	class InfoScreen extends Mixable
 
 		@concern EventBindings
 
 		constructor: ( context, @forceKeyboard = false ) ->
 			@views = {}
-			$('head').append('<link rel="stylesheet" type="text/css" href="../stylesheets/welcomeScreen.css">');
+			$('head').append('<link rel="stylesheet" type="text/css" href="../stylesheets/infoScreen.css">');
 
-			context.append $ '<div id="welcome"></div>'
-			@container = $ '#welcome'
+			context.append $ '<div id="info"></div>'
+			@container = $ '#info'
 			do @showLoadingScreen
 
 		_showFromFile: ( file, onShow = (->), onHide = (->) ) =>
@@ -20,7 +20,7 @@ define [
 				@_activeScreen = false
 
 			unless @views[file]
-				@container.load "views/welcomeScreen/#{file}", (contents) =>
+				@container.load "views/infoScreen/#{file}", (contents) =>
 					@views[file] = contents
 					@_activeScreen = onHide
 					onShow()

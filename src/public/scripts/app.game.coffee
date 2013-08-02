@@ -37,13 +37,13 @@ require [
 	'public/scripts/models/entity.player'
 	'public/scripts/models/controller'
 
-	'public/views/welcomeScreen'
+	'public/views/infoScreen'
 
 	'jquery'
 	'three'
 	'stats'
 	'qrcode'
-	], ( App, ControllerNode, Node, World, Player, Controller, WelcomeScreen, $, Three, Stats, QRCode ) ->
+	], ( App, ControllerNode, Node, World, Player, Controller, InfoScreen, $, Three, Stats, QRCode ) ->
 
 	# This game class implements the node structure created in the library.
 	# It uses three.js for the graphics.
@@ -58,12 +58,12 @@ require [
 		# 
 		initialize: ( ) ->
 			@inputHandler = new Controller()
-			@welcomeScreen = new WelcomeScreen $('#overlay'), false
-			@welcomeScreen.on('controllerType', ( type ) =>
+			@infoScreen = new InfoScreen $('#overlay'), false
+			@infoScreen.on('controllerType', ( type ) =>
 					switch type
 						when 'mouse'
 							@inputHandler.selectInput(type)
-							@welcomeScreen.showInfoScreen('keyboard')
+							@infoScreen.showInfoScreen(type)
 
 							@startGame()
 						when 'mobile'
@@ -114,7 +114,7 @@ require [
 
 			@node.on('joined', =>
 				@node.off('joined')
-				@welcomeScreen.showWelcomeScreen()
+				@infoScreen.showWelcomeScreen()
 				@status = 2
 			)
 
@@ -193,8 +193,8 @@ require [
 			@node.broadcast('player.died', @player.id)
 			@player = null
 
-			@welcomeScreen.show()
-			@welcomeScreen.showPlayerDiedScreen()
+			@infoScreen.show()
+			@infoScreen.showPlayerDiedScreen()
 			@startGame(position)
 
 		# Updates the phyics for all objects and renders the scene. Requests a new animation frame 
@@ -267,23 +267,23 @@ require [
 			window.requestAnimationFrame(@update)
 
 		createControllerNode: () ->
-			@welcomeScreen.showLoadingScreen()
+			@infoScreen.showLoadingScreen()
 			@inputHandler._generateRemoteMobile()
 			@inputHandler.on('mobile.initialized', ( id ) =>
 					@_controllerID = id
 					@inputHandler.selectInput('mobile')
-					@welcomeScreen.showMobileConnectScreen(@setQRCode)
+					@infoScreen.showMobileConnectScreen(@setQRCode)
 				)
 
 			@inputHandler.on('mobile.connected', ( id ) =>
-					@welcomeScreen.showInfoScreen('mobile')
+					@infoScreen.showInfoScreen('mobile')
 					@startGame()
 				)
 
 		startGame: ( position = new Three.Vector3(0, 300, 0) ) =>
 			@inputHandler.on('Boost', ( value ) =>
 					@inputHandler.off('Boost')
-					@welcomeScreen.hide()
+					@infoScreen.hide()
 					@createPlayer(position)
 				)
 
