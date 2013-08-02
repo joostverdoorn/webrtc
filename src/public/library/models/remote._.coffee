@@ -62,7 +62,7 @@ define [
 		# @param args... [Any] any parameters you may want to pass
 		#
 		emit: ( event, args... ) ->
-			message = new Message(@id, @_controller.id, event, args)
+			message = new Message(@id, @_controller.id, event, args, @_controller.time())
 			@send(message)
 
 		# Sends a message to a peer, via the server.
@@ -72,7 +72,7 @@ define [
 		# @param args... [Any] any paramters you may want to pass
 		#
 		emitTo: ( to, event, args... ) ->
-			message = new Message(to, @_controller.id, event, args)
+			message = new Message(to, @_controller.id, event, args, @_controller.time())
 			@send(message)
 
 		# Sends a predefined message to the remote, but first hashes the message 

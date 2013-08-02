@@ -38,12 +38,15 @@ define [
 		type: 'node'
 		serverAddress: ':8080/'
 
+		_timeDelta: 0
+
 		# Constructs a new node. Calls initialize on any subclass.
 		#
 		# @param serverAddress [String] the uri address of the server
 		#
 		constructor: ( @serverAddress = @serverAddress ) ->
 			@server = new Server(@, @serverAddress)
+			@server.on('connect', @_onServerConnect)
 			@server.on('peer.connectionRequest', @_onPeerConnectionRequest)
 			@server.on('peer.setRemoteDescription', @_onPeerSetRemoteDescription)
 			@server.on('peer.addIceCandidate', @_onPeerAddIceCandidate)
@@ -126,7 +129,7 @@ define [
 		# @param args... [Any] any other arguments to pass along 
 		#
 		emitTo: ( to, event, args... ) ->
-			message = new Message(to, @id, event, args)
+			message = new Message(to, @id, event, args, @time())
 			@relay(message)
 
 		# Attempts to query a peer by id. Unreliable.
@@ -148,7 +151,7 @@ define [
 		# @param args... [Any] any other arguments to pass along
 		#
 		broadcast: ( event, args... ) ->
-			message = new Message('*', @id, event, args)
+			message = new Message('*', @id, event, args, @time())
 			@relay(message)
 		
 		# Relays a message to other nodes. If the intended receiver is not a direct 
@@ -163,7 +166,7 @@ define [
 			else if peer = @getPeer(message.to)
 				peer.send(message)
 
-		# Responds to a request
+		# Responds to a request.
 		#
 		# @param request [String] the string identifier of the request
 		# @param args... [Any] any arguments that may be accompanied with the request
@@ -172,7 +175,7 @@ define [
 		query: ( request, args..., callback ) ->
 			switch request
 				when 'ping'
-					callback 'pong'
+					callback 'pong', @time()
 				when 'type'
 					callback @type
 				when 'info'
@@ -187,6 +190,14 @@ define [
 					callback info
 				else
 					callback null
+
+		# Is called when the server connects. Will ping the server and compute
+		# the network time based on the server time and latency.
+		#
+		_onServerConnect: ( ) =>
+			@server.ping( ( latency, serverTime ) =>
+				@_timeDelta = serverTime - (Date.now() - latency / 2)
+			)
 
 		# Is called when a peer requests a connection with this node. Will
 		# accept this request by establishing a connection.
@@ -214,3 +225,10 @@ define [
 		_onPeerAddIceCandidate: ( id, data ) =>
 			candidate = new RTCIceCandidate(data)
 			@getPeer(id, null, true)?.addIceCandidate(candidate)
+
+		# Returns the network time.
+		#
+		# @return [Integer] the network time in milliseconds
+		#
+		time: ( ) ->
+			return Date.now() + @_timeDelta

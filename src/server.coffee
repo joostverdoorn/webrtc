@@ -112,7 +112,7 @@ define [
 		query: ( request, args..., callback ) ->
 			switch request
 				when 'ping'
-					callback 'pong'
+					callback 'pong', @time()
 				when 'nodes'
 					type = args[0]
 					extensive = args[1]

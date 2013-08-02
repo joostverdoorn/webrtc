@@ -16,6 +16,7 @@ require [
 				id: '1'
 				query: (request, args..., callback) -> callback(true)
 				relay: ->
+				time: -> return Date.now()
 			}
 			spyOn(fakeController, 'query').andCallThrough()
 			spyOn(fakeController, 'relay')
