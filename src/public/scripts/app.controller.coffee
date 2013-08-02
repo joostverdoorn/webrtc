@@ -196,7 +196,7 @@ require [
 			
 			@pokePosition = {}
 			@pokePosition.x = Math.round((event.x - @poke.x) / 8)
-			@pokePosition.y = Math.round((event.y - @poke.y) / 8)		
+			@pokePosition.y = Math.round((event.y - @poke.y) / 8)
 		
 			@pokeController = {}
 			@pokeController.x = @fire.x - event.x
