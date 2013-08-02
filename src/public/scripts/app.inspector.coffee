@@ -298,6 +298,8 @@ require [
 		die: ( ) ->
 			@scene.remove(@mesh)
 			@scene.remove(edge) for edge in @edges
+			@scene.remove(@tokenMesh)
+			@scene.remove(@tokenEdge)
 			@edges = []
 
 		# Updates this nodes' position and the lines to its connected nodes.
@@ -327,15 +329,39 @@ require [
 						@edges.push(edge)
 						@scene.add(edge)
 
+			if @tokenMesh?
+				@scene.remove(@tokenEdge) if @tokenEdge?
+				geometry = new Three.Geometry()
+				geometry.vertices.push(@mesh.position, @tokenMesh.position)
+				material = new Three.LineDashedMaterial(color: 0xffff00)
+				@tokenEdge = new Three.Line(geometry, material)
+				@scene.add(@tokenEdge)
+
 		# Sets information of this node from a nodeInfo object. Used to update
 		# the node's state or connected peers.
 		#
 		# @param nodeInfo [Object] an object representing this node
 		#
 		setInfo: ( nodeInfo ) ->
+			if @tokenMesh?
+				@scene.remove(@tokenMesh)
+				delete @tokenMesh
+
+			if @tokenEdge?
+				@scene.remove(@tokenEdge)			
+				delete @tokenEdge
+
 			@id = nodeInfo.id
 			@isSuperNode = nodeInfo.isSuperNode
 			@token = nodeInfo.token
+			
+			if @token?
+				geometry = new Three.SphereGeometry(0.2, 6, 8)
+				material = new THREE.MeshLambertMaterial( color:0xffff00 )
+				@tokenMesh = new Three.Mesh(geometry, material)
+				@tokenMesh.position.set(@token.position[0], @token.position[1], @token.position[2])			
+				@scene.add(@tokenMesh)
+
 			@peers = nodeInfo.peers
 
 			# Set supernodes to display as red, normal nodes as green.
