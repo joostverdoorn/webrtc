@@ -169,7 +169,7 @@ require [
 		#
 		# @param position [Three.Vector3] the position at which to spawn the player
 		#
-		createPlayer: ( position = new Three.Vector3(0, 300, 0) ) =>
+		createPlayer: ( position ) =>
 			if @player
 				return
 
@@ -195,7 +195,7 @@ require [
 
 			@infoScreen.show()
 			@infoScreen.showPlayerDiedScreen()
-			@startGame(position)
+			@startGame()
 
 		# Updates the phyics for all objects and renders the scene. Requests a new animation frame 
 		# to repeat this methods.
@@ -281,7 +281,9 @@ require [
 					@startGame()
 				)
 
-		startGame: ( position = new Three.Vector3(0, 300, 0) ) =>
+		startGame: ( position = null ) =>
+			position = position || new Three.Vector3(Math.random(), Math.random(), Math.random())
+			position.normalize().multiplyScalar(@world.planet.geometry.boundingSphere.radius)
 			@inputHandler.on('Boost', ( value ) =>
 					@inputHandler.off('Boost')
 					@infoScreen.hide()
