@@ -31,9 +31,11 @@ define [
 			# Add lights to the scene.
 			directionalLight = new Three.DirectionalLight(0xffffff, 2)
 			directionalLight.position.set(0, 1, 1).normalize()
+			directionalLight.castShadow = true
+			directionalLight.shadowDarkness = .8
 			@scene.add(directionalLight)
 
-			hemisphereLight = new Three.HemisphereLight(0x555555, 0x555555)
+			hemisphereLight = new Three.HemisphereLight(0x999999, 0x999999)
 			@scene.add(hemisphereLight)
 
 			# Load planet mesh.

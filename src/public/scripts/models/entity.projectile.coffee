@@ -37,6 +37,7 @@ define [
 				, sphereMaterial)
 
 			@mesh.geometry.computeBoundingSphere()
+			@mesh.receiveShadow = true
 
 			# If both cannon and player are defined, instantiate the projectile forces.
 			if cannon? and player?

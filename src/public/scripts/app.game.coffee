@@ -79,6 +79,7 @@ require [
 			@scene = new Three.Scene()
 			@renderer = new Three.WebGLRenderer({antialias: true})
 			@renderer.setSize(width, height)
+			@renderer.shadowMapEnabled = true
 			@container.append(@renderer.domElement)
 
 			@aspectRatio = width / height
