@@ -42,8 +42,7 @@ require [
 	'jquery'
 	'three'
 	'stats'
-	'qrcode'
-	], ( App, ControllerNode, Node, World, Player, Controller, InfoScreen, $, Three, Stats, QRCode ) ->
+	], ( App, ControllerNode, Node, World, Player, Controller, InfoScreen, $, Three, Stats ) ->
 
 	# This game class implements the node structure created in the library.
 	# It uses three.js for the graphics.
@@ -270,9 +269,10 @@ require [
 			@infoScreen.showLoadingScreen()
 			@inputHandler._generateRemoteMobile()
 			@inputHandler.on('mobile.initialized', ( id ) =>
-					@_controllerID = id
 					@inputHandler.selectInput('mobile')
-					@infoScreen.showMobileConnectScreen(@setQRCode)
+					url = window.location.origin + "/controller/" + id
+
+					@infoScreen.showMobileConnectScreen(url)
 				)
 
 			@inputHandler.on('mobile.connected', ( id ) =>
@@ -286,11 +286,6 @@ require [
 					@infoScreen.hide()
 					@createPlayer(position)
 				)
-
-		setQRCode: () =>
-			link = window.location.origin + "/controller/" + @_controllerID
-			$('#controllerQRCodeImage').qrcode(link)
-			$('#controllerQRCodeLink').html("<a href=\"#{link}\">#{link}</a>")
 
 				
 	window.App = new App.Game
