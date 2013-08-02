@@ -96,10 +96,10 @@ define [
 				surfaceNormal = @position
 
 				# Add tilt forces
-				@addAngularForce(new Three.Euler(0, 0, -.6 * @flyForward, 'YXZ'))
-				@addAngularForce(new Three.Euler(0, 0, .6 * @flyBackward, 'YXZ'))
-				@addAngularForce(new Three.Euler(-.6 * @flyLeft, 0, 0, 'YXZ'))
-				@addAngularForce(new Three.Euler(.6 * @flyRight, 0, 0, 'YXZ'))
+				@addAngularForce(new Three.Euler(0, 0, -19 * @flyForward * dt, 'YXZ'))
+				@addAngularForce(new Three.Euler(0, 0, 19 * @flyBackward * dt, 'YXZ'))
+				@addAngularForce(new Three.Euler(-19 * @flyLeft * dt, 0, 0, 'YXZ'))
+				@addAngularForce(new Three.Euler(19 * @flyRight * dt, 0, 0, 'YXZ'))
 
 			# Attract player to a straight position with relation to the planet surface.
 			levelRotation = @calculateLevelRotation(surfaceNormal)
