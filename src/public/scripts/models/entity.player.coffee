@@ -136,8 +136,8 @@ define [
 				@_ufoBase.position.lerp(new Three.Vector3(0, 0, 0), dt * 8)
 				@_ufoBase.scale.lerp(new Three.Vector3(1, 2, 1), dt * 8)
 			else
-				@_ufoBase.position.lerp(new Three.Vector3(0, 1, 0), dt * 5)
-				@_ufoBase.scale.lerp(new Three.Vector3(1, 0, 1), dt * 5)
+				@_ufoBase.position.lerp(new Three.Vector3(0, .8, 0), dt * 5)
+				@_ufoBase.scale.lerp(new Three.Vector3(1, .5, 1), dt * 5)
 
 				@addAngularForce(new Three.Euler(0, @cannon.rotation.y * 20 * dt, 0, 'YXZ'))
 				@cannon.addAngularForce(new Three.Euler(0, -@cannon.rotation.y * 20 * dt, 0, 'YXZ'))
