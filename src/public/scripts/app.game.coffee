@@ -283,7 +283,14 @@ require [
 
 		startGame: ( position = null ) =>
 			position = position || new Three.Vector3(Math.random(), Math.random(), Math.random())
-			position.normalize().multiplyScalar(@world.planet.geometry.boundingSphere.radius)
+			intersect = @world.getSurface(position)
+
+			# Not a valid place, just find a new one
+			if intersect is null
+				@startGame()
+				return;
+
+			position = intersect.point
 			@inputHandler.on('Boost', ( value ) =>
 					@inputHandler.off('Boost')
 					@infoScreen.hide()

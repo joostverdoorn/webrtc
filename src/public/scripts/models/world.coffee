@@ -2,19 +2,20 @@ define [
 	'public/scripts/helpers/mixable'
 	'public/scripts/helpers/mixin.eventbindings'
 
+	'public/scripts/models/entity._'
 	'public/scripts/models/entity.player'
 	'public/scripts/models/entity.projectile'
 	'public/scripts/models/collection'
 
 	'underscore'
 	'three'
-	], ( Mixable, EventBindings, Player, Projectile,  Collection, _, Three ) ->
+	], ( Mixable, EventBindings, Entity, Player, Projectile,  Collection, _, Three ) ->
 
 	# This class manages the game world.
 	#
 	# @concern EventBindings
 	#
-	class World extends Mixable
+	class World extends Entity
 
 		@concern EventBindings
 
@@ -42,6 +43,7 @@ define [
 			@_loader.load('/meshes/planet.js', ( geometry, material ) =>
 				@planet = new Three.Mesh(geometry, new Three.MeshFaceMaterial(material))
 				@planet.castShadow = true
+				@mesh = @planet
 
 				# Compute normals and bounding sphere to aid collision detection
 				@planet.geometry.computeBoundingSphere()
@@ -50,6 +52,7 @@ define [
 				# Add planet to the scene
 				@scene.add(@planet)
 			)
+			super(@, true)
 
 		# Adds a physics entity to the world
 		#
@@ -121,9 +124,21 @@ define [
 			projectile = new Projectile(@, false, null, null, info)
 			@addEntity(projectile)
 
+		getSurface: ( position = new Three.Vector3(0, 1, 0)) ->
+			radius = @planet.geometry.boundingSphere.radius
+			pos = position.clone().normalize().multiplyScalar(radius)
+			raycaster = new Three.Raycaster(pos, pos.clone().negate())
+			objects = raycaster.intersectObject(@planet)
+			if objects.length > 0
+				objects[0].distance = radius - objects[0].distance
+				return objects[0]
+
+			return null
+
 		# Updates the world.
 		#
 		# @param dt [Float] the time that has elapsed since last update
+		# @param ownPlayer [Entity] entity to check against collisions with projectiles
 		#
 		update: ( @dt, ownPlayer ) ->
 			entity?.update(dt) for entity in @_entities
