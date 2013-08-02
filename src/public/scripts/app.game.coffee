@@ -89,7 +89,7 @@ require [
 			@scene.add(@camera)
 			@scene.fog = new Three.FogExp2( 0xaabbff, 0.0015 );
 
-			@lastUpdateTime = 0
+			@_lastUpdateTime = 0
 
 			# Create sky dome
 			@sky = new THREE.Mesh( new THREE.SphereGeometry( 1500, 6, 8 ), new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/images/sky.jpg' ) } ) )
@@ -138,12 +138,12 @@ require [
 				@world.removePlayer(id)
 			)
 
-			@node.onReceive('player.update', ( id, info ) =>
-				@world.applyPlayerInfo(id, info)
+			@node.onReceive('player.update', ( id, info, timestamp ) =>
+				@world.applyPlayerInfo(id, info, timestamp)
 			)
 
-			@node.onReceive('player.fire', ( id, info ) =>
-				@world.createProjectile(info)
+			@node.onReceive('player.fire', ( id, info, timestamp ) =>
+				@world.createProjectile(info, timestamp)
 			)
 
 			window.requestAnimationFrame(@update)
@@ -203,7 +203,7 @@ require [
 		# @param timestamp [Integer] the time that has elapsed since the first requestAnimationFrame
 		#
 		update: ( timestamp ) =>
-			dt = (timestamp - @lastUpdateTime) / 1000     
+			dt = (timestamp - @_lastUpdateTime) / 1000     
 
 			# Apply input to player.
 			if @player?.cannon?			
@@ -263,7 +263,7 @@ require [
 			@stats.update()
 
 			# Request a new animation frame.
-			@lastUpdateTime = timestamp
+			@_lastUpdateTime = timestamp
 			window.requestAnimationFrame(@update)
 
 		createControllerNode: () ->
@@ -289,6 +289,9 @@ require [
 					@infoScreen.hide()
 					@createPlayer(position)
 				)
+
+		time: ( ) ->
+			return @node.time()
 
 				
 	window.App = new App.Game

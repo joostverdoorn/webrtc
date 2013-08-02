@@ -17,7 +17,7 @@ define [
 		# @param id [String] the string id of the player
 		# @param info [Object] an object containing all info to apply to the player
 		#
-		initialize: ( @id, info = null ) ->		
+		initialize: ( @id, info = null, timestamp = null ) ->		
 			@mass = 300
 			@drag = .01
 			@angularDrag = 7
@@ -54,7 +54,7 @@ define [
 				@cannon = new Cannon(@world, @owner, @)
 
 				# Apply passed info.
-				@applyInfo(info)
+				@applyInfo(info, timestamp)
 
 				# Set the rotation axis order to YXZ.
 				@rotation.order = 'YXZ'
@@ -209,11 +209,11 @@ define [
 		#
 		# @param info [Object] an object that contains the transformations
 		#
-		applyInfo: ( info ) =>
+		applyInfo: ( info, timestamp = null ) =>
 			unless info
 				return
 
-			super(info)
+			super(info, timestamp)
 			
 			if info.flyLeft?
 				@flyLeft = info.flyLeft
@@ -239,7 +239,7 @@ define [
 			if info.baseExtended?
 				@baseExtended = info.baseExtended
 
-			@cannon.applyInfo(info.cannon)
+			@cannon.applyInfo(info.cannon, timestamp)
 			
 		# Returns the current info in an object.
 		#

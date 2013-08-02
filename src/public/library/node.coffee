@@ -118,7 +118,9 @@ define [
 		# @param context [Object] the context on which to apply the callback
 		#
 		onReceive: ( event, callback, context = @ ) ->
-			@_peers.on(event, ( peer, args... ) =>
+			@_peers.on(event, ( peer, args..., message ) =>
+				args = args.concat(message.timestamp)
+				#console.log args
 				callback.apply(context, args)
 			)
 

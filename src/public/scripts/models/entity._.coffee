@@ -22,6 +22,8 @@ define [
 			@scene = @world.scene
 			@_loader = new Three.JSONLoader()
 			@loaded = false
+
+			@_updates = {}
 			
 			@mass = 1
 			@drag = .01
@@ -92,7 +94,17 @@ define [
 			if updatePosition
 
 				# Calculate our new position from the velocity.
-				@position.add(@velocity.clone().multiplyScalar(dt))
+				deltaPosition = @velocity.clone().multiplyScalar(dt)
+				@position.add(deltaPosition)
+
+				# Apply dead reckoning of position.
+				if @_targetPosition and not @owner
+					@_targetPosition.add(deltaPosition)
+
+					if @position.distanceTo(@_targetPosition) > 20
+						@position = @_targetPosition.clone()
+					else
+						@position.lerp(@_targetPosition, dt)
 
 				# Check if the player intersects with the planet.
 				if @owner
@@ -132,7 +144,14 @@ define [
 
 				# ... and multiply this delta with the current rotation to get the new rotation.
 				rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)		
-				rotationQuaternion.multiply(angularDeltaQuaternion)
+				rotationQuaternion.multiply(angularDeltaQuaternion)				
+
+				# Apply dead reckoning of rotation.
+				if @_targetRotation and not @owner
+					targetRotationQuaternion = new Three.Quaternion().setFromEuler(@_targetRotation)
+					targetRotationQuaternion.multiply(angularDeltaQuaternion)
+					rotationQuaternion.slerp(targetRotationQuaternion, dt)
+
 				@rotation.setFromQuaternion(rotationQuaternion)
 
 				# Loop through all angular forces and calculate the angular acceleration.
@@ -158,25 +177,96 @@ define [
 			@_forces = []
 			@_angularForces = []
 
+			# History
+			unless @owner
+				@_updates[App.time()] = 
+					position: @position
+					rotation: @rotation
+
 		# Applies information given in an object to the entity.
 		#
 		# @param info [Object] an object that contains the transformations
 		#
-		applyInfo: ( info ) =>
+		applyInfo: ( info, timestamp = null ) =>
 			unless info?
 				return
 
+			# We received a timed update. From it we will compute
+			# the target position, and rotation, and slowly ease 
+			# toward it. This will look much better and will be more 
+			# accurate than setting the position and rotation directly.
+			if timestamp?
+				# Extract position and rotation from info object
+				infoPosition = new Three.Vector3().fromArray(info.position)
+				infoRotation = new Three.Euler().fromArray(info.rotation)
+
+				# Get updates behind and ahead of timestamp
+				previousTime = 0				
+				for time, update of @_updates
+					
+					# This update's time is smaller, but we don't 
+					# know if the next update is, so we remove the one
+					# before the current.
+					if time < timestamp 
+						delete @_updates[previousTime]
+						previousTime = time
+
+					# We have found the two updates!
+					else 
+						behind = @_updates[previousTime]
+						ahead = update
+						break
+
+				# When we found the updates, we will apply the delta position 
+				# and delta rotation that happened since that update to the
+				# the received info and set the resultant position and rotation
+				# as our target position and target rotation.
+				if behind? and ahead?
+					# Get the time fraction between the two updates at which the 
+					# info was sent.
+					deltaTime = time - previousTime
+					fraction = (timestamp - previousTime) / deltaTime
+
+					# Get the target position.
+					position = behind.position.clone().lerp(ahead.position, fraction)
+					deltaPosition = @position.clone().sub(position)					
+					@_targetPosition = infoPosition.clone().add(deltaPosition)
+
+					# Get the target rotation.
+					behindRotation = behind.rotation.clone()
+					aheadRotation = ahead.rotation.clone()
+
+					rotation = new Three.Quaternion().setFromEuler(behindRotation)
+					rotation.slerp(new Three.Quaternion().setFromEuler(aheadRotation), fraction)
+					deltaRotation = new Three.Quaternion().setFromEuler(@rotation)
+					deltaRotation.multiply(rotation.inverse())
+
+					targetRotation = new Three.Quaternion().setFromEuler(infoRotation)
+					targetRotation.multiply(deltaRotation)
+					@_targetRotation = new Three.Euler().setFromQuaternion(targetRotation)
+				
+				# Else we will just set our target position and target rotation
+				# directly.
+				else
+					@_targetPosition = infoPosition
+					@_targetRotation = infoRotation
+			
+			# We didn't receive a timed update. Just set the position and rotation
+			# directly.
+			else
+				if info.position?
+					@position.fromArray(info.position)
+				
+				if info.rotation?
+					@rotation.fromArray(info.rotation)
+
+			# Always just set the received velocity and angular velocity.
 			if info.velocity?
 				@velocity.fromArray(info.velocity)
 
 			if info.angularVelocity?
 				@angularVelocity.fromArray(info.angularVelocity)
-			
-			if info.position?
-				@position.fromArray(info.position)
-			
-			if info.rotation?
-				@rotation.fromArray(info.rotation)
+				
 
 		# Returns the current info in an object.
 		#

@@ -109,7 +109,7 @@ define [
 		#
 		# @param info [Object] an object that contains the transformations
 		#
-		applyInfo: ( info ) =>
+		applyInfo: ( info, timestamp = null ) =>
 			unless info
 				return
 

@@ -70,8 +70,8 @@ define [
 		# @param id [String] the string id of the player
 		# @param info [Object] an object of the player's info
 		#
-		createPlayer: ( id, owner, info ) ->
-			player = new Player(@, owner, id, info)
+		createPlayer: ( id, owner, info, timestamp ) ->
+			player = new Player(@, owner, id, info, timestamp)
 
 			if owner
 				player.on('fire', ( projectile ) => @addEntity(projectile))
@@ -108,16 +108,16 @@ define [
 		# @param id [String] the string id of the player
 		# @param info [Object] an object of the player's info
 		#
-		applyPlayerInfo: ( id, info ) ->
+		applyPlayerInfo: ( id, info, timestamp ) ->
 			if player = @getPlayer(id)
-				player.applyInfo(info)
+				player.applyInfo(info, timestamp)
 			else @createPlayer(id, false, info)
 
 		# Creates a new projectile.
 		# 
 		# @param info [Object] the object containing the projectile info
 		#
-		createProjectile: ( info ) ->
+		createProjectile: ( info, timestamp ) ->
 			projectile = new Projectile(@, false, null, null, info)
 			@addEntity(projectile)
 
