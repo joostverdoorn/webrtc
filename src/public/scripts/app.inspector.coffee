@@ -82,6 +82,7 @@ require [
 			# Create scene, camera and renderer.
 			@scene = new Three.Scene()
 			@camera = new Three.PerspectiveCamera(viewAngle, aspectRatio, nearClip, farClip)
+			@camera.position = new Three.Vector3()
 			@renderer = new Three.WebGLRenderer()
 
 			@renderer.setSize(width, height)
@@ -109,6 +110,35 @@ require [
 			@stats.domElement.style.top = '0px'
 			@stats.domElement.style.left = '0px'
 			container.appendChild(@stats.domElement)
+
+			# Add axes
+			xStart = new Three.Vector3(5000, 0, 0)
+			xEnd = new Three.Vector3(-5000, 0, 0)
+			yStart = new Three.Vector3(0, 5000, 0)
+			yEnd = new Three.Vector3(0, -5000, 0)
+			zStart = new Three.Vector3(0, 0, 5000)
+			zEnd = new Three.Vector3(0, 0, -5000)
+
+			xGeometry = new Three.Geometry()
+			xGeometry.vertices.push(xStart)
+			xGeometry.vertices.push(xEnd)
+			xMaterial = new Three.LineBasicMaterial(color: 0xff0000)
+			xLine = new Three.Line(xGeometry, xMaterial)
+			@scene.add(xLine)
+
+			yGeometry = new Three.Geometry()
+			yGeometry.vertices.push(yStart)
+			yGeometry.vertices.push(yEnd)
+			yMaterial = new Three.LineBasicMaterial(color: 0x00ff00)
+			yLine = new Three.Line(yGeometry, yMaterial)
+			@scene.add(yLine)
+
+			zGeometry = new Three.Geometry()
+			zGeometry.vertices.push(zStart)
+			zGeometry.vertices.push(zEnd)
+			zMaterial = new Three.LineBasicMaterial(color: 0x0000ff)
+			zLine = new Three.Line(zGeometry, zMaterial)
+			@scene.add(zLine)
 
 			# Various callbacks and the like.
 			window.requestAnimationFrame(@update)
