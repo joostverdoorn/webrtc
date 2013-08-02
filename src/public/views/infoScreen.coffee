@@ -96,14 +96,14 @@ define [
 		# @param url [String] URL that after visiting connects to this user
 		#
 		showMobileConnectScreen: ( url ) =>
-			@_showFromFile "mobile_qr.html", =>
+			@_showFromFile 'mobile_qr.html', =>
 				$('#controllerQRCodeImage').qrcode(url)
 				$('#controllerQRCodeLink').html("<a href=\"#{url}\">#{url}</a>")
 
 		# Tells the user that he died and how to respawn
 		#
 		showPlayerDiedScreen: ( ) =>
-			@_showFromFile "player_died.html"
+			@_showFromFile 'player_died.html'
 
 		# Shows the InfoView
 		#
