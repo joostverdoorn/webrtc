@@ -336,6 +336,7 @@ require [
 				material = new Three.LineDashedMaterial(color: 0xffff00)
 				@tokenEdge = new Three.Line(geometry, material)
 				@scene.add(@tokenEdge)
+				@tokenMesh.position.lerp(@tokenPosition, dt)
 
 		# Sets information of this node from a nodeInfo object. Used to update
 		# the node's state or connected peers.
@@ -343,24 +344,28 @@ require [
 		# @param nodeInfo [Object] an object representing this node
 		#
 		setInfo: ( nodeInfo ) ->
-			if @tokenMesh?
-				@scene.remove(@tokenMesh)
-				delete @tokenMesh
-
-			if @tokenEdge?
-				@scene.remove(@tokenEdge)			
-				delete @tokenEdge
-
 			@id = nodeInfo.id
 			@isSuperNode = nodeInfo.isSuperNode
 			@token = nodeInfo.token
 			
 			if @token?
-				geometry = new Three.SphereGeometry(0.2, 6, 8)
-				material = new THREE.MeshLambertMaterial( color:0xffff00 )
-				@tokenMesh = new Three.Mesh(geometry, material)
-				@tokenMesh.position.set(@token.position[0], @token.position[1], @token.position[2])			
-				@scene.add(@tokenMesh)
+				unless @tokenMesh?
+					geometry = new Three.SphereGeometry(0.2, 6, 8)
+					material = new THREE.MeshLambertMaterial( color:0xffff00 )
+					@tokenMesh = new Three.Mesh(geometry, material)
+					@tokenMesh.position.set(@token.position[0], @token.position[1], @token.position[2])			
+					@scene.add(@tokenMesh)
+
+				x = @token.position[0]
+				y = @token.position[1]
+				z = @token.position[2]
+				@tokenPosition = new Three.Vector3(x, y, z)
+
+			else
+				@scene.remove(@tokenMesh)
+				@scene.remove(@tokenEdge)			
+				delete @tokenMesh
+				delete @tokenEdge
 
 			@peers = nodeInfo.peers
 
