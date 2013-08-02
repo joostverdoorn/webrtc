@@ -107,44 +107,31 @@ require [
 
 			@status = 0
 
-			@node.server.on('connect', ( ) =>
-				@node.server.off('connect')
-				@status = 1
-			)
+			@node.server.once
+				'connect': ( ) =>
+					@status = 1
 
-			@node.on('joined', =>
-				@node.off('joined')
-				@infoScreen.showWelcomeScreen()
-				@status = 2
-			)
+			@node.on
+				'joined': =>
+					@node.off('joined')
+					@infoScreen.showWelcomeScreen()
+					@status = 2
+				'left': =>
+					console.log 'Left the network'
 
-			@node.on('left', =>
-				console.log 'Left the network'
-			)
-
-			@node.onReceive('player.list', ( list ) =>
-				@world.createPlayer(id, info) for id, info in list
-			)
-
-			@node.onReceive('player.joined', ( id, info ) =>
-				@world.createPlayer(id, info)
-			)
-
-			@node.onReceive('player.left', ( id ) =>
-				@world.removePlayer(id)
-			)
-
-			@node.onReceive('player.died', ( id ) =>
-				@world.removePlayer(id)
-			)
-
-			@node.onReceive('player.update', ( id, info, timestamp ) =>
-				@world.applyPlayerInfo(id, info, timestamp)
-			)
-
-			@node.onReceive('player.fire', ( id, info, timestamp ) =>
-				@world.createProjectile(info, timestamp)
-			)
+			@node.onReceive
+				'player.list': ( list ) =>
+					@world.createPlayer(id, info) for id, info in list
+				'player.joined': ( id, info ) =>
+					@world.createPlayer(id, info)
+				'player.left': ( id ) =>
+					@world.removePlayer(id)
+				'player.died': ( id ) =>
+					@world.removePlayer(id)
+				'player.update': ( id, info, timestamp ) =>
+					@world.applyPlayerInfo(id, info, timestamp)
+				'player.fire': ( id, info, timestamp ) =>
+					@world.createProjectile(info, timestamp)
 
 			window.requestAnimationFrame(@update)
 			$(window).resize(@setDimensions)
@@ -177,16 +164,16 @@ require [
 				position: position.toArray()
 
 			@player = @world.createPlayer(@node.id, true, info)
-			@player.on('fire', ( projectile ) => @node.broadcast('player.fire', @player.id, projectile.getInfo()))
-			@node.broadcast('player.joined', @player.id, @player.getInfo())
+			@player.on
+				'fire': ( projectile ) =>
+					@node.broadcast('player.fire', @player.id, projectile.getInfo())
+				'die': ( position, velocity ) =>
+					@_playerDied(broadcastInterval, position, velocity)
 
+			@node.broadcast('player.joined', @player.id, @player.getInfo())
 			broadcastInterval = setInterval( ( ) =>
 				@node.broadcast('player.update', @player.id, @player.getInfo())
 			, 200)
-
-			@player.on('die', ( position, velocity ) =>
-					@_playerDied(broadcastInterval, position, velocity)
-				)
 
 		_playerDied: ( interval, position, velocity ) ->
 			clearInterval(interval)

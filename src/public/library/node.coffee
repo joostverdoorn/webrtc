@@ -113,16 +113,31 @@ define [
 
 		# Public method to bind a callback on to a peer event
 		#
-		# @param event [String] the string identifier of the event
-		# @param callback [Function] the function to call
-		# @param context [Object] the context on which to apply the callback
+		# @overload onReceive(event, callback, context = @)
+		#	 Binds a single event
+		# 	 @param event [String] the string identifier of the event
+		# 	 @param callback [Function] the function to call
+		# 	 @param context [Object] the context on which to apply the callback
 		#
-		onReceive: ( event, callback, context = @ ) ->
-			@_peers.on(event, ( peer, args..., message ) =>
-				args = args.concat(message.timestamp)
-				#console.log args
-				callback.apply(context, args)
-			)
+		# @overload onReceive(bindings)
+		#	 @param bindings [Object] an object mapping events to callbacks
+		#
+		onReceive: ( ) ->
+			if typeof arguments[0] is 'string'
+				event = arguments[0]
+				callback = arguments[1]
+				context = arguments[2] || @
+
+				@_peers.on(event, ( peer, args..., message ) =>
+					args = args.concat(message.timestamp)
+					callback.apply(context, args)
+				)
+
+			else if typeof arguments[0] is 'object'
+				bindings = arguments[0]
+
+				for event, callback of bindings
+					@onReceive(event, callback)
 
 		# Attempts to emit to a peer by id. Unreliable.
 		#
