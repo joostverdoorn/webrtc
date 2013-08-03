@@ -211,7 +211,8 @@ define [
 		# Is called when the server connects. Will ping the server and compute
 		# the network time based on the server time and latency.
 		#
-		_onServerConnect: ( ) =>
+		_onServerConnect: ( id ) =>
+			@id = id
 			@server.ping( ( latency, serverTime ) =>
 				@_timeDelta = serverTime - (Date.now() - latency / 2)
 			)

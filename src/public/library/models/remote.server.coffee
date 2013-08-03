@@ -24,7 +24,7 @@ define [
 			@_connection = io.connect(@_address, {'force new connection': true})
 			
 			@_connection.on('message', ( message ) => @trigger('message', message))
-			@_connection.on('connect', ( ) => @trigger('connect'))
+			@_connection.on('connect', ( ) => @trigger('connect', @_connection.socket.sessionid))
 			@_connection.on('disconnect', ( ) => @trigger('disconnect'))
 
 		# Disconnects from the server.
@@ -50,4 +50,3 @@ define [
 		# 
 		_onConnect: ( ) =>
 			console.log 'connected to server'
-			@_controller.id = @_connection.socket.sessionid
