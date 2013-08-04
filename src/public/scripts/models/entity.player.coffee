@@ -4,8 +4,7 @@ define [
 	'public/scripts/models/entity.projectile'
 
 	'three'
-	'jquery'
-	], ( Entity, Cannon, Projectile, Three, $ ) ->
+	], ( Entity, Cannon, Projectile, Three ) ->
 
 	# This class implements player-specific properties for the entity physics object.
 	#
@@ -18,7 +17,7 @@ define [
 		# @param info [Object] an object containing all info to apply to the player
 		#
 		initialize: ( @id, info = null, timestamp = null ) ->		
-			@mass = 300
+			@mass = 100
 			@drag = .01
 			@angularDrag = 7
 			@applyGravity = true
@@ -88,7 +87,7 @@ define [
 			# Check if the player is within landing range of the planet. If she is,
 			# retract the cannon, extend the landing gear, and set the ufo to attract
 			# to a level position with relation to the normal of the surface below it.
-			if intersect = @getIntersect(@world.planet, 1, 3)
+			if intersect = @world.planet.getIntersect(@position, 1, 3)
 				if intersect.distance < 2
 					@cannon.extended = false
 					surfaceNormal = intersect.face.normal
@@ -102,10 +101,10 @@ define [
 				surfaceNormal = @position
 
 				# Add tilt forces
-				@addAngularForce(new Three.Euler(0, 0, -19 * @flyForward * dt, 'YXZ'))
-				@addAngularForce(new Three.Euler(0, 0, 19 * @flyBackward * dt, 'YXZ'))
-				@addAngularForce(new Three.Euler(-19 * @flyLeft * dt, 0, 0, 'YXZ'))
-				@addAngularForce(new Three.Euler(19 * @flyRight * dt, 0, 0, 'YXZ'))
+				@addAngularForce(new Three.Euler(0, 0, -30 * @flyForward * dt, 'YXZ'))
+				@addAngularForce(new Three.Euler(0, 0, 30 * @flyBackward * dt, 'YXZ'))
+				@addAngularForce(new Three.Euler(-30 * @flyLeft * dt, 0, 0, 'YXZ'))
+				@addAngularForce(new Three.Euler(30 * @flyRight * dt, 0, 0, 'YXZ'))
 
 			# Attract player to a straight position with relation to the planet surface.
 			# The normal is determined in the previous step: when the player's close to

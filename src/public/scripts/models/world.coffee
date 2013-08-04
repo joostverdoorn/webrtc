@@ -2,20 +2,20 @@ define [
 	'public/scripts/helpers/mixable'
 	'public/scripts/helpers/mixin.eventbindings'
 
-	'public/scripts/models/entity._'
+	'public/scripts/models/entity.planet'
 	'public/scripts/models/entity.player'
 	'public/scripts/models/entity.projectile'
 	'public/scripts/models/collection'
 
 	'underscore'
 	'three'
-	], ( Mixable, EventBindings, Entity, Player, Projectile,  Collection, _, Three ) ->
+	], ( Mixable, EventBindings, Planet, Player, Projectile,  Collection, _, Three ) ->
 
 	# This class manages the game world.
 	#
 	# @concern EventBindings
 	#
-	class World extends Entity
+	class World extends Mixable
 
 		@concern EventBindings
 
@@ -39,20 +39,9 @@ define [
 			hemisphereLight = new Three.HemisphereLight(0x999999, 0x999999)
 			@scene.add(hemisphereLight)
 
-			# Load planet mesh.
-			@_loader.load('/meshes/planet.js', ( geometry, material ) =>
-				@planet = new Three.Mesh(geometry, new Three.MeshFaceMaterial(material))
-				@planet.castShadow = true
-				@mesh = @planet
-
-				# Compute normals and bounding sphere to aid collision detection
-				@planet.geometry.computeBoundingSphere()
-				@planet.geometry.computeMorphNormals()
-
-				# Add planet to the scene
-				@scene.add(@planet)
-			)
-			super(@, true)
+			# Create planet.
+			@planet = new Planet(@, false)
+			@planet.position = new Three.Vector3(0, 0, 0)
 
 		# Adds a physics entity to the world
 		#

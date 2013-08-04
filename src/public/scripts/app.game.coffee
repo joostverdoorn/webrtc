@@ -178,7 +178,7 @@ require [
 			@world.update(dt, @player)
 
 			# Set the camera to follow the player
-			if @player? and @player.cannon?
+			if @player?.loaded
 				# Get the direction of the camera, and apply cannon and player rotations to it.
 				cameraDirection = new Three.Vector3(-1, 0, 0)
 				cameraDirection.applyQuaternion(new Three.Quaternion().setFromEuler(@player.cannon.rotation.clone()))
@@ -187,17 +187,9 @@ require [
 				# Get the target position of the camera
 				targetPosition = @player.position.clone().add(cameraDirection.multiplyScalar(80))
 
-				currentLength = targetPosition.length()
-				planetRadius = @world.planet.geometry.boundingSphere.radius
-				if currentLength < planetRadius
-					targetPosition2 = targetPosition.clone().multiplyScalar((planetRadius) / currentLength)
-					@cameraRaycaster.set(targetPosition2, targetPosition2.clone().negate())
-					intersects = @cameraRaycaster.intersectObject(@world.planet)
-					for key, intersect of intersects
-						surface = planetRadius - intersect.distance
-						surface += 20		# Safe distance
-						targetPosition.multsplyScalar(surface / currentLength)
-						break
+				if intersect = @world.planet.getIntersect(targetPosition, 100, 10)
+					console.log targetPosition, intersect.point, intersect.distance
+					targetPosition = intersect.point
 
 				# Ease the camera to the target position
 				@camera.position.lerp(targetPosition, 1.5 * dt)
@@ -225,15 +217,16 @@ require [
 		# @param position [Three.Vector3] the position override to spawn the player
 		#
 		startGame: ( position = null ) ->
-			position = position || new Three.Vector3(Math.random(), Math.random(), Math.random())
-			intersect = @world.getSurface(position)
+			# position = position || new Three.Vector3(Math.random(), Math.random(), Math.random())
+			# intersect = @world.getSurface(position)
 
-			# Not a valid place, just find a new one
-			if intersect is null
-				@startGame()
-				return
+			# # Not a valid place, just find a new one
+			# if intersect is null
+			# 	@startGame()
+			# 	return
 
-			position = intersect.point
+			# position = intersect.point
+			position = new Three.Vector3(0, 300, 0)
 			@createPlayer(position)
 			@paused = false
 

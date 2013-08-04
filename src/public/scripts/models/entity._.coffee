@@ -108,9 +108,9 @@ define [
 
 				# Check if the player intersects with the planet.
 				if @owner
-					if intersect = @getIntersect(@world.planet, 4, 0)
+					if intersect = @world.planet.getIntersect(@position, 4, 0)
 						@trigger('impact.world', @position.clone(), @velocity.clone())
-						
+
 						@position = intersect.point
 						@velocity = new Three.Vector3()
 
@@ -289,15 +289,19 @@ define [
 		# @param ahead [Float] the distance in ahead of this entity to check to
 		# @return [Object] the intersect object
 		#
-		getIntersect: ( mesh, behind, ahead ) ->
-			meshRadius = mesh.geometry.boundingSphere.radius
+		getIntersect: ( point, behind, ahead ) ->
+			radius = @mesh.geometry.boundingSphere.radius
+			distance = @position.distanceTo(point)
 			
-			if @position.distanceTo(mesh.position) <= meshRadius
-				direction = mesh.position.clone().sub(@position).normalize()
-				origin = @position.clone().add(@position.clone().setLength(behind))
+			if distance <= radius
+				direction = @position.clone().sub(point).normalize()
+				origin = @position.clone().add(direction.clone().negate().setLength(distance + behind))
+
+
+				# origin = @position.clone().add(@position.clone().setLength(behind))
 				raycaster = new Three.Raycaster(origin, direction, 0, behind + ahead)
 				
-				intersects = raycaster.intersectObject(mesh)
+				intersects = raycaster.intersectObject(@mesh)
 				if intersect = intersects[0]
 					intersect.distance -= behind
 					return intersect
