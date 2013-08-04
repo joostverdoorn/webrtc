@@ -27,95 +27,98 @@ requirejs.config
 		'three': 'vendor/scripts/three'
 		'qrcode': 'vendor/scripts/qrcode.min'
 		'stats': 'vendor/scripts/stats.min'
-		
+
 require [
 	'public/scripts/app._'
-	'public/library/node'
 	'public/library/node.structured'
+	
+	'public/scripts/models/controller._'
+	'public/scripts/models/controller.desktop'
+	'public/scripts/models/controller.mobile'
 
 	'public/scripts/models/world'
 	'public/scripts/models/entity.player'
-	'public/scripts/models/controller'
 
-	'public/views/infoScreen'
+	'public/scripts/views/overlay'
 
-	'jquery'
 	'three'
 	'stats'
-	], ( App, ControllerNode, Node, World, Player, Controller, InfoScreen, $, Three, Stats ) ->
+	], ( App, Node, Controller, DesktopController, MobileController, World, Player, Overlay, Three, Stats ) ->
 
 	# This game class implements the node structure created in the library.
 	# It uses three.js for the graphics.
 	#
 	class App.Game extends App
 
+		paused = true
+
 		viewAngle = 45
 		nearClip = 0.1
-		farClip = 10000
+		farClip = 2000
+
+		_lastUpdateTime = 0
 
 		# This method will be called from the baseclass when it has been constructed.
 		# 
 		initialize: ( ) ->
-			@inputHandler = new Controller()
-			@infoScreen = new InfoScreen $('#overlay'), false
-			@infoScreen.on('controllerType', ( type ) =>
-					switch type
-						when 'mouse'
-							@inputHandler.selectInput(type)
-							@infoScreen.showInfoScreen(type)
+			# Create node and controller.
+			@node = new Node()
+			@controller = new Controller()
 
-							@startGame()
-						when 'mobile'
-							# Should be called when a user decides to connect his mobile phone
-							@createControllerNode()
-				)
+			# Create overlay screen.
+			@overlay = new Overlay()
+			@overlay.on('controller.select', @_onControllerSelect)
 
+			# Create the container and add it to the document.
 			@container = document.createElement 'div'
 			@container.id = 'container'
 			document.body.appendChild @container
-			@container = $('#container')
-			[width, height] = @setDimensions()
 
-			@scene = new Three.Scene()
+			# Get the width and height of the window.
+			width = window.innerWidth
+			height = window.innerHeight
+
+			# Create renderer.
 			@renderer = new Three.WebGLRenderer({antialias: true})
 			@renderer.setSize(width, height)
 			@renderer.shadowMapEnabled = true
-			@container.append(@renderer.domElement)
+			@container.appendChild(@renderer.domElement)
 
+			# Create camera.
 			@aspectRatio = width / height
 			@camera = new Three.PerspectiveCamera(@viewAngle, @aspectRatio, @nearClip, @farClip)
 			@cameraRaycaster = new Three.Raycaster()
 
+			# Create scene.
+			@scene = new Three.Scene()
 			@scene.add(@camera)
 			@scene.fog = new Three.FogExp2( 0xaabbff, 0.0015 );
 
-			@_lastUpdateTime = 0
-
-			# Create sky dome
-			@sky = new THREE.Mesh( new THREE.SphereGeometry( 1500, 6, 8 ), new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( '/images/sky.jpg' ) } ) )
+			# Create sky dome.
+			geometry = new THREE.SphereGeometry( 1500, 6, 8 )
+			material = new THREE.MeshBasicMaterial(map: THREE.ImageUtils.loadTexture('/images/sky.jpg'))
+			@sky = new THREE.Mesh(geometry, material) 
 			@sky.scale.x = -1;
 			@scene.add( @sky )
 
+			# Create stats display.
 			@stats = new Stats()
 			@stats.domElement.style.position = 'absolute'
 			@stats.domElement.style.top = '20px'
 			@stats.domElement.style.left = '20px'
-			@container.append(@stats.domElement)
+			@container.appendChild(@stats.domElement)
 
+			# Create the world.
 			@world = new World(@scene)
-			@node = new Node()
 
-			@status = 0
-
+			# Listen to events.
 			@node.server.once
 				'connect': ( ) =>
-					@status = 1
 
 			@node.on
 				'joined': =>
 					@node.off('joined')
-					@infoScreen.showWelcomeScreen()
-					@status = 2
+					@overlay.showWelcomeScreen()
 				'left': =>
 					console.log 'Left the network'
 
@@ -134,55 +137,19 @@ require [
 					@world.createProjectile(info, timestamp)
 
 			window.requestAnimationFrame(@update)
-			$(window).resize(@setDimensions)
+			window.addEventListener('resize', @setDimensions)
 
-		# Sets the dimensions of the viewport and the aspect ration of the camera
-		#
-		# @return [[Integer, Integer]] a tuple of the width and height of the container
+		# Sets the dimensions of the viewport and the aspect ration of the camera.
 		#
 		setDimensions: ( ) =>
 			width = window.innerWidth
 			height = window.innerHeight
 
-			@renderer?.setSize(width, height)
+			@renderer.setSize(width, height)
 
 			@aspectRatio = width / height
-			@camera?.aspect = @aspectRatio
-			@camera?.updateProjectionMatrix()
-
-			return [width, height]
-
-		# Spawns the player in the world.
-		#
-		# @param position [Three.Vector3] the position at which to spawn the player
-		#
-		createPlayer: ( position ) =>
-			if @player
-				return
-
-			info = 
-				position: position.toArray()
-
-			@player = @world.createPlayer(@node.id, true, info)
-			@player.on
-				'fire': ( projectile ) =>
-					@node.broadcast('player.fire', @player.id, projectile.getInfo())
-				'die': ( position, velocity ) =>
-					@_playerDied(broadcastInterval, position, velocity)
-
-			@node.broadcast('player.joined', @player.id, @player.getInfo())
-			broadcastInterval = setInterval( ( ) =>
-				@node.broadcast('player.update', @player.id, @player.getInfo())
-			, 200)
-
-		_playerDied: ( interval, position, velocity ) ->
-			clearInterval(interval)
-			@node.broadcast('player.died', @player.id)
-			@player = null
-
-			@infoScreen.show()
-			@infoScreen.showPlayerDiedScreen()
-			@startGame()
+			@camera.aspect = @aspectRatio
+			@camera.updateProjectionMatrix()
 
 		# Updates the phyics for all objects and renders the scene. Requests a new animation frame 
 		# to repeat this methods.
@@ -190,22 +157,22 @@ require [
 		# @param timestamp [Integer] the time that has elapsed since the first requestAnimationFrame
 		#
 		update: ( timestamp ) =>
-			dt = (timestamp - @_lastUpdateTime) / 1000     
+			dt = (timestamp - @_lastUpdateTime) / 1000
 
 			# Apply input to player.
-			if @player?.cannon?			
-				@player.fire() if @inputHandler.getFire()
-				@player.boost = @inputHandler.getBoost()
+			if @player?.loaded and not @paused
+				@player.fire() if @controller.Fire
+				@player.boost = @controller.Boost
 
-				@player.flyLeft = @inputHandler.getFlyLeft()
-				@player.flyRight = @inputHandler.getFlyRight()
-				@player.flyForward = @inputHandler.getFlyForward()
-				@player.flyBackward = @inputHandler.getFlyBackward()
+				@player.flyLeft = @controller.FlyLeft
+				@player.flyRight = @controller.FlyRight
+				@player.flyForward = @controller.FlyForward
+				@player.flyBackward = @controller.FlyBackward
 
-				@player.cannon.rotateLeft = @inputHandler.getCannonRotateLeft()
-				@player.cannon.rotateRight = @inputHandler.getCannonRotateRight()
-				@player.cannon.rotateUpward = @inputHandler.getCannonRotateUpward()
-				@player.cannon.rotateDownward = @inputHandler.getCannonRotateDownward()
+				@player.cannon.rotateLeft = @controller.RotateCannonLeft
+				@player.cannon.rotateRight = @controller.RotateCannonRight
+				@player.cannon.rotateUpward = @controller.RotateCannonUpward
+				@player.cannon.rotateDownward = @controller.RotateCannonDownward
 
 			# Update the world
 			@world.update(dt, @player)
@@ -229,7 +196,7 @@ require [
 					for key, intersect of intersects
 						surface = planetRadius - intersect.distance
 						surface += 20		# Safe distance
-						targetPosition.multiplyScalar(surface / currentLength)
+						targetPosition.multsplyScalar(surface / currentLength)
 						break
 
 				# Ease the camera to the target position
@@ -246,46 +213,120 @@ require [
 			# Render the scene.
 			@renderer.render(@scene, @camera)
 
-			# Update stats.			
+			# Update stats.
 			@stats.update()
 
 			# Request a new animation frame.
 			@_lastUpdateTime = timestamp
 			window.requestAnimationFrame(@update)
 
-		createControllerNode: () ->
-			@infoScreen.showLoadingScreen()
-			@inputHandler._generateRemoteMobile()
-			@inputHandler.on('mobile.initialized', ( id ) =>
-					@inputHandler.selectInput('mobile')
-					url = window.location.origin + "/controller/" + id
-
-					@infoScreen.showMobileConnectScreen(url)
-				)
-
-			@inputHandler.on('mobile.connected', ( id ) =>
-					@infoScreen.showInfoScreen('mobile')
-					@startGame()
-				)
-
-		startGame: ( position = null ) =>
+		# Starts the game by finding a spawnpoint and spawning the player.
+		#
+		# @param position [Three.Vector3] the position override to spawn the player
+		#
+		startGame: ( position = null ) ->
 			position = position || new Three.Vector3(Math.random(), Math.random(), Math.random())
 			intersect = @world.getSurface(position)
 
 			# Not a valid place, just find a new one
 			if intersect is null
 				@startGame()
-				return;
+				return
 
 			position = intersect.point
-			@inputHandler.on('Boost', ( value ) =>
-					@inputHandler.off('Boost')
-					@infoScreen.hide()
-					@createPlayer(position)
-				)
+			@createPlayer(position)
+			@paused = false
 
+		# Spawns the player in the world.
+		#
+		# @param position [Three.Vector3] the position at which to spawn the player
+		#
+		createPlayer: ( position ) =>
+			if @player
+				return
+
+			@player = @world.createPlayer(@node.id, true, position: position.toArray())
+
+			broadcastInterval = setInterval( ( ) =>
+				@node.broadcast('player.update', @player.id, @player.getInfo())
+			, 200)
+
+			@player.on
+				'fire': ( projectile ) =>
+					@node.broadcast('player.fire', @player.id, projectile.getInfo())
+				'die': ( ) =>
+					@_onPlayerDied(broadcastInterval)
+
+			@node.broadcast('player.joined', @player.id, @player.getInfo())
+
+		# Is called when a type of controller is selected. This method will
+		# set up listeners for type specific controller events.
+		#
+		# @param type [String] the type of controller (desktop or mobile)
+		#
+		_onControllerSelect: ( type ) =>
+			if type is 'desktop' 
+				@controller = new DesktopController()
+				@controller.requestPointerLock()
+				@overlay.showInfoScreen('desktop')
+
+				@controller.on
+					'controller.pointerlock.lost': ( ) =>
+						@paused = true
+						@overlay.show()
+						@overlay.display('paused')
+
+						@controller.once('Boost', ( ) =>
+							@paused = false
+							@controller.requestPointerLock()
+							@overlay.hide()
+						)
+
+			else if type is 'mobile' 
+				@controller = new MobileController()
+				
+				@controller.once
+					'initialized': ( ) =>
+						@overlay.showMobileConnectScreen(@controller.node.id)
+					'connected': ( ) => 
+						@overlay.showInfoScreen('mobile')
+
+				@controller.on
+					'disconnected': ( ) =>
+						@overlay.show()
+						@overlay.showMobileConnectScreen(@controller.node.id)
+						@controller.once('connected', ( ) =>
+							@overlay.hide()
+						)
+
+			# Start the game when we receive a Boost event. This probably means
+			# the controller is set up correctly.
+			@controller.once('Boost', ( ) =>
+				@overlay.hide()
+				@startGame()
+			)
+
+		# Is called when the player dies. Will cancel timed updates that are
+		# broadcasted into the network.
+		#
+		# @param interval [Integer] the player broadcast interval to cancel.
+		#
+		_onPlayerDied: ( interval ) =>
+			clearInterval(interval)
+			@node.broadcast('player.died', @player.id)
+			@player = null
+
+			@overlay.showPlayerDiedScreen()
+			@controller.on('Boost', ( ) =>
+				@overlay.hide()
+				@startGame()
+			)
+
+		# Returns the current network time.
+		#
+		# @return [Float] the network time
+		#
 		time: ( ) ->
 			return @node.time()
 
-				
 	window.App = new App.Game

@@ -209,7 +209,7 @@ require [
 
 		sendPoke: () =>
 			if @pokePosition?
-				@node.getPeers()[0].emit('controller.cannon', @pokePosition)
+				@node.getPeers()[0].emit('controller.cannon', @pokePosition.x, @pokePosition.y)
 				window.requestAnimationFrame(@sendPoke)
 			if @pokeController?
 				@pokeCanvas.moveTo(-@pokeController.x, -@pokeController.y)

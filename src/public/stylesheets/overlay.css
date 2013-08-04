@@ -1,11 +1,8 @@
-#overlay > * {
+#overlay {
 	font-family: Armata, Arial, sans-serif;
 	color: #fff;
-
 	line-height:28px;
-}
 
-#info {
 	width: 600px;
 	height: 400px;
 	position: absolute;
@@ -21,10 +18,11 @@
 	border-radius:10px;
 }
 
-#controllerSelection > #keyboard {
+#overlay #select-desktop {
 	float: left;
 }
-#controllerSelection > #keyboard > img {
+
+#overlay #select-desktop > img {
 	position: absolute;
 	top: 50%;
 	width: 270px;
@@ -32,20 +30,20 @@
 	margin: -64px 0 0 0px;
 }
 
-#controllerSelection > #mobile {
+#overlay #select-mobile {
 	float: right;
 	top: 50%;
 }
-#controllerSelection > #mobile > img {
+#overlay #select-mobile > img {
 	width: 159px;
 	height: 300px;
 }
 
-#info h3 {
+#overlay h3 {
 	font-size:30px;
 }
 
-#info .key {
+#overlay .key {
 	border: 1px solid #fff;
 	border-bottom-width:2px;
 	border-radius:3px;
