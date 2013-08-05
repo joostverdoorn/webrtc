@@ -104,6 +104,7 @@ define [
 			# @param args [Any*] any arguments to pass to the callback
 			#
 			trigger: ( name, args... ) ->
+				#console.log name, args if @role? and name isnt '*'
 				@_events = {} unless @_events?
 				for event in @_events[name] ? []
 					event.callback.apply(event.context ? @, args)

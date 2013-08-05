@@ -11,6 +11,7 @@ define [
 	class Remote extends Mixable
 
 		@concern EventBindings
+		latency : Infinity
 
 		# Constructs a remote.
 		#
