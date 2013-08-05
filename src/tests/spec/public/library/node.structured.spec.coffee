@@ -11,7 +11,7 @@ require [
 	'public/library/models/remote.peer'
 
 	], ( Node, Vector, Collection, Peer ) ->
-		describe 'Node', ->
+		describe 'Node.Structured', ->
 
 			node = null
 			peer = null
@@ -181,3 +181,5 @@ require [
 				it 'should connect to a superNode if a superNode is available', ->
 					expect(node._peers.length).toBe(1)
 					expect(node.isSuperNode).toBeFalsy()
+
+				

@@ -10,7 +10,7 @@ require [
 
 	], ( Server, Message, io ) ->
 
-	describe 'Remote.Client', ->
+	describe 'Remote.Server', ->
 
 		server = null
 		fakeController = null
@@ -23,7 +23,7 @@ require [
 			constructor: ->		
 				@server = new FakeServer()
 
-			id: '2'
+			#id: '2'
 			query: ->
 			relay: ->
 
@@ -97,11 +97,3 @@ require [
 						'message'
 						fakeMessage.serialize()
 					])
-
-		describe 'when connecting', ->
-			it 'should set own id to be Socket.IO session ID', ->
-				server = new Server(fakeController, '127.0.0.1')
-
-				server._onConnect()
-
-				expect(fakeController.id).toBe('3')		# value from Mock Socket.IO
