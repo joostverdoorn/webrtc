@@ -26,12 +26,12 @@ define [], ( ) ->
 				sum.push( @[i] + v[i] )
 			return sum
 
-		# Substracts one Vector from another
+		# Subtracts one Vector from another
 		#
-		# @param v [Vector] A Vector to be substracted
+		# @param v [Vector] A Vector to be subtracted
 		# @return [Vector] Answer of the operation
 		#
-		substract: ( v ) ->
+		subtract: ( v ) ->
 			res = new Vector()
 
 			for i in [0...@length]

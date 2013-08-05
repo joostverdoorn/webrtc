@@ -54,7 +54,7 @@ require [
 		# Displays all available nodes.
 		#
 		displayNodes: () =>
-			@node.server.query('nodes', ( nodes ) =>
+			@node.server.query('nodes', 'node.structured', ( nodes ) =>
 				$('.node-row').remove()
 
 				for node in nodes

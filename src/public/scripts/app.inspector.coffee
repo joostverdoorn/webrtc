@@ -73,6 +73,7 @@ require [
 
 			# Connect to the server.
 			@server = new Server(@, @serverAddress)
+			@server.on('connect', ( id ) => @id = id)
 
 			# Create container element.
 			container = document.createElement 'div'
@@ -229,6 +230,7 @@ require [
 		# @param nodesInfo [Array<Object>] an array of objects representing the nodes
 		#
 		processNodesInfo: ( nodesInfo ) =>
+			console.log nodesInfo
 			for node in @nodes
 				if nodeInfo = _(nodesInfo).find( ( nodeInfo ) -> nodeInfo.id is node.id)
 					node.setInfo(nodeInfo)
@@ -362,9 +364,9 @@ require [
 			@mesh.material = material
 
 			# Update coordinates.
-			x = nodeInfo.coordinates[0]
-			y = nodeInfo.coordinates[1]
-			z = nodeInfo.coordinates[2]
+			x = nodeInfo.position[0]
+			y = nodeInfo.position[1]
+			z = nodeInfo.position[2]
 			@position = new Three.Vector3(x, y, z)
 
 	window.App = new App.Inspector()
