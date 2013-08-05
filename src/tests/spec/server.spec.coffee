@@ -39,11 +39,32 @@ require [
 									'./public'
 								])
 
-						fakeRes = {
-									writeHead: jasmine.createSpy('writeHead')
-									write: jasmine.createSpy('write')
-									end: jasmine.createSpy('end')
-								}
+						it 'should redirect to the controller.html', ->
+							fakeRes = {
+										writeHead: jasmine.createSpy('writeHead')
+										write: jasmine.createSpy('write')
+										end: jasmine.createSpy('end')
+										redirect: jasmine.createSpy('redirect')
+									}
+
+							callArgs = server._app.get.mostRecentCall.args
+							expect(callArgs[0]).toEqual('/controller/:nodeId')
+							callArgs[1]({
+									params: {
+										nodeId: '123'
+									}
+								}, fakeRes)
+							expect(fakeRes.writeHead).not.toHaveBeenCalled()
+							expect(fakeRes.write).not.toHaveBeenCalled()
+							expect(fakeRes.redirect.mostRecentCall.args).toEqual([
+									'/controller.html?nodeId=123'
+								])
+							expect(fakeRes.end).toHaveBeenCalled()
+
+				it 'should start listening on port 8080', ->
+					expect(server._server.listen.mostRecentCall.args).toEqual([
+							8080
+						])
 
 				describe 'logging in', ->
 					it 'should create a new Remote.Client with the server as controller and a socket as connection', ->
@@ -86,6 +107,13 @@ require [
 
 						callArgs = fakeClient.on.mostRecentCall.args
 						expect(callArgs[0]).toEqual('*')
+
+						spyOn(server, 'removeNode')
+						callArgs[1]('disconnect')
+
+						expect(server.removeNode.mostRecentCall.args).toEqual([
+								fakeClient
+							])						
 
 				describe 'when emitting', ->
 					it 'should create a new message without a sender and relay it', ->
@@ -207,6 +235,28 @@ require [
 						expect(allNodes.length).toEqual(3)
 
 				describe 'when queried', ->
+					fakeNode1 = null
+					fakeNode2 = null
+					beforeEach ->
+						fakeNode1 = {
+							a: 1
+							b: 2
+							id: '1'
+							serialize: ->
+								return '[1]'
+							query: ( name, fn ) ->
+								fn('[[3],[4]]')
+						}
+						fakeNode2 = {
+							c: 3
+							d: 4
+							id: '2'
+							serialize: ->
+								return '[2]'
+							query: ( name, fn ) ->
+								fn('[[5],[6]]')
+						}
+
 					it 'should reply "pong" to a "ping" query', ->
 						callback = jasmine.createSpy('callback').andCallFake(( result ) ->
 							expect(result).toBe('pong')
@@ -218,21 +268,7 @@ require [
 							return callback.wasCalled
 						)						
 
-					it 'should reply all serialized nodes on a "nodes" query', ->
-						fakeNode1 = {
-							a: 1
-							b: 2
-							id: '1'
-							serialize: =>
-								return '[1]'
-						}
-						fakeNode2 = {
-							c: 3
-							d: 4
-							id: '2'
-							serialize: =>
-								return '[2]'
-						}
+					it 'should reply all serialized nodes on a non-extensive "nodes" query', ->
 
 						callback = jasmine.createSpy('callback').andCallFake(( result ) ->
 							expect(result).toEqual([
@@ -250,6 +286,36 @@ require [
 							return callback.wasCalled
 						)
 
+					it 'should reply all queried serialized nodes on a extensive "nodes" query', ->
+						callback = jasmine.createSpy('callback').andCallFake(( result ) ->
+							expect(result).toEqual([
+								'[[3],[4]]'
+								'[[5],[6]]'
+							])
+						)
+
+						server.addNode(fakeNode1)
+						server.addNode(fakeNode2)
+
+						result = server.query('nodes', undefined, true, callback)
+
+						waitsFor(->
+							return callback.wasCalled
+						)
+
+					it 'should reply null when something unknown is queried', ->
+						callback = jasmine.createSpy('callback').andCallFake(( result ) ->
+							expect(result).toEqual(null)
+						)
+
+						server.addNode(fakeNode1)
+						server.addNode(fakeNode2)
+
+						result = server.query('asfsdg', callback)
+
+						waitsFor(->
+							return callback.wasCalled
+						)
 						
 				describe 'when timed', ->
 					it 'should give precise incremental numbers representing the time', ->
