@@ -20,7 +20,7 @@ define [
 			@on('setSuperNode', @_onSetSuperNode)
 
 			@query('type', ( type ) => @type = type)
-			@query('isSuperNode', ( isSuperNode ) => @isSuperNode = isSuperNode)
+			@isSuperNode = false
 
 		# Disconnects from the client.
 		#

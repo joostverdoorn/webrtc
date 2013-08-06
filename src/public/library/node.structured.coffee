@@ -38,8 +38,8 @@ define [
 		type: 'node.structured'
 
 		_updatePositionInterval : 2000
-		_selectParentInterval: 2000
-		_updateFoundationNodesInterval : 10000
+		#_selectParentInterval: 2000
+		_updateFoundationNodesInterval : 5000
 
 		_pingCandidateTimeout : 1000
 		_coordinateDelta : 1
@@ -54,7 +54,6 @@ define [
 
 			@timers = []
 			setInterval(@_updatePosition, @_updatePositionInterval)
-			setInterval(@_selectParent, @_selectParentInterval)
 			setInterval(@_updateFoundationNodes, @_updateFoundationNodesInterval)
 
 
@@ -64,16 +63,16 @@ define [
 			@token = null
 
 
-			@server.on('connect', @_updateFoundationNodes)
+			@server.on('connect', @_enterNetwork)
 			@_peers.on
 				'channel.opened': (peer) =>
 					peer.query('isSuperNode', ( superNode ) => peer.isSuperNode = superNode)
+				'disconnect': @_onPeerDisconnect
 				'peer.abandonParent': (_peer, id) =>
 					if child = @getChild(id)
 						@removeChild(child)
 				'peer.abandonChild': (_peer, id) =>
 					if @_parent?.id is id
-
 						@removeParent()
 				'peer.addSibling': (_peer, id) =>
 					if peer = @getPeer(id)
@@ -217,14 +216,13 @@ define [
 
 			@isSuperNode = superNode
 
-			@server.emit('setSuperNode', superNode)			
+			@server.emit('setSuperNode', superNode)
 			@broadcast('peer.setSuperNode', @id, superNode)
 			@trigger('setSuperNode', superNode)
 
 			if @isSuperNode
 				if @_parent?
 					peer = @_parent
-					console.log "asddfg434hhfgh"
 					@removeParent()
 					@addSibling(peer)
 				@addSibling(peer) for peer in @getPeers() when peer.isSuperNode					
@@ -236,8 +234,14 @@ define [
 					@removeChild(child)
 				@_selectParent()
 
-			
-			
+		_onPeerDisconnect: (peer) =>
+			if peer is @_parent
+				@removeParent()
+			else if peer.role is Peer.Role.Sibling
+				@removeSibling(peer)
+			else if peer.role is Peer.Role.Child
+				@removeChild(peer)
+
 
 		_onPeerSetSuperNode: (_peer, id, superNode) =>
 			unless peer = @getPeer(id)
@@ -249,98 +253,106 @@ define [
 			else
 				peer.isSuperNode = superNode
 
-
-			# if child = @getChild(peer) and superNode
-			# 	@removeChild(child)
-			# if sibling = @getSibling(peer) and not superNode
-			# 	@removeSibling(sibling)
-			
-
-
-
-				
-
-
-
-
-		_selectParent: () =>
-
+		_enterNetwork: () =>
 
 			if @isSuperNode or @_parent?
 				return
 
-			requestAdoption =  (candidates) =>
-				if @isSuperNode or @_parent?
+			connectParent =  (superNodes) =>
+
+				if superNodes.length is 0
+					@setSuperNode(true)
 					return
-				if candidate = candidates.shift()
-					@setParent(candidate, (accepted) =>
+
+				i = _.random(0,superNodes.length-1)
+				superNode = superNodes[i]
+				superNodes.splice(i, 1)
+
+				peer = @connect(superNode.id)
+				peer.once('channel.opened', () =>
+					@setParent(peer, (accepted) =>
 						unless accepted
-							requestAdoption(candidates)
+							connectParent(superNodes)
 					)
-				else
+				)
+
+			@server.query('nodes', 'node.structured', (nodes) =>
+				superNodes = _(nodes).filter( (node) -> node.isSuperNode)
+
+				if superNodes.length is 0
+					@setSuperNode(true)
 					return
-			candidates = _(@getPeers()).filter( (peer) -> peer.isSuperNode)
 
-			if candidates.length is 0
-				@setSuperNode(true)
-				@trigger('joined')
+				connectParent(superNodes)
 
-			for candidate in candidates
-				( ( candidate ) =>
-					candidate.ping( )
-				) ( candidate )
+			)
 
-			setTimeout( () =>
-				candidates = _(candidates).sortBy( (peer) -> peer.latency)
-				requestAdoption(candidates)
-			, @_pingCandidateTimeout)
-			
+		_selectParent: () ->
+
+			if @isSuperNode or @_parent?
+				return
+
+			requestParent = (superNodes) =>
+
+				if superNodes.length is 0
+					@_enterNetwork()
+					return
+
+				superNode = superNodes.shift()
+
+				@setParent(superNode, (accepted) =>
+					unless accepted
+						requestParent(superNodes)
+				)
+
+			superNodes = _(@getPeers()).filter( (peer) -> peer.isSuperNode)
+			superNodes = _(superNodes).sortBy( (peer) -> peer.latency)
+			requestParent(superNodes)
 
 		_updateFoundationNodes: () =>
 
-			superNodes = _(@getPeers()).filter( ( peer ) => peer.isSuperNode )
-			if superNodes.length >= @_foundationNodes
-				return
 
 			if @isSuperNode
-				@addSibling(superNode) for superNode in superNodes when superNode.role isnt Peer.Role.Sibling
+				@server.query('nodes', 'node.structured', (nodes) =>
+					superNodes = _(nodes).filter( (node) -> node.isSuperNode)
+					superNodes = _(superNodes).filter( (node) => not @getPeer(node.id)?)
 
-			needed = @_foundationNodes - superNodes.length
+					if superNodes.length is 0
+						return
 
-			connectFoundationNodes = (superNodes) =>
-				# Make a random selection of supernodes.
-				superNodes = _(superNodes).filter( ( node ) => not @getPeer(node.id)? )
-				n = Math.min(needed, superNodes.length)
-				while superNodes.length > n
-					i = _.random(0,superNodes.length-1)
-					superNodes.splice(i, 1)
-
-				j = 0
-				# Connect to all selected supernodes.
-				for superNode in superNodes
-					( ( superNode ) =>
-						peer = @connect(superNode.id)
-						peer.on('channel.opened', ( ) =>
-
-							if @isSuperNode
+					for superNode in superNodes
+						( (superNode) =>
+							peer = @connect(superNode.id)
+							peer.once('channel.opened', () =>
 								@addSibling(peer)
-							else
-								peer.ping(() =>
-									j++
-									if j is superNodes.length
-										@_selectParent()
-								)
-						)
-					) ( superNode )
-
-
-			if @_parent?
-				@_parent.query('siblings', connectFoundationNodes)
-			else
-				@server.query('nodes', 'node.structured', ( nodes ) =>
-					superNodes = _(nodes).filter( ( node ) => node.isSuperNode )
-					connectFoundationNodes(superNodes)
+							)
+						) (superNode)
 				)
+
+			else unless @_parent?
+				@_enterNetwork()
+
+			else
+				current = _(@getPeers()).filter( (peer) -> peer.isSuperNode).length
+				needed = @_foundationNodes - current
+				if needed <= 0 
+					return
+
+				@_parent.query('siblings', (superNodes) =>
+					if superNodes.length is 0
+						return 
+
+					superNodes = _(superNodes).filter( (node) => not @getPeer(node.id)?)
+					n = Math.min(needed, superNodes.length)
+					while superNodes.length > n
+						i = _.random(0,superNodes.length-1)
+						superNodes.splice(i, 1)
+
+					@connect(superNode.id) for superNode in superNodes
+				)
+
+
+
 
 
 		# Responds to a request

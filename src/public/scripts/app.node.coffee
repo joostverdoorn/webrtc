@@ -33,7 +33,7 @@ require [
 		initialize: ( ) ->
 			@node = new Node()
 
-			@_updateNodesInterval = setInterval(@displayNodes, 5000)
+			@_updateNodesInterval = setInterval(@displayNodes, 2000)
 			
 			@node.on('peer.added', ( peer ) =>
 				$("#node-#{peer.id}").replaceWith(@generateNodeRow( peer ))
@@ -76,10 +76,6 @@ require [
 
 			self = @node.id is node.id
 
-			if node.benchmark?
-				benchmarkString = "#{node.benchmark['cpu']}"
-			else
-				benchmarkString = "-"
 
 			if self
 				row = $("<tr class='self-row success' id='node-#{node.id}'></tr>")
@@ -87,7 +83,6 @@ require [
 				row = $("<tr class='node-row' id='node-#{node.id}'></tr>")
 			
 			row.append("<td>#{node.id}</td>")
-			row.append("<td>#{benchmarkString}</td>")
 
 			if self				
 				row.append("<td class='ping'>-</td>")
