@@ -30,12 +30,14 @@ define [
 		# @return [String] the JSON string representing this token
 		#
 		serialize: ( ) ->
+			position = @position?.serialize() || null
+			
 			object = 
 				id: @id
 				timestamp: @timestamp
 				nodeId: @nodeId
 				releasedBy: @releasedBy
-				position: @position.serialize()
+				position: position
 			return JSON.stringify(object)
 
 		# Generates a token from a JSON string and returns this

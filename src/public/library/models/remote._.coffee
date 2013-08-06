@@ -24,7 +24,6 @@ define [
 			@on('ping', @_onPing)
 			@on('query', @_onQuery)
 			@on('emitTo', @_onEmitTo)
-			@on('log', ( args... ) => console.log(args))
 
 		# Disconnects the remote and removes all bindings.
 		#

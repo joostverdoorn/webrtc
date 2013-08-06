@@ -208,6 +208,12 @@ require [
 				expect(remote.query).toHaveBeenCalled()
 				remote.query.mostRecentCall.args[1]('pong', 1, 2, 3)
 
-				waitsFor(->
-						return callbackCalled isnt false
-					, 1000)
+			it 'should only respond to pong events', ->
+				spyOn(remote, 'query')
+
+				callback = jasmine.createSpy()
+
+				remote.ping(callback)
+				expect(remote.query).toHaveBeenCalled()
+				remote.query.mostRecentCall.args[1]('plong', 1, 2, 3)
+				expect(callback).not.toHaveBeenCalled()

@@ -228,7 +228,7 @@ require [
 				spyOn(peer._connection, 'setLocalDescription')
 				spyOn(fakeController.server, 'emitTo')
 
-				spyOn(peer, '_higherBandwidthSDP')
+				spyOn(peer, '_higherBandwidthSDP').andCallThrough()
 
 				fakeOffer = {
 					sdp: 'ABC'
