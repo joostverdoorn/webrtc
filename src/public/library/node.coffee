@@ -168,8 +168,8 @@ define [
 		# @param args... [Any] any other arguments to pass along
 		#
 		broadcast: ( event, args... ) ->
-			message = new Message('*', @id, event, args, @time())
-			@relay(message)
+			args = ['*', event].concat(args)
+			@emitTo.apply(@, args)
 		
 		# Relays a message to other nodes. If the intended receiver is not a direct 
 		# neighbor, we route the message through other nodes in an attempt to reach 

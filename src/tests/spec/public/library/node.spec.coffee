@@ -91,3 +91,208 @@ require [
 							expect(thePeer).toBe(peer)
 						)
 					node.removePeer(peer)
+
+			describe 'when getting a peer', ->
+				fakePeer1 = fakePeer2 = null
+				beforeEach ->
+					fakePeer1 = {
+						id: '1'
+						role: 'a'
+						isConnected: -> true
+					}
+					fakePeer2 = {
+						id: '2'
+						role: 'b'
+						isConnected: -> false
+					}
+
+				it 'should find a peer by id', ->
+					spyOn(node, 'getPeers').andReturn([
+							fakePeer1
+							fakePeer2
+						])
+					expect(node.getPeer('1')).toBe(fakePeer1)
+					expect(node.getPeer('2')).toBe(fakePeer2)
+
+				it 'should filter on role and connection status', ->
+					spyOn(node, 'getPeers').andReturn([])
+					expect(node.getPeer('1', 'a', false)).toBe(undefined)
+					expect(node.getPeers.mostRecentCall.args).toEqual([
+							'a'
+							false
+						])
+
+			describe 'when getting peers', ->
+				fakePeer1 = fakePeer2 = null
+				beforeEach ->
+					fakePeer1 = {
+						id: '1'
+						role: 'a'
+						isConnected: -> true
+					}
+					fakePeer2 = {
+						id: '2'
+						role: 'b'
+						isConnected: -> false
+					}
+					node._peers.push(fakePeer1, fakePeer2)
+
+				it 'should return a filtered list of peers', ->
+					expect(node.getPeers()).toEqual([
+							fakePeer1
+						])
+					expect(node.getPeers('a')).toEqual([
+							fakePeer1
+						])
+					expect(node.getPeers(null, true)).toEqual([
+							fakePeer1
+							fakePeer2
+						])
+
+			describe 'when receiving a message', ->
+				it 'should start listening for the given event on all peers', ->
+					spyOn(node._peers, 'on').andCallThrough()
+					callback = ( args... ) ->
+						expect(@).toBe(node)
+						expect(args).toEqual([
+								'2'
+								'4'
+								'3'
+							])
+
+					node.onReceive('test', callback)
+					callArgs = node._peers.on.mostRecentCall.args
+					expect(callArgs[0]).toBe('test')
+
+					fakeMessage = {
+							timestamp: '3'
+						}
+					callArgs[1]('1', '2', '4', fakeMessage)
+
+				it 'should start listening for multiple events on all peers', ->
+					originalReceive = node.onReceive
+					spyOn(node, 'onReceive')
+
+					callback1 = ->
+						true
+					callback2 = ->
+						false
+					originalReceive.call(node, {
+							'test1': callback1
+							'test2': callback2
+						})
+
+					expect(node.onReceive.calls[0].args).toEqual([
+							'test1'
+							callback1
+						])
+					expect(node.onReceive.calls[1].args).toEqual([
+							'test2'
+							callback2
+						])
+
+			describe 'when emitting a message', ->
+				it 'should create Message object with given parameters', ->
+					spyOn(node, 'relay')
+					spyOn(node, 'time').andReturn('7')
+					node.emitTo('1', '2', '3', '4', '5', '6')
+
+					args = node.relay.mostRecentCall.args[0]
+
+					expect(JSON.stringify(args)).toEqual(JSON.stringify({
+							to: '1'
+							from: node.id
+							event: '2'
+							args: [
+								'3'
+								'4'
+								'5'
+								'6'
+							]
+							timestamp: '7'
+							_hash: args._hash
+						}))		# JSON.stringify used because of weirdness with Jasmine
+
+			describe 'when querying', ->
+				it 'should start a listener on _peers for the query result', ->
+					spyOn(node._peers, 'once')
+
+					callback = ->
+					node.queryTo('1', '2', callback, '3', '4')
+
+					callArgs = node._peers.once.mostRecentCall.args
+					expect(callArgs[1]).toEqual(callback)
+
+				it 'should emit the query', ->
+					spyOn(node, 'emitTo')
+					spyOn(node._peers, 'once')
+
+					callback = ->
+					node.queryTo('1', '2', callback, '3', '4')
+
+					callArgs = node._peers.once.mostRecentCall.args
+					#expect(callArgs[1]).toEqual(callback)
+					expect(node.emitTo.mostRecentCall.args).toEqual([
+							'1'
+							'query'
+							'2'
+							callArgs[0]
+							'3'
+							'4'
+						])
+
+			describe 'when broadcasting', ->
+				it 'should emitTo *', ->
+				it 'should create Message object with given parameters', ->
+					spyOn(node, 'emitTo')
+					node.broadcast('1', '2', '3')
+
+					args = node.emitTo.mostRecentCall.args
+
+					expect(args).toEqual([
+							'*'
+							'1'
+							'2'
+							'3'
+						])
+
+			describe 'when relaying', ->
+				fakePeer1 = fakePeer2 = null
+				beforeEach ->
+					fakePeer1 = {
+						send: jasmine.createSpy()
+					}
+					fakePeer2 = {
+						send: jasmine.createSpy()
+					}
+
+				it 'should send to all peers when recipient is *', ->
+					spyOn(node, 'getPeers').andReturn([
+							fakePeer1
+							fakePeer2
+						])	# returns *
+					fakeMessage = {
+						a: 'b'
+						to: '*'
+					}
+					node.relay(fakeMessage)
+					expect(fakePeer1.send.mostRecentCall.args).toEqual([
+							fakeMessage
+						])
+					expect(fakePeer2.send.mostRecentCall.args).toEqual([
+							fakeMessage
+						])
+
+				it 'should send to the correct peer if it is not *', ->
+					spyOn(node, 'getPeer').andReturn(fakePeer1)
+					fakeMessage = {
+						a: 'b'
+						to: '1'
+					}
+					node.relay(fakeMessage)
+					expect(fakePeer1.send.mostRecentCall.args).toEqual([
+							fakeMessage
+						])
+					node.getPeer.reset()
+					node.getPeer.andReturn(null)
+					expect(node.relay(fakeMessage)).toBe(undefined)
