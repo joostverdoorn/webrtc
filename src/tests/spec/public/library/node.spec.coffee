@@ -296,3 +296,59 @@ require [
 					node.getPeer.reset()
 					node.getPeer.andReturn(null)
 					expect(node.relay(fakeMessage)).toBe(undefined)
+
+			describe 'when receiving a query', ->
+				it 'should handle ping requests', ->
+					spyOn(node, 'time').andReturn(123)
+
+					callback = ( event, time ) ->
+						expect(event).toBe('pong')
+						expect(time).toBe(123)
+
+					node.query('ping', callback)
+
+				it 'should handle type requests', ->
+					callback = ( type ) ->
+						expect(type).toBe(node.type)
+
+					node.query('type', callback)
+
+				it 'should handle info requests', ->
+					peers = [
+							{
+								id: '1'
+								role: '2'
+							}
+							{
+								id: '3'
+								role: '4'
+							}
+						]
+					spyOn(node, 'getPeers').andReturn(peers)
+					callback = ( info ) ->
+						expect(info).toEqual({
+								id: node.id
+								type: node.type
+								peers: peers
+							})
+
+					node.query('info', callback)
+
+				it 'should handle random requests', ->
+					callback = ( data... ) ->
+						expect(data).toEqual([
+								null
+							])
+
+					node.query(undefined, callback)
+
+			describe 'when a peer wants to connect', ->
+				it 'should connect to that peer', ->
+					spyOn(node, 'connect')
+
+					node._onPeerConnectionRequest('1')
+
+					expect(node.connect.mostRecentCall.args).toEqual([
+							'1'
+							false
+						])
