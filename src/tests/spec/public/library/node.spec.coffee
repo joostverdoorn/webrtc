@@ -352,3 +352,20 @@ require [
 							'1'
 							false
 						])
+
+			describe 'when connected with server', ->
+				it 'should set own id to the one from the server', ->
+					spyOn(node.server, 'ping')
+					node._onServerConnect('1')
+					expect(node.id).toBe('1')
+
+				it 'should calculate the latency to the server', ->
+					spyOn(node.server, 'ping')
+					node._onServerConnect('1')
+
+					# bad approach, might fail sometimes
+					now = Date.now()
+					delta = node.server.ping.mostRecentCall.args[0](100, 300)
+					# formula should be: serverTime - (currentLocalTime - latency / 2)
+					expect(node._timeDelta).toBe(delta)
+					expect(delta).toEqual(300 - (now - 50))
