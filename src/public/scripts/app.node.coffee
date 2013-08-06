@@ -49,6 +49,7 @@ require [
 
 			@node.on('setSuperNode', ( isSuperNode ) =>
 				$(".self-row .superNode").text(isSuperNode)
+				console.log "callback: ", isSuperNode
 			)
 
 		# Displays all available nodes.
@@ -58,12 +59,15 @@ require [
 				$('.node-row').remove()
 
 				for node in nodes
-					unless node.id is @node.id
+					if node.id is @node.id
+						$('.self-row .superNode').text(node.isSuperNode)
+					else
 						peer = @node.getPeer(node.id)
 						# peer might be empty/unset so render the node instead
 						row = @generateNodeRow(peer || node)
+						$("#nodes tbody").append(row)
 
-					$("#nodes tbody").append(row)
+					
 			)
 
 		# Generate and returns a jQuery object of a table row containing all information
@@ -73,8 +77,8 @@ require [
 		# @return [jQuery] a jQuery object of a table row
 		#
 		generateNodeRow: ( node ) ->
-
 			self = @node.id is node.id
+
 
 
 			if self
@@ -84,9 +88,9 @@ require [
 			
 			row.append("<td>#{node.id}</td>")
 
-			if self				
+			if self	
 				row.append("<td class='ping'>-</td>")
-				row.append("<td class='superNode'>false</td>")
+				row.append("<td class='superNode'>#{node.isSuperNode}</td>")
 				row.append("<td>-</td>")
 				row.append("<td>-</td>")
 				row.append("<td></td>")

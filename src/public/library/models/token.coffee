@@ -6,23 +6,15 @@ define [
 
 	class Token
 
-		id = null
-		timestamp = null
 		nodeId = null
-		releasedBy = null
-		coordinates = null # only set in a local set of tokens. Only used locally
-		position = null
-		candidates = null # Only used locally to compare the differences
-
 
 		# Constructs a new token.
 		#
-		constructor: ( nodeId = null, releasedBy = null ) ->
-			@id = Date.now()
+		constructor: ( ) ->
+			@id = Math.floor(Date.now() * Math.random())
 			@timestamp = Date.now()
-			@nodeId = nodeId
-			@releasedBy = releasedBy
-			@position = new Vector()
+			@position = new Vector(0, 0, 0)
+			@targetPosition = new Vector(0, 0, 0)
 			@candidates = []
 
 		# Serializes this token to a JSON string
@@ -32,10 +24,10 @@ define [
 		serialize: ( ) ->
 			object = 
 				id: @id
-				timestamp: @timestamp
 				nodeId: @nodeId
-				releasedBy: @releasedBy
+				timestamp: @timestamp
 				position: @position.serialize()
+				targetPosition: @targetPosition.serialize()
 			return JSON.stringify(object)
 
 		# Generates a token from a JSON string and returns this
@@ -45,11 +37,12 @@ define [
 		#
 		@deserialize: ( tokenString ) ->
 			object = JSON.parse(tokenString)
-			token = new Token( object.nodeId, object.releasedBy)
+			token = new Token()
 			token.id = object.id
+			token.nodeId = object.nodeId
 			token.timestamp = object.timestamp
-			if object.position?
-				token.position = Vector.deserialize(object.position)
+			token.position = Vector.deserialize(object.position)
+			token.targetPosition = Vector.deserialize(object.targetPosition)
 			return token
 
 

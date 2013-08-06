@@ -351,16 +351,17 @@ require [
 			@token = nodeInfo.token
 			
 			if @token?
+				console.log @token
 				unless @tokenMesh?
 					geometry = new Three.SphereGeometry(0.2, 6, 8)
 					material = new THREE.MeshLambertMaterial( color:0xffff00 )
 					@tokenMesh = new Three.Mesh(geometry, material)
-					@tokenMesh.position.set(@token.position[0], @token.position[1], @token.position[2])			
+					@tokenMesh.position.set(@token.targetPosition[0], @token.targetPosition[1], @token.targetPosition[2])			
 					@scene.add(@tokenMesh)
 
-				x = @token.position[0]
-				y = @token.position[1]
-				z = @token.position[2]
+				x = @token.targetPosition[0]
+				y = @token.targetPosition[1]
+				z = @token.targetPosition[2]
 				@tokenPosition = new Three.Vector3(x, y, z)
 
 			else
@@ -373,7 +374,7 @@ require [
 
 			# Set supernodes to display as red, normal nodes as green.
 			if @isSuperNode then material = new THREE.MeshLambertMaterial( color:0xff0000 )
-			else if @token then material = new THREE.MeshLambertMaterial( color:0xffff00 )
+			else if @token? then material = new THREE.MeshLambertMaterial( color:0xffff00 )
 			else material = new Three.MeshLambertMaterial( color:0x00ff00 )
 
 			@mesh.material = material
