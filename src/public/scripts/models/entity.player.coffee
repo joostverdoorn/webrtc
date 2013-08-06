@@ -53,9 +53,16 @@ define [
 				@cannon = new Cannon(@world, @owner, @)
 
 				# Apply passed info.
-				@applyInfo(info, timestamp)
+				@applyInfo(info)
 
-				# Set the rotation axis order to YXZ.
+				# Set the rotation of the player to be level with relation to the planet.
+				levelRotation = @calculateLevelRotation().clone()
+				levelRotationQuaternion = new Three.Quaternion().setFromEuler(levelRotation)
+
+				rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
+				rotationQuaternion.multiply(levelRotationQuaternion)
+
+				@rotation.setFromQuaternion(rotationQuaternion)
 				@rotation.order = 'YXZ'
 
 				# Add the mesh to the scene and set loaded state.
@@ -94,7 +101,7 @@ define [
 				else
 					@cannon.extended = true
 					surfaceNormal = @position
-				@baseExtended = true				
+				@baseExtended = true
 			else
 				@baseExtended = false
 				@cannon.extended = true

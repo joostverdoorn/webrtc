@@ -40,6 +40,7 @@ define [
 
 				# Set the correct rotation order.
 				@rotation.order = 'YZX'
+				@rotation.z = -Math.PI / 4
 
 				# Apply transformations
 				@applyInfo(info)

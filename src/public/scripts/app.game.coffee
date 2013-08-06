@@ -187,12 +187,18 @@ require [
 				# Get the target position of the camera
 				targetPosition = @player.position.clone().add(cameraDirection.multiplyScalar(80))
 
-				if intersect = @world.planet.getIntersect(targetPosition, 100, 10)
-					console.log targetPosition, intersect.point, intersect.distance
-					targetPosition = intersect.point
+				# If the distance to the target position is not too great, ease toward it.
+				if targetPosition.distanceTo(@camera.position) < 200
+					@camera.position.lerp(targetPosition, 1.5 * dt)
 
-				# Ease the camera to the target position
-				@camera.position.lerp(targetPosition, 1.5 * dt)
+				# Else, set the position directly.
+				else @camera.position = targetPosition
+
+				# Check if the camera doesn't intersect with the planet surface. If it does,
+				# move it.
+				if intersect = @world.planet.getIntersect(@camera.position, 5, 100)
+					if intersect.distance < 5
+						@camera.position = intersect.point.add(@camera.position.setLength(5))
 
 				# Set the upvector perpendicular to the planet surface and point the camera
 				# towards the player
@@ -217,16 +223,23 @@ require [
 		# @param position [Three.Vector3] the position override to spawn the player
 		#
 		startGame: ( position = null ) ->
-			# position = position || new Three.Vector3(Math.random(), Math.random(), Math.random())
-			# intersect = @world.getSurface(position)
+			randomRadial = ( ) =>
+				Math.random() * Math.PI * 2
 
-			# # Not a valid place, just find a new one
-			# if intersect is null
-			# 	@startGame()
-			# 	return
+			sanePosition = false
+			while sanePosition is false
+				radius = @world.planet.mesh.geometry.boundingSphere.radius
+				euler = new Three.Euler(randomRadial(), randomRadial(), randomRadial())
+				quaternion = new Three.Quaternion().setFromEuler(euler)
 
-			# position = intersect.point
-			position = new Three.Vector3(0, 300, 0)
+				position = new Three.Vector3(0, radius, 0)
+				position.applyQuaternion(quaternion)
+
+				if intersect = @world.planet.getIntersect(position, 4, radius)
+					position = intersect.point
+					console.log intersect
+					sanePosition = true
+
 			@createPlayer(position)
 			@paused = false
 
