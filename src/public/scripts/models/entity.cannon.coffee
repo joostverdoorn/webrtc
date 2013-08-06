@@ -1,8 +1,9 @@
 define [
 	'public/scripts/models/entity._'
+	'public/scripts/models/entity.projectile'
 
 	'three'
-	], ( Entity, Three ) ->
+	], ( Entity, Projectile, Three ) ->
 
 	# This class implements the cannon hanging from the ufo
 	#
@@ -39,7 +40,7 @@ define [
 				@player.mesh.add(@mesh)
 
 				# Set the correct rotation order.
-				@rotation.order = 'YZX'
+				@rotation.order = 'YXZ'
 				@rotation.z = -Math.PI / 4
 
 				# Apply transformations
@@ -57,11 +58,17 @@ define [
 				@_cannonBase.material = new Three.MeshFaceMaterial(material)
 				@player.mesh.add(@_cannonBase)
 
+				# Create faux projectile. This will simulate the reloading
+				# of the cannon.
+				@_fauxProjectile = new Projectile(scene: @_cannonBase, false)
+
 				# Set the loaded state.
 				@_cannonBaseLoaded = true
 				if @_cannonLoaded
 					@loaded = true
 			)
+
+			@player.on('fire', @_onFire)
 
 		# Updates the physics state of the cannon. Calls baseclass' update after.
 		#
@@ -80,9 +87,6 @@ define [
 			# Update physics.
 			super(dt, false, true)
 
-			# Rotate cannon base y to cannon y
-			@_cannonBase.rotation.y = @rotation.y
-
 			# Set a maximal angles for the cannon.
 			if @rotation.z > Math.PI / 4
 				@rotation.z = Math.PI / 4
@@ -98,6 +102,12 @@ define [
 			if @rotation.x isnt 0
 				@rotation.x = 0
 
+			@_updateVisuals(dt)
+
+		# Updates visuals that have nothing to do with physics, such as lowering
+		# the cannon.
+		#
+		_updateVisuals: ( dt ) =>
 			# Retract or extend the cannon
 			if @extended
 				@position.lerp(new Three.Vector3(0, -1.1, 0), dt * 2)
@@ -105,6 +115,24 @@ define [
 			else
 				@position.lerp(new Three.Vector3(0, .5, 0), dt * 5)
 				@_cannonBase.position.lerp(new Three.Vector3(0, 1.6, 0), dt * 5)
+
+			# Rotate cannon base y to cannon y
+			@_cannonBase.rotation.y = @rotation.y
+
+			# Lower the faux projectile
+			if @_fauxProjectile.position.y > -1.1
+				@_fauxProjectile.position.y -= dt * 7
+			else @_fauxProjectile.position.y = -1.1
+
+		# Is called when the player fires a projectile. This will reset the position
+		# of the faux projectile so it can be lowered into the cannon.
+		# 
+		_onFire: ( ) =>
+			@_fauxProjectile.mesh.visible = false
+			setTimeout( =>
+				@_fauxProjectile.mesh.visible = true
+				@_fauxProjectile.position = new Three.Vector3(.1, 1, 0)
+			, 150)
 
 		# Applies information given in an object to the entity.
 		#

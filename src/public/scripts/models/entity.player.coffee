@@ -145,6 +145,13 @@ define [
 			# Update our cannon.
 			@cannon.update(dt)
 
+			# Update visuals.
+			@_updateVisuals(dt)
+
+		# Updates visuals that have nothing to do with physics, such as lowering
+		# the base and updating the animation.
+		#
+		_updateVisuals: ( dt ) =>
 			# Make the ufo bounce upward a bit when landed.
 			if @landed
 				targetPosition = @landedPosition.clone().add(@landedPosition.clone().setLength(.8))
@@ -162,7 +169,7 @@ define [
 				@cannon.addAngularForce(new Three.Euler(0, -@cannon.rotation.y * 20 * dt, 0, 'YXZ'))
 
 			# Update alien animation.
-			@animation.update(dt)			
+			@animation.update(dt)
 
 		# Fires a projectile when the cannon is ready, which is a fixed amount of time
 		# after the last shot.

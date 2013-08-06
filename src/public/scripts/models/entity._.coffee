@@ -87,7 +87,8 @@ define [
 
 			# Add gravitational force pointing toward the origin.
 			if @applyGravity
-				gravityForce = @position.clone().normalize().multiplyScalar(-9.81 * @mass * dt)
+				gravityDirection = @mesh.localToWorld(@position.clone()).normalize().negate()
+				gravityForce = gravityDirection.multiplyScalar(9.81 * @mass * dt)
 				@addForce(gravityForce)
 
 			# Apply forces ...
