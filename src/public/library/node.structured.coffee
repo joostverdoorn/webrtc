@@ -19,8 +19,8 @@ define [
 	'public/library/helpers/mixin.eventbindings'
 
 	'public/library/node'
-	'public/library/models/remote.server'
-	'public/library/models/remote.peer'
+	'public//library/models/remote.server'
+	'public//library/models/remote.peer'
 	'public/library/models/message'
 	'public/library/models/token'
 
@@ -83,6 +83,7 @@ define [
 						@addToken(Token.deserialize(tokenString))
 				)
 			, 500)
+			@timers.push(peer.pingInterval)
 
 
 		# Change a SuperNode state of a node

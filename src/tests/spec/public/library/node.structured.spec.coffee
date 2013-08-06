@@ -1,3 +1,4 @@
+###
 require.config
 	baseUrl: '../../../../'
 	paths:
@@ -33,14 +34,6 @@ require [
 
 				it 'should have Vector coordinates', ->
 					expect(node.coordinates instanceof Vector ).toBeTruthy()
-
-				it 'should create a new Remote.Server and register several callbacks on it', ->
-					expect(node.server._mockTriggers.splice(-4, 4)).toEqual([
-							'peer.connectionRequest'
-							'peer.setRemoteDescription'
-							'peer.addIceCandidate'
-							'connect'
-						])
 
 			describe 'when connect and disconnect to other nodes', ->
 				beforeEach ->
@@ -182,4 +175,15 @@ require [
 					expect(node._peers.length).toBe(1)
 					expect(node.isSuperNode).toBeFalsy()
 
-				
+			describe 'when pinging', ->
+				it 'should set an interval to ping given peer', ->
+					jasmine.Clock.useMock();
+					fakePeer = {
+						ping: jasmine.createSpy()
+					}
+					node.ping(fakePeer)
+					expect(fakePeer.pingInterval).not.toBe(undefined)
+					expect(fakePeer.ping).not.toHaveBeenCalled()
+					jasmine.Clock.tick(501)
+					expect(fakePeer.ping.callCount).toBe(1)
+###
