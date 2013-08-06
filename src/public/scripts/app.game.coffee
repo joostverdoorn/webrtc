@@ -87,7 +87,8 @@ require [
 			# Create camera.
 			@aspectRatio = width / height
 			@camera = new Three.PerspectiveCamera(@viewAngle, @aspectRatio, @nearClip, @farClip)
-			@cameraRaycaster = new Three.Raycaster()
+			@camera.position = new Three.Vector3(-300, 600, 0)
+			@camera.lookAt(new Three.Vector3(0, 300, 0))
 
 			# Create scene.
 			@scene = new Three.Scene()
@@ -205,8 +206,8 @@ require [
 				@camera.up.set(@camera.position.x, @camera.position.y, @camera.position.z)
 				@camera.lookAt(@player.position)
 
-				# Update sky position
-				@sky.position = @camera.position.clone()
+			# Update sky position
+			@sky.position = @camera.position.clone()
 
 			# Render the scene.
 			@renderer.render(@scene, @camera)
@@ -237,7 +238,6 @@ require [
 
 				if intersect = @world.planet.getIntersect(position, 4, radius)
 					position = intersect.point
-					console.log intersect
 					sanePosition = true
 
 			@createPlayer(position)
