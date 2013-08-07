@@ -82,6 +82,7 @@ require [
 			@renderer = new Three.WebGLRenderer({antialias: true})
 			@renderer.setSize(width, height)
 			@renderer.shadowMapEnabled = true
+			@renderer.shadowMapSoft = true
 			@container.appendChild(@renderer.domElement)
 
 			# Create camera.

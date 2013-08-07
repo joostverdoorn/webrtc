@@ -33,7 +33,7 @@ define [
 			directionalLight = new Three.DirectionalLight(0xffffff, 2)
 			directionalLight.position.set(0, 1, 1).normalize()
 			directionalLight.castShadow = true
-			directionalLight.shadowDarkness = .8
+			directionalLight.shadowDarkness = .5
 			@scene.add(directionalLight)
 
 			hemisphereLight = new Three.HemisphereLight(0x999999, 0x999999)

@@ -27,6 +27,8 @@ define [
 				@mesh.geometry = geometry
 				@mesh.material = new Three.MeshFaceMaterial(material)
 
+				@mesh.castShadow = true
+
 				# Add the mesh to the scene and set loaded state.
 				@scene.add(@mesh)
 				@loaded = true
