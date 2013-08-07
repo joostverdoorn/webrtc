@@ -41,7 +41,7 @@ define [
 		_updateFoundationNodesInterval : 10000
 		_recommendParentInterval: 10000
 		_demotionTimeout: 11000
-		_tokenInfoTimeout: 3000
+		_tokenInfoTimeout: 5000
 
 		_pingCandidateTimeout : 1000
 		_coordinateDelta : 1
@@ -106,7 +106,7 @@ define [
 		query: ( request, args..., callback ) =>
 			switch request
 				when 'ping'
-					callback 'pong', @position.serialize()
+					callback 'pong', @position.serialize(), @token?.serialize()
 				when 'position'
 					callback @position.serialize()
 				when 'isSuperNode'
@@ -166,9 +166,10 @@ define [
 			if @isSuperNode
 				callback?(false)
 				return
-
+			console.log 'sending parent request to ' + peer.id
 			peer.query('peer.requestAdoption', @id, (accepted) =>
 				if accepted and not @isSuperNode
+					console.log 'parent request accepted'
 					if @_parent?
 						@removeParent()
 
@@ -176,6 +177,7 @@ define [
 					@_parent = peer
 					callback?(true)
 				else
+					console.log 'parent request denied'
 					peer.emit('peer.abandonParent', @id)
 					peer.role = Peer.Role.None
 					callback?(false)
@@ -186,6 +188,7 @@ define [
 		# @return [Peer] the parent peer
 		#
 		removeParent: ( ) ->
+			console.log 'removing parent ' + @_parent.id
 			@_parent.emit('peer.abandonParent', @id)
 			@_parent.role = Peer.Role.None
 			@_parent = null
@@ -203,7 +206,6 @@ define [
 		#
 		addChild: ( peer ) ->
 			if peer is @_parent
-				console.log "joost is een naus"
 				@removeParent()
 
 			if @getSibling(peer)?
@@ -251,7 +253,6 @@ define [
 		#
 		addSibling: ( peer, instantiate = true ) ->
 			if peer is @_parent
-				console.log "asdasd2323"
 				@removeParent()
 
 			if @getChild(peer)?
@@ -303,6 +304,7 @@ define [
 					@addSibling(peer)
 				@addSibling(peer) for peer in @getPeers() when peer.isSuperNode		
 				unless @token?
+					console.log "I have the first token, bitch!"
 					@token = new Token()
 					@token.nodeId = @id
 					@token.position = @position
@@ -310,11 +312,15 @@ define [
 			else
 				for sibling in @getSiblings()
 					@removeSibling(sibling)
+				@_recommendParent(false)
 				for child in @getChildren()
 					@removeChild(child)
 				@_selectParent()
-				@broadcast('token.die', @token.serialize())
-				@token = null
+				console.log @token
+				if @token?
+					@broadcast('token.die', @token.serialize())
+					console.log "I quit. Sending token.die", @token.id
+					@token = null
 
 		_onPeerDisconnect: (peer) =>
 			if peer is @_parent
@@ -350,13 +356,19 @@ define [
 				superNode = superNodes[i]
 				superNodes.splice(i, 1)
 
-				peer = @connect(superNode.id)
-				peer.once('channel.opened', () =>
+				if peer = @getPeer(superNode.id)
 					@setParent(peer, (accepted) =>
 						unless accepted
 							connectParent(superNodes)
 					)
-				)
+				else
+					peer = @connect(superNode.id)
+					peer.once('channel.opened', () =>
+						@setParent(peer, (accepted) =>
+							unless accepted
+								connectParent(superNodes)
+						)
+					)
 
 			@server.query('nodes', 'node.structured', (nodes) =>
 				superNodes = _(nodes).filter( (node) -> node.isSuperNode)
@@ -397,22 +409,25 @@ define [
 			if @isSuperNode
 				@server.query('nodes', 'node.structured', (nodes) =>
 					superNodes = _(nodes).filter( (node) -> node.isSuperNode)
-					superNodes = _(superNodes).filter( (node) => not @getPeer(node.id)? and node.id isnt @id )
 
 					if superNodes.length is 0
 						return
 
 					for superNode in superNodes
 						( (superNode) =>
-							peer = @connect(superNode.id)
-							peer.once('channel.opened', () =>
+
+							if peer = @getPeer(superNode.id)
 								@addSibling(peer)
-							)
+							else
+								peer = @connect(superNode.id)
+								peer.once('channel.opened', () =>
+									@addSibling(peer)
+								)
 						) (superNode)
 				)
 
 			else unless @_parent?
-				@_enterNetwork()
+				@_selectParent()
 
 			else
 				current = _(@getPeers()).filter( (peer) -> peer.isSuperNode).length
@@ -437,8 +452,11 @@ define [
 			i = 0
 			for peer in @getPeers()
 				( ( peer ) =>
-					peer.ping( ( latency, position ) =>
+					peer.ping( ( latency, position, tokenString ) =>
 						peer.position = Vector.deserialize(position)
+						if tokenString?
+							token = Token.deserialize(tokenString)
+							@addToken(token)
 						i++
 						if i is @getPeers().length
 							@_computePosition()
@@ -457,12 +475,11 @@ define [
 
 				@_coordinateDelta = Math.max(0.05, @_coordinateDelta - 0.025)
 
-			console.log "cieapo"
 			if @token?
 				@token.position = @position
 				@_computeTokenTargetPosition()
 
-		_recommendParent: () =>
+		_recommendParent: (includeSelf = true) =>
 
 			siblings = @getSiblings()
 			children = @getChildren()
@@ -470,15 +487,15 @@ define [
 			if not @isSuperNode or children.length is 0 or siblings.length is 0
 				return
 
-			for child in children
+			for child in children when child.position?
 				closestSuperNode = null
 				closestDistance = Infinity
-				for sibling in siblings
+				for sibling in siblings when sibling.position?
 					distance = child.position.getDistance(sibling.position)
 					if distance < closestDistance
 						closestDistance = distance
 						closestSuperNode = sibling
-				if closestDistance < child.position.getDistance(@position) * @_superNodeSwitchThreshold
+				if closestDistance < child.position.getDistance(@position) * @_superNodeSwitchThreshold or not includeSelf
 					child.emit('peer.recommendParent', closestSuperNode.id)
 
 
@@ -526,7 +543,7 @@ define [
 			if @token?
 				return
 
-			console.log tokenString
+			console.log "received token"
 			@token = Token.deserialize(tokenString)
 			@removeToken(@token)
 			@token.nodeId = @id
@@ -547,6 +564,7 @@ define [
 
 		_onTokenDied: (tokenString) =>
 			token = Token.deserialize(tokenString)
+			console.log "Received dead token", token.id
 			@removeToken(token)
 
 
@@ -556,12 +574,11 @@ define [
 
 			force = Vector.createZeroVector(@position.length)
 			for token in @_tokens
-				direction = @position.subtract(token.targetPosition)		# Difference between self and other Token
-				direction.scale(2 / direction.getLength())
-				force = force.add(direction)					# Sum all token differences
+				direction = @position.subtract(token.position)		# Difference between self and other Token
+				direction.scale(1 / direction.getLength())
+				force = force.add(direction)								# Sum all token differences
 
-			console.log "asd"
-			@token.targetPosition = @position.add(force)
+			@token.targetPosition = @token.position.add(force)
 
 			magnitude = @position.getDistance(@token.targetPosition)
 			if magnitude > @_tokenMoveThreshold
@@ -584,7 +601,7 @@ define [
 			closestChild = null
 			closestDistance = Infinity
 			
-			for child in @getChildren()
+			for child in @getChildren() when child.position?
 				distance = child.position.getDistance(token.targetPosition)
 				if distance < closestDistance
 					closestDistance = distance
@@ -618,9 +635,12 @@ define [
 
 			console.log "best candidate is #{closestCandidate}, distance is #{closestDistance}"
 			if closestCandidate? and closestCandidate isnt @id
-				@emitTo(closestCandidate, 'token.add', @token.serialize())
-				@token = null
-				@setSuperNode(false)
+				@emitTo(closestCandidate, 'token.receive', @token.serialize())
+
+				if @isSuperNode
+					@setSuperNode(false)
+				else
+					@token = null
 
 			else
 				@token.candidates = []
