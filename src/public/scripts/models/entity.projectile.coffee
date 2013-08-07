@@ -17,7 +17,7 @@ define [
 		# @param info [Object] an object containing all info to apply to the player
 		#
 		initialize: ( player = null, cannon = null, info = null ) ->
-			@mass = 5
+			@mass = 2
 			@drag = .0005
 			@angularDrag = 10
 			@applyGravity = true
