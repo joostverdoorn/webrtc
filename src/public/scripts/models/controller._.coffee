@@ -22,7 +22,7 @@ define [
 			RotateCannonUpward: 0
 			RotateCannonDownward: 0
 
-		constructor: ( ) ->
+		constructor: ( args... ) ->
 			getters = []
 			setters = []
 			@values = []
@@ -39,4 +39,4 @@ define [
 			@getter getters
 			@setter setters
 
-			@initialize?()
+			@initialize?.apply(@, args)

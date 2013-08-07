@@ -269,8 +269,8 @@ define [
 				direction = direction.unit()								# Make direction into unit vector
 				displacement =  direction.scale(error * @coordinateDelta)	# Calculate displacement
 				@coordinates = @coordinates.add( displacement )				# Calculate new coordinates
-				if isNaN(@coordinates[0])
-					debugger
+				#if isNaN(@coordinates[0])
+					#debugger
 								
 				@coordinateDelta = Math.max(0.05, @coordinateDelta - 0.025)
 			@_calculateTokenMagnitude()
