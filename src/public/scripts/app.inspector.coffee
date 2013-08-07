@@ -14,6 +14,8 @@ requirejs.config
 		'three':
 			exports: 'THREE'
 
+		'orbitControls': [ 'three' ]
+
 		'stats':
 			exports: 'Stats'
 
@@ -28,6 +30,7 @@ requirejs.config
 		'three': 'vendor/scripts/three'
 		'stats': 'vendor/scripts/stats.min'
 		'socket.io': 'socket.io/socket.io'
+		'orbitControls': 'vendor/scripts/orbitControls'
 
 require [
 	'scripts/app._'
@@ -38,6 +41,7 @@ require [
 
 	'jquery'
 	'underscore'
+	'orbitControls'
 	], ( App, Server, Three, Stats, $, _ ) ->
 
 	# Inspector app class. This will create and draw a 3d scene
@@ -82,7 +86,7 @@ require [
 			# Create scene, camera and renderer.
 			@scene = new Three.Scene()
 			@camera = new Three.PerspectiveCamera(viewAngle, aspectRatio, nearClip, farClip)
-			@camera.position = new Three.Vector3()
+			@camera.position = new Three.Vector3(-100, 0, 0)
 			@renderer = new Three.WebGLRenderer()
 
 			@renderer.setSize(width, height)
@@ -110,6 +114,9 @@ require [
 			@stats.domElement.style.top = '0px'
 			@stats.domElement.style.left = '0px'
 			container.appendChild(@stats.domElement)
+
+			# Add controls
+			@controls = new Three.OrbitControls(@camera)
 
 			# Add axes
 			xStart = new Three.Vector3(5000, 0, 0)
@@ -145,12 +152,6 @@ require [
 			$(window).resize(@setDimensions)
 			
 			$(window).mousemove ( event ) =>
-				if @_mouseDown
-					@_deltaX = event.clientX - @_lastMouseX
-					@_deltaY = event.clientY - @_lastMouseY
-
-					@_lastMouseX = event.clientX
-					@_lastMouseY = event.clientY
 
 				# Detect mouse intersects
 				mouseX = ( event.clientX / window.innerWidth ) * 2 - 1
@@ -209,23 +210,7 @@ require [
 			node.update(dt) for node in @nodes
 
 			# Update camera position.
-			if @_mouseDown
-				width = window.innerWidth
-				height = window.innerHeight
-
-				yAngle = -(@_deltaX / width)  * Math.PI * 5
-				zAngle = -(@_deltaY / height) * Math.PI * 5
-
-				angle = new Three.Quaternion().setFromEuler(new Three.Euler(0, yAngle, zAngle, 'YXZ'))
-				@_cameraAngle.multiply(angle)
-
-			position = new Three.Vector3(-100 * @_zoom, 0, 0).applyQuaternion(@_cameraAngle)
-			@camera.position.lerp(position, dt * 20)
-			@camera.lookAt(new Three.Vector3(0, 0, 0))
-
-			zVector = new Three.Vector3(1, 0, 0).applyQuaternion(new Three.Quaternion().setFromEuler(@camera.rotation))
-			yVector = @camera.position.clone()
-			@camera.up = new Three.Vector3().crossVectors(zVector, yVector).negate()
+			@controls.update()
 
 			# Render the scene.
 			@renderer.render(@scene, @camera)
@@ -321,7 +306,7 @@ require [
 						geometry.vertices.push(node.mesh.position)
 
 						material = new Three.LineBasicMaterial(
-							color: 0xff2222
+							color: 0xffaaff
 							linewidth: 1
 						)
 						
