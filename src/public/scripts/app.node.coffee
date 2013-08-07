@@ -55,6 +55,7 @@ require [
 		# Displays all available nodes.
 		#
 		displayNodes: () =>
+			@updateTokenInfo()
 			@node.server.query('nodes', 'node.structured', ( nodes ) =>
 				$('.node-row').remove()
 
@@ -91,6 +92,7 @@ require [
 			if self	
 				row.append("<td class='ping'>-</td>")
 				row.append("<td class='superNode'>#{node.isSuperNode}</td>")
+				row.append("<td class='token'>#{node.token?}</td>")
 				row.append("<td>-</td>")
 				row.append("<td>-</td>")
 				row.append("<td></td>")
@@ -98,6 +100,7 @@ require [
 			else if node.latency?
 				row.append("<td>#{Math.round(node.latency)}</td>")
 				row.append("<td class='superNode'>#{node.isSuperNode}</td>")
+				row.append("<td class='token'>#{if @tokens[node.id] then @tokens[node.id] else 0}</td>")
 				row.append("<td>#{node.role}</td>")
 				row.append("<td>Connected</td>")
 				
@@ -112,7 +115,8 @@ require [
 				row.append("<td>-</td>")
 				row.append("<td class='superNode'>#{node.isSuperNode}</td>")
 				row.append("<td>-</td>")
-				row.append("<td></td>")
+				row.append("<td>-</td>")
+				row.append("<td>-</td>")
 				
 				elem = $("<td><a href='#'>Connect</a></td>")
 				elem.click( ( ) => 
@@ -122,5 +126,21 @@ require [
 				row.append(elem)
 
 			return row
+
+		updateTokenInfo: () ->
+			$('.self-row .token').text(@node.token?)
+			@tokens = {}
+			@node._tokens.map( (token) =>
+				if @tokens[token.nodeId]?
+					@tokens[token.nodeId]++
+				else
+					@tokens[token.nodeId] = 1
+			)
+
+
+
+
+
+
 			
 	window.App = new App.Master

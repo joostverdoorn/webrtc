@@ -37,11 +37,11 @@ define [
 
 		type: 'node.structured'
 
-		_updatePositionInterval : 2000
+		_updatePositionInterval : 4000
 		_updateFoundationNodesInterval : 10000
 		_recommendParentInterval: 10000
 		_demotionTimeout: 11000
-		_tokenInfoTimeout: 5000
+		_tokenInfoTimeout: 3000
 
 		_pingCandidateTimeout : 1000
 		_coordinateDelta : 1
@@ -303,23 +303,22 @@ define [
 					@addSibling(peer)
 				@addSibling(peer) for peer in @getPeers() when peer.isSuperNode		
 				unless @token?
-					console.log "I have the first token, bitch!"
 					@token = new Token()
 					@token.nodeId = @id
 					@token.position = @position
 
 			else
+				if @token?
+					@broadcast('token.die', @token.serialize())
+					console.log "I quit. Sending token.die", @token.id
+					@token = null
 				for sibling in @getSiblings()
 					@removeSibling(sibling)
 				@_recommendParent(false)
 				for child in @getChildren()
 					@removeChild(child)
 				@_selectParent()
-				console.log @token
-				if @token?
-					@broadcast('token.die', @token.serialize())
-					console.log "I quit. Sending token.die", @token.id
-					@token = null
+
 
 		_onPeerDisconnect: (peer) =>
 			if peer is @_parent
@@ -536,14 +535,14 @@ define [
 			children = @getChildren()
 			randomChild = children[_.random(0,children.length-1)]
 			randomChild.emit('token.receive', token.serialize())
-			console.log  randomChild.id +  ' received a token'
+			console.log  randomChild.id +  ' received a token with id ', token.id
 
 		_onTokenReceived: (tokenString) =>
 			if @token?
 				return
 
-			console.log "received token"
 			@token = Token.deserialize(tokenString)
+			console.log "received token with id ", @token.id
 			@removeToken(@token)
 			@token.nodeId = @id
 			@token.position = @position
@@ -556,6 +555,7 @@ define [
 
 		_onTokenInfo: (tokenString, instantiate = true) =>
 			token = Token.deserialize(tokenString)
+			console.log "received info about token with id ", token.id
 			@addToken(token)
 
 			if @token? and instantiate
@@ -644,24 +644,3 @@ define [
 			else
 				@token.candidates = []
 				@setSuperNode(true)
-
-
-
-
-
-			# @token.force = tokenForce
-			# @token.position = @coordinates.add(tokenForce)				# Calculate the new Token Position and save it in Token object
-			# tokenMagnitude = @coordinates.getDistance(@token.position)
-
-
-
-
-
-
-
-
-
-
-			
-
-
