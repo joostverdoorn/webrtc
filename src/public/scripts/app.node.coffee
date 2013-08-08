@@ -91,7 +91,7 @@ require [
 			
 			row.append("<td>#{node.id}</td>")
 
-			if self	
+			if self
 				row.append("<td class='ping'>-</td>")
 				row.append("<td class='superNode'>#{node.isSuperNode}</td>")
 				row.append("<td class='token'>#{node.token?}</td>")

@@ -170,6 +170,8 @@ define [
 				return
 			console.log 'sending parent request to ' + peer.id
 			peer.query('peer.requestAdoption', @id, (accepted) =>
+				unless accepted?
+					callback?(false)
 				if accepted and not @isSuperNode
 					console.log 'parent request accepted'
 					if @_parent?
@@ -418,6 +420,7 @@ define [
 			@server.query('nodes', 'node.structured', ( nodes ) =>
 				if nodes?
 					superNodes = _(nodes).filter( ( node ) -> node.isSuperNode)
+					superNodes = _(superNodes).filter( ( node ) -> node.id is not @id)
 					connectParent(superNodes)
 			)
 
@@ -463,6 +466,7 @@ define [
 			if @isSuperNode
 				@server.query('nodes', 'node.structured', ( nodes ) =>
 					superNodes = _(nodes).filter( ( node ) -> node.isSuperNode)
+					superNodes = _(superNodes).filter( ( node ) -> node.id is not @id)
 
 					if superNodes.length is 0
 						return
@@ -608,7 +612,7 @@ define [
 			children = @getChildren()
 			randomChild = children[_.random(0,children.length-1)]
 			randomChild.emit('token.receive', token.serialize())
-			console.log  randomChild.id +  " received a token with id ", token.id
+			console.log  randomChild.id +  " received a token with id", token.id
 
 		# Is called when we received a token. This will start the token hop 
 		# process.
@@ -743,13 +747,7 @@ define [
 				@token = null
 				if @isSuperNode
 					@setSuperNode(false)
-					
 
 			else
 				@token.candidates = []
 				@setSuperNode(true)
-
-		logTokenIds: () ->
-			for token in @_tokens
-				console.log token.id
-			
