@@ -43,10 +43,10 @@ define [
 		#
 		_onMessage: ( messageString ) =>
 			message = Message.deserialize(messageString)
-			if message.isStored()
+			if message.isStored(@_controller.messageStorage)
 				return
 
-			message.storeHash()
+			message.storeHash(@_controller.messageStorage)
 
 			if message.to is @_controller.id
 				args = [message.event].concat(message.args).concat(message)
@@ -83,8 +83,8 @@ define [
 		# @param message [Message] the message to send
 		#
 		send: ( message ) ->
-			unless message.isStored()
-				message.storeHash()
+			unless message.isStored(@_controller.messageStorage)
+				message.storeHash(@_controller.messageStorage)
 
 			@_send(message)
 

@@ -39,6 +39,8 @@ define [
 				res.redirect('/controller.html?nodeId=' + req.params.nodeId)
 				res.end()
 			)
+
+			@messageStorage = []
 				
 			@_server.listen(8080)
 

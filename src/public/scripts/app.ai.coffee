@@ -30,6 +30,10 @@ require [
 	'public/scripts/models/controller.random'
 	], ( App, GameModel, RandomController ) ->
 	
+	class FakeScene
+		add: ->
+		remove: ->
+
 	# Application base class
 	#
 
@@ -40,22 +44,27 @@ require [
 		initialize: ( ) ->
 			@bots = []
 			console.log 'INIT'
+
+			@scene = new FakeScene()
+
 			@newBot()
 
 			window.requestAnimationFrame(@update)
 
 		newBot: ( ) =>
 			console.log 'CREATING'
-			game = new GameModel()
+			game = new GameModel(@scene)
 			game.controller = new RandomController(game)
 			game.on
 				'joined': =>
 					game.startGame()
-					console.log 'spawned on', game.player
+					console.log 'spawned on', game.player.position
+				'player.died': =>
+					game.startGame()
 			@bots.push(game)
 
-			if @bots.length < 5
-				setTimeout(@newBot, 10000)
+			if @bots.length < 25
+				setTimeout(@newBot, 5000)
 
 		update: ( timestamp ) =>
 			for game in @bots
