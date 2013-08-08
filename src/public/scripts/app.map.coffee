@@ -151,14 +151,14 @@ require [
 
 			@node.onReceive
 				'player.died': ( id ) =>
-					if player = _(@players).find( ( p ) -> p.id = id )
+					if player = _(@players).find( ( p ) -> p.id is id )
 						player.die()
 						@players = _(@players).without(player)
 				'player.update': ( id, info, timestamp ) =>
-					if player = _(@players).find( ( p ) -> p.id = id )
+					if player = _(@players).find( ( p ) -> p.id is id )
 						player.applyInfo(info)
 					else
-						player = new Player(@)
+						player = new Player(@, id)
 						player.applyInfo(info)
 						@players.push(player)
 			
@@ -201,7 +201,7 @@ require [
 	
 	class Player
 
-		constructor: ( @app ) ->
+		constructor: ( @app, @id ) ->
 			@targetPosition = new Three.Vector3()
 
 			geometry = new Three.SphereGeometry(2, 6, 8)
