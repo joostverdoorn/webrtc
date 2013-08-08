@@ -12,6 +12,8 @@ define [
 
 		@concern EventBindings
 
+		_queryTimeout: 5000
+
 		# Constructs a remote.
 		#
 		# @param parent [Object] the parent object (Server or Node).
@@ -85,7 +87,9 @@ define [
 
 			@_send(message)
 
-		# Queries the remote. Calls the callback function when a response is received.
+		# Queries the remote. Calls the callback function when a response is received, or
+		# when the query has timed out, in which case the first argument passed to the
+		# callback is null.
 		#
 		# @param request [String] the request string identifier
 		# @param callback [Function] the function to call when a response was received
@@ -93,7 +97,17 @@ define [
 		#
 		query: ( request, args..., callback ) ->
 			queryID = _.uniqueId('query')
-			@once(queryID, callback)
+
+			timer = setTimeout( ( ) =>
+				@off(queryID)
+				callback(null)
+			, @_queryTimeout)
+
+			fn = ( argms... ) =>
+				callback.apply(@, argms)
+				clearTimeout(timer)
+
+			@once(queryID, fn)
 
 			args = ['query', request, queryID].concat(args)
 			@emit.apply(@, args)
