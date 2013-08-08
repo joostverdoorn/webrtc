@@ -7,7 +7,7 @@
         "allowed_in_comments": false
     },
     "max_line_length": {
-        "value": 100,
+        "value": 150,
         "level": "error"
     },
     "camel_case_classes": {
