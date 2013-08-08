@@ -53,7 +53,6 @@ define [
 			@on('channel.opened', @_onChannelOpened)
 			@on('channel.closed', @_onChannelClosed)
 
-			@coordinates = new Vector(0, 0, 0)
 			@latency = 0
 
 			if instantiate
