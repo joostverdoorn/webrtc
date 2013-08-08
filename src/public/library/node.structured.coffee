@@ -306,16 +306,6 @@ define [
 			@broadcast('peer.setSuperNode', @id, superNode)
 			@trigger('setSuperNode', superNode)
 
-<<<<<<< HEAD
-				direction = direction.unit()								# Make direction into unit vector
-				displacement =  direction.scale(error * @coordinateDelta)	# Calculate displacement
-				@coordinates = @coordinates.add( displacement )				# Calculate new coordinates
-				#if isNaN(@coordinates[0])
-					#debugger
-								
-				@coordinateDelta = Math.max(0.05, @coordinateDelta - 0.025)
-			@_calculateTokenMagnitude()
-=======
 			if @isSuperNode
 				# If we have a parent, remove it.
 				if @_parent?
@@ -331,7 +321,6 @@ define [
 					@token = new Token()
 					@token.nodeId = @id
 					@token.position = @position
->>>>>>> refactor_structured_node
 
 			else
 				# If we have a token, remove it.
