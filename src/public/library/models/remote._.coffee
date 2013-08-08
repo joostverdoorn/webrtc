@@ -34,7 +34,7 @@ define [
 
 			@off()
 
-		# Is called when a data channel message is received. Discards any 
+		# Is called when a data channel message is received. Discards any
 		# duplicate messages.
 		#
 		# @param message [String] the unparsed message
@@ -53,7 +53,7 @@ define [
 				args = [message.event].concat(message.args).concat(message)
 				@trigger.apply(@, args)
 				@_controller.relay(message)
-			else 
+			else
 				@_controller.relay(message)
 
 		# Compiles and sends a message to the remote.
@@ -75,7 +75,7 @@ define [
 			message = new Message(to, @_controller.id, event, args, @_controller.time())
 			@send(message)
 
-		# Sends a predefined message to the remote, but first hashes the message 
+		# Sends a predefined message to the remote, but first hashes the message
 		# to make sure it's ignored when someone bounces it back to us.
 		#
 		# @param message [Message] the message to send
@@ -138,23 +138,23 @@ define [
 		# @param message [Message] the message to send
 		#
 		_send: ( message ) ->
-			throw "Not implemented"
+			throw new Error("Not implemented")
 
 		# Abstract function to be implemented by another class
 		#
 		# @param args [Any] any arguments to pass along to subclasses
 		#
 		initialize: ( args... ) ->
-			throw "Not implemented"
+			throw new Error("Not implemented")
 
 		# Abstract function to be implemented by another class to determine if there is a connection
 		#
 		# @return [Boolean] if there is a connection
 		#
 		isConnected: ( ) ->
-			throw "Not implemented"
+			throw new Error("Not implemented")
 
 		# Abstract function to be implemented by another class to kill a connection
 		#
 		disconnect: ( ) ->
-			throw "Not implemented"
+			throw new Error("Not implemented")

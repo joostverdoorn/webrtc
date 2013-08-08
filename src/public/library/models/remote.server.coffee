@@ -16,7 +16,7 @@ define [
 		#
 		initialize: ( @_address ) ->
 			@connect()
-			@on('connect', @_onConnect)	
+			@on('connect', @_onConnect)
 
 		# Connects to the server using websockets.
 		#
@@ -44,9 +44,9 @@ define [
 		# @param message [Message] the message to send
 		#
 		_send: ( message ) ->
-			@_connection.emit('message', message.serialize()) 
+			@_connection.emit('message', message.serialize())
 
 		# Is called when a connection is made. We emit our type to the server.
-		# 
+		#
 		_onConnect: ( ) =>
 			console.log 'connected to server'

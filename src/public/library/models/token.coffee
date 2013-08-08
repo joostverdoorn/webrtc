@@ -24,7 +24,7 @@ define [
 		serialize: ( ) ->
 			position = @position?.serialize() || null
 			
-			object = 
+			object =
 				id: @id
 				nodeId: @nodeId
 				timestamp: @timestamp
@@ -36,7 +36,7 @@ define [
 		# Generates a token from a JSON string and returns this
 		#
 		# @param messageString [String] a string in JSON format
-		# @return [Token] a new Token 
+		# @return [Token] a new Token
 		#
 		@deserialize: ( tokenString ) ->
 			object = JSON.parse(tokenString)

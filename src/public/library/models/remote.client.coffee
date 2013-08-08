@@ -39,7 +39,7 @@ define [
 		# @param message [Message] the message to send
 		#
 		_send: ( message ) ->
-			@_connection.emit('message', message.serialize()) 
+			@_connection.emit('message', message.serialize())
 
 		# Is called when a SuperNode state is changed
 		#

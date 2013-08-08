@@ -11,7 +11,7 @@ define ->
 		#
 		# @param classmixins [Object*] the mixins to add
 		#
-		@extend: ( classmixins... ) ->		
+		@extend: ( classmixins... ) ->
 			for mixin in classmixins
 				for key, value of mixin when key not in Mixable.ModuleKeyWords
 					@[ key ] = value
@@ -37,7 +37,7 @@ define ->
 		#
 		# @param  concerns [Object*] the mixins to add
 		#
-		@concern: ( concerns... ) ->		
+		@concern: ( concerns... ) ->
 			for concern in concerns
 				@include concern.InstanceMethods
 				@extend concern.ClassMethods

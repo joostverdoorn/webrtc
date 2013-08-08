@@ -106,8 +106,8 @@ define [], ( ) ->
 		# Generates a vector from a JSON string and returns this
 		#
 		# @param vectorString [String] a string in JSON format
-		# @return [Vector] a new Vector 
-		#		
+		# @return [Vector] a new Vector
+		#
 		@deserialize: ( vectorString ) ->
 			object = JSON.parse(vectorString)
 			res = new Vector()
