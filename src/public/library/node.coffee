@@ -61,9 +61,12 @@ define [
 
 			@initialize?.apply(@)
 			
-		# Attempts to connect to a peer.
+		# Attempts to connect to a peer. Calls the callback function
+		# with argument true when the connection was fully established,
+		# and false when the connection timed out.
 		#
 		# @param id [String] the id of the peer to connect to
+		# @param callback [Function] the callback to call
 		# @param instantiate [Boolean] whether to instantiate the connection
 		#
 		connect: ( id, callback, instantiate = true ) ->
