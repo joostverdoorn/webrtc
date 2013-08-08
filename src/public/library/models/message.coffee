@@ -50,17 +50,17 @@ define [], ( ) ->
 
 		# Stores this message's hash in the static hash array for later lookup
 		#
-		storeHash: ( ) ->
-			Message.hashes.push(@_hash)
-			unless Message.hashes.length < 1000
-				Message.hashes.splice(0, 200)
+		storeHash: ( storage ) ->
+			storage.push(@_hash)
+			unless storage.length < 1000
+				storage.splice(0, 200)
 
 		# Returns true if and only if this message was already hashed and stored
 		#
 		# @return [Boolean] wether or this message was already stored
 		#
-		isStored: ( ) ->
-			return @_hash in Message.hashes
+		isStored: ( storage ) ->
+			return @_hash in storage
 
 		# Generates a message from a JSON string and returns this
 		#

@@ -45,6 +45,8 @@ define [
 		# @param serverAddress [String] the uri address of the server
 		#
 		constructor: ( @serverAddress = @serverAddress ) ->
+			@messageStorage = []
+
 			@server = new Server(@, @serverAddress)
 			@server.on('connect', @_onServerConnect)
 			@server.on('peer.connectionRequest', @_onPeerConnectionRequest)

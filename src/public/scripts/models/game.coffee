@@ -28,21 +28,10 @@ define [
 
 		# This method will be called from the baseclass when it has been constructed.
 		# 
-		constructor: ( ) ->
+		constructor: ( @scene ) ->
 			# Create node and controller.
 			@node = new Node()
 			@controller = new Controller()
-
-			# Create scene.
-			@scene = new Three.Scene()
-			@scene.fog = new Three.FogExp2( 0xaabbff, 0.0015 );
-
-			# Create sky dome.
-			geometry = new THREE.SphereGeometry( 1500, 6, 8 )
-			material = new THREE.MeshBasicMaterial(map: THREE.ImageUtils.loadTexture('/images/sky.jpg'))
-			@sky = new THREE.Mesh(geometry, material) 
-			@sky.scale.x = -1;
-			@scene.add( @sky )
 
 			# Create the world.
 			@world = new World(@scene)
