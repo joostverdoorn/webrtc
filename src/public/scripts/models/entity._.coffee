@@ -24,6 +24,7 @@ define [
 			@loaded = false
 
 			@_updates = {}
+			@_lastUpdate = 0
 			
 			@mass = 1
 			@drag = .01
@@ -196,7 +197,7 @@ define [
 			# the target position, and rotation, and slowly ease 
 			# toward it. This will look much better and will be more 
 			# accurate than setting the position and rotation directly.
-			if timestamp?
+			if timestamp? and timestamp > @_lastUpdate
 				# Extract position and rotation from info object
 				infoPosition = new Three.Vector3().fromArray(info.position)
 				infoRotation = new Three.Euler().fromArray(info.rotation)
@@ -251,6 +252,8 @@ define [
 				else
 					@_targetPosition = infoPosition
 					@_targetRotation = infoRotation
+
+				@_lastUpdate = timestamp
 			
 			# We didn't receive a timed update. Just set the position and rotation
 			# directly.
