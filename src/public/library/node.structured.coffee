@@ -6,8 +6,8 @@ requirejs.config
 		'socket.io':
 			exports: 'io'
 
-	# We want the following paths for 
-	# code-sharing reasons. Now it doesn't 
+	# We want the following paths for
+	# code-sharing reasons. Now it doesn't
 	# matter from where we require a module.
 	paths:
 		'underscore': 'library/vendor/scripts/underscore'
@@ -137,8 +137,8 @@ define [
 				else
 					super
 
-		# Relays a message to other nodes. If the intended receiver is not a direct 
-		# neighbor, we route the message through other nodes in an attempt to reach 
+		# Relays a message to other nodes. If the intended receiver is not a direct
+		# neighbor, we route the message through other nodes in an attempt to reach
 		# the destination.
 		#
 		# @param message [Message] the message to relay.
@@ -226,10 +226,10 @@ define [
 				peer.role = Peer.Role.None
 				peer.emit('peer.abandonChild', @id)
 
-			if @getChildren().length is 0
-				@_demotionTimer = setTimeout( () =>
-					@setSuperNode(false)
-				, @_demotionTimeout)
+			# if @getChildren().length is 0
+			# 	@_demotionTimer = setTimeout( () =>
+			# 		@setSuperNode(false)
+			# 	, @_demotionTimeout)
 
 		# Returns a child specified by an id
 		#
@@ -298,6 +298,8 @@ define [
 			if @isSuperNode is superNode
 				return
 
+
+			console.log "Supernode: #{superNode} and having token", @token?
 			@isSuperNode = superNode
 
 			@server.emit('setSuperNode', superNode)
@@ -315,6 +317,7 @@ define [
 
 				# If we don't have a token, create one.	
 				unless @token?
+					debugger
 					@token = new Token()
 					@token.nodeId = @id
 					@token.position = @position
@@ -351,6 +354,8 @@ define [
 				@removeSibling(peer)
 			else if peer.role is Peer.Role.Child
 				@removeChild(peer)
+			obsoleteTokens = _(@_tokens).filter( ( token ) => token.nodeId is peer.id)
+			@removeToken(token) for token in obsoleteTokens
 
 		# Is called when a peer switches supernode status. We will connect
 		# to all new supernodes when we're supernode.
@@ -599,24 +604,24 @@ define [
 			children = @getChildren()
 			randomChild = children[_.random(0,children.length-1)]
 			randomChild.emit('token.receive', token.serialize())
-			console.log  randomChild.id +  ' received a token with id ', token.id
+			console.log  randomChild.id +  " received a token with id ", token.id
 
 		# Is called when we received a token. This will start the token hop 
 		# process.
 		#
 		# @param tokenString [String] a string representation of the received token.
 		#
-		_onTokenReceived: ( tokenString ) =>
+		_onTokenReceived: ( tokenString, timestamp, message ) =>
 			if @token?
 				return
 
 			@token = Token.deserialize(tokenString)
-			console.log "received token with id ", @token.id
+			console.log "received token from node #{message.from} with id ", @token.id
 			@removeToken(@token)
 			@token.nodeId = @id
 			@token.position = @position
 
-			@broadcast('token.info', @token.serialize())
+			@broadcast('token.info', @token.serialize(), true)
 			
 			setTimeout(( ) =>
 				@_computeTokenTargetPosition()
@@ -628,9 +633,10 @@ define [
 		# @param tokenString [String] a string representation of the token.
 		# @param instantiate [Boolean] wether or not to respond.
 		#
-		_onTokenInfo: ( tokenString, instantiate = true ) =>
+		_onTokenInfo: ( tokenString, instantiate, timestamp,  message ) =>
+
 			token = Token.deserialize(tokenString)
-			console.log "received info about token with id ", token.id
+			console.log "received info from node #{message.from} about token with id ", token.id
 			@addToken(token)
 
 			if @token? and instantiate
@@ -641,9 +647,9 @@ define [
 		#
 		# @param tokenString [String] a string representation of the token.
 		#
-		_onTokenDied: ( tokenString ) =>
+		_onTokenDied: ( tokenString, timestamp, message ) =>
 			token = Token.deserialize(tokenString)
-			console.log "Received dead token", token.id
+			console.log "Received dead token from node #{message.from} with id ", token.id
 			@removeToken(token)
 
 		# Computes the desired position of the token from the positions of other tokens,
@@ -662,7 +668,7 @@ define [
 			@token.targetPosition = @token.position.add(force)
 
 			magnitude = @position.getDistance(@token.targetPosition)
-			if magnitude > @_tokenMoveThreshold
+			if magnitude > @_tokenMoveThreshold and @getSiblings().length > 0
 				@broadcast('token.requestCandidate', @token.serialize())
 
 				setTimeout( ( ) =>
@@ -725,15 +731,21 @@ define [
 					closestDistance = candidate.distance
 					closestCandidate = candidate.id
 
-			console.log "best candidate is #{closestCandidate}, distance is #{closestDistance}"
+			@token.candidates = []
 			if closestCandidate? and closestCandidate isnt @id
+				console.log "best candidate is #{closestCandidate}, distance is #{closestDistance}"
 				@emitTo(closestCandidate, 'token.receive', @token.serialize())
 
+				@token = null
 				if @isSuperNode
 					@setSuperNode(false)
-				else
-					@token = null
+					
 
 			else
 				@token.candidates = []
 				@setSuperNode(true)
+
+		logTokenIds: () ->
+			for token in @_tokens
+				console.log token.id
+			

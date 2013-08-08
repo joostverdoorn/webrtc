@@ -129,7 +129,7 @@ define [
 				context = arguments[2] || @
 
 				@_peers.on(event, ( peer, args..., message ) =>
-					args = args.concat(message.timestamp)
+					args = args.concat(message.timestamp, message)
 					callback.apply(context, args)
 				)
 

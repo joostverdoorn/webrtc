@@ -32,6 +32,7 @@ require [
 		# 
 		initialize: ( ) ->
 			@node = new Node()
+			@tokens = {}
 
 			@_updateNodesInterval = setInterval(@displayNodes, 2000)
 			
@@ -49,7 +50,6 @@ require [
 
 			@node.on('setSuperNode', ( isSuperNode ) =>
 				$(".self-row .superNode").text(isSuperNode)
-				console.log "callback: ", isSuperNode
 			)
 
 		# Displays all available nodes.
@@ -100,7 +100,11 @@ require [
 			else if node.latency?
 				row.append("<td>#{Math.round(node.latency)}</td>")
 				row.append("<td class='superNode'>#{node.isSuperNode}</td>")
-				row.append("<td class='token'>#{if @tokens[node.id] then @tokens[node.id] else 0}</td>")
+				if @tokens?[node.id]?
+					tokenAmount = @tokens[node.id]
+				else
+				 	tokenAmount = 0
+				row.append("<td class='token'>#{tokenAmount}</td>")
 				row.append("<td>#{node.role}</td>")
 				row.append("<td>Connected</td>")
 				
