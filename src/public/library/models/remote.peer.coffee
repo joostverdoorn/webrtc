@@ -61,7 +61,7 @@ define [
 		#
 		connect: ( ) ->
 			@_isConnector = true
-			@_controller.server.emitTo(@id, 'peer.connectionRequest', @_controller.id, @_controller.type)
+			@_controller.server.emitTo(@id, 'peer.connectionRequest', @_controller.id)
 
 			channel = @_connection.createDataChannel('a', @_channelConfiguration)	
 			@_connection.createOffer(@_onLocalDescription)

@@ -221,9 +221,8 @@ define [
 		# accept this request by establishing a connection.
 		#
 		# @param id [String] the id of the peer
-		# @param type [String] the type of the peer
 		#
-		_onPeerConnectionRequest: ( id, type ) =>
+		_onPeerConnectionRequest: ( id ) =>
 			@connect(id, false)
 
 		# Is called when a remote peer wants to set a remote description.
