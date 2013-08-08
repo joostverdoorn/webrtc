@@ -164,7 +164,6 @@ define [
 		# @param callback [function] is called with a parameter if a node is accepted or not
 		#
 		setParent: ( peer, callback ) ->
-
 			if @isSuperNode
 				callback?(false)
 				return
@@ -409,18 +408,19 @@ define [
 				# Else, first connect, then set as parent.
 				else
 					peer = @connect(superNode.id, ( ) =>
+						console.log peer
 						@setParent(peer, ( accepted ) =>
-						if accepted
-							@trigger('joined')
-						else
-							connectParent(superNodes)
+							if accepted
+								@trigger('joined')
+							else
+								connectParent(superNodes)
 						)
 					)
 			# Query the server for nodes, and pass attempt to connect to supers.
 			@server.query('nodes', 'node.structured', ( nodes ) =>
 				if nodes?
 					superNodes = _(nodes).filter( ( node ) -> node.isSuperNode)
-					superNodes = _(superNodes).filter( ( node ) -> node.id is not @id)
+					superNodes = _(superNodes).filter( ( node ) => node.id isnt @id)
 					connectParent(superNodes)
 			)
 
@@ -466,14 +466,13 @@ define [
 			if @isSuperNode
 				@server.query('nodes', 'node.structured', ( nodes ) =>
 					superNodes = _(nodes).filter( ( node ) -> node.isSuperNode)
-					superNodes = _(superNodes).filter( ( node ) -> node.id is not @id)
+					superNodes = _(superNodes).filter( ( node ) -> node.id isnt @id)
 
 					if superNodes.length is 0
 						return
 
 					for superNode in superNodes
 						( ( superNode ) =>
-
 							if peer = @getPeer(superNode.id)
 								@addSibling(peer)
 							else
