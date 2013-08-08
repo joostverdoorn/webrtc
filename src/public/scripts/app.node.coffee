@@ -57,6 +57,8 @@ require [
 		displayNodes: () =>
 			@updateTokenInfo()
 			@node.server.query('nodes', 'node.structured', ( nodes ) =>
+				unless nodes?
+					return
 				$('.node-row').remove()
 
 				for node in nodes

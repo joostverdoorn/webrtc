@@ -71,7 +71,10 @@ define [
 			@server.on('connect', @_enterNetwork)
 			@_peers.on
 				'channel.opened': (peer) =>
-					peer.query('isSuperNode', ( superNode ) => peer.isSuperNode = superNode)
+					peer.query('isSuperNode', ( superNode ) =>
+						if superNode?
+							peer.isSuperNode = superNode
+					)
 				'disconnect': @_onPeerDisconnect
 
 			@onReceive
@@ -366,8 +369,7 @@ define [
 		_onPeerSetSuperNode: ( id, superNode ) =>
 			unless peer = @getPeer(id)
 				if superNode and @isSuperNode
-					peer = @connect(id)
-					peer.once('channel.opened', =>
+					peer = @connect(id, () =>
 						@addSibling(peer)
 					)
 			else peer.isSuperNode = superNode
@@ -386,6 +388,7 @@ define [
 				# If no available supernodes, we promote ourself.
 				if superNodes.length is 0
 					@setSuperNode(true)
+					@trigger('joined')
 					return
 
 				# We pick a random supernode from the list.
@@ -396,23 +399,27 @@ define [
 				# If we're connected, just set as parent.
 				if peer = @getPeer(superNode.id)
 					@setParent(peer, ( accepted ) =>
-						unless accepted
+						if accepted
+							@trigger('joined')
+						else
 							connectParent(superNodes)
 					)
 				
 				# Else, first connect, then set as parent.
 				else
-					peer = @connect(superNode.id)
-					peer.once('channel.opened', ( ) =>
+					peer = @connect(superNode.id, ( ) =>
 						@setParent(peer, ( accepted ) =>
-							unless accepted
-								connectParent(superNodes)
+						if accepted
+							@trigger('joined')
+						else
+							connectParent(superNodes)
 						)
 					)
 			# Query the server for nodes, and pass attempt to connect to supers.
 			@server.query('nodes', 'node.structured', ( nodes ) =>
-				superNodes = _(nodes).filter( ( node ) -> node.isSuperNode)
-				connectParent(superNodes)
+				if nodes?
+					superNodes = _(nodes).filter( ( node ) -> node.isSuperNode)
+					connectParent(superNodes)
 			)
 
 		# Selects the supernode with the lowest latency and attempts to connect.
@@ -467,8 +474,7 @@ define [
 							if peer = @getPeer(superNode.id)
 								@addSibling(peer)
 							else
-								peer = @connect(superNode.id)
-								peer.once('channel.opened', ( ) =>
+								peer = @connect(superNode.id, ( ) =>
 									@addSibling(peer)
 								)
 						) (superNode)
@@ -484,7 +490,7 @@ define [
 					return
 
 				@_parent.query('siblings', ( superNodes ) =>
-					if superNodes.length is 0
+					if not superNodes? or superNodes.length is 0
 						return 
 
 					superNodes = _(superNodes).filter( ( node ) => not @getPeer(node.id)?)
@@ -573,8 +579,7 @@ define [
 			if peer = @getPeer(id)
 				@setParent(peer)
 			else
-				peer = @connect(id)
-				peer.once('channel.opened', ( ) =>
+				peer = @connect(id, ( ) =>
 					@setParent(peer)
 				)
 
