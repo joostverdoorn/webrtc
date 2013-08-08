@@ -53,6 +53,7 @@ require [
 		serverAddress: ':8080/'
 
 		nodes: []
+		messageStorage: []
 		
 		# Constructs a new inspector app. 
 		#
@@ -60,16 +61,6 @@ require [
 			viewAngle = 45
 			nearClip = 0.1
 			farClip = 10000
-
-			@_zoom = 1
-
-			@_deltaX = 0
-			@_deltaY = 0
-			@_lastMouseX = 0
-			@_lastMouseY = 0
-			@_mouseDown = false		
-
-			@_cameraAngle = new Three.Quaternion()
 
 			# Connect to the server.
 			@server = new Server(@, @serverAddress)
