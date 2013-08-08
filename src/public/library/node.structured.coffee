@@ -320,7 +320,6 @@ define [
 
 				# If we don't have a token, create one.	
 				unless @token?
-					debugger
 					@token = new Token()
 					@token.nodeId = @id
 					@token.position = @position
