@@ -45,8 +45,13 @@ require [
 			it 'should be possible to bind to events the object throws', ->
 				fn = jasmine.createSpy()
 				collection.on('event', fn)
-				obj.trigger('event')
-				expect(fn).toHaveBeenCalled()
+				obj.trigger('event', '1', 2, undefined)
+				fn.mostRecentCall.args.shift()
+				expect(fn.mostRecentCall.args).toEqual([
+						'1'
+						2
+						undefined
+					])
 
 			it 'should be possible to listen only once to events the object throws', ->
 				fn = jasmine.createSpy()

@@ -31,6 +31,7 @@ require [
 			id: '2'
 			query: ->
 			relay: ->
+			time: -> Date.now()
 
 		beforeEach ->
 			fakeController = new FakeController()

@@ -38,12 +38,15 @@ define [
 		type: 'node'
 		serverAddress: ':8080/'
 
+		_timeDelta: 0
+
 		# Constructs a new node. Calls initialize on any subclass.
 		#
 		# @param serverAddress [String] the uri address of the server
 		#
 		constructor: ( @serverAddress = @serverAddress ) ->
 			@server = new Server(@, @serverAddress)
+			@server.on('connect', @_onServerConnect)
 			@server.on('peer.connectionRequest', @_onPeerConnectionRequest)
 			@server.on('peer.setRemoteDescription', @_onPeerSetRemoteDescription)
 			@server.on('peer.addIceCandidate', @_onPeerAddIceCandidate)
@@ -110,14 +113,31 @@ define [
 
 		# Public method to bind a callback on to a peer event
 		#
-		# @param event [String] the string identifier of the event
-		# @param callback [Function] the function to call
-		# @param context [Object] the context on which to apply the callback
+		# @overload onReceive(event, callback, context = @)
+		#	 Binds a single event
+		# 	 @param event [String] the string identifier of the event
+		# 	 @param callback [Function] the function to call
+		# 	 @param context [Object] the context on which to apply the callback
 		#
-		onReceive: ( event, callback, context = @ ) ->
-			@_peers.on(event, ( peer, args... ) =>
-				callback.apply(context, args)
-			)
+		# @overload onReceive(bindings)
+		#	 @param bindings [Object] an object mapping events to callbacks
+		#
+		onReceive: ( ) ->
+			if typeof arguments[0] is 'string'
+				event = arguments[0]
+				callback = arguments[1]
+				context = arguments[2] || @
+
+				@_peers.on(event, ( peer, args..., message ) =>
+					args = args.concat(message.timestamp)
+					callback.apply(context, args)
+				)
+
+			else if typeof arguments[0] is 'object'
+				bindings = arguments[0]
+
+				for event, callback of bindings
+					@onReceive(event, callback)
 
 		# Attempts to emit to a peer by id. Unreliable.
 		#
@@ -126,7 +146,7 @@ define [
 		# @param args... [Any] any other arguments to pass along 
 		#
 		emitTo: ( to, event, args... ) ->
-			message = new Message(to, @id, event, args)
+			message = new Message(to, @id, event, args, @time())
 			@relay(message)
 
 		# Attempts to query a peer by id. Unreliable.
@@ -148,8 +168,8 @@ define [
 		# @param args... [Any] any other arguments to pass along
 		#
 		broadcast: ( event, args... ) ->
-			message = new Message('*', @id, event, args)
-			@relay(message)
+			args = ['*', event].concat(args)
+			@emitTo.apply(@, args)
 		
 		# Relays a message to other nodes. If the intended receiver is not a direct 
 		# neighbor, we route the message through other nodes in an attempt to reach 
@@ -163,7 +183,7 @@ define [
 			else if peer = @getPeer(message.to)
 				peer.send(message)
 
-		# Responds to a request
+		# Responds to a request.
 		#
 		# @param request [String] the string identifier of the request
 		# @param args... [Any] any arguments that may be accompanied with the request
@@ -172,7 +192,7 @@ define [
 		query: ( request, args..., callback ) ->
 			switch request
 				when 'ping'
-					callback 'pong'
+					callback 'pong', @time()
 				when 'type'
 					callback @type
 				when 'info'
@@ -187,6 +207,15 @@ define [
 					callback info
 				else
 					callback null
+
+		# Is called when the server connects. Will ping the server and compute
+		# the network time based on the server time and latency.
+		#
+		_onServerConnect: ( id ) =>
+			@id = id
+			@server.ping( ( latency, serverTime ) =>
+				@_timeDelta = serverTime - (Date.now() - latency / 2)
+			)
 
 		# Is called when a peer requests a connection with this node. Will
 		# accept this request by establishing a connection.
@@ -214,3 +243,10 @@ define [
 		_onPeerAddIceCandidate: ( id, data ) =>
 			candidate = new RTCIceCandidate(data)
 			@getPeer(id, null, true)?.addIceCandidate(candidate)
+
+		# Returns the network time.
+		#
+		# @return [Integer] the network time in milliseconds
+		#
+		time: ( ) ->
+			return Date.now() + @_timeDelta

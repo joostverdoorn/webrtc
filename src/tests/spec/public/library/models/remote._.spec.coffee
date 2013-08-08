@@ -16,6 +16,7 @@ require [
 				id: '1'
 				query: (request, args..., callback) -> callback(true)
 				relay: ->
+				time: -> return Date.now()
 			}
 			spyOn(fakeController, 'query').andCallThrough()
 			spyOn(fakeController, 'relay')
@@ -207,6 +208,12 @@ require [
 				expect(remote.query).toHaveBeenCalled()
 				remote.query.mostRecentCall.args[1]('pong', 1, 2, 3)
 
-				waitsFor(->
-						return callbackCalled isnt false
-					, 1000)
+			it 'should only respond to pong events', ->
+				spyOn(remote, 'query')
+
+				callback = jasmine.createSpy()
+
+				remote.ping(callback)
+				expect(remote.query).toHaveBeenCalled()
+				remote.query.mostRecentCall.args[1]('plong', 1, 2, 3)
+				expect(callback).not.toHaveBeenCalled()

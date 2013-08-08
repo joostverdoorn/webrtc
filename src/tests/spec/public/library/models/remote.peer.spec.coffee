@@ -51,12 +51,10 @@ require [
 			id: '2'
 			query: ->
 			relay: ->
+			time: -> Date.now()
 
 		beforeEach ->
 			fakeController = new FakeController()
-
-		afterEach ->
-			peer.removeTimers()
 
 		describe 'when initialized', ->
 			it 'should create a new RTCPeerConnection object with default configurations', ->
@@ -230,7 +228,7 @@ require [
 				spyOn(peer._connection, 'setLocalDescription')
 				spyOn(fakeController.server, 'emitTo')
 
-				spyOn(peer, '_higherBandwidthSDP')
+				spyOn(peer, '_higherBandwidthSDP').andCallThrough()
 
 				fakeOffer = {
 					sdp: 'ABC'
@@ -424,30 +422,6 @@ require [
 					, 1000)
 
 		describe 'when the channel is opened', ->
-			it 'should start sending a ping packet every 7500 ms', ->
-				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
-				jasmine.Clock.useMock();
-				spyOn(peer, 'ping')
-				peer._onChannelOpen()
-				jasmine.Clock.tick(1)
-				for i in [0...10]
-					expect(peer.ping.callCount).toBe(i)
-					if i > 0
-						randCoords = [
-							Math.random()
-							Math.random()
-							Math.random()
-						]
-						peer.ping.mostRecentCall.args[0](null, JSON.stringify(randCoords))
-						randCoords = {
-							0: randCoords[0]
-							1: randCoords[1]
-							2: randCoords[2]
-							length: 3
-						}
-						expect(JSON.stringify(peer.coordinates)).toBe(JSON.stringify(randCoords))
-					jasmine.Clock.tick(7500);		# Fake the time passing 7500ms
-				
 			it 'should send queries for benchmark, system and isSuperNode', ->
 				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
 				called = []
@@ -499,12 +473,3 @@ require [
 					, 1000)
 
 		describe 'when the channel disconnects', ->
-			it 'should clear the ping interval', ->
-				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
-				jasmine.Clock.useMock();
-				spyOn(peer, 'ping')
-				peer._onChannelOpen()
-				jasmine.Clock.tick(7501)
-				peer._onDisconnect()
-				jasmine.Clock.tick(7500 * 10)
-				expect(peer.ping.callCount).toBe(1)

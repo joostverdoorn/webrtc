@@ -47,3 +47,12 @@ require [
 				string = token.serialize()
 				newToken = Token.deserialize(string)
 				expect(newToken).toEqual(token)
+
+			it 'should not fail when position is missing', ->
+				oldPos = token.position
+				token.position = null
+
+				string = token.serialize()
+				token.position = oldPos
+				newToken = Token.deserialize(string)
+				expect(newToken).toEqual(token)

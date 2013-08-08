@@ -4,5 +4,5 @@ define [], (  ) ->
 		constructor: ->
 		@createServer: ->
 			return new HTTP()
-		listen: ->
+		listen: jasmine.createSpy('listen')
 	

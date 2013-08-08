@@ -15,19 +15,36 @@ define [
 			
 			# Binds an event to a callback.
 			#
-			# @param name [String] the event name to bind
-			# @param callback [Function] the callback to call
-			# @param context [Object] the context of the binding
+			# @overload on(name, callback, context = null)
+			#	 Binds a single event.
+			# 	 @param name [String] the event name to bind
+			# 	 @param callback [Function] the callback to call
+			# 	 @param context [Object] the context of the binding
 			#
-			on: ( name, callback, context = null ) ->
-				@_events = {} unless @_events?
-				@_events[name] = [] unless @_events[name]?
+			# @overload on(bindings)
+			#	 Binds multiple events.
+			#	 @param bindings [Object] an object mapping event names to functions
+			#
+			on: ( ) ->
+				if typeof arguments[0] is 'string'
+					name = arguments[0]
+					callback = arguments[1]
+					context = arguments[2] || null
 
-				event = 
-					callback: callback
-					context: context
+					@_events = {} unless @_events?
+					@_events[name] = [] unless @_events[name]?
 
-				@_events[name].push(event)
+					event = 
+						callback: callback
+						context: context
+
+					@_events[name].push(event)
+
+				else if typeof arguments[0] is 'object'
+					bindings = arguments[0]
+
+					for name, callback of bindings
+						@on(name, callback) 
 
 				return @
 
@@ -51,16 +68,35 @@ define [
 
 			# Binds an event, and calls the callback only once on that event.
 			#
-			# @param name [String] the event name to bind
-			# @param callback [Function] the callback to call
-			# @param context [Object] the context of the binding
+			# @overload once(name, callback, context = null)
+			#	 Binds a single event.
+			# 	 @param name [String] the event name to bind
+			# 	 @param callback [Function] the callback to call
+			# 	 @param context [Object] the context of the binding
 			#
-			once: ( name, callback, context = null ) ->
-				fn = ( args... ) ->
-					callback.apply(context, args)
-					@off(name, arguments.callee, context)
+			# @overload once(bindings)
+			#	 Binds a multiple events.
+			# 	 @param bindings [Object] an object mapping event names to functions
+			#
+			once: ( ) ->
+				if typeof arguments[0] is 'string'
+					name = arguments[0]
+					callback = arguments[1]
+					context = arguments[2] || null
 
-				@on(name, fn, context)
+					fn = ( args... ) ->
+						callback.apply(context, args)
+						@off(name, arguments.callee, context)
+
+					@on(name, fn, context)
+
+				else if typeof arguments[0] is 'object'
+					bindings = arguments[0]
+
+					for name, callback of bindings
+						@once(name, callback)
+
+				return @				
 
 			# Triggers an event.
 			#

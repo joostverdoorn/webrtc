@@ -1,40 +1,9 @@
-requirejs.config
-	baseUrl: '../'
-
-	shim:
-		'jquery':
-			exports: '$'
-
-		'three':
-			exports: 'THREE'
-
-		'stats':
-			exports: 'Stats'
-
-		'bootstrap': [ 'jquery' ]
-		'qrcode': [ 'jquery' ]
-		'jquery.plugins': [ 'jquery' ]
-
-	# We want the following paths for 
-	# code-sharing reasons. Now it doesn't 
-	# matter from where we require a module.
-	paths:
-		'public': './'
-
-		'underscore': 'vendor/scripts/underscore'
-		'jquery': 'vendor/scripts/jquery'
-		'bootstrap': 'vendor/scripts/bootstrap'
-		'three': 'vendor/scripts/three'
-		'qrcode': 'vendor/scripts/qrcode.min'
-		'stats': 'vendor/scripts/stats.min'
-
-require [
+define [
 	'public/scripts/app._'
 	'public/library/node.structured'
 	
 	'public/scripts/models/controller._'
-	'public/scripts/models/controller.desktop'
-	'public/scripts/models/controller.mobile'
+	'public/scripts/models/controller.random'
 
 	'public/scripts/models/world'
 	'public/scripts/models/entity.player'
@@ -42,13 +11,12 @@ require [
 	'public/scripts/views/overlay'
 
 	'three'
-	'stats'
-	], ( App, Node, Controller, DesktopController, MobileController, World, Player, Overlay, Three, Stats ) ->
+	], ( App, Node, Controller, RandomController, World, Player, Overlay, Three ) ->
 
 	# This game class implements the node structure created in the library.
 	# It uses three.js for the graphics.
 	#
-	class App.Game extends App
+	class App.AIGame extends App
 
 		paused = true
 
@@ -78,13 +46,6 @@ require [
 			width = window.innerWidth
 			height = window.innerHeight
 
-			# Create renderer.
-			@renderer = new Three.WebGLRenderer({antialias: true})
-			@renderer.setSize(width, height)
-			@renderer.shadowMapEnabled = true
-			@renderer.shadowMapSoft = true
-			@container.appendChild(@renderer.domElement)
-
 			# Create camera.
 			@aspectRatio = width / height
 			@camera = new Three.PerspectiveCamera(@viewAngle, @aspectRatio, @nearClip, @farClip)
@@ -103,13 +64,6 @@ require [
 			@sky.scale.x = -1;
 			@scene.add( @sky )
 
-			# Create stats display.
-			@stats = new Stats()
-			@stats.domElement.style.position = 'absolute'
-			@stats.domElement.style.top = '20px'
-			@stats.domElement.style.left = '20px'
-			@container.appendChild(@stats.domElement)
-
 			# Create the world.
 			@world = new World(@scene)
 
@@ -120,7 +74,11 @@ require [
 			@node.on
 				'joined': =>
 					@node.off('joined')
-					@overlay.showWelcomeScreen()
+					@controller = new RandomController(@)
+					@controller.once('Boost', ( ) =>
+						@overlay.hide()
+						@startGame()
+					)
 				'left': =>
 					console.log 'Left the network'
 
@@ -146,8 +104,6 @@ require [
 		setDimensions: ( ) =>
 			width = window.innerWidth
 			height = window.innerHeight
-
-			@renderer.setSize(width, height)
 
 			@aspectRatio = width / height
 			@camera.aspect = @aspectRatio
@@ -210,12 +166,6 @@ require [
 			# Update sky position
 			@sky.position = @camera.position.clone()
 
-			# Render the scene.
-			@renderer.render(@scene, @camera)
-
-			# Update stats.
-			@stats.update()
-
 			# Request a new animation frame.
 			@_lastUpdateTime = timestamp
 			window.requestAnimationFrame(@update)
@@ -273,6 +223,9 @@ require [
 		#
 		_onControllerSelect: ( type ) =>
 			if type is 'desktop' 
+				@controller = new RandomController(@)
+				@overlay.showInfoScreen('desktop')
+				###
 				@controller = new DesktopController()
 				@controller.requestPointerLock()
 				@overlay.showInfoScreen('desktop')
@@ -288,6 +241,7 @@ require [
 							@controller.requestPointerLock()
 							@overlay.hide()
 						)
+				###
 
 			else if type is 'mobile' 
 				@controller = new MobileController()
@@ -335,5 +289,3 @@ require [
 		#
 		time: ( ) ->
 			return @node.time()
-
-	window.App = new App.Game

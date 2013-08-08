@@ -14,6 +14,8 @@ requirejs.config
 		'three':
 			exports: 'THREE'
 
+		'orbitControls': [ 'three' ]
+
 		'stats':
 			exports: 'Stats'
 
@@ -28,6 +30,7 @@ requirejs.config
 		'three': 'vendor/scripts/three'
 		'stats': 'vendor/scripts/stats.min'
 		'socket.io': 'socket.io/socket.io'
+		'orbitControls': 'vendor/scripts/orbitControls'
 
 require [
 	'scripts/app._'
@@ -38,6 +41,7 @@ require [
 
 	'jquery'
 	'underscore'
+	'orbitControls'
 	], ( App, Server, Three, Stats, $, _ ) ->
 
 	# Inspector app class. This will create and draw a 3d scene
@@ -82,6 +86,7 @@ require [
 			# Create scene, camera and renderer.
 			@scene = new Three.Scene()
 			@camera = new Three.PerspectiveCamera(viewAngle, aspectRatio, nearClip, farClip)
+			@camera.position = new Three.Vector3(-100, 0, 0)
 			@renderer = new Three.WebGLRenderer()
 
 			@renderer.setSize(width, height)
@@ -110,17 +115,43 @@ require [
 			@stats.domElement.style.left = '0px'
 			container.appendChild(@stats.domElement)
 
+			# Add controls
+			@controls = new Three.OrbitControls(@camera)
+
+			# Add axes
+			xStart = new Three.Vector3(5000, 0, 0)
+			xEnd = new Three.Vector3(-5000, 0, 0)
+			yStart = new Three.Vector3(0, 5000, 0)
+			yEnd = new Three.Vector3(0, -5000, 0)
+			zStart = new Three.Vector3(0, 0, 5000)
+			zEnd = new Three.Vector3(0, 0, -5000)
+
+			xGeometry = new Three.Geometry()
+			xGeometry.vertices.push(xStart)
+			xGeometry.vertices.push(xEnd)
+			xMaterial = new Three.LineBasicMaterial(color: 0xff0000)
+			xLine = new Three.Line(xGeometry, xMaterial)
+			@scene.add(xLine)
+
+			yGeometry = new Three.Geometry()
+			yGeometry.vertices.push(yStart)
+			yGeometry.vertices.push(yEnd)
+			yMaterial = new Three.LineBasicMaterial(color: 0x00ff00)
+			yLine = new Three.Line(yGeometry, yMaterial)
+			@scene.add(yLine)
+
+			zGeometry = new Three.Geometry()
+			zGeometry.vertices.push(zStart)
+			zGeometry.vertices.push(zEnd)
+			zMaterial = new Three.LineBasicMaterial(color: 0x0000ff)
+			zLine = new Three.Line(zGeometry, zMaterial)
+			@scene.add(zLine)
+
 			# Various callbacks and the like.
 			window.requestAnimationFrame(@update)
 			$(window).resize(@setDimensions)
 			
 			$(window).mousemove ( event ) =>
-				if @_mouseDown
-					@_deltaX = event.clientX - @_lastMouseX
-					@_deltaY = event.clientY - @_lastMouseY
-
-					@_lastMouseX = event.clientX
-					@_lastMouseY = event.clientY
 
 				# Detect mouse intersects
 				mouseX = ( event.clientX / window.innerWidth ) * 2 - 1
@@ -179,23 +210,7 @@ require [
 			node.update(dt) for node in @nodes
 
 			# Update camera position.
-			if @_mouseDown
-				width = window.innerWidth
-				height = window.innerHeight
-
-				yAngle = -(@_deltaX / width)  * Math.PI * 5
-				zAngle = -(@_deltaY / height) * Math.PI * 5
-
-				angle = new Three.Quaternion().setFromEuler(new Three.Euler(0, yAngle, zAngle, 'YXZ'))
-				@_cameraAngle.multiply(angle)
-
-			position = new Three.Vector3(-100 * @_zoom, 0, 0).applyQuaternion(@_cameraAngle)
-			@camera.position.lerp(position, dt * 20)
-			@camera.lookAt(new Three.Vector3(0, 0, 0))
-
-			zVector = new Three.Vector3(1, 0, 0).applyQuaternion(new Three.Quaternion().setFromEuler(@camera.rotation))
-			yVector = @camera.position.clone()
-			@camera.up = new Three.Vector3().crossVectors(zVector, yVector).negate()
+			@controls.update()
 
 			# Render the scene.
 			@renderer.render(@scene, @camera)
@@ -268,6 +283,8 @@ require [
 		die: ( ) ->
 			@scene.remove(@mesh)
 			@scene.remove(edge) for edge in @edges
+			@scene.remove(@tokenMesh)
+			@scene.remove(@tokenEdge)
 			@edges = []
 
 		# Updates this nodes' position and the lines to its connected nodes.
@@ -289,13 +306,22 @@ require [
 						geometry.vertices.push(node.mesh.position)
 
 						material = new Three.LineBasicMaterial(
-							color: 0xff2222
+							color: 0xffaaff
 							linewidth: 1
 						)
 						
 						edge = new Three.Line(geometry, material)
 						@edges.push(edge)
 						@scene.add(edge)
+
+			if @tokenMesh?
+				@scene.remove(@tokenEdge) if @tokenEdge?
+				geometry = new Three.Geometry()
+				geometry.vertices.push(@mesh.position, @tokenMesh.position)
+				material = new Three.LineDashedMaterial(color: 0xffff00)
+				@tokenEdge = new Three.Line(geometry, material)
+				@scene.add(@tokenEdge)
+				@tokenMesh.position.lerp(@tokenPosition, dt)
 
 		# Sets information of this node from a nodeInfo object. Used to update
 		# the node's state or connected peers.
@@ -306,6 +332,26 @@ require [
 			@id = nodeInfo.id
 			@isSuperNode = nodeInfo.isSuperNode
 			@token = nodeInfo.token
+			
+			if @token?
+				unless @tokenMesh?
+					geometry = new Three.SphereGeometry(0.2, 6, 8)
+					material = new THREE.MeshLambertMaterial( color:0xffff00 )
+					@tokenMesh = new Three.Mesh(geometry, material)
+					@tokenMesh.position.set(@token.position[0], @token.position[1], @token.position[2])			
+					@scene.add(@tokenMesh)
+
+				x = @token.position[0]
+				y = @token.position[1]
+				z = @token.position[2]
+				@tokenPosition = new Three.Vector3(x, y, z)
+
+			else
+				@scene.remove(@tokenMesh)
+				@scene.remove(@tokenEdge)			
+				delete @tokenMesh
+				delete @tokenEdge
+
 			@peers = nodeInfo.peers
 
 			# Set supernodes to display as red, normal nodes as green.

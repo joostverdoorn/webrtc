@@ -9,7 +9,7 @@ define [
 
 		connected = false
 
-		initialize: ( @id, instantiate = true ) ->
+		initialize: ( @id, @instantiate = true ) ->
 
 			@coordinates = new Vector(0, 0, 0)
 			@latency = 0

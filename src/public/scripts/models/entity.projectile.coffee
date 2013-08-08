@@ -14,17 +14,17 @@ define [
 		#
 		# @param player [Player] Player who fires the projectile
 		# @param cannon [Cannon] Cannon which fires the projectile
-		# @param transformations [Object] an object containing all transformations to apply to the player
+		# @param info [Object] an object containing all info to apply to the player
 		#
-		initialize: ( player = null, cannon = null, transformations ) ->
-			@mass = 10
+		initialize: ( player = null, cannon = null, info = null ) ->
+			@mass = 2
 			@drag = .0005
 			@angularDrag = 10
 			@applyGravity = true
 
 			@_projectileVelocity = 100
 
-			sphereMaterial = new THREE.MeshPhongMaterial( {color:0xff0000 })
+			sphereMaterial = new THREE.MeshPhongMaterial( {color:0x333333 })
 			radius = 0.45
 			segments = 6
 			rings = 8
@@ -36,6 +36,9 @@ define [
 					rings)
 				, sphereMaterial)
 
+			@mesh.geometry.computeBoundingSphere()
+			@mesh.receiveShadow = true
+
 			# If both cannon and player are defined, instantiate the projectile forces.
 			if cannon? and player?
 				# Get the starting position of the projectile.
@@ -43,27 +46,32 @@ define [
 				player.mesh.localToWorld(@position)
 
 				# Generate the projectile force.
-				@force = new Three.Vector3(@_projectileVelocity * @mass, 0, 0)
+				@velocity = new Three.Vector3(@_projectileVelocity, 0, 0)
 
 				# Apply the cannon rotation to the force vector.
-				@force.applyQuaternion(new Three.Quaternion().setFromEuler(cannon.rotation))
+				@velocity.applyQuaternion(new Three.Quaternion().setFromEuler(cannon.rotation))
 
 				# Apply the player rotation to the force vector.
-				@force.applyQuaternion(new Three.Quaternion().setFromEuler(player.rotation))
+				@velocity.applyQuaternion(new Three.Quaternion().setFromEuler(player.rotation))
 
 				# Add the player velocity to the force.
-				@force.add(player.velocity.clone().multiplyScalar(@mass))
+				@velocity.add(player.velocity)
 
 				# Add the force to the pending forces
-				@addForce(@force)
-				player.addForce(@force.clone().negate())
+				player.addForce(@velocity.clone().negate().multiplyScalar(@mass))
+			else @applyInfo(info)
 
 			# Add the projectile to the scene
 			@scene.add(@mesh)
 			@loaded = true
 
-		update: ( dt ) ->
-			super(dt, true, false)
+			# Add listeners to common events.
+			@on('impact.world', @_onImpactWorld)
 
-			if @velocity.length() < 1
-				@die()
+		# Is called when the projectile impacts the world.
+		#
+		# @param position [Three.Vector3] the position of the projectile at the moment of impact
+		# @param velocity [Three.Vector3] the velocity of the projectile at the moment of impact
+		#
+		_onImpactWorld: ( position, velocity ) =>
+			@die()
