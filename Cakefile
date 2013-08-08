@@ -37,6 +37,11 @@ task 'watch', ->
 task 'test', ->
 	test()
 
+# Runs the lint tests
+#
+task 'lint', ->
+	lint()
+
 # Starts a new process by executing the execString, and 
 # logs all stdout and stderr output.
 #
@@ -165,6 +170,20 @@ test = ( ) ->
 			)
 		)
 	)
+
+# Runs the coffeelint tests
+
+lint = () ->
+	walk(sourceDir, (err, files) ->
+		if files
+			files.forEach( ( file ) ->
+				split = file.split('.')
+				if split[split.length - 1] is 'coffee'
+					startProcess('coffeelint ' + file + ' -f coffeelint_config.json')
+
+			)
+	)
+	startProcess('coffeelint Cakefile -f coffeelint_config.json')
 
 # Copies a file to the target. If the path doesn't exist,
 # creates the path.

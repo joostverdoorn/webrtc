@@ -21,12 +21,12 @@ define [
 				url: 'stun:stun.l.google.com:19302'
 				]
 
-		# Provides default connection configuration for RTCPeerConnection. Note that 
+		# Provides default connection configuration for RTCPeerConnection. Note that
 		# 'RtpDataChannels: true' is mandatory for current Chrome (27).
 		_connectionConfiguration:
 			optional: [
-				{ DtlsSrtpKeyAgreement: true }, 
-				{ RtpDataChannels: true } 
+				{ DtlsSrtpKeyAgreement: true },
+				{ RtpDataChannels: true }
 				]
 
 		# Provides default channel configuration for RTCDataChannel. Note that
@@ -63,7 +63,7 @@ define [
 			@_isConnector = true
 			@_controller.server.emitTo(@id, 'peer.connectionRequest', @_controller.id)
 
-			channel = @_connection.createDataChannel('a', @_channelConfiguration)	
+			channel = @_connection.createDataChannel('a', @_channelConfiguration)
 			@_connection.createOffer(@_onLocalDescription)
 
 			@_addChannel(channel)

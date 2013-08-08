@@ -15,7 +15,8 @@
 		"performance-now": "*",
 		"adapter": "*",
 		"wrench": "*",
-		"coffee-coverage": "*"
+		"coffee-coverage": "*",
+		"coffeelint": "*"
 	}
 
 }

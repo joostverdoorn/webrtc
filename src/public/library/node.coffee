@@ -6,8 +6,8 @@ requirejs.config
 		'socket.io':
 			exports: 'io'
 
-	# We want the following paths for 
-	# code-sharing reasons. Now it doesn't 
+	# We want the following paths for
+	# code-sharing reasons. Now it doesn't
 	# matter from where we require a module.
 	paths:
 		'underscore': 'library/vendor/scripts/underscore'
@@ -106,7 +106,7 @@ define [
 		#
 		getPeers: ( role = null, getUnconnected = false ) ->
 			fn = ( peer ) ->
-				return (not role? or role is peer.role) and 
+				return (not role? or role is peer.role) and
 					(getUnconnected or peer.isConnected())
 
 			return @_peers.filter(fn)
@@ -129,7 +129,7 @@ define [
 				context = arguments[2] || @
 
 				@_peers.on(event, ( peer, args..., message ) =>
-					args = args.concat(message.timestamp)
+					args = args.concat(message.timestamp, message)
 					callback.apply(context, args)
 				)
 
@@ -143,7 +143,7 @@ define [
 		#
 		# @param to [String] the id of the peer to pass the message to
 		# @param event [String] the event to pass to the peer
-		# @param args... [Any] any other arguments to pass along 
+		# @param args... [Any] any other arguments to pass along
 		#
 		emitTo: ( to, event, args... ) ->
 			message = new Message(to, @id, event, args, @time())
@@ -171,8 +171,8 @@ define [
 			args = ['*', event].concat(args)
 			@emitTo.apply(@, args)
 		
-		# Relays a message to other nodes. If the intended receiver is not a direct 
-		# neighbor, we route the message through other nodes in an attempt to reach 
+		# Relays a message to other nodes. If the intended receiver is not a direct
+		# neighbor, we route the message through other nodes in an attempt to reach
 		# the destination.
 		#
 		# @param message [Message] the message to relay.

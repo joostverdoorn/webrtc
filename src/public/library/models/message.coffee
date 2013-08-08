@@ -23,7 +23,7 @@ define [], ( ) ->
 		# @return [String] the JSON string representing this message
 		#
 		serialize: ( ) ->
-			object = 
+			object =
 				to: @to
 				from: @from
 				event: @event
@@ -32,7 +32,7 @@ define [], ( ) ->
 			return JSON.stringify(object)
 
 		# Generates a unique hash for this message to check for duplicates.
-		# We use the djb2 hashing method described here: 
+		# We use the djb2 hashing method described here:
 		# http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
 		# as it provides excellent speed vs distribution.
 		#
@@ -40,9 +40,9 @@ define [], ( ) ->
 		#
 		hash: ( ) ->
 			string = @serialize()
-			hash = 5381;
+			hash = 5381
 
-			for i in [0...string.length] 
+			for i in [0...string.length]
 				char = string.charCodeAt(i)
 				hash = ((hash << 5) + hash) + char
 		
@@ -65,7 +65,7 @@ define [], ( ) ->
 		# Generates a message from a JSON string and returns this
 		#
 		# @param messageString [String] a string in JSON format
-		# @return [Message] a new Message 
+		# @return [Message] a new Message
 		#
 		@deserialize: ( messageString ) ->
 			object = JSON.parse(messageString)

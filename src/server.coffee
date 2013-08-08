@@ -10,7 +10,7 @@ define [
 	], ( Node, Collection, Message, express, http, io, _ ) ->
 
 
-	# Server class. This is run on the server and maintains connections to 
+	# Server class. This is run on the server and maintains connections to
 	# any client: masters or slaves.
 
 	class Server
@@ -36,7 +36,7 @@ define [
 
 			# Redirect a controller url for lees typing
 			@_app.get('/controller/:nodeId', ( req, res ) =>
-				res.redirect('/controller.html?nodeId=' + req.params.nodeId);
+				res.redirect('/controller.html?nodeId=' + req.params.nodeId)
 				res.end()
 			)
 				
@@ -88,11 +88,11 @@ define [
 		# Sends a message to a certain node.
 		#
 		# @param to [String] the id of the node to pass the message to
-		# @param event [String] the event to pass to the node 
-		# @param args... [Any] any arguments to pass along 
+		# @param event [String] the event to pass to the node
+		# @param args... [Any] any arguments to pass along
 		#
 		emitTo: ( to, event, args... ) ->
-			message = new Message(to, null, event, args)	
+			message = new Message(to, null, event, args)
 			@relay(message)
 
 		# Relays a composed message to a certain node.

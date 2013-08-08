@@ -23,7 +23,7 @@ require [
 			it 'should be possible to access the vector values', ->
 				expect(a[2]).toEqual(5)
 			
-		describe 'basic operations: sum, substract, scale', ->
+		describe 'basic operations: sum, subtract, scale', ->
 			
 			beforeEach ->
 				a = new Vector(3, 4, 5)
@@ -33,8 +33,8 @@ require [
 				c = a.add(b)
 				expect(c).toEqual(new Vector(6, 6, 6))
 
-			it 'should be able to substract the vectors', ->
-				c = a.substract(b)
+			it 'should be able to subtract the vectors', ->
+				c = a.subtract(b)
 				expect(c).toEqual(new Vector(0, 2, 4))
 
 			it 'should be able to scale the vectors', ->
