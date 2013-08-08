@@ -34,6 +34,8 @@ define [
 		_channelConfiguration:
 			reliable: false
 
+		_connectionTimeout: 10000
+
 		# Initializes this class. Will attempt to connect to a remote peer through WebRTC.
 		# Is called from the baseclass' constructor.
 		#
@@ -67,6 +69,13 @@ define [
 			@_connection.createOffer(@_onLocalDescription)
 
 			@_addChannel(channel)
+
+			# Add a connection timeout to automatically kill the peer
+			# when a connection takes to long to establish.
+			timer = setTimeout( ( ) =>
+				@trigger('timeout')
+			, @_connectionTimeout )
+			@once('channel.opened', ( ) => clearTimeout(timer))
 
 		# Disconnects from the peer.
 		#

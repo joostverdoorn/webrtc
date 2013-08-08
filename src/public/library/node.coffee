@@ -48,13 +48,16 @@ define [
 			@messageStorage = []
 
 			@server = new Server(@, @serverAddress)
-			@server.on('connect', @_onServerConnect)
-			@server.on('peer.connectionRequest', @_onPeerConnectionRequest)
-			@server.on('peer.setRemoteDescription', @_onPeerSetRemoteDescription)
-			@server.on('peer.addIceCandidate', @_onPeerAddIceCandidate)
+			@server.on
+				'connect': @_onServerConnect
+				'peer.connectionRequest': @_onPeerConnectionRequest
+				'peer.setRemoteDescription': @_onPeerSetRemoteDescription
+				'peer.addIceCandidate': @_onPeerAddIceCandidate
 
 			@_peers = new Collection()
-			@_peers.on('disconnect', ( peer ) => @removePeer(peer))
+			@_peers.on
+				'disconnect': ( peer ) => @removePeer(peer)
+				'timeout': ( peer ) => @removePeer(peer)
 
 			@initialize?.apply(@)
 			
@@ -63,8 +66,16 @@ define [
 		# @param id [String] the id of the peer to connect to
 		# @param instantiate [Boolean] whether to instantiate the connection
 		#
-		connect: ( id, instantiate = true ) ->
+		connect: ( id, callback, instantiate = true ) ->
+			if peer = @getPeer(id)
+				callback?(true)
+				return
+
 			peer = new Peer(@, id, instantiate)
+			peer.once
+				'channel.opened': ( ) => callback?(true)
+				'timeout': ( ) => callback?(false)
+
 			@addPeer(peer)
 			return peer
 
@@ -225,7 +236,7 @@ define [
 		# @param id [String] the id of the peer
 		#
 		_onPeerConnectionRequest: ( id ) =>
-			@connect(id, false)
+			@connect(id, null, false)
 
 		# Is called when a remote peer wants to set a remote description.
 		#
