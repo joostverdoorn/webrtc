@@ -6,7 +6,6 @@ define [
 	class Controller.Random extends Controller
 
 		initialize: ( @game ) ->
-			console.log('game', @game)
 			@_updateAll()
 
 		_updateAll: ( ) =>
@@ -60,7 +59,7 @@ define [
 				@Fire = false
 
 		_cycleBoost: ( time ) ->
-			if @game.player?.position?.length() < 400
+			if not @game.player or @game.player?.position?.length() < 400
 				@Boost = true
 			else
 				@Boost = false
