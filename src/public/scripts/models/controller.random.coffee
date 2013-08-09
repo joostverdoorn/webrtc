@@ -53,7 +53,7 @@ define [
 				@RotateCannonDownward = -upDown
 
 		_cycleFire: ( time ) ->
-			if true or Math.round(time) % 5 == 0
+			if Math.round(time) % 5 == 0
 				@Fire = true
 			else
 				@Fire = false

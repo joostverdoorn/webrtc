@@ -37,6 +37,10 @@ define [
 			@world = new World(@scene)
 
 			# Listen to events.
+			@world.on
+				'die': ( id ) =>
+					@node.broadcast('entity.die', id)
+
 			@node.server.once
 				'connect': ( ) =>
 
@@ -60,6 +64,9 @@ define [
 					@world.applyPlayerInfo(id, info, timestamp)
 				'player.fire': ( id, info, timestamp ) =>
 					@world.createProjectile(info, timestamp)
+				'entity.die': ( id ) =>
+					@world.removeEntityByID(id)
+
 
 		# Updates the phyics for all objects and renders the scene. Requests a new animation frame
 		# to repeat this methods.

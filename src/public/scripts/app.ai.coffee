@@ -28,11 +28,8 @@ require [
 	'public/scripts/app._'
 	'public/scripts/models/game'
 	'public/scripts/models/controller.random'
-	], ( App, GameModel, RandomController ) ->
-
-	class FakeScene
-		add: ->
-		remove: ->
+	'three'
+	], ( App, GameModel, RandomController, Three ) ->
 
 	# Application base class
 	#
@@ -45,15 +42,15 @@ require [
 			@bots = []
 			console.log 'INIT'
 
-			@scene = new FakeScene()
-
 			@newBot()
 
 			window.requestAnimationFrame(@update)
 
 		newBot: ( ) =>
 			console.log 'CREATING'
-			game = new GameModel(@scene)
+
+			scene = new Three.Scene()
+			game = new GameModel(scene)
 			game.controller = new RandomController(game)
 			game.on
 				'joined': =>
@@ -63,11 +60,12 @@ require [
 					game.startGame()
 			@bots.push(game)
 
-			if @bots.length < 25
+			if @bots.length < 10
 				setTimeout(@newBot, 5000)
 
 		update: ( timestamp ) =>
 			for game in @bots
+				game.player?.mesh?.updateMatrixWorld()
 				game.update(timestamp)
 
 			window.requestAnimationFrame(@update)

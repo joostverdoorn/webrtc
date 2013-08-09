@@ -2,7 +2,8 @@ define [
 	'public/scripts/models/entity._'
 
 	'three'
-	], ( Entity, Three ) ->
+	'underscore'
+	], ( Entity, Three, _ ) ->
 
 	# This class implements projectile-specific properties for the entity physics object.
 	#
@@ -17,6 +18,9 @@ define [
 		# @param info [Object] an object containing all info to apply to the player
 		#
 		initialize: ( player = null, cannon = null, info = null ) ->
+			if player?.id
+				@id = "#{player.id}_#{_.uniqueId('P')}"
+
 			@mass = 2
 			@drag = .0005
 			@angularDrag = 10

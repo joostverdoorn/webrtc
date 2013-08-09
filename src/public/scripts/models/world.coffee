@@ -27,7 +27,11 @@ define [
 			@_loader = new Three.JSONLoader()
 
 			@_entities = new Collection()
-			@_entities.on('die', ( entity ) => @removeEntity(entity))
+			@_entities.on('die', ( entity ) =>
+					if entity.owner and entity.id
+						@trigger('die', entity.id)
+					@removeEntity(entity)
+				)
 
 			# Add lights to the scene.
 			directionalLight = new Three.DirectionalLight(0xffffff, 2)
@@ -56,6 +60,13 @@ define [
 		#
 		removeEntity: ( entity ) ->
 			@_entities.remove(entity)
+
+		# Removes a physics entity from the world
+		#
+		# @param entity [Entity] the entity to remove
+		#
+		removeEntityByID: ( id ) ->
+			_(@_entities).find( ( entity ) -> entity.id is id).die()
 
 		# Creates and adds a player to the world.
 		#

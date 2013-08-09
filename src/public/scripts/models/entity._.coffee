@@ -193,6 +193,9 @@ define [
 			unless info?
 				return
 
+			if info.id
+				@id = info.id
+
 			# We received a timed update. From it we will compute
 			# the target position, and rotation, and slowly ease
 			# toward it. This will look much better and will be more
@@ -278,6 +281,7 @@ define [
 		#
 		getInfo: ( ) =>
 			info =
+				id: @id
 				velocity: @velocity.toArray()
 				angularVelocity: @angularVelocity.toArray()
 				position: @position.toArray()
@@ -309,6 +313,13 @@ define [
 				if intersect = intersects[0]
 					intersect.distance -= behind
 					return intersect
+				else if distance <= radius / 2
+					return {
+						distance: 0
+						point: point.clone()
+						face:
+							normal: new Three.Vector3()
+					}
 				else
 					return null
 
