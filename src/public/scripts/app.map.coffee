@@ -162,6 +162,13 @@ require [
 						player.applyInfo(info)
 						@players.push(player)
 
+					if player.lastUpdate
+						clearTimeout(player.lastUpdate)
+
+					player.lastUpdate = setTimeout(->
+						player.die()
+					, 30000)
+
 		# Sets the dimensions of the viewport and the aspect ration of the camera
 		#
 		# @return [[Integer, Integer]] a tuple of the width and height of the container

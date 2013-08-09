@@ -66,7 +66,7 @@ define [
 		# @param entity [Entity] the entity to remove
 		#
 		removeEntityByID: ( id ) ->
-			_(@_entities).find( ( entity ) -> entity.id is id).die()
+			_(@_entities).find( ( entity ) -> entity.id is id)?.die()
 
 		# Creates and adds a player to the world.
 		#
@@ -114,7 +114,14 @@ define [
 		applyPlayerInfo: ( id, info, timestamp ) ->
 			if player = @getPlayer(id)
 				player.applyInfo(info, timestamp)
-			else @createPlayer(id, false, info)
+			else
+				player = @createPlayer(id, false, info)
+
+			if player.lastUpdate
+				clearTimeout(player.lastUpdate)
+			player.lastUpdate = setTimeout(->
+				player.die()
+			, 30000)
 
 		# Creates a new projectile.
 		#
