@@ -17,8 +17,8 @@ define [
 			_.defer(@_updateAll)
 
 		_movement: ( time ) ->
-			leftRight = Math.sin(time * Math.PI / 10)
-			forwardBackward = Math.cos(time * Math.PI / 10)
+			leftRight = 0#Math.sin(time * Math.PI / 10)
+			forwardBackward = 0#Math.cos(time * Math.PI / 10)
 
 			if leftRight > 0
 				@FlyRight = leftRight
@@ -35,8 +35,8 @@ define [
 				@FlyBackward = -forwardBackward
 
 		_gunRotation: ( time ) ->
-			leftRight = Math.sin(time * Math.PI / 10 - Math.PI / 2)
-			upDown = Math.cos(time * Math.PI / 10 - Math.PI / 2)
+			leftRight = 0#Math.sin(time * Math.PI / 10 - Math.PI / 2)
+			upDown = 0#Math.cos(time * Math.PI / 10 - Math.PI / 2)
 
 			if leftRight > 0
 				@RotateCannonRight = leftRight
