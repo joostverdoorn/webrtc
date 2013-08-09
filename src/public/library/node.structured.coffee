@@ -167,10 +167,12 @@ define [
 			if @isSuperNode
 				callback?(false)
 				return
+
 			console.log 'sending parent request to ' + peer.id
-			peer.query('peer.requestAdoption', @id, (accepted) =>
-				unless accepted?
+			peer.query('peer.requestAdoption', @id, ( accepted ) =>
+				unless accepted
 					callback?(false)
+
 				if accepted and not @isSuperNode
 					console.log 'parent request accepted'
 					if @_parent?
@@ -302,7 +304,6 @@ define [
 			if @isSuperNode is superNode
 				return
 
-
 			console.log "Supernode: #{superNode} and having token", @token?
 			@isSuperNode = superNode
 
@@ -369,8 +370,9 @@ define [
 		_onPeerSetSuperNode: ( id, superNode ) =>
 			unless peer = @getPeer(id)
 				if superNode and @isSuperNode
-					peer = @connect(id, () =>
-						@addSibling(peer)
+					peer = @connect(id, ( success ) =>
+						if success
+							@addSibling(peer)
 					)
 			else peer.isSuperNode = superNode
 
@@ -407,8 +409,11 @@ define [
 
 				# Else, first connect, then set as parent.
 				else
-					peer = @connect(superNode.id, ( ) =>
-						console.log peer
+					peer = @connect(superNode.id, ( success ) =>
+						unless success
+							connectParent(superNodes)
+							return
+
 						@setParent(peer, ( accepted ) =>
 							if accepted
 								@trigger('joined')
@@ -476,8 +481,9 @@ define [
 							if peer = @getPeer(superNode.id)
 								@addSibling(peer)
 							else
-								peer = @connect(superNode.id, ( ) =>
-									@addSibling(peer)
+								peer = @connect(superNode.id, ( success ) =>
+									if success
+										@addSibling(peer)
 								)
 						) (superNode)
 				)
@@ -581,8 +587,9 @@ define [
 			if peer = @getPeer(id)
 				@setParent(peer)
 			else
-				peer = @connect(id, ( ) =>
-					@setParent(peer)
+				peer = @connect(id, ( success ) =>
+					if success
+						@setParent(peer)
 				)
 
 		# Adds a token to the collection of foreign tokens
@@ -620,6 +627,7 @@ define [
 		#
 		_onTokenReceived: ( tokenString, timestamp, message ) =>
 			if @token?
+				@broadcast('token.die', tokenString)
 				return
 
 			@token = Token.deserialize(tokenString)
