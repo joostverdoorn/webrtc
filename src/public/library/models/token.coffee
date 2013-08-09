@@ -23,7 +23,7 @@ define [
 		#
 		serialize: ( ) ->
 			position = @position?.serialize() || null
-			
+
 			object =
 				id: @id
 				nodeId: @nodeId
@@ -51,4 +51,3 @@ define [
 
 
 
-		 

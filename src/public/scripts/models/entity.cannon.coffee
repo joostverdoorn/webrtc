@@ -9,7 +9,7 @@ define [
 	#
 	class Entity.Cannon extends Entity
 
-		# Is called from the baseclass' constructor. 
+		# Is called from the baseclass' constructor.
 		#
 		# @param info [Object] an object containing all info to apply to the player
 		#
@@ -28,11 +28,11 @@ define [
 			@extended = false
 
 			@_cannonBase = new Three.Mesh()
-			
+
 			# Load the cannon mesh.
 			@_loader.load('/meshes/cannon.js', ( geometry, material ) =>
 				geometry.computeBoundingSphere()
-				
+
 				@mesh.geometry = geometry
 				@mesh.material = new Three.MeshFaceMaterial(material)
 				@mesh.receiveShadow = true
@@ -126,7 +126,7 @@ define [
 
 		# Is called when the player fires a projectile. This will reset the position
 		# of the faux projectile so it can be lowered into the cannon.
-		# 
+		#
 		_onFire: ( ) =>
 			@_fauxProjectile.mesh.visible = false
 			setTimeout( =>
@@ -143,7 +143,7 @@ define [
 				return
 
 			super(info)
-			
+
 			if info.rotateLeft?
 				@rotateLeft = info.rotateLeft
 
@@ -158,14 +158,14 @@ define [
 
 			if info.extended?
 				@extended = info.extended
-			
+
 		# Returns the current info in an object.
 		#
 		# @return [Object] an object of all the info
 		#
 		getInfo: ( ) ->
 			info = super()
-			
+
 			info.rotateLeft = @rotateLeft
 			info.rotateRight = @rotateRight
 			info.rotateUpward = @rotateUpward

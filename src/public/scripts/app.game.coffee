@@ -15,8 +15,8 @@ requirejs.config
 		'qrcode': [ 'jquery' ]
 		'jquery.plugins': [ 'jquery' ]
 
-	# We want the following paths for 
-	# code-sharing reasons. Now it doesn't 
+	# We want the following paths for
+	# code-sharing reasons. Now it doesn't
 	# matter from where we require a module.
 	paths:
 		'public': './'
@@ -48,17 +48,17 @@ require [
 	class App.Game extends App
 
 		# This method will be called from the baseclass when it has been constructed.
-		# 
+		#
 		initialize: ( ) ->
 			# Create scene.
 			@scene = new Three.Scene()
 			@scene.add(@camera)
 			@scene.fog = new Three.FogExp2( 0xaabbff, 0.0015 );
-			
+
 			# Create sky dome.
 			geometry = new THREE.SphereGeometry( 1500, 6, 8 )
 			material = new THREE.MeshBasicMaterial(map: THREE.ImageUtils.loadTexture('/images/sky.jpg'))
-			@sky = new THREE.Mesh(geometry, material) 
+			@sky = new THREE.Mesh(geometry, material)
 			@sky.scale.x = -1;
 			@scene.add( @sky )
 
@@ -118,7 +118,7 @@ require [
 			@camera.aspect = @aspectRatio
 			@camera.updateProjectionMatrix()
 
-		# Updates the phyics for all objects and renders the scene. Requests a new animation frame 
+		# Updates the phyics for all objects and renders the scene. Requests a new animation frame
 		# to repeat this methods.
 		#
 		# @param timestamp [Integer] the time that has elapsed since the first requestAnimationFrame
@@ -181,7 +181,7 @@ require [
 		# @param type [String] the type of controller (desktop or mobile)
 		#
 		_onControllerSelect: ( type ) =>
-			if type is 'desktop' 
+			if type is 'desktop'
 				@controller = new DesktopController()
 				@controller.requestPointerLock()
 				@overlay.showInfoScreen('desktop')
@@ -198,13 +198,13 @@ require [
 							@overlay.hide()
 						)
 
-			else if type is 'mobile' 
+			else if type is 'mobile'
 				@controller = new MobileController()
-				
+
 				@controller.once
 					'initialized': ( ) =>
 						@overlay.showMobileConnectScreen(@controller.node.id)
-					'connected': ( ) => 
+					'connected': ( ) =>
 						@overlay.showInfoScreen('mobile')
 
 				@controller.on

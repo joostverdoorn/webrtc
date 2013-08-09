@@ -13,7 +13,7 @@ define [], ( ) ->
 			super()
 			for i in args
 				@push(i)
-			
+
 		# Adds one Vector to another
 		#
 		# @param v [Vector] A Vector to be added

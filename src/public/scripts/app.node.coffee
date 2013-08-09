@@ -8,15 +8,15 @@ requirejs.config
 		'bootstrap': [ 'jquery' ]
 		'jquery.plugins': [ 'jquery' ]
 
-	# We want the following paths for 
-	# code-sharing reasons. Now it doesn't 
+	# We want the following paths for
+	# code-sharing reasons. Now it doesn't
 	# matter from where we require a module.
 	paths:
 		'public': './'
 
 		'jquery': 'vendor/scripts/jquery'
 		'bootstrap': 'vendor/scripts/bootstrap'
-		
+
 require [
 	'scripts/app._'
 	'library/node.structured'
@@ -27,20 +27,20 @@ require [
 	#
 
 	class App.Master extends App
-		
+
 		# This method will be called from the baseclass when it has been constructed.
-		# 
+		#
 		initialize: ( ) ->
 			@node = new Node()
 			@tokens = {}
 
 			@_updateNodesInterval = setInterval(@displayNodes, 2000)
-			
+
 			@node.on('peer.added', ( peer ) =>
 				$("#node-#{peer.id}").replaceWith(@generateNodeRow( peer ))
 			)
 
-			@node.on('peer.removed', ( peer ) => 
+			@node.on('peer.removed', ( peer ) =>
 				$("#node-#{peer.id}").replaceWith(@generateNodeRow(peer))
 			)
 
@@ -70,7 +70,7 @@ require [
 						row = @generateNodeRow(peer || node)
 						$("#nodes tbody").append(row)
 
-					
+
 			)
 
 		# Generate and returns a jQuery object of a table row containing all information
@@ -88,7 +88,7 @@ require [
 				row = $("<tr class='self-row success' id='node-#{node.id}'></tr>")
 			else
 				row = $("<tr class='node-row' id='node-#{node.id}'></tr>")
-			
+
 			row.append("<td>#{node.id}</td>")
 
 			if self
@@ -109,24 +109,24 @@ require [
 				row.append("<td class='token'>#{tokenAmount}</td>")
 				row.append("<td>#{node.role}</td>")
 				row.append("<td>Connected</td>")
-				
+
 				elem = $("<td><a href='#'>Disconnect</a></td>")
-				elem.click( ( ) => 
+				elem.click( ( ) =>
 					@node.disconnect(node.id)
 					elem.replaceWith("<td>Disconnecting...</td>")
 				)
 				row.append(elem)
 
-			else 
+			else
 				row.append("<td>-</td>")
 				row.append("<td class='superNode'>#{node.isSuperNode}</td>")
 				row.append("<td>-</td>")
 				row.append("<td>-</td>")
 				row.append("<td>-</td>")
-				
+
 				elem = $("<td><a href='#'>Connect</a></td>")
-				elem.click( ( ) => 
-					@node.connect(node.id) 
+				elem.click( ( ) =>
+					@node.connect(node.id)
 					elem.replaceWith("<td>Connecting...</td>")
 				)
 				row.append(elem)
@@ -148,5 +148,5 @@ require [
 
 
 
-			
+
 	window.App = new App.Master

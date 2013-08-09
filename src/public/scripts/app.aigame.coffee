@@ -1,7 +1,7 @@
 define [
 	'public/scripts/app._'
 	'public/library/node.structured'
-	
+
 	'public/scripts/models/controller._'
 	'public/scripts/models/controller.random'
 
@@ -27,7 +27,7 @@ define [
 		_lastUpdateTime = 0
 
 		# This method will be called from the baseclass when it has been constructed.
-		# 
+		#
 		initialize: ( ) ->
 			# Create node and controller.
 			@node = new Node()
@@ -60,7 +60,7 @@ define [
 			# Create sky dome.
 			geometry = new THREE.SphereGeometry( 1500, 6, 8 )
 			material = new THREE.MeshBasicMaterial(map: THREE.ImageUtils.loadTexture('/images/sky.jpg'))
-			@sky = new THREE.Mesh(geometry, material) 
+			@sky = new THREE.Mesh(geometry, material)
 			@sky.scale.x = -1;
 			@scene.add( @sky )
 
@@ -109,7 +109,7 @@ define [
 			@camera.aspect = @aspectRatio
 			@camera.updateProjectionMatrix()
 
-		# Updates the phyics for all objects and renders the scene. Requests a new animation frame 
+		# Updates the phyics for all objects and renders the scene. Requests a new animation frame
 		# to repeat this methods.
 		#
 		# @param timestamp [Integer] the time that has elapsed since the first requestAnimationFrame
@@ -222,7 +222,7 @@ define [
 		# @param type [String] the type of controller (desktop or mobile)
 		#
 		_onControllerSelect: ( type ) =>
-			if type is 'desktop' 
+			if type is 'desktop'
 				@controller = new RandomController(@)
 				@overlay.showInfoScreen('desktop')
 				###
@@ -243,13 +243,13 @@ define [
 						)
 				###
 
-			else if type is 'mobile' 
+			else if type is 'mobile'
 				@controller = new MobileController()
-				
+
 				@controller.once
 					'initialized': ( ) =>
 						@overlay.showMobileConnectScreen(@controller.node.id)
-					'connected': ( ) => 
+					'connected': ( ) =>
 						@overlay.showInfoScreen('mobile')
 
 				@controller.on

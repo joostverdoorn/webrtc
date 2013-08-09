@@ -3,7 +3,7 @@ define [
 	'public/scripts/helpers/mixin.eventbindings'
 
 	'public/library/node.structured'
-	
+
 	'public/scripts/models/controller._'
 
 	'public/scripts/models/world'
@@ -27,7 +27,7 @@ define [
 		_lastUpdateTime = 0
 
 		# This method will be called from the baseclass when it has been constructed.
-		# 
+		#
 		constructor: ( @scene ) ->
 			# Create node and controller.
 			@node = new Node()
@@ -61,7 +61,7 @@ define [
 				'player.fire': ( id, info, timestamp ) =>
 					@world.createProjectile(info, timestamp)
 
-		# Updates the phyics for all objects and renders the scene. Requests a new animation frame 
+		# Updates the phyics for all objects and renders the scene. Requests a new animation frame
 		# to repeat this methods.
 		#
 		# @param timestamp [Integer] the time that has elapsed since the first requestAnimationFrame

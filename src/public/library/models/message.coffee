@@ -45,7 +45,7 @@ define [], ( ) ->
 			for i in [0...string.length]
 				char = string.charCodeAt(i)
 				hash = ((hash << 5) + hash) + char
-		
+
 			return hash
 
 		# Stores this message's hash in the static hash array for later lookup

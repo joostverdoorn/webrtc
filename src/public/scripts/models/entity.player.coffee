@@ -10,13 +10,13 @@ define [
 	#
 	class Entity.Player extends Entity
 
-		# Is called from the baseclass' constructor. Will set up player specific 
+		# Is called from the baseclass' constructor. Will set up player specific
 		# properties for the entity
 		#
 		# @param id [String] the string id of the player
 		# @param info [Object] an object containing all info to apply to the player
 		#
-		initialize: ( @id, info = null, timestamp = null ) ->		
+		initialize: ( @id, info = null, timestamp = null ) ->
 			@mass = 100
 			@drag = .01
 			@angularDrag = 7
@@ -80,7 +80,7 @@ define [
 			# Add listeners to common events.
 			@on('impact.world', @_onImpactWorld)
 
-		# Updates the physics state of the player. Adds forces to simulate gravity and 
+		# Updates the physics state of the player. Adds forces to simulate gravity and
 		# the propulsion system. Calls baseclass' update after.
 		#
 		# @param dt [Float] the time that has elapsed since last update was called.
@@ -138,7 +138,7 @@ define [
 				thrustVector.divideScalar(@position.length() - 1000)
 
 			@addForce(thrustVector)
-			
+
 			# Update physics.
 			super(dt, not @landed)
 
@@ -190,7 +190,7 @@ define [
 		#
 		# @param vector [Three.Vector3] the normal vector.
 		# @return [Three.Euler] the ideal (level) rotation.
-		# 
+		#
 		calculateLevelRotation: ( vector = @position ) ->
 			upVector = vector.clone().normalize()
 			rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
@@ -204,7 +204,7 @@ define [
 			levelRotation = new Three.Euler().setFromRotationMatrix(rotationMatrix, 'YXZ')
 			return levelRotation
 
-		# Is called when the player impacts the world. Used to determine if the 
+		# Is called when the player impacts the world. Used to determine if the
 		# player should systain damage.
 		#
 		# @param position [Three.Vector3] the position of the player at the moment of impact
@@ -227,7 +227,7 @@ define [
 				return
 
 			super(info, timestamp)
-			
+
 			if info.flyLeft?
 				@flyLeft = info.flyLeft
 
@@ -253,7 +253,7 @@ define [
 				@baseExtended = info.baseExtended
 
 			@cannon.applyInfo(info.cannon, timestamp)
-			
+
 		# Returns the current info in an object.
 		#
 		# @return [Object] an object of all the info

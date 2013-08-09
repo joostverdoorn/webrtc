@@ -9,7 +9,7 @@ define [
 	class Entity.Projectile extends Entity
 
 
-		# Is called from the baseclass' constructor. Will set up projectile specific 
+		# Is called from the baseclass' constructor. Will set up projectile specific
 		# properties for the entity
 		#
 		# @param player [Player] Player who fires the projectile

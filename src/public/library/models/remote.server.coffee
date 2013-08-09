@@ -22,7 +22,7 @@ define [
 		#
 		connect: ( ) ->
 			@_connection = io.connect(@_address, {'force new connection': true})
-			
+
 			@_connection.on('message', ( message ) => @trigger('message', message))
 			@_connection.on('connect', ( ) => @trigger('connect', @_connection.socket.sessionid))
 			@_connection.on('disconnect', ( ) => @trigger('disconnect'))
@@ -38,7 +38,7 @@ define [
 		#
 		isConnected: ( ) ->
 			return @_connection.socket.connected
-			
+
 		# Sends a predefined message to the remote.
 		#
 		# @param message [Message] the message to send

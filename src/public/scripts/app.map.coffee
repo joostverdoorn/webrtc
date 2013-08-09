@@ -19,8 +19,8 @@ requirejs.config
 		'stats':
 			exports: 'Stats'
 
-	# We want the following paths for 
-	# code-sharing reasons. Now it doesn't 
+	# We want the following paths for
+	# code-sharing reasons. Now it doesn't
 	# matter from where we require a module.
 	paths:
 		'public': './'
@@ -53,8 +53,8 @@ require [
 		serverAddress: ':8080/'
 
 		nodes: []
-		
-		# Constructs a new inspector app. 
+
+		# Constructs a new inspector app.
 		#
 		constructor: ( ) ->
 			viewAngle = 45
@@ -99,7 +99,7 @@ require [
 			@projector = new THREE.Projector();
 			@label = $('<div class="label"></div>')
 			$('body').append(@label)
-			
+
 			@label.hide()
 			@label.css('position', 'absolute')
 
@@ -161,7 +161,7 @@ require [
 						player = new Player(@, id)
 						player.applyInfo(info)
 						@players.push(player)
-			
+
 		# Sets the dimensions of the viewport and the aspect ration of the camera
 		#
 		# @return [[Integer, Integer]] a tuple of the width and height of the container
@@ -176,7 +176,7 @@ require [
 
 			return [width, height]
 
-		# Updates the scene, calling update on every node in the scene. Also 
+		# Updates the scene, calling update on every node in the scene. Also
 		# requests a new animation frame to keep on updating.
 		#
 		# @param timestamp [Integer] the time that has elapsed since the first update
@@ -198,7 +198,7 @@ require [
 			# Set last update time and request a new animation frame.
 			@_lastUpdateTime = timestamp
 			window.requestAnimationFrame(@update)
-	
+
 	class Player
 
 		constructor: ( @app, @id ) ->

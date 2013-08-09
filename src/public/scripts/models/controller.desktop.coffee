@@ -6,7 +6,7 @@ define [
 
 	class Controller.Desktop extends Controller
 
-		@Keys: 
+		@Keys:
 			BACKSPACE:		8
 			TAB:			9
 			RETURN:			13
@@ -77,12 +77,12 @@ define [
 		# Requests a pointer lock from the browser.
 		#
 		requestPointerLock: ( ) ->
-			App.container.requestPointerLock = App.container.requestPointerLock || 
+			App.container.requestPointerLock = App.container.requestPointerLock ||
 				App.container.mozRequestPointerLock || App.container.webkitRequestPointerLock
 
 			App.container.requestPointerLock()
 
-		# Is called when a key event is fired by the browser. This will trigger a key 
+		# Is called when a key event is fired by the browser. This will trigger a key
 		# specific event.
 		#
 		# @param e [Event] the event fired
@@ -106,7 +106,7 @@ define [
 				@trigger('MOUSEMOVE', dx, dy)
 
 				# Trigger a mousemove with 0 dx and 0 dy after a fixed timeout
-				# to signal that the mouse has stopped moving. 
+				# to signal that the mouse has stopped moving.
 				clearTimeout(@_mouseStopTimeout)
 				@_mouseStopTimeout = setTimeout( =>
 					@trigger('MOUSEMOVE', 0, 0)

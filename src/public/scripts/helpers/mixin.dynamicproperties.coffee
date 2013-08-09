@@ -6,8 +6,8 @@ define ->
 	#
 	DynamicProperties =
 
-		ClassMethods: {}		
-		
+		ClassMethods: {}
+
 		InstanceMethods:
 
 			# Defines setters from an object of properties mapped to function calls
@@ -45,19 +45,19 @@ define ->
 					@_setters = {}
 
 				unless @_getters?
-					@_getters = {}			
+					@_getters = {}
 
 				unless @_setters[key]? and @_getters[key]?
 					try
-						Object.defineProperty(@, key, 
-							set: ( value ) => 
+						Object.defineProperty(@, key,
+							set: ( value ) =>
 								return @_setters[key].apply( @, [ value ] )
 
 							get: ( ) =>
-								return @_getters[key].apply( @ )								
+								return @_getters[key].apply( @ )
 						)
 
 						return true
 					catch e # Just return false
-				return false	
+				return false
 

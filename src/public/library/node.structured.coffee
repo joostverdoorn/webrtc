@@ -26,7 +26,7 @@ define [
 
 	'public/library/models/collection'
 	'public/library/models/vector'
-	
+
 	'underscore'
 
 	], ( Mixable, EventBindings, Node, Server, Peer, Message, Token, Collection, Vector, _ ) ->
@@ -49,7 +49,7 @@ define [
 		_foundationNodes : 5
 		_superNodeSwitchThreshold : 0.7
 		_tokenMoveThreshold : 1
-		
+
 
 		position : new Vector(Math.random()-0.5, Math.random()-0.5, Math.random()-0.5)
 
@@ -404,7 +404,7 @@ define [
 						else
 							connectParent(superNodes)
 					)
-				
+
 				# Else, first connect, then set as parent.
 				else
 					peer = @connect(superNode.id, ( ) =>
@@ -629,7 +629,7 @@ define [
 			@token.position = @position
 
 			@broadcast('token.info', @token.serialize(), true)
-			
+
 			setTimeout(( ) =>
 				@_computeTokenTargetPosition()
 			, @_tokenInfoTimeout)
@@ -697,7 +697,7 @@ define [
 
 			closestChild = null
 			closestDistance = Infinity
-			
+
 			for child in @getChildren() when child.position?
 				distance = child.position.getDistance(token.targetPosition)
 				if distance < closestDistance

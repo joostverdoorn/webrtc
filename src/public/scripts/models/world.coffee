@@ -94,7 +94,7 @@ define [
 		getPlayers: ( ) ->
 			return _(@_entities).filter( ( entity ) -> entity instanceof Player)
 
-		# Updates a player's info. If the player doesn't exist, 
+		# Updates a player's info. If the player doesn't exist,
 		# it will create the player using addPlayer().
 		#
 		# @param id [String] the string id of the player
@@ -106,7 +106,7 @@ define [
 			else @createPlayer(id, false, info)
 
 		# Creates a new projectile.
-		# 
+		#
 		# @param info [Object] the object containing the projectile info
 		#
 		createProjectile: ( info, timestamp ) ->

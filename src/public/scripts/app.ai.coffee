@@ -12,8 +12,8 @@ requirejs.config
 		'qrcode': [ 'jquery' ]
 		'jquery.plugins': [ 'jquery' ]
 
-	# We want the following paths for 
-	# code-sharing reasons. Now it doesn't 
+	# We want the following paths for
+	# code-sharing reasons. Now it doesn't
 	# matter from where we require a module.
 	paths:
 		'public': './'
@@ -29,7 +29,7 @@ require [
 	'public/scripts/models/game'
 	'public/scripts/models/controller.random'
 	], ( App, GameModel, RandomController ) ->
-	
+
 	class FakeScene
 		add: ->
 		remove: ->

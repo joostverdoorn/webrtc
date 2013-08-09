@@ -10,13 +10,13 @@ define [
 	#
 	class Entity.Planet extends Entity
 
-		# Is called from the baseclass' constructor. Will set up player specific 
+		# Is called from the baseclass' constructor. Will set up player specific
 		# properties for the entity
 		#
 		# @param id [String] the string id of the player
 		# @param info [Object] an object containing all info to apply to the player
 		#
-		initialize: ( ) ->		
+		initialize: ( ) ->
 			@mass = 1000000000
 			@applyGravity = false
 

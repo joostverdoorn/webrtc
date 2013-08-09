@@ -1,7 +1,7 @@
 define [
 	'public/library/helpers/mixable'
 	'public/library/helpers/mixin.eventbindings'
-	
+
 	'jquery'
 	'qrcode'
 	], ( Mixable, EventBindings, $, QRCode ) ->
@@ -14,7 +14,7 @@ define [
 		# @param context [jQuery DOM-object] The object to add this info view to.
 		# @param forceKeyboard [Boolean] Force to use the keyboard as input without showing the selection screen
 		#
-		constructor: ( ) ->			
+		constructor: ( ) ->
 			$('head').append('<link rel="stylesheet" type="text/css" href="/stylesheets/overlay.css">')
 
 			@container = $('<div id="overlay"></div>')
@@ -54,7 +54,7 @@ define [
 
 		# Shows a welcome screen to the user that the user can click away to get to the controller selection
 		#
-		showWelcomeScreen: ( ) ->			
+		showWelcomeScreen: ( ) ->
 			clickHandler = ( ) => @showControllerSelectionScreen()
 			onShow = ( ) => @container.click(clickHandler)
 			onHide = ( ) => @container.unbind('click', clickHandler)
@@ -67,7 +67,7 @@ define [
 			clickHandlerDesktop = ( ) =>
 				@trigger('controller.select', 'desktop')
 
-			clickHandlerMobile = ( ) => 
+			clickHandlerMobile = ( ) =>
 				@trigger('controller.select', 'mobile')
 
 			onShow = ( ) =>

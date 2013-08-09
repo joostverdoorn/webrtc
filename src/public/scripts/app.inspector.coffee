@@ -19,8 +19,8 @@ requirejs.config
 		'stats':
 			exports: 'Stats'
 
-	# We want the following paths for 
-	# code-sharing reasons. Now it doesn't 
+	# We want the following paths for
+	# code-sharing reasons. Now it doesn't
 	# matter from where we require a module.
 	paths:
 		'public': './'
@@ -54,8 +54,8 @@ require [
 
 		nodes: []
 		messageStorage: []
-		
-		# Constructs a new inspector app. 
+
+		# Constructs a new inspector app.
 		#
 		constructor: ( ) ->
 			viewAngle = 45
@@ -93,7 +93,7 @@ require [
 			@projector = new THREE.Projector();
 			@label = $('<div class="label"></div>')
 			$('body').append(@label)
-			
+
 			@label.hide()
 			@label.css('position', 'absolute')
 
@@ -142,18 +142,18 @@ require [
 			# Various callbacks and the like.
 			window.requestAnimationFrame(@update)
 			$(window).resize(@setDimensions)
-			
+
 			$(window).mousemove ( event ) =>
 
 				# Detect mouse intersects
 				mouseX = ( event.clientX / window.innerWidth ) * 2 - 1
 				mouseY = - ( event.clientY / window.innerHeight ) * 2 + 1
 				vector = new THREE.Vector3( mouseX, mouseY, 0.5 )
-				
+
 				@projector.unprojectVector( vector, @camera )
 				raycaster = new THREE.Raycaster( @camera.position, vector.sub( @camera.position ).normalize() )
 				intersects = raycaster.intersectObjects( node.mesh for node in @nodes )
-				
+
 				if node = _(@nodes).find( ( node ) -> node.mesh is intersects[0]?.object )
 					@label.html(node.id)
 					@label.css('left', event.clientX)
@@ -162,12 +162,12 @@ require [
 				else
 					@label.hide()
 
-			$(window).mousedown ( ) => 
+			$(window).mousedown ( ) =>
 				@_mouseDown = true
 				@_lastMouseX = event.offsetX
 				@_lastMouseY = event.offsetY
 
-			$(window).mouseup ( ) => 
+			$(window).mouseup ( ) =>
 				@_mouseDown = false
 
 			$(window).scroll ( event ) =>
@@ -191,7 +191,7 @@ require [
 
 			return [width, height]
 
-		# Updates the scene, calling update on every node in the scene. Also 
+		# Updates the scene, calling update on every node in the scene. Also
 		# requests a new animation frame to keep on updating.
 		#
 		# @param timestamp [Integer] the time that has elapsed since the first update
@@ -263,7 +263,7 @@ require [
 			@scene = @app.scene
 
 			geometry = new Three.SphereGeometry(0.5, 6, 8)
-			@mesh = new Three.Mesh(geometry)			
+			@mesh = new Three.Mesh(geometry)
 			@scene.add(@mesh)
 
 			@peers = []
@@ -302,7 +302,7 @@ require [
 							color: 0xffaaff
 							linewidth: 1
 						)
-						
+
 						edge = new Three.Line(geometry, material)
 						@edges.push(edge)
 						@scene.add(edge)
@@ -325,14 +325,14 @@ require [
 			@id = nodeInfo.id
 			@isSuperNode = nodeInfo.isSuperNode
 			@token = nodeInfo.token
-			
+
 			if @token?
 				console.log @token
 				unless @tokenMesh?
 					geometry = new Three.SphereGeometry(0.2, 6, 8)
 					material = new THREE.MeshLambertMaterial( color:0xffff00 )
 					@tokenMesh = new Three.Mesh(geometry, material)
-					@tokenMesh.position.set(@token.targetPosition[0], @token.targetPosition[1], @token.targetPosition[2])			
+					@tokenMesh.position.set(@token.targetPosition[0], @token.targetPosition[1], @token.targetPosition[2])
 					@scene.add(@tokenMesh)
 
 				x = @token.targetPosition[0]
@@ -342,7 +342,7 @@ require [
 
 			else
 				@scene.remove(@tokenMesh)
-				@scene.remove(@tokenEdge)			
+				@scene.remove(@tokenEdge)
 				delete @tokenMesh
 				delete @tokenEdge
 

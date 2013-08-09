@@ -12,7 +12,7 @@ define [
 		ClassMethods: {}
 
 		InstanceMethods:
-			
+
 			# Binds an event to a callback.
 			#
 			# @overload on(name, callback, context = null)

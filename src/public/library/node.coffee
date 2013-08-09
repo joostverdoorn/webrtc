@@ -23,7 +23,7 @@ define [
 	'public/library/models/message'
 
 	'public/library/models/collection'
-	
+
 	'underscore'
 
 	], ( Mixable, EventBindings, Server, Peer, Message, Collection, _ ) ->
@@ -60,7 +60,7 @@ define [
 				'timeout': ( peer ) => @removePeer(peer)
 
 			@initialize?.apply(@)
-			
+
 		# Attempts to connect to a peer. Calls the callback function
 		# with argument true when the connection was fully established,
 		# and false when the connection timed out.
@@ -177,7 +177,7 @@ define [
 			args = [to, 'query', request, queryID].concat(args)
 			@_peers.once(queryID, callback)
 			@emitTo.apply(@, args)
-		
+
 		# Broadcasts a message to all peers in network.
 		#
 		# @param event [String] the event to broadcast
@@ -186,7 +186,7 @@ define [
 		broadcast: ( event, args... ) ->
 			args = ['*', event].concat(args)
 			@emitTo.apply(@, args)
-		
+
 		# Relays a message to other nodes. If the intended receiver is not a direct
 		# neighbor, we route the message through other nodes in an attempt to reach
 		# the destination.
