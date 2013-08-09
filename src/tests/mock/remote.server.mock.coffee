@@ -29,5 +29,3 @@ define [
 
 		query: ( request, args..., callback ) ->
 			callback( @_nodes )
-
-

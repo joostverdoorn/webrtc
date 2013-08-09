@@ -22,9 +22,9 @@ require [
 
 			it 'should be possible to access the vector values', ->
 				expect(a[2]).toEqual(5)
-			
+
 		describe 'basic operations: sum, subtract, scale', ->
-			
+
 			beforeEach ->
 				a = new Vector(3, 4, 5)
 				b = new Vector(3, 2, 1)
@@ -42,17 +42,17 @@ require [
 				expect(c).toEqual(new Vector(-6, -8, -10))
 
 		describe 'line functions: getDistance and getLength', ->
-			
+
 			beforeEach ->
 				a = new Vector(2, 3, -9)
 				b = new Vector(5, 7, -9)
 				c = new Vector(10, 8, -6)
 
-			it 'should be able to calculate the distance between two vectors', ->			
+			it 'should be able to calculate the distance between two vectors', ->
 				expect(a.getDistance(b)).toEqual(5)
 				expect(Math.round(c.getDistance(a))).toEqual(10)
 
-			it 'should be able to calculate the length of the vector', ->			
+			it 'should be able to calculate the length of the vector', ->
 				expect(Math.round(a.getLength())).toEqual(10)
 				expect(a.getLength()).toEqual(a.getDistance(new Vector(0,0,0)))
 
@@ -93,4 +93,4 @@ require [
 
 
 
-			
+

@@ -12,7 +12,7 @@ require [
 		client = null
 		fakeController = null
 		fakeConnection = null
-		
+
 		class FakeConnection
 			id: '1'
 
@@ -24,8 +24,8 @@ require [
 
 			class FakeServer
 				emitTo: ->
-			
-			constructor: ->		
+
+			constructor: ->
 				@server = new FakeServer()
 
 			id: '2'

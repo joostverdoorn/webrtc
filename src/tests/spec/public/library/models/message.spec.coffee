@@ -52,7 +52,7 @@ require [
 				expect(message.hash()).not.toEqual(otherMessage.hash())
 
 		describe 'when its hash is stored', ->
-			
+
 			it 'should have increased the stored hashes\' length', ->
 				length = Message.hashes.length
 				message.storeHash()

@@ -44,8 +44,8 @@ require [
 
 			class FakeServer
 				emitTo: ->
-			
-			constructor: ->		
+
+			constructor: ->
 				@server = new FakeServer()
 
 			id: '2'
@@ -185,7 +185,7 @@ require [
 				spyOn(peer._channel, 'send')
 
 				message = new Message('a', 'b', 'event')
-				
+
 				result = peer._send(message)
 
 				expect(result).toBe(true)
@@ -195,7 +195,7 @@ require [
 				spyOn(peer, 'isChannelOpen').andReturn(true)
 				spyOn(peer._channel, 'send')
 				spyOn(peer, '_send').andCallThrough()
-				
+
 				result = peer._send(null)
 
 				expect(result).toBe(undefined)
@@ -203,7 +203,7 @@ require [
 				waitsFor(->
 						return peer._send.callCount is 6
 					, 1000)
-		
+
 		describe 'when adding a channel', ->
 			it 'should set _channel to the channel', ->
 				peer = new Peer(fakeController, '1', false, FakeRTCPeerConnection)

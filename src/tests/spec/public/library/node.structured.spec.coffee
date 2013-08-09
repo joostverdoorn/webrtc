@@ -4,7 +4,7 @@ require.config
 	paths:
 		'public/library/models/remote.server': 'tests/mock/remote.server.mock'
 		'public/library/models/remote.peer': 'tests/mock/remote.peer.mock'
-		
+
 require [
 	'public/library/node.structured'
 	'public/library/models/vector'
@@ -16,7 +16,7 @@ require [
 
 			node = null
 			peer = null
-			
+
 			beforeEach ->
 				node = new Node()
 

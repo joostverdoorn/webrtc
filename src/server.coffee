@@ -29,7 +29,7 @@ define [
 			@_server = http.createServer(@_app)
 			@_io = io.listen(@_server, log: false)
 			@_io.sockets.on('connection', @login)
-			
+
 			# Serve static content from ./public/library
 			@_app.configure =>
 				@_app.use(express.static("#{dir}/public"))
@@ -41,7 +41,7 @@ define [
 			)
 
 			@messageStorage = []
-				
+
 			@_server.listen(8080)
 
 		# Defines a login process for a socket. Further input from the client

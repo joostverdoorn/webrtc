@@ -17,7 +17,7 @@ require [
 			collection = new Collection()
 
 		describe 'when created', ->
-			
+
 			it 'should be empty', ->
 				expect(collection.length).toBe(0)
 

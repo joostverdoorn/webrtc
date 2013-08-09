@@ -5,4 +5,4 @@ define [], (  ) ->
 		@createServer: ->
 			return new HTTP()
 		listen: jasmine.createSpy('listen')
-	
+
