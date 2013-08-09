@@ -252,7 +252,7 @@ define [
 			if info.baseExtended?
 				@baseExtended = info.baseExtended
 
-			@cannon.applyInfo(info.cannon, timestamp)
+			@cannon?.applyInfo(info.cannon, timestamp)
 
 		# Returns the current info in an object.
 		#
