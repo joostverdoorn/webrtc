@@ -12,6 +12,8 @@ define [
 		@concern EventBindings
 		@concern DynamicProperties
 
+		@Loader = new Three.JSONLoader()
+
 		# Constructs a new basic physics entity. Baseclass for other entities.
 		# Will call initialize on the subclass.
 		#
@@ -20,7 +22,6 @@ define [
 		#
 		constructor: ( @world, @owner, args... ) ->
 			@scene = @world.scene
-			@_loader = new Three.JSONLoader()
 			@loaded = false
 
 			@_updates = {}

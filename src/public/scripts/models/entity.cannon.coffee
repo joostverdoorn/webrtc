@@ -14,9 +14,6 @@ define [
 		# @param info [Object] an object containing all info to apply to the player
 		#
 		initialize: ( @player, info = null ) ->
-			@_cannonLoaded = false
-			@_cannonBaseLoaded = false
-
 			@mass = 10
 			@angularDrag = 5
 
@@ -27,48 +24,35 @@ define [
 
 			@extended = false
 
-			@_cannonBase = new Three.Mesh()
+			@on
+				'loaded': =>
+					@_onLoaded()
+					@applyInfo(info)
 
-			# Load the cannon mesh.
-			@_loader.load('/meshes/cannon.js', ( geometry, material ) =>
-				geometry.computeBoundingSphere()
+			@player.on
+				'fire': @_onFire
 
-				@mesh.geometry = geometry
-				@mesh.material = new Three.MeshFaceMaterial(material)
-				@mesh.receiveShadow = true
+			if Cannon.Model? then @trigger('loaded')
+			else
+				Entity.Loader.load '/meshes/cannon.js', ( geometry, material )=>
+					Cannon.Model = {}
 
-				@player.mesh.add(@mesh)
+					Cannon.Model.Geometry = geometry
+					Cannon.Model.Geometry.computeBoundingSphere()
 
-				# Set the correct rotation order.
-				@rotation.order = 'YXZ'
-				@rotation.z = -Math.PI / 4
+					Cannon.Model.Material = new Three.MeshFaceMaterial(material)
 
-				# Apply transformations
-				@applyInfo(info)
+					Cannon.Model.Mesh = new Three.Mesh(Cannon.Model.Geometry, Cannon.Model.Material)
+					Cannon.Model.Mesh.receiveShadow = true
 
-				# Set the loaded state.
-				@_cannonLoaded = true
-				if @_cannonBaseLoaded
-					@loaded = true
-			)
+					Entity.Loader.load '/meshes/cannonBase.js', ( geometry, material ) =>
+						Cannon.Model.Base = {}
 
-			# Load the cannon base mesh.
-			@_loader.load('/meshes/cannonBase.js', ( geometry, material ) =>
-				@_cannonBase.geometry = geometry
-				@_cannonBase.material = new Three.MeshFaceMaterial(material)
-				@player.mesh.add(@_cannonBase)
+						Cannon.Model.Base.Geometry = geometry
+						Cannon.Model.Base.Material = new Three.MeshFaceMaterial(material)
+						Cannon.Model.Base.Mesh = new Three.Mesh(Cannon.Model.Base.Geometry, Cannon.Model.Base.Material)
 
-				# Create faux projectile. This will simulate the reloading
-				# of the cannon.
-				@_fauxProjectile = new Projectile(scene: @_cannonBase, false)
-
-				# Set the loaded state.
-				@_cannonBaseLoaded = true
-				if @_cannonLoaded
-					@loaded = true
-			)
-
-			@player.on('fire', @_onFire)
+						@trigger('loaded')
 
 		# Updates the physics state of the cannon. Calls baseclass' update after.
 		#
@@ -111,18 +95,37 @@ define [
 			# Retract or extend the cannon
 			if @extended
 				@position.lerp(new Three.Vector3(0, -1.1, 0), dt * 2)
-				@_cannonBase.position.lerp(new Three.Vector3(0, 0, 0), dt * 2)
+				@_cannonBaseMesh.position.lerp(new Three.Vector3(0, 0, 0), dt * 2)
 			else
 				@position.lerp(new Three.Vector3(0, .5, 0), dt * 5)
-				@_cannonBase.position.lerp(new Three.Vector3(0, 1.6, 0), dt * 5)
+				@_cannonBaseMesh.position.lerp(new Three.Vector3(0, 1.6, 0), dt * 5)
 
 			# Rotate cannon base y to cannon y
-			@_cannonBase.rotation.y = @rotation.y
+			@_cannonBaseMesh.rotation.y = @rotation.y
 
 			# Lower the faux projectile
 			if @_fauxProjectile.position.y > -1.1
 				@_fauxProjectile.position.y -= dt * 7
 			else @_fauxProjectile.position.y = -1.1
+
+		_onLoaded: ( ) =>
+			@loaded = true
+
+			# Setup the cannon.
+			@mesh = Cannon.Model.Mesh.clone()
+			@player.mesh.add(@mesh)
+
+			# Setup the cannon base.
+			@_cannonBaseMesh = Cannon.Model.Base.Mesh.clone()
+			@player.mesh.add(@_cannonBaseMesh)
+
+			# Create faux projectile. This will simulate the reloading
+			# of the cannon.
+			@_fauxProjectile = new Projectile(scene: @_cannonBaseMesh, false)
+
+			# Set the correct rotation order.
+			@rotation.order = 'YXZ'
+			@rotation.z = -Math.PI / 4
 
 		# Is called when the player fires a projectile. This will reset the position
 		# of the faux projectile so it can be lowered into the cannon.

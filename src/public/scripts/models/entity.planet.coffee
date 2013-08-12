@@ -20,16 +20,28 @@ define [
 			@mass = 1000000000
 			@applyGravity = false
 
-			@_loader.load('/meshes/planet.js', ( geometry, material ) =>
-				geometry.computeBoundingSphere()
-				geometry.computeMorphNormals()
+			@on('loaded', @_onLoaded)
 
-				@mesh.geometry = geometry
-				@mesh.material = new Three.MeshFaceMaterial(material)
+			if Planet.Model? then @trigger('loaded')
+			else
+				Entity.Loader.load '/meshes/planet.js', ( geometry, material ) =>
+					Planet.Model = {}
 
-				@mesh.castShadow = true
+					Planet.Model.Geometry = geometry
+					Planet.Model.Geometry.computeBoundingSphere()
+					Planet.Model.Geometry.computeMorphNormals()
 
-				# Add the mesh to the scene and set loaded state.
-				@scene.add(@mesh)
-				@loaded = true
-			)
+					Planet.Model.Material = new Three.MeshFaceMaterial(material)
+
+					Planet.Model.Mesh = new Three.Mesh(Planet.Model.Geometry, Planet.Model.Material)
+					Planet.Model.Mesh.castShadow = true
+
+					console.log @
+					@trigger('loaded')
+
+		_onLoaded: ( ) =>
+			@loaded = true
+
+			@mesh = Planet.Model.Mesh.clone()
+			@scene.add(@mesh)
+

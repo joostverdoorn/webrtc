@@ -34,51 +34,41 @@ define [
 
 			@_cannonReady = true
 
-			@_ufoBase = new Three.Mesh()
-
-			@_loader.load('/meshes/ufo.js', ( geometry, material ) =>
-				geometry.computeBoundingSphere()
-
-				# Set up skinned geometry mesh.
-				@mesh = new Three.SkinnedMesh(geometry, new Three.MeshFaceMaterial(material))
-				@mesh.receiveShadow = true
-				material.skinning = true for material in @mesh.material.materials
-
-				# Set up animations for the mesh.
-				Three.AnimationHandler.add(@mesh.geometry.animation)
-				@animation = new Three.Animation(@mesh, 'ArmatureAction', Three.AnimationHandler.CATMULLROM)
-				@animation.play()
-
-				# Create our cannon.
-				@cannon = new Cannon(@world, @owner, @)
-
-				# Apply passed info.
-				@applyInfo(info)
-
-				# Set the rotation of the player to be level with relation to the planet.
-				levelRotation = @calculateLevelRotation().clone()
-				levelRotationQuaternion = new Three.Quaternion().setFromEuler(levelRotation)
-
-				rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
-				rotationQuaternion.multiply(levelRotationQuaternion)
-
-				@rotation.setFromQuaternion(rotationQuaternion)
-				@rotation.order = 'YXZ'
-
-				# Add the mesh to the scene and set loaded state.
-				@scene.add(@mesh)
-
-				@_loader.load('/meshes/ufoBase.js', ( geometry, material ) =>
-					@_ufoBase.geometry = geometry
-					@_ufoBase.material = new Three.MeshFaceMaterial(material)
-					@mesh.add(@_ufoBase)
-
-					@loaded = true
-				)
-			)
-
 			# Add listeners to common events.
-			@on('impact.world', @_onImpactWorld)
+			@on
+				'loaded': =>
+					@_onLoaded()
+					@applyInfo(info)
+				'impact.world': @_onImpactWorld
+
+			# Load meshes.
+			if Player.Model? then @trigger('loaded')
+			else
+				Entity.Loader.load '/meshes/ufo.js', ( geometry, material ) =>
+					Player.Model = {}
+
+					# Setup geometry.
+					Player.Model.Geometry = geometry
+					Player.Model.Geometry.computeBoundingSphere()
+					Three.AnimationHandler.add(Player.Model.Geometry.animation)
+
+					# Setup materials.
+					Player.Model.Material = new Three.MeshFaceMaterial(material)
+					material.skinning = true for material in Player.Model.Material.materials
+
+					# Setup mesh.
+					Player.Model.Mesh = new Three.SkinnedMesh(Player.Model.Geometry, Player.Model.Material)
+					Player.Model.Mesh.receiveShadow = true
+
+					# Setup base.
+					Entity.Loader.load '/meshes/ufoBase.js', ( geometry, material ) =>
+						Player.Model.Base = {}
+
+						Player.Model.Base.Geometry = geometry
+						Player.Model.Base.Material = new Three.MeshFaceMaterial(material)
+						Player.Model.Base.Mesh = new Three.Mesh(Player.Model.Base.Geometry, Player.Model.Base.Material)
+
+						@trigger('loaded')
 
 		# Updates the physics state of the player. Adds forces to simulate gravity and
 		# the propulsion system. Calls baseclass' update after.
@@ -159,11 +149,11 @@ define [
 
 			# Retract or extend the base.
 			if @baseExtended
-				@_ufoBase.position.lerp(new Three.Vector3(0, 0, 0), dt * 8)
-				@_ufoBase.scale.lerp(new Three.Vector3(1, 2, 1), dt * 8)
+				@_ufoBaseMesh.position.lerp(new Three.Vector3(0, 0, 0), dt * 8)
+				@_ufoBaseMesh.scale.lerp(new Three.Vector3(1, 2, 1), dt * 8)
 			else
-				@_ufoBase.position.lerp(new Three.Vector3(0, .8, 0), dt * 5)
-				@_ufoBase.scale.lerp(new Three.Vector3(1, .5, 1), dt * 5)
+				@_ufoBaseMesh.position.lerp(new Three.Vector3(0, .8, 0), dt * 5)
+				@_ufoBaseMesh.scale.lerp(new Three.Vector3(1, .5, 1), dt * 5)
 
 				@addAngularForce(new Three.Euler(0, @cannon.rotation.y * 20 * dt, 0, 'YXZ'))
 				@cannon.addAngularForce(new Three.Euler(0, -@cannon.rotation.y * 20 * dt, 0, 'YXZ'))
@@ -203,6 +193,33 @@ define [
 
 			levelRotation = new Three.Euler().setFromRotationMatrix(rotationMatrix, 'YXZ')
 			return levelRotation
+
+		_onLoaded: ( ) =>
+			@loaded = true
+
+			# Setup UFO
+			@mesh = Player.Model.Mesh.clone()
+			@scene.add(@mesh)
+
+			@animation = new Three.Animation(@mesh, 'ArmatureAction', Three.AnimationHandler.CATMULLROM)
+			@animation.play()
+
+			# Setup UFO base
+			@_ufoBaseMesh = Player.Model.Base.Mesh.clone()
+			@mesh.add(@_ufoBaseMesh)
+
+			# Create the cannon.
+			@cannon = new Cannon(@world, @owner, @)
+
+			# Set the rotation of the player to be level with relation to the planet.
+			levelRotation = @calculateLevelRotation().clone()
+			levelRotationQuaternion = new Three.Quaternion().setFromEuler(levelRotation)
+
+			rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
+			rotationQuaternion.multiply(levelRotationQuaternion)
+
+			@rotation.setFromQuaternion(rotationQuaternion)
+			@rotation.order = 'YXZ'
 
 		# Is called when the player impacts the world. Used to determine if the
 		# player should systain damage.
