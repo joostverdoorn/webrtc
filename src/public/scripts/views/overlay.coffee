@@ -125,34 +125,25 @@ define [
 
 				statsFormatted[id].deaths = deaths
 
-			###
-			sortedKills = []
-			for id, kills of stats.kills
-				deaths = stats.deaths[id] || 0
-				console.log id, kills
-				if deaths is 0
-					kdr = kills
+			sortedStats = []
+			for id, stat of statsFormatted
+				if stat.deaths is 0
+					kdr = stat.kills
 				else
-					kdr = Math.round(kills / deaths, 2)
-				sortedKills.push([id, kills, deaths, kdr])
-			console.log stats.kills
+					kdr = Math.round(stat.kills / stat.deaths, 2)
+				sortedStats.push([id, stat.kills, stat.deaths, kdr])
 
-			sortedKills.sort(( a, b ) ->
+			sortedStats.sort(( a, b ) ->
 				a[1] - b[1]
 			)
-			console.log sortedKills
-			###
+
 			@display('stats', ( ) =>
 				@_statsVisible = true
 				statRows = $('#statRows')
 				statRows.empty()
 				rank = 1
-				for id, stat of statsFormatted
-					if stat.deaths is 0
-						kdr = stat.kills
-					else
-						kdr = Math.round(stat.kills / stat.deaths, 2)
-					statRows.append("<tr><td>#{rank++}</td><td>#{id}</td><td>#{stat.kills}</td><td>#{stat.deaths}</td><td>#{kdr}</td></tr>")
+				for stat in sortedStats
+					statRows.append("<tr><td>#{rank++}</td><td>#{stat[0]}</td><td>#{stat[1]}</td><td>#{stat[2]}</td><td>#{stat[3]}</td></tr>")
 			, ( ) =>
 				@_statsVisible = false
 			)
