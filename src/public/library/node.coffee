@@ -18,14 +18,16 @@ define [
 	'public/library/helpers/mixable'
 	'public/library/helpers/mixin.eventbindings'
 
+
 	'public/library/models/remote.server'
 	'public/library/models/remote.peer'
 	'public/library/models/message'
 
 	'public/library/models/collection'
+	'public/library/helpers/listener'
 
 	'underscore'
-	], ( Mixable, EventBindings, Server, Peer, Message, Collection, _ ) ->
+	], ( Mixable, EventBindings, Server, Peer, Message, Collection, Listener, _ ) ->
 
 	# Constructs a new unstructured node.
 	#
@@ -48,6 +50,8 @@ define [
 			@messageStorage = []
 			@partialMessages = {}
 
+			@queries = new Listener()
+
 			@server = new Server(@, @serverAddress)
 			@server.on
 				'connect': @_onServerConnect
@@ -57,7 +61,35 @@ define [
 				'disconnect': ( peer ) => @removePeer(peer)
 				'timeout': ( peer ) => @removePeer(peer)
 
-			@initialize?.apply(@)
+			@onQuery
+				'ping': ( callback ) =>
+					callback 'pong', @time()
+				'type': ( callback ) =>
+					callback @type
+				'requestConnection': ( callback, id ) =>
+					@connect(id, null, false)
+					callback true
+				'remoteDescription': ( callback, id, data ) =>
+					if peer = @getPeer(id, null, true)
+						peer.setRemoteDescription(data, callback)
+					else callback null
+				'iceCandidates': ( callback, id, arr ) =>
+					if peer = @getPeer(id, null, true)
+						peer.addIceCandidates(arr)
+						callback peer.iceCandidates
+					else callback null
+				'info': ( callback ) =>
+					info =
+						id: @id
+						type: @type
+						peers: @getPeers().map( ( peer ) ->
+							id: peer.id
+							role: peer.role
+						)
+
+					callback info
+
+			@initialize?()
 
 		# Attempts to connect to a peer. Calls the callback function
 		# with argument true when the connection was fully established,
@@ -154,6 +186,21 @@ define [
 				for event, callback of bindings
 					@onReceive(event, callback)
 
+		# Binds a query.
+		#
+		# @overload on(name, callback, context = null)
+		#	 Binds a single event.
+		# 	 @param name [String] the event name to bind
+		# 	 @param callback [Function] the callback to call
+		# 	 @param context [Object] the context of the binding
+		#
+		# @overload on(bindings)
+		#	 Binds multiple events.
+		#	 @param bindings [Object] an object mapping event names to functions
+		#
+		onQuery: ( args... ) ->
+			@queries.on.apply(@queries, args)
+
 		# Attempts to emit to a peer by id. Unreliable.
 		#
 		# @param to [String] the id of the peer to pass the message to
@@ -217,53 +264,6 @@ define [
 			else if peer = @getPeer(message.to)
 				peer.send(message)
 			else server.send(message)
-
-		# Responds to a request.
-		#
-		# @param request [String] the string identifier of the request
-		# @param args... [Any] any arguments that may be accompanied with the request
-		# @param callback [Function] the callback to call with the response
-		#
-		query: ( request, args..., callback ) ->
-			switch request
-				when 'ping'
-					callback 'pong', @time()
-				when 'type'
-					callback @type
-				when 'requestConnection'
-					id = args[0]
-
-					@connect(id, null, false)
-					callback true
-				when 'remoteDescription'
-					id = args[0]
-					data = args[1]
-
-					if peer = @getPeer(id, null, true)
-						peer.setRemoteDescription(data, callback)
-					else callback null
-
-				when 'iceCandidates'
-					id = args[0]
-					arr = args[1]
-
-					if peer = @getPeer(id, null, true)
-						peer.addIceCandidates(arr)
-						callback peer.iceCandidates
-					else callback null
-
-				when 'info'
-					info =
-						id: @id
-						type: @type
-						peers: @getPeers().map( ( peer ) ->
-							id: peer.id
-							role: peer.role
-						)
-
-					callback info
-				else
-					callback null
 
 		# Is called when the server connects. Will ping the server and compute
 		# the network time based on the server time and latency.

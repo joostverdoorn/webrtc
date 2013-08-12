@@ -70,7 +70,7 @@ define [
 
 			@server.on('connect', @_enterNetwork)
 			@_peers.on
-				'channel.opened': (peer) =>
+				'channel.opened': ( peer ) =>
 					peer.query('isSuperNode', ( superNode ) =>
 						if superNode?
 							peer.isSuperNode = superNode
@@ -78,16 +78,16 @@ define [
 				'disconnect': @_onPeerDisconnect
 
 			@onReceive
-				'peer.abandonParent': (id) =>
+				'peer.abandonParent': ( id ) =>
 					if child = @getChild(id)
 						@removeChild(child)
-				'peer.abandonChild': (id) =>
+				'peer.abandonChild': ( id ) =>
 					if @_parent?.id is id
 						@removeParent()
-				'peer.addSibling': (id) =>
+				'peer.addSibling': ( id ) =>
 					if peer = @getPeer(id)
 						@addSibling(peer, false)
-				'peer.removeSibling': (id) =>
+				'peer.removeSibling': ( id ) =>
 					if sibling = @getSibling(id)
 						@removeSibling(sibling)
 				'peer.setSuperNode': @_onPeerSetSuperNode
@@ -99,32 +99,24 @@ define [
 				'token.candidate': @_onTokenCandidate
 				'token.die': @_onTokenDied
 
-		# Responds to a request
-		#
-		# @param request [String] the string identifier of the request
-		# @param args... [Any] any arguments that may be accompanied with the request
-		# @param callback [Function] the callback to call with the response
-		#
-		query: ( request, args..., callback ) =>
-			switch request
-				when 'ping'
+			@onQuery
+				'ping': ( callback ) =>
 					callback 'pong', @position.serialize(), @token?.serialize()
-				when 'position'
+				'position': ( callback ) =>
 					callback @position.serialize()
-				when 'isSuperNode'
+				'isSuperNode': ( callback ) =>
 					callback @isSuperNode
-				when 'siblings'
+				'siblings': ( callback ) =>
 					callback @getSiblings().map( ( peer ) ->
 						id: peer.id
 					)
-				when 'peer.requestAdoption'
-					id = args[0]
+				'peer.requestAdoption': ( callback, id ) =>
 					if @isSuperNode and child = @getPeer(id)
 						@addChild(child)
 						callback true
 					else
 						callback false
-				when 'info'
+				'info': ( callback ) =>
 					info =
 						id: @id
 						type: @type
@@ -137,8 +129,47 @@ define [
 						)
 
 					callback info
-				else
-					super
+
+		# # Responds to a request
+		# #
+		# # @param request [String] the string identifier of the request
+		# # @param args... [Any] any arguments that may be accompanied with the request
+		# # @param callback [Function] the callback to call with the response
+		# #
+		# query: ( request, args..., callback ) =>
+		# 	switch request
+		# 		when 'ping'
+		# 			callback 'pong', @position.serialize(), @token?.serialize()
+		# 		when 'position'
+		# 			callback @position.serialize()
+		# 		when 'isSuperNode'
+		# 			callback @isSuperNode
+		# 		when 'siblings'
+		# 			callback @getSiblings().map( ( peer ) ->
+		# 				id: peer.id
+		# 			)
+		# 		when 'peer.requestAdoption'
+		# 			id = args[0]
+		# 			if @isSuperNode and child = @getPeer(id)
+		# 				@addChild(child)
+		# 				callback true
+		# 			else
+		# 				callback false
+		# 		when 'info'
+		# 			info =
+		# 				id: @id
+		# 				type: @type
+		# 				position: @position
+		# 				isSuperNode: @isSuperNode
+		# 				token: @token
+		# 				peers: @getPeers().map( ( peer ) ->
+		# 					id: peer.id
+		# 					role: peer.role
+		# 				)
+
+		# 			callback info
+		# 		else
+		# 			super
 
 		# Relays a message to other nodes. If the intended receiver is not a direct
 		# neighbor, we route the message through other nodes in an attempt to reach

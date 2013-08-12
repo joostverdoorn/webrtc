@@ -172,8 +172,8 @@ define [
 				argms = [message.from, queryID].concat(argms, Infinity)
 				@emitTo.apply(@, argms)
 
-			args = [request].concat(args).concat(callback)
-			@_controller.query.apply(@_controller, args)
+			args = [request, callback].concat(args)
+			@_controller.queries.trigger.apply(@_controller.queries, args)
 
 		# Pings the server. A callback function should be provided to do anything
 		# with the ping.
