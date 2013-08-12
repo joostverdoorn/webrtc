@@ -8,9 +8,10 @@ define [
 
 	'public/scripts/models/world'
 	'public/scripts/models/entity.player'
+	'public/scripts/models/stats'
 
 	'three'
-	], ( Mixable, EventBindings, Node, Controller, World, Player, Three ) ->
+	], ( Mixable, EventBindings, Node, Controller, World, Player, Stats, Three ) ->
 
 	# This game class implements the node structure created in the library.
 	# It uses three.js for the graphics.
@@ -33,6 +34,10 @@ define [
 			@node = new Node()
 			@controller = new Controller()
 
+			@stats = new Stats()
+			@stats.addStat('kills')
+			@stats.addStat('deaths')
+
 			# Create the world.
 			@world = new World(@scene)
 
@@ -40,6 +45,10 @@ define [
 			@world.on
 				'die': ( id ) =>
 					@node.broadcast('entity.die', id)
+				'player.kill': ( killerEntity ) =>
+					@node.broadcast('player.kill', killerEntity.id)
+					@stats.incrementStat('deaths', @node.id, 1)
+					killerEntity.die()
 
 			@node.server.once
 				'connect': ( ) =>
@@ -60,12 +69,19 @@ define [
 					@world.removePlayer(id)
 				'player.died': ( id ) =>
 					@world.removePlayer(id)
+					@stats.incrementStat('deaths', id, 1)
 				'player.update': ( id, info, message ) =>
 					@world.applyPlayerInfo(id, info, message.timestamp)
 				'player.fire': ( id, info, message ) =>
 					@world.createProjectile(info, message.timestamp)
 				'entity.die': ( id ) =>
 					@world.removeEntityByID(id)
+				'player.kill': ( killerEntityID ) =>
+					@stats.incrementStat('kills', @node.id, 1)
+					@node.broadcast('player.addKill', @node.id)
+					@world.removeEntityByID(killerEntityID)
+				'player.addKill': ( id ) =>
+					@stats.incrementStat('kills', id, 1)
 
 		# Updates the phyics for all objects and renders the scene. Requests a new animation frame
 		# to repeat this methods.

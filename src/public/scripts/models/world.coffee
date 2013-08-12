@@ -153,4 +153,5 @@ define [
 			entities = _(@_entities).filter( ( entity ) -> entity instanceof Projectile and not entity.owner)
 			if entities
 				if ownPlayer?.isColliding(entities)
+					@trigger('player.kill', entity)
 					ownPlayer.die()
