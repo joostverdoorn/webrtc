@@ -652,7 +652,7 @@ define [
 			@addToken(token)
 
 			if @token? and instantiate
-				@emitTo(token.nodeId, 'token.info', @token.serialize(), false)
+				@emitTo(token.nodeId, 'token.info', @token.serialize(), false, Infinity)
 
 		# Is called when a token is killed. We will destroy any stored information
 		# on the token.
@@ -718,7 +718,7 @@ define [
 					closestChild = child
 
 			if closestChild?
-				@emitTo(token.nodeId, 'token.candidate', closestChild.id, distance)
+				@emitTo(token.nodeId, 'token.candidate', closestChild.id, distance, Infinity)
 
 		# Is called when we receive a candidate for our token. We will store this
 		# information in the token.
@@ -754,7 +754,7 @@ define [
 			@token.candidates = []
 			if closestCandidate? and closestCandidate isnt @id
 				console.log "best candidate is #{closestCandidate}, distance is #{closestDistance}"
-				@emitTo(closestCandidate, 'token.receive', @token.serialize())
+				@emitTo(closestCandidate, 'token.receive', @token.serialize(), Infinity)
 
 				@token = null
 				if @isSuperNode

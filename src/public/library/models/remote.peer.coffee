@@ -74,7 +74,7 @@ define [
 				@trigger('timeout')
 			, @_connectionTimeout )
 
-			@_controller.queryTo(@id, 'requestConnection', @_controller.id, ( accepted ) =>
+			@_controller.queryTo(@id, Infinity, 'requestConnection', @_controller.id, ( accepted ) =>
 				unless accepted
 					console.log 'connection request denied'
 					@trigger('failed')
@@ -83,7 +83,7 @@ define [
 
 				@_connection.createOffer( ( description ) =>
 					@_setLocalDescription(description, ( description ) =>
-						@_controller.queryTo(@id, 'remoteDescription', @_controller.id, description, ( data ) =>
+						@_controller.queryTo(@id, Infinity, 'remoteDescription', @_controller.id, description, ( data ) =>
 							if data? then @setRemoteDescription(data)
 						)
 					)
@@ -182,7 +182,7 @@ define [
 
 			if @_isConnector
 				setTimeout( ( ) =>
-					@_controller.queryTo(@id, 'iceCandidates', @_controller.id, @iceCandidates, ( arr ) =>
+					@_controller.queryTo(@id, Infinity, 'iceCandidates', @_controller.id, @iceCandidates, ( arr ) =>
 						if arr? then @addIceCandidates(arr)
 					)
 				, @_iceCandidateGenerationTimeout)

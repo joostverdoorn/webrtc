@@ -160,8 +160,8 @@ define [
 		# @param event [String] the event to pass to the peer
 		# @param args... [Any] any other arguments to pass along
 		#
-		emitTo: ( to, event, args... ) ->
-			message = new Message(to, @id, event, args, @time())
+		emitTo: ( to, event, args..., ttl ) ->
+			message = new Message(to, @id, event, args, @time(), ttl)
 			@relay(message)
 
 		# Attempts to query a peer by id. Unreliable.
@@ -171,7 +171,7 @@ define [
 		# @param callback [Function] the function to call when a response has arrived
 		# @param args... [Any] any other arguments to be passed along with the query
 		#
-		queryTo: ( to, request, args..., callback ) ->
+		queryTo: ( to, ttl = Infinity, request, args..., callback ) ->
 			queryID = _.uniqueId('query')
 
 			timer = setTimeout( ( ) =>
@@ -193,7 +193,7 @@ define [
 			@_peers.once(queryID, peerCallback)
 			@server.once(queryID, serverCallback)
 
-			args = [to, 'query', request, queryID].concat(args)
+			args = [to, 'query', request, queryID].concat(args, ttl)
 			@emitTo.apply(@, args)
 
 		# Broadcasts a message to all peers in network.
@@ -202,7 +202,7 @@ define [
 		# @param args... [Any] any other arguments to pass along
 		#
 		broadcast: ( event, args... ) ->
-			args = ['*', event].concat(args)
+			args = ['*', event].concat(args, Infinity)
 			@emitTo.apply(@, args)
 
 		# Relays a message to other nodes. If the intended receiver is not a direct

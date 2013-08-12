@@ -24,7 +24,6 @@ define [
 			@on('message', @_onMessage)
 			@on('ping', @_onPing)
 			@on('query', @_onQuery)
-			@on('emitTo', @_onEmitTo)
 
 		# Disconnects the remote and removes all bindings.
 		#
@@ -113,14 +112,14 @@ define [
 			message = new Message(@id, @_controller.id, event, args, @_controller.time())
 			@send(message)
 
-		# Sends a message to a peer, via the server.
+		# Tells the remote to forward a message to a peer specified by to.
 		#
 		# @param to [String] the id of the receiving peer
 		# @param event [String] the event to send
 		# @param args... [Any] any paramters you may want to pass
 		#
-		emitTo: ( to, event, args... ) ->
-			message = new Message(to, @_controller.id, event, args, @_controller.time())
+		emitTo: ( to, event, args..., ttl ) ->
+			message = new Message(to, @_controller.id, event, args, @_controller.time(), ttl)
 			@send(message)
 
 		# Sends a predefined message to the remote, but first hashes the message
@@ -129,6 +128,8 @@ define [
 		# @param message [Message] the message to send
 		#
 		send: ( message ) ->
+			if --message.ttl <= 0 then return
+
 			unless message.isStored(@_controller.messageStorage)
 				message.storeHash(@_controller.messageStorage)
 
@@ -168,7 +169,7 @@ define [
 		#
 		_onQuery: ( request, queryID, args..., message ) =>
 			callback = ( argms... ) =>
-				argms = [message.from, queryID].concat(argms)
+				argms = [message.from, queryID].concat(argms, Infinity)
 				@emitTo.apply(@, argms)
 
 			args = [request].concat(args).concat(callback)
