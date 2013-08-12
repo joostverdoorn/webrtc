@@ -224,7 +224,7 @@ require [
 		# broadcasted into the network.
 		#
 		_onPlayerDied: ( ) =>
-			@overlay.showPlayerDiedScreen()
+			@overlay.showStats(@game.stats.stats)
 			@waitPlayerSpawn()
 
 	window.App = new App.Game

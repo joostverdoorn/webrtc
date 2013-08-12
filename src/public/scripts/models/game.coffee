@@ -38,6 +38,11 @@ define [
 			@stats.addStat('kills')
 			@stats.addStat('deaths')
 
+			@node.onQuery
+					stats: ( callback, stats ) =>
+						@stats.mergeStats(stats)
+						callback @stats.stats
+
 			# Create the world.
 			@world = new World(@scene)
 
@@ -46,7 +51,8 @@ define [
 				'die': ( id ) =>
 					@node.broadcast('entity.die', id)
 				'player.kill': ( killerEntity ) =>
-					@node.broadcast('player.kill', killerEntity.id)
+					if killerEntity isnt @player
+						@node.broadcast('player.kill', killerEntity.id)
 					@stats.incrementStat('deaths', @node.id, 1)
 					killerEntity.die()
 

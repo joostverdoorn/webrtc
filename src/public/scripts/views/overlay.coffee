@@ -104,6 +104,55 @@ define [
 		showPlayerDiedScreen: ( ) =>
 			@display('player_died')
 
+		showStats: ( stats ) ->
+			statsFormatted = {}
+			for id, kills of stats.kills
+				unless statsFormatted[id]
+					statsFormatted[id] = {
+						kills: 0
+						deaths: 0
+					}
+
+				statsFormatted[id].kills = kills
+
+			for id, deaths of stats.deaths
+				unless statsFormatted[id]
+					statsFormatted[id] = {
+						kills: 0
+						deaths: 0
+					}
+
+				statsFormatted[id].deaths = deaths
+
+			###
+			sortedKills = []
+			for id, kills of stats.kills
+				deaths = stats.deaths[id] || 0
+				console.log id, kills
+				if deaths is 0
+					kdr = kills
+				else
+					kdr = Math.round(kills / deaths, 2)
+				sortedKills.push([id, kills, deaths, kdr])
+			console.log stats.kills
+
+			sortedKills.sort(( a, b ) ->
+				a[1] - b[1]
+			)
+			console.log sortedKills
+			###
+			@display('stats', ( ) ->
+				statRows = $('#statRows')
+				statRows.empty()
+				rank = 1
+				for id, stat of statsFormatted
+					if stat.deaths is 0
+						kdr = stat.kills
+					else
+						kdr = Math.round(stat.kills / stat.deaths, 2)
+					statRows.append("<tr><td>#{rank++}</td><td>#{id}</td><td>#{stat.kills}</td><td>#{stat.deaths}</td><td>#{kdr}</td></tr>")
+			)
+
 		# Shows the InfoView
 		#
 		show: ->
