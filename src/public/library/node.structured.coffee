@@ -45,7 +45,7 @@ define [
 
 		_pingCandidateTimeout : 1000
 		_coordinateDelta : 1
-		_maxChildren : 4
+		_maxChildren : 8
 		_foundationNodes : 5
 		_superNodeSwitchThreshold : 0.7
 		_tokenMoveThreshold : 1
@@ -129,47 +129,6 @@ define [
 						)
 
 					callback info
-
-		# # Responds to a request
-		# #
-		# # @param request [String] the string identifier of the request
-		# # @param args... [Any] any arguments that may be accompanied with the request
-		# # @param callback [Function] the callback to call with the response
-		# #
-		# query: ( request, args..., callback ) =>
-		# 	switch request
-		# 		when 'ping'
-		# 			callback 'pong', @position.serialize(), @token?.serialize()
-		# 		when 'position'
-		# 			callback @position.serialize()
-		# 		when 'isSuperNode'
-		# 			callback @isSuperNode
-		# 		when 'siblings'
-		# 			callback @getSiblings().map( ( peer ) ->
-		# 				id: peer.id
-		# 			)
-		# 		when 'peer.requestAdoption'
-		# 			id = args[0]
-		# 			if @isSuperNode and child = @getPeer(id)
-		# 				@addChild(child)
-		# 				callback true
-		# 			else
-		# 				callback false
-		# 		when 'info'
-		# 			info =
-		# 				id: @id
-		# 				type: @type
-		# 				position: @position
-		# 				isSuperNode: @isSuperNode
-		# 				token: @token
-		# 				peers: @getPeers().map( ( peer ) ->
-		# 					id: peer.id
-		# 					role: peer.role
-		# 				)
-
-		# 			callback info
-		# 		else
-		# 			super
 
 		# Relays a message to other nodes. If the intended receiver is not a direct
 		# neighbor, we route the message through other nodes in an attempt to reach
@@ -520,10 +479,15 @@ define [
 			# our correct position in the network and to catch our fall we we
 			# lose our parent.
 			else
+				for peer in @getPeers()
+					unless peer.isSuperNode then peer.die()
+
 				current = _(@getPeers()).filter( (peer) -> peer.isSuperNode).length
 				needed = @_foundationNodes - current
 				if needed <= 0
 					return
+
+
 
 				@_parent.query('siblings', ( superNodes ) =>
 					if not superNodes? or superNodes.length is 0
