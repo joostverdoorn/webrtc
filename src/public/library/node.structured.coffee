@@ -37,7 +37,7 @@ define [
 
 		type: 'node.structured'
 
-		_updatePositionInterval : 4000
+		_updatePositionInterval : 1000
 		_updateFoundationNodesInterval : 10000
 		_recommendParentInterval: 10000
 		_demotionTimeout: 11000
@@ -648,7 +648,7 @@ define [
 		_onTokenInfo: ( tokenString, instantiate, message ) =>
 
 			token = Token.deserialize(tokenString)
-			console.log "received info from node #{message.from} about token with id ", token.id
+			#console.log "received info from node #{message.from} about token with id ", token.id
 			@addToken(token)
 
 			if @token? and instantiate
@@ -661,7 +661,7 @@ define [
 		#
 		_onTokenDied: ( tokenString, message ) =>
 			token = Token.deserialize(tokenString)
-			console.log "Received dead token from node #{message.from} with id ", token.id
+			#console.log "Received dead token from node #{message.from} with id ", token.id
 			@removeToken(token)
 
 		# Computes the desired position of the token from the positions of other tokens,
@@ -672,14 +672,22 @@ define [
 				return
 
 			force = Vector.createZeroVector(@position.length)
+			directions = []
 			for token in @_tokens
 				direction = @position.subtract(token.position)		# Difference between self and other Token
-				direction.scale(1 / direction.getLength())
-				force = force.add(direction)								# Sum all token differences
+				directions.push(direction)
+				force = force.add(direction)						# Sum all token differences
+
+			if force.getLength() isnt 0
+				directions = _(directions).sortBy( (direction) -> direction.getLength())
+				modalDirection = Math.floor(directions.length / 2)
+				scaledModalDirectionLength = directions[modalDirection].getLength() / 2
+				force = force.scale(scaledModalDirectionLength / force.getLength())
 
 			@token.targetPosition = @token.position.add(force)
-
 			magnitude = @position.getDistance(@token.targetPosition)
+
+			console.groupEnd();
 			if magnitude > @_tokenMoveThreshold and not @isSuperNode
 				@broadcast('token.requestCandidate', @token.serialize())
 

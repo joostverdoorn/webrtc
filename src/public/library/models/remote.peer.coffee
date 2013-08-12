@@ -208,7 +208,6 @@ define [
 		addIceCandidates: ( arr ) =>
 			for data in arr
 				candidate = new RTCIceCandidate(data)
-				console.log candidate
 				@_connection.addIceCandidate(candidate)
 
 		# Is called when the ice connection state changed.
@@ -255,12 +254,12 @@ define [
 		# Is called when a connection has been established.
 		#
 		_onConnect: ( ) ->
-			console.log "connected to node #{@id}"
+			#console.log "connected to node #{@id}"
 
 		# Is called when a connection has been broken.
 		#
 		_onDisconnect: ( ) ->
-			console.log "disconnected from node #{@id}"
+			#console.log "disconnected from node #{@id}"
 
 		# Is called when the channel has opened.
 		#
