@@ -177,3 +177,8 @@ define [
 		#
 		time: ( ) ->
 			return @node.time()
+
+		queryStats: ( ) ->
+			@node.queryTo('*', 'stats', @stats.stats, ( stats ) =>
+				@stats.mergeStats(stats)
+			)
