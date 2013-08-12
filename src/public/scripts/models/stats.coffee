@@ -16,6 +16,7 @@ define [
 		mergeStats: ( newStats ) ->
 			for name, stats of newScores
 				@mergeStat(name, stats)
+			@_triggerChange()
 
 		mergeStat: ( stat, values ) ->
 			unless @stats[stat]
@@ -31,9 +32,11 @@ define [
 
 			unless @stats[stat][id]
 				@stats[stat][id] = increment
+				@_triggerChange()
 				return
 
 			@stats[stat][id] += increment
+			@_triggerChange()
 
 		getStat: ( stat, id, defaultValue = 0 ) ->
 			unless @stats[stat]
@@ -43,3 +46,6 @@ define [
 				return defaultValue
 
 			return @stats[stat][id]
+
+		_triggerChange: ( ) ->
+			@trigger('change', @stats)

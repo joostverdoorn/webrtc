@@ -66,6 +66,11 @@ require [
 
 			# Create overlay screen.
 			@overlay = new Overlay()
+
+			@game.stats.on('change', ( stats ) =>
+				@overlay.setStats(stats)
+			)
+
 			@overlay.on('controller.select', @_onControllerSelect)
 
 			@game.on('player.died', @_onPlayerDied)

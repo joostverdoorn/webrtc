@@ -15,6 +15,7 @@ define [
 		# @param forceKeyboard [Boolean] Force to use the keyboard as input without showing the selection screen
 		#
 		constructor: ( ) ->
+			@_stats = {}
 			$('head').append('<link rel="stylesheet" type="text/css" href="/stylesheets/overlay.css">')
 
 			@container = $('<div id="overlay"></div>')
@@ -104,9 +105,9 @@ define [
 		showPlayerDiedScreen: ( ) =>
 			@display('player_died')
 
-		showStats: ( stats ) ->
+		showStats: ( @_stats ) ->
 			statsFormatted = {}
-			for id, kills of stats.kills
+			for id, kills of _stats.kills
 				unless statsFormatted[id]
 					statsFormatted[id] = {
 						kills: 0
@@ -115,7 +116,7 @@ define [
 
 				statsFormatted[id].kills = kills
 
-			for id, deaths of stats.deaths
+			for id, deaths of _stats.deaths
 				unless statsFormatted[id]
 					statsFormatted[id] = {
 						kills: 0
@@ -141,7 +142,8 @@ define [
 			)
 			console.log sortedKills
 			###
-			@display('stats', ( ) ->
+			@display('stats', ( ) =>
+				@_statsVisible = true
 				statRows = $('#statRows')
 				statRows.empty()
 				rank = 1
@@ -151,7 +153,13 @@ define [
 					else
 						kdr = Math.round(stat.kills / stat.deaths, 2)
 					statRows.append("<tr><td>#{rank++}</td><td>#{id}</td><td>#{stat.kills}</td><td>#{stat.deaths}</td><td>#{kdr}</td></tr>")
+			, ( ) =>
+				@_statsVisible = false
 			)
+
+		setStats: ( @_stats ) =>
+			if @_statsVisible
+				@showStats(@_stats)
 
 		# Shows the InfoView
 		#

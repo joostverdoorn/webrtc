@@ -39,9 +39,9 @@ define [
 			@stats.addStat('deaths')
 
 			@node.onQuery
-					stats: ( callback, stats ) =>
-						@stats.mergeStats(stats)
-						callback @stats.stats
+				stats: ( callback, stats ) =>
+					@stats.mergeStats(stats)
+					callback @stats.stats
 
 			# Create the world.
 			@world = new World(@scene)
