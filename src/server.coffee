@@ -17,6 +17,8 @@ define [
 
 		id: 'server'
 
+		queryTimeout: 5000
+
 		# Constructs a new server.
 		#
 		constructor: ( dir ) ->
@@ -41,6 +43,7 @@ define [
 			)
 
 			@messageStorage = []
+			@partialMessages = {}
 
 			@_server.listen(8080)
 
@@ -125,11 +128,13 @@ define [
 					else
 						nodes = @getNodes(type)
 						nodesInfo = []
+						i = 0
 						for node in nodes
 							( ( node ) ->
 								node.query('info', ( info ) =>
-									nodesInfo.push(info)
-									if nodesInfo.length is nodes.length
+									if info?
+										nodesInfo.push(info)
+									if ++i is nodes.length
 										callback(nodesInfo)
 								)
 							) ( node )

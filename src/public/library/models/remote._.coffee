@@ -13,8 +13,6 @@ define [
 		@concern EventBindings
 		latency : Infinity
 
-		_queryTimeout: 5000
-
 		# Constructs a remote.
 		#
 		# @param parent [Object] the parent object (Server or Node).
@@ -48,6 +46,10 @@ define [
 
 			message.storeHash(@_controller.messageStorage)
 
+			if message.event is 'partial'
+				@_assemble.apply(@, message.args)
+				return
+
 			if message.to is @_controller.id
 				args = [message.event].concat(message.args).concat(message)
 				@trigger.apply(@, args)
@@ -57,6 +59,50 @@ define [
 				@_controller.relay(message)
 			else
 				@_controller.relay(message)
+
+		# Stores parts of a message and assembles the message when all
+		# parts are received, in which case it triggers a message event
+		# so the message is handled as usual.
+		#
+		# @param messageID [Integer] the ID (hash) of the message
+		# @param totalParts [Integer] the total number of parts the message consists of
+		# @param partNumber [Integer] the number of this part
+		# @param partData [String] the data of this part
+		#
+		_assemble: ( messageID, totalParts, partNumber, partData ) =>
+			# Store the part.
+			unless @_controller.partialMessages[messageID]?
+				@_controller.partialMessages[messageID] = []
+
+			@_controller.partialMessages[messageID][partNumber] = partData
+
+			# Try to assemble the message.
+			if @_controller.partialMessages[messageID].length < totalParts
+				return
+
+			messageString = ""
+			for data in @_controller.partialMessages[messageID]
+				unless data? then return
+				messageString += data
+
+			delete @_controller.partialMessages[messageID]
+			@trigger('message', messageString)
+
+		# Disassembles a message and emits the pieces.
+		#
+		# @param message [Message] the message to disassemble
+		# @param maxSize [Integer] the maximum size of the pieces
+		#
+		_disassemble: ( message, maxSize = 600 ) =>
+			messageString = message.serialize()
+			length = messageString.length
+
+			messageID = message.hash()
+			totalParts = Math.ceil(length / maxSize)
+
+			for partNumber in [0...totalParts]
+				partData = messageString.substr(maxSize * partNumber, maxSize)
+				@emit('partial', messageID, totalParts, partNumber, partData)
 
 		# Compiles and sends a message to the remote.
 		#
@@ -102,7 +148,7 @@ define [
 			timer = setTimeout( ( ) =>
 				@off(queryID)
 				callback(null)
-			, @_queryTimeout)
+			, @_controller.queryTimeout)
 
 			fn = ( argms... ) =>
 				callback.apply(@, argms)

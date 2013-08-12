@@ -32,6 +32,7 @@ require [
 			query: ->
 			relay: ->
 			time: -> Date.now()
+			messageStorage: []
 
 		beforeEach ->
 			fakeController = new FakeController()
@@ -64,7 +65,7 @@ require [
 
 				expect(Client.prototype._onSetSuperNode).toHaveBeenCalled()
 
-			it 'should send queries for type and isSuperNode', ->
+			it 'should send queries for type', ->
 				called = []
 				spyOn(Client.prototype, 'query').andCallFake( ( query, fn ) ->
 						called.push query
@@ -73,7 +74,6 @@ require [
 
 				expect(called).toEqual([
 						'type'
-						'isSuperNode'
 					])
 
 		describe 'when disconnecting', ->

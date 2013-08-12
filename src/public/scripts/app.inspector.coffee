@@ -34,7 +34,7 @@ requirejs.config
 
 require [
 	'scripts/app._'
-	'library/models/remote.server'
+	'library/node'
 
 	'three'
 	'stats'
@@ -42,15 +42,12 @@ require [
 	'jquery'
 	'underscore'
 	'orbitControls'
-	], ( App, Server, Three, Stats, $, _ ) ->
+	], ( App, NetworkNode, Three, Stats, $, _ ) ->
 
 	# Inspector app class. This will create and draw a 3d scene
 	# containing all nodes and their connections.
 	#
 	class App.Inspector extends App
-
-		type: 'inspector'
-		serverAddress: ':8080/'
 
 		nodes: []
 		messageStorage: []
@@ -63,8 +60,7 @@ require [
 			farClip = 10000
 
 			# Connect to the server.
-			@server = new Server(@, @serverAddress)
-			@server.on('connect', ( id ) => @id = id)
+			@node = new NetworkNode()
 
 			# Create container element.
 			container = document.createElement 'div'
@@ -174,7 +170,7 @@ require [
 				console.log event
 
 			setInterval( =>
-				@server.query('nodes', 'node.structured', true, @processNodesInfo)
+				@node.server.query('nodes', 'node.structured', true, @processNodesInfo)
 			, 1000)
 
 		# Sets the dimensions of the viewport and the aspect ration of the camera

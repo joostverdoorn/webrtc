@@ -25,7 +25,6 @@ define [
 	'public/library/models/collection'
 
 	'underscore'
-
 	], ( Mixable, EventBindings, Server, Peer, Message, Collection, _ ) ->
 
 	# Constructs a new unstructured node.
@@ -39,6 +38,7 @@ define [
 		serverAddress: ':8080/'
 
 		_timeDelta: 0
+		queryTimeout: 5000
 
 		# Constructs a new node. Calls initialize on any subclass.
 		#
@@ -46,13 +46,11 @@ define [
 		#
 		constructor: ( @serverAddress = @serverAddress ) ->
 			@messageStorage = []
+			@partialMessages = {}
 
 			@server = new Server(@, @serverAddress)
 			@server.on
 				'connect': @_onServerConnect
-				'peer.connectionRequest': @_onPeerConnectionRequest
-				'peer.setRemoteDescription': @_onPeerSetRemoteDescription
-				'peer.addIceCandidate': @_onPeerAddIceCandidate
 
 			@_peers = new Collection()
 			@_peers.on
@@ -78,6 +76,7 @@ define [
 			peer.once
 				'channel.opened': ( ) => callback?(true)
 				'timeout': ( ) => callback?(false)
+				'failed': ( ) => callback?(false)
 
 			@addPeer(peer)
 			return peer
@@ -145,7 +144,7 @@ define [
 				context = arguments[2] || @
 
 				@_peers.on(event, ( peer, args..., message ) =>
-					args = args.concat(message.timestamp, message)
+					args = args.concat(message)
 					callback.apply(context, args)
 				)
 
@@ -172,10 +171,29 @@ define [
 		# @param callback [Function] the function to call when a response has arrived
 		# @param args... [Any] any other arguments to be passed along with the query
 		#
-		queryTo: ( to, request, callback, args... ) ->
+		queryTo: ( to, request, args..., callback ) ->
 			queryID = _.uniqueId('query')
+
+			timer = setTimeout( ( ) =>
+				@_peers.off(queryID)
+				@server.off(queryID)
+				callback(null)
+			, @queryTimeout)
+
+			peerCallback = ( peer, argms... ) =>
+				@server.off(queryID)
+				callback.apply(@, argms)
+				clearTimeout(timer)
+
+			serverCallback = ( argms... ) =>
+				@_peers.off(queryID)
+				callback.apply(@, argms)
+				clearTimeout(timer)
+
+			@_peers.once(queryID, peerCallback)
+			@server.once(queryID, serverCallback)
+
 			args = [to, 'query', request, queryID].concat(args)
-			@_peers.once(queryID, callback)
 			@emitTo.apply(@, args)
 
 		# Broadcasts a message to all peers in network.
@@ -198,6 +216,7 @@ define [
 				peer.send(message) for peer in @getPeers()
 			else if peer = @getPeer(message.to)
 				peer.send(message)
+			else server.send(message)
 
 		# Responds to a request.
 		#
@@ -211,6 +230,28 @@ define [
 					callback 'pong', @time()
 				when 'type'
 					callback @type
+				when 'requestConnection'
+					id = args[0]
+
+					@connect(id, null, false)
+					callback true
+				when 'remoteDescription'
+					id = args[0]
+					data = args[1]
+
+					if peer = @getPeer(id, null, true)
+						peer.setRemoteDescription(data, callback)
+					else callback null
+
+				when 'iceCandidates'
+					id = args[0]
+					arr = args[1]
+
+					if peer = @getPeer(id, null, true)
+						peer.addIceCandidates(arr)
+						callback peer.iceCandidates
+					else callback null
+
 				when 'info'
 					info =
 						id: @id

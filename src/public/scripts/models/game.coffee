@@ -60,13 +60,12 @@ define [
 					@world.removePlayer(id)
 				'player.died': ( id ) =>
 					@world.removePlayer(id)
-				'player.update': ( id, info, timestamp ) =>
-					@world.applyPlayerInfo(id, info, timestamp)
-				'player.fire': ( id, info, timestamp ) =>
-					@world.createProjectile(info, timestamp)
+				'player.update': ( id, info, message ) =>
+					@world.applyPlayerInfo(id, info, message.timestamp)
+				'player.fire': ( id, info, message ) =>
+					@world.createProjectile(info, message.timestamp)
 				'entity.die': ( id ) =>
 					@world.removeEntityByID(id)
-
 
 		# Updates the phyics for all objects and renders the scene. Requests a new animation frame
 		# to repeat this methods.

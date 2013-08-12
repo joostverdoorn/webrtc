@@ -1,6 +1,7 @@
 define [
 	'public/library/models/remote._'
 	'public/library/models/vector'
+
 	'underscore'
 	'adapter'
 	], ( Remote, Vector, _ ) ->
@@ -35,6 +36,7 @@ define [
 			reliable: false
 
 		_connectionTimeout: 10000
+		_iceCandidateGenerationTimeout: 1000
 
 		# Initializes this class. Will attempt to connect to a remote peer through WebRTC.
 		# Is called from the baseclass' constructor.
@@ -42,8 +44,10 @@ define [
 		# @param id [String] the id of the peer to connect to
 		# @param instantiate [Booelean] wether to instantiate the connection or wait for the remote
 		#
-		initialize: ( @id, instantiate = true, webRTCObject = RTCPeerConnection ) ->
-			@_connection = new webRTCObject(@_serverConfiguration, @_connectionConfiguration)
+		initialize: ( @id, instantiate = true, WebRTCObject = RTCPeerConnection ) ->
+			@iceCandidates = []
+
+			@_connection = new WebRTCObject(@_serverConfiguration, @_connectionConfiguration)
 			@_connection.onicecandidate = @_onIceCandidate
 			@_connection.oniceconnectionstatechange = @_onIceConnectionStateChange
 			@_connection.ondatachannel = @_onDataChannel
@@ -62,18 +66,30 @@ define [
 		#
 		connect: ( ) ->
 			@_isConnector = true
-			@_controller.server.emitTo(@id, 'peer.connectionRequest', @_controller.id)
 
 			channel = @_connection.createDataChannel('a', @_channelConfiguration)
-			@_connection.createOffer(@_onLocalDescription)
-
 			@_addChannel(channel)
 
-			# Add a connection timeout to automatically kill the peer
-			# when a connection takes to long to establish.
 			timer = setTimeout( ( ) =>
 				@trigger('timeout')
 			, @_connectionTimeout )
+
+			@_controller.queryTo(@id, 'requestConnection', @_controller.id, ( accepted ) =>
+				unless accepted
+					console.log 'connection request denied'
+					@trigger('failed')
+					clearTimeout(timer)
+					return
+
+				@_connection.createOffer( ( description ) =>
+					@_setLocalDescription(description, ( description ) =>
+						@_controller.queryTo(@id, 'remoteDescription', @_controller.id, description, ( data ) =>
+							if data? then @setRemoteDescription(data)
+						)
+					)
+				)
+			)
+
 			@once('channel.opened', ( ) => clearTimeout(timer))
 
 		# Disconnects from the peer.
@@ -105,8 +121,14 @@ define [
 			unless @isChannelOpen()
 				return false
 
+			messageString = message.serialize()
+
+			if messageString.length > 800
+				@_disassemble(message)
+				return undefined
+
 			try
-				@_channel.send(message.serialize())
+				@_channel.send(messageString)
 				return true
 			catch error
 				if retries < maxRetries
@@ -144,21 +166,30 @@ define [
 		#
 		# @param description [RTCSessionDescription] the local session description
 		#
-		_onLocalDescription: ( description ) =>
+		_setLocalDescription: ( description, callback ) =>
 			description.sdp = @_higherBandwidthSDP(description.sdp)
 			@_connection.setLocalDescription(description)
-			@_controller.server.emitTo(@id, 'peer.setRemoteDescription', @_controller.id, description)
+			callback?(description)
 
 		# Is called when a remote description has been received. It will create an answer.
 		#
 		# @param id [String] a string representing the remote peer
 		# @param description [Object] an object representing the remote session description
 		#
-		setRemoteDescription: ( description ) =>
+		setRemoteDescription: ( data, callback ) =>
+			description = new RTCSessionDescription(data)
 			@_connection.setRemoteDescription(description)
 
-			unless @_isConnector
-				@_connection.createAnswer(@_onLocalDescription, null, {})
+			if @_isConnector
+				setTimeout( ( ) =>
+					@_controller.queryTo(@id, 'iceCandidates', @_controller.id, @iceCandidates, ( arr ) =>
+						if arr? then @addIceCandidates(arr)
+					)
+				, @_iceCandidateGenerationTimeout)
+			else
+				@_connection.createAnswer( ( description ) =>
+					@_setLocalDescription(description, callback)
+				, null, {})
 
 		# Provides a callback for adding ice candidates. When a candidate is present,
 		# call candidate.add on the remote to add it.
@@ -167,15 +198,18 @@ define [
 		#
 		_onIceCandidate: ( event ) =>
 			if event.candidate?
-				@_controller.server.emitTo(@id, 'peer.addIceCandidate', @_controller.id, event.candidate)
+				@iceCandidates.push(event.candidate)
 
 		# Is called when the remote wants to add an ice candidate.
 		#
 		# @param id [String] the id of the remote
 		# @param candidate [Object] an object representing the ice candidate
 		#
-		addIceCandidate: ( candidate ) =>
-			@_connection.addIceCandidate(candidate)
+		addIceCandidates: ( arr ) =>
+			for data in arr
+				candidate = new RTCIceCandidate(data)
+				console.log candidate
+				@_connection.addIceCandidate(candidate)
 
 		# Is called when the ice connection state changed.
 		#
@@ -209,7 +243,6 @@ define [
 		# @param event [Event] the channel open event
 		#
 		_onChannelOpen: ( event ) =>
-			@query('isSuperNode', ( isSuperNode ) => @isSuperNode = isSuperNode)
 			@trigger('channel.opened', @, event)
 
 		# Is called when the data channel is closed.
@@ -222,12 +255,11 @@ define [
 		# Is called when a connection has been established.
 		#
 		_onConnect: ( ) ->
-			#console.log "connected to node #{@id}"
+			console.log "connected to node #{@id}"
 
 		# Is called when a connection has been broken.
 		#
 		_onDisconnect: ( ) ->
-			clearInterval(@pingInterval)
 			console.log "disconnected from node #{@id}"
 
 		# Is called when the channel has opened.
@@ -239,8 +271,3 @@ define [
 		#
 		_onChannelClosed: ( ) ->
 			console.log "channel closed to node #{@id}"
-
-		# Removes all timers
-		#
-		removeTimers: ( ) ->
-			clearInterval(@pingInterval)

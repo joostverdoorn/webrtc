@@ -168,13 +168,11 @@ define [
 				callback?(false)
 				return
 
-			console.log 'sending parent request to ' + peer.id
 			peer.query('peer.requestAdoption', @id, ( accepted ) =>
 				unless accepted
 					callback?(false)
 
 				if accepted and not @isSuperNode
-					console.log 'parent request accepted'
 					if @_parent?
 						@removeParent()
 
@@ -182,7 +180,6 @@ define [
 					@_parent = peer
 					callback?(true)
 				else
-					console.log 'parent request denied'
 					peer.emit('peer.abandonParent', @id)
 					peer.role = Peer.Role.None
 					callback?(false)
@@ -625,7 +622,7 @@ define [
 		#
 		# @param tokenString [String] a string representation of the received token.
 		#
-		_onTokenReceived: ( tokenString, timestamp, message ) =>
+		_onTokenReceived: ( tokenString, message ) =>
 			if @token?
 				@broadcast('token.die', tokenString)
 				return
@@ -648,7 +645,7 @@ define [
 		# @param tokenString [String] a string representation of the token.
 		# @param instantiate [Boolean] wether or not to respond.
 		#
-		_onTokenInfo: ( tokenString, instantiate, timestamp,  message ) =>
+		_onTokenInfo: ( tokenString, instantiate, message ) =>
 
 			token = Token.deserialize(tokenString)
 			console.log "received info from node #{message.from} about token with id ", token.id
@@ -662,7 +659,7 @@ define [
 		#
 		# @param tokenString [String] a string representation of the token.
 		#
-		_onTokenDied: ( tokenString, timestamp, message ) =>
+		_onTokenDied: ( tokenString, message ) =>
 			token = Token.deserialize(tokenString)
 			console.log "Received dead token from node #{message.from} with id ", token.id
 			@removeToken(token)
