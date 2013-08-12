@@ -92,7 +92,7 @@ define [
 		# @param message [Message] the message to disassemble
 		# @param maxSize [Integer] the maximum size of the pieces
 		#
-		_disassemble: ( message, maxSize = 600 ) =>
+		_disassemble: ( message, maxSize = 400 ) =>
 			messageString = message.serialize()
 			length = messageString.length
 

@@ -59,6 +59,7 @@ define [
 
 				names = if name then [ name ] else _.keys(@_events)
 				for name in names
+					unless @_events[name]? then return
 					for event in @_events[name]
 						if ( not callback? or callback is event.callback ) and
 								( not context? or context is event.context )

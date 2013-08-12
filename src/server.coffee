@@ -34,8 +34,7 @@ define [
 				'ping': ( callback ) =>
 					callback 'pong', @time()
 				'nodes': ( callback, type, extensive = false ) =>
-					console.log type, extensive, callback
-					unless extensive?
+					unless extensive
 						nodes = (node.serialize() for node in @getNodes(type))
 						callback nodes
 					else

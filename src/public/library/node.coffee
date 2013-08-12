@@ -199,7 +199,21 @@ define [
 		#	 @param bindings [Object] an object mapping event names to functions
 		#
 		onQuery: ( args... ) ->
-			@queries.on.apply(@queries, args)
+			if typeof arguments[0] is 'string'
+				name = arguments[0]
+				callback = arguments[1]
+				context = arguments[2] || null
+
+				@queries.off(name)
+				@queries.on(name, callback, context)
+
+			else if typeof arguments[0] is 'object'
+				bindings = arguments[0]
+
+				for name, callback of bindings
+					@onQuery(name, callback)
+
+			return @
 
 		# Attempts to emit to a peer by id. Unreliable.
 		#
