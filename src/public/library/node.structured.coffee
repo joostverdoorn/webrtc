@@ -37,7 +37,7 @@ define [
 
 		type: 'node.structured'
 
-		_updatePositionInterval : 1000
+		_updatePositionInterval : 2000
 		_updateFoundationNodesInterval : 10000
 		_recommendParentInterval: 10000
 		_demotionTimeout: 11000
@@ -51,7 +51,7 @@ define [
 		_tokenMoveThreshold : 1
 
 
-		position : new Vector(Math.random()-0.5, Math.random()-0.5, Math.random()-0.5)
+		position : new Vector((Math.random()-0.5)*4, (Math.random()-0.5)*4, (Math.random()-0.5)*4)
 
 		initialize: () ->
 
@@ -291,7 +291,7 @@ define [
 			if @isSuperNode is superNode
 				return
 
-			console.log "Supernode: #{superNode} and having token", @token?
+			console.log "Supernode: #{superNode}, having token #{@token?} and children #{@getChildren().length}"
 			@isSuperNode = superNode
 
 			@server.emit('setSuperNode', superNode)
@@ -471,6 +471,8 @@ define [
 								peer = @connect(superNode.id, ( success ) =>
 									if success
 										@addSibling(peer)
+									else
+										console.warn "can not connect to ", peer.id
 								)
 						) (superNode)
 				)
@@ -507,6 +509,7 @@ define [
 		#
 		_updatePosition: ( ) =>
 			i = 0
+			#console.group("Pingsessie")
 			for peer in @getPeers()
 				( ( peer ) =>
 					peer.ping( ( latency, position, tokenString ) =>
@@ -515,10 +518,14 @@ define [
 							token = Token.deserialize(tokenString)
 							@addToken(token)
 						i++
+
+						#console.log "#{i} van de #{@getPeers().length} gepingd - #{peer.id}"
+
 						if i is @getPeers().length
 							@_computePosition()
 					)
 				) ( peer )
+			#console.groupEnd()
 
 		# Computes our position in the network from the positions of our neighbours
 		# and the latency to them. This implements the vivaldi network coordinates:

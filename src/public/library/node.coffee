@@ -32,7 +32,6 @@ define [
 	# Constructs a new unstructured node.
 	#
 	class Node extends Mixable
-
 		@concern EventBindings
 
 		id: null
@@ -60,6 +59,7 @@ define [
 			@_peers.on
 				'disconnect': ( peer ) => @removePeer(peer)
 				'timeout': ( peer ) => @removePeer(peer)
+				'failed': ( peer ) => @removePeer(peer)
 
 			@onQuery
 				'ping': ( callback ) =>
@@ -125,8 +125,9 @@ define [
 		# @param peer [Peer] the peer to add
 		#
 		addPeer: ( peer ) ->
-			@_peers.add(peer)
-			@trigger('peer.added', peer)
+			if not p = @getPeer(peer.id)
+				@_peers.add(peer)
+				@trigger('peer.added', peer)
 
 		# Removes a peer from the peer list
 		#
