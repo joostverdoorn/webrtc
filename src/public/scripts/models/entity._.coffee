@@ -60,6 +60,10 @@ define [
 			@scene.remove(@mesh)
 			@trigger('die', @position.clone(), @velocity.clone())
 
+		revive: ( ) ->
+			@_dead = false
+			@scene.add(@mesh)
+
 		# Adds a force to the forces stack. Forces will be applied next update.
 		#
 		# @param vector [Three.Vector3] the vector force to add
@@ -109,13 +113,18 @@ define [
 					else
 						@position.lerp(@_targetPosition, dt)
 
+				triggerImpact = ( intersect ) =>
+					@trigger('impact.world', @position.clone(), @velocity.clone())
+
+					@position = intersect.point
+					@velocity = new Three.Vector3()
+
 				# Check if the player intersects with the planet.
+				if intersect = @world.planet.isInside(@position)
+					triggerImpact(intersect)
 				if @owner
 					if intersect = @world.planet.getIntersect(@position, 4, 0)
-						@trigger('impact.world', @position.clone(), @velocity.clone())
-
-						@position = intersect.point
-						@velocity = new Three.Vector3()
+						triggerImpact(intersect)
 
 				# Loop through all forces and calculate the acceleration.
 				acceleration = new Three.Vector3(0, 0, 0)
@@ -314,15 +323,21 @@ define [
 				if intersect = intersects[0]
 					intersect.distance -= behind
 					return intersect
-				else if distance <= radius / 2
-					return {
-						distance: 0
-						point: point.clone()
-						face:
-							normal: new Three.Vector3()
-					}
 				else
-					return null
+					return @isInside(point)
+
+		isInside: ( point ) ->
+			radius = @mesh.geometry.boundingSphere.radius
+			distance = @position.distanceTo(point)
+			if distance <= radius / 2
+				return {
+					distance: 0
+					point: point.clone()
+					face:
+						normal: new Three.Vector3()
+				}
+			else
+				return null
 
 		# Returns if the bounding sphere of this entity is colliding with a bounding sphere
 		# of a given set of objects.

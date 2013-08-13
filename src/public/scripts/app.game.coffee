@@ -67,7 +67,7 @@ require [
 			# Create overlay screen.
 			@overlay = new Overlay()
 
-			@game.stats.on('change', ( stats ) =>
+			@game.on('stats.change', ( stats ) =>
 				@overlay.setStats(stats)
 			)
 
@@ -229,7 +229,7 @@ require [
 		# broadcasted into the network.
 		#
 		_onPlayerDied: ( ) =>
-			@overlay.showStats(@game.stats.stats)
+			@overlay.showStats(@game.stats)
 			@waitPlayerSpawn()
 
 	window.App = new App.Game

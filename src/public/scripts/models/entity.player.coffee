@@ -2,9 +2,10 @@ define [
 	'public/scripts/models/entity._'
 	'public/scripts/models/entity.cannon'
 	'public/scripts/models/entity.projectile'
+	'public/scripts/models/stats'
 
 	'three'
-	], ( Entity, Cannon, Projectile, Three ) ->
+	], ( Entity, Cannon, Projectile, Stats, Three ) ->
 
 	# This class implements player-specific properties for the entity physics object.
 	#
@@ -17,6 +18,10 @@ define [
 		# @param info [Object] an object containing all info to apply to the player
 		#
 		initialize: ( @id, info = null, timestamp = null ) ->
+			@stats = new Stats()
+			@stats.addStat('kills')
+			@stats.addStat('deaths')
+
 			@mass = 100
 			@drag = .01
 			@angularDrag = 7

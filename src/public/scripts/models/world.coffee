@@ -24,13 +24,16 @@ define [
 		# @param scene [Three.Scene] the scene to draw upon
 		#
 		constructor: ( @scene ) ->
+			@stats = {}
+
 			@_loader = new Three.JSONLoader()
 
 			@_entities = new Collection()
 			@_entities.on('die', ( entity ) =>
 					if entity.owner and entity.id
 						@trigger('die', entity.id)
-					@removeEntity(entity)
+					unless entity instanceof Player
+						@removeEntity(entity)
 				)
 
 			# Add lights to the scene.
@@ -74,12 +77,24 @@ define [
 		# @param info [Object] an object of the player's info
 		#
 		createPlayer: ( id, owner, info, timestamp ) ->
+			if player = @getPlayer(id)
+				player.applyInfo(info, timestamp)
+				if player._dead
+					player.revive()
+				player.new = false
+				return player
+
 			player = new Player(@, owner, id, info, timestamp)
+			player.stats.on('change', ( stats ) =>
+				@stats[id] = stats
+				@trigger('stats.change', @stats)
+			)
 
 			if owner
 				player.on('fire', ( projectile ) => @addEntity(projectile))
 
 			@addEntity(player)
+			player.new = true
 			return player
 
 		# Removes a player from the world.
@@ -117,10 +132,14 @@ define [
 			else
 				player = @createPlayer(id, false, info)
 
+			if player._dead
+				player.revive()
+
 			if player.lastUpdate
 				clearTimeout(player.lastUpdate)
-			player.lastUpdate = setTimeout(->
+			player.lastUpdate = setTimeout(=>
 				player.die()
+				@removeEntity(player)
 			, 30000)
 
 		# Creates a new projectile.
@@ -149,6 +168,9 @@ define [
 		#
 		update: ( @dt, ownPlayer ) ->
 			entity?.update(dt) for entity in @_entities
+
+			if ownPlayer?._dead
+				return
 
 			entities = _(@_entities).filter( ( entity ) -> entity instanceof Projectile and not entity.owner)
 			if entities

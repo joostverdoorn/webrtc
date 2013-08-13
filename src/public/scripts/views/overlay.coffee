@@ -105,35 +105,18 @@ define [
 			@display('player_died')
 
 		_sortStats: ( stats ) ->
-			statsFormatted = {}
-			for id, kills of stats.kills
-				unless statsFormatted[id]
-					statsFormatted[id] = {
-						kills: 0
-						deaths: 0
-					}
-
-				statsFormatted[id].kills = kills
-
-			for id, deaths of stats.deaths
-				unless statsFormatted[id]
-					statsFormatted[id] = {
-						kills: 0
-						deaths: 0
-					}
-
-				statsFormatted[id].deaths = deaths
-
 			sortedStats = []
-			for id, stat of statsFormatted
+
+			for id, stat of stats
 				if stat.deaths is 0
 					kdr = stat.kills
 				else
-					kdr = Math.round(stat.kills / stat.deaths, 2)
+					kdr = Math.round(stat.kills / stat.deaths * 100) / 100
+
 				sortedStats.push([id, stat.kills, stat.deaths, kdr])
 
 			sortedStats.sort(( a, b ) ->
-				a[1] - b[1]
+				b[3] - a[3]
 			)
 
 			return sortedStats
@@ -145,7 +128,7 @@ define [
 			for stat in sortedStats
 				statRows.append("<tr><td>#{rank++}</td><td>#{stat[0]}</td><td>#{stat[1]}</td><td>#{stat[2]}</td><td>#{stat[3]}</td></tr>")
 
-		showStats: ( stats ) ->
+		showStats: ( stats = @stats ) ->
 			@_statsVisible = true
 
 			sortedStats = @_sortStats(stats)
@@ -156,9 +139,10 @@ define [
 				@_statsVisible = false
 			)
 
-		setStats: ( stats ) =>
+		setStats: ( @stats ) =>
 			if @_statsVisible
-				sortedStats = @_sortStats(stats)
+				console.log 'Updating stats'
+				sortedStats = @_sortStats(@stats)
 				@_updateStatTable(sortedStats)
 
 		# Shows the InfoView

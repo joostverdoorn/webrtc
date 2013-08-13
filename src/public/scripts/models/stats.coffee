@@ -9,43 +9,38 @@ define [
 		constructor: ( ) ->
 			@stats = {}
 
-		addStat: ( name, values = {} ) ->
+		addStat: ( name, value = 0 ) ->
 			unless @stats[name]
-				@stats[name] = values
+				@stats[name] = value
 
-		mergeStats: ( newStats ) ->
-			for name, stats of newScores
-				@mergeStat(name, stats)
-			@_triggerChange()
+		@mergeStats: ( players, stats ) ->
+			for player in players
+				if player.id? and stats[player.id]?
+					player.stats.mergeStats(stats[player.id])
 
-		mergeStat: ( stat, values ) ->
+		mergeStats: ( stats ) ->
+			for statName of @stats
+				@mergeStat(statName, stats[statName])
+
+		mergeStat: ( statName, value ) ->
+			if value > @stats[statName]
+				@stats[statName] = value
+				@_triggerChange()
+
+		incrementStat: ( stat, increment = 1 ) ->
 			unless @stats[stat]
-				return
-
-			for id, value of values
-				if @stats[stat][id] > value
-					@stats[stat][id] = value
-
-		incrementStat: ( stat, id, increment = 1 ) ->
-			unless @stats[stat]
-				return
-
-			unless @stats[stat][id]
-				@stats[stat][id] = increment
+				@stats[stat] = increment
 				@_triggerChange()
 				return
 
-			@stats[stat][id] += increment
+			@stats[stat] += increment
 			@_triggerChange()
 
 		getStat: ( stat, id, defaultValue = 0 ) ->
 			unless @stats[stat]
-				return
-
-			unless @stats[stat][id]
 				return defaultValue
 
-			return @stats[stat][id]
+			return @stats[stat]
 
 		_triggerChange: ( ) ->
 			@trigger('change', @stats)

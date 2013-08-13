@@ -8,10 +8,9 @@ define [
 
 	'public/scripts/models/world'
 	'public/scripts/models/entity.player'
-	'public/scripts/models/stats'
 
 	'three'
-	], ( Mixable, EventBindings, Node, Controller, World, Player, Stats, Three ) ->
+	], ( Mixable, EventBindings, Node, Controller, World, Player, Three ) ->
 
 	# This game class implements the node structure created in the library.
 	# It uses three.js for the graphics.
@@ -34,14 +33,10 @@ define [
 			@node = new Node()
 			@controller = new Controller()
 
-			@stats = new Stats()
-			@stats.addStat('kills')
-			@stats.addStat('deaths')
-
 			@node.onQuery
 				stats: ( callback, stats ) =>
-					@stats.mergeStats(stats)
-					callback @stats.stats
+					#@stats.mergeStats(stats)
+					#callback @stats.stats
 
 			# Create the world.
 			@world = new World(@scene)
@@ -53,8 +48,11 @@ define [
 				'player.kill': ( killerEntity ) =>
 					if killerEntity isnt @player
 						@node.broadcast('player.kill', killerEntity.id)
-					@stats.incrementStat('deaths', @node.id, 1)
+					console.log 'We died. Incrementing deaths'
+					@player?.stats.incrementStat('deaths', 1)
 					killerEntity.die()
+				'stats.change': ( stats ) =>
+					@trigger('stats.change', stats)
 
 			@node.server.once
 				'connect': ( ) =>
@@ -74,8 +72,10 @@ define [
 				'player.left': ( id ) =>
 					@world.removePlayer(id)
 				'player.died': ( id ) =>
-					@world.removePlayer(id)
-					@stats.incrementStat('deaths', id, 1)
+					console.log 'Player ' + id + ' died. Incrementing deaths'
+					player = @world.getPlayer(id)
+					player?.stats.incrementStat('deaths', 1)
+					player?.die()
 				'player.update': ( id, info, message ) =>
 					@world.applyPlayerInfo(id, info, message.timestamp)
 				'player.fire': ( id, info, message ) =>
@@ -83,11 +83,14 @@ define [
 				'entity.die': ( id ) =>
 					@world.removeEntityByID(id)
 				'player.kill': ( killerEntityID ) =>
-					@stats.incrementStat('kills', @node.id, 1)
+					console.log 'We killed player ' + killerEntityID + '. Incrementing own kills'
+					@player.stats.incrementStat('kills', 1)
 					@node.broadcast('player.addKill', @node.id)
 					@world.removeEntityByID(killerEntityID)
 				'player.addKill': ( id ) =>
-					@stats.incrementStat('kills', id, 1)
+					console.log 'We heard that player ' + id + ' killed someone. Incrementing kills'
+					player = @world.getPlayer(id)
+					player?.stats.incrementStat('kills', 1)
 
 		# Updates the phyics for all objects and renders the scene. Requests a new animation frame
 		# to repeat this methods.
@@ -149,20 +152,21 @@ define [
 		# @param position [Three.Vector3] the position at which to spawn the player
 		#
 		createPlayer: ( position ) =>
-			if @player
+			if @player and not @player._dead
 				return
 
 			@player = @world.createPlayer(@node.id, true, position: position.toArray())
 
-			broadcastInterval = setInterval( ( ) =>
+			@broadcastInterval = setInterval( ( ) =>
 				@node.broadcast('player.update', @player.id, @player.getInfo())
 			, 200)
 
-			@player.on
-				'fire': ( projectile ) =>
-					@node.broadcast('player.fire', @player.id, projectile.getInfo())
-				'die': ( ) =>
-					@_onPlayerDied(broadcastInterval)
+			if @player.new
+				@player.on
+					'fire': ( projectile ) =>
+						@node.broadcast('player.fire', @player.id, projectile.getInfo())
+					'die': ( ) =>
+						@_onPlayerDied(@broadcastInterval)
 
 			@node.broadcast('player.joined', @player.id, @player.getInfo())
 
@@ -174,7 +178,7 @@ define [
 		_onPlayerDied: ( interval ) =>
 			clearInterval(interval)
 			@node.broadcast('player.died', @player.id)
-			@player = null
+			#@player.visible = false
 			@trigger('player.died')
 
 		# Returns the current network time.
@@ -185,6 +189,8 @@ define [
 			return @node.time()
 
 		queryStats: ( ) ->
+			###
 			@node.queryTo('*', 'stats', @stats.stats, ( stats ) =>
 				@stats.mergeStats(stats)
 			)
+			###
