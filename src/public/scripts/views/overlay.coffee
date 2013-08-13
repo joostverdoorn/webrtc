@@ -16,6 +16,7 @@ define [
 		#
 		constructor: ( ) ->
 			@stats = {}
+			@_statsVisible = false
 
 			$('head').append('<link rel="stylesheet" type="text/css" href="/stylesheets/overlay.css">')
 

@@ -129,6 +129,12 @@ require [
 		# @param timestamp [Integer] the time that has elapsed since the first requestAnimationFrame
 		#
 		update: ( timestamp ) =>
+			if not @game.player?._dead and not @paused
+				if not @overlay._statsVisible and @game.controller.Leaderboard
+					@overlay.showStats()
+				else if @overlay._statsVisible and not @game.controller.Leaderboard
+					@overlay.hide()
+
 			dt = @game.update(timestamp)
 
 			# Set the camera to follow the player

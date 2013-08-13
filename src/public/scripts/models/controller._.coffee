@@ -11,6 +11,7 @@ define [
 		@Controls:
 			Fire: false
 			Boost: false
+			Leaderboard: false
 
 			FlyLeft: 0
 			FlyRight: 0

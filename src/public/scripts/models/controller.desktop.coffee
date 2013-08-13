@@ -68,6 +68,7 @@ define [
 				'S': ( pressed ) => @FlyBackward = pressed ? 1 : 0
 				'SPACE': ( pressed ) => @Boost = pressed
 				'MOUSE': ( pressed ) => @Fire = pressed
+				'Q': ( pressed ) => @Leaderboard = pressed
 				'MOUSEMOVE': ( dx, dy ) =>
 					@RotateCannonLeft = if dx < 0 then -dx * @_mouseMoveScale else 0
 					@RotateCannonRight = if dx > 0 then dx * @_mouseMoveScale else 0
