@@ -138,6 +138,8 @@ define [
 			if player.lastUpdate
 				clearTimeout(player.lastUpdate)
 			player.lastUpdate = setTimeout(=>
+				delete @stats[player.id]
+				@trigger('stats.change', @stats)
 				player.die()
 				@removeEntity(player)
 			, 30000)

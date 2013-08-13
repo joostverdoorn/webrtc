@@ -8,9 +8,10 @@ define [
 
 	'public/scripts/models/world'
 	'public/scripts/models/entity.player'
+	'public/scripts/models/stats'
 
 	'three'
-	], ( Mixable, EventBindings, Node, Controller, World, Player, Three ) ->
+	], ( Mixable, EventBindings, Node, Controller, World, Player, Stats, Three ) ->
 
 	# This game class implements the node structure created in the library.
 	# It uses three.js for the graphics.
@@ -33,10 +34,13 @@ define [
 			@node = new Node()
 			@controller = new Controller()
 
+			@stats = {}
+
 			@node.onQuery
 				stats: ( callback, stats ) =>
-					#@stats.mergeStats(stats)
-					#callback @stats.stats
+					console.log 'SOMEONE ASKING FOR OUR STATS WITH THESE STATS', stats
+					Stats.mergeStats(@world.getPlayers(), stats)
+					callback @stats
 
 			# Create the world.
 			@world = new World(@scene)
@@ -52,6 +56,7 @@ define [
 					@player?.stats.incrementStat('deaths', 1)
 					killerEntity.die()
 				'stats.change': ( stats ) =>
+					@stats = stats
 					@trigger('stats.change', stats)
 
 			@node.server.once
@@ -188,9 +193,10 @@ define [
 		time: ( ) ->
 			return @node.time()
 
-		queryStats: ( ) ->
-			###
-			@node.queryTo('*', 'stats', @stats.stats, ( stats ) =>
-				@stats.mergeStats(stats)
+		queryStats: ( ) =>
+			console.log 'REQUESTING STATS FROM NEIGHBOURS'
+			@node.queryTo('*', 2, 'stats', @stats, ( stats ) =>
+				console.log 'GOT STATS BACK', stats
+				Stats.mergeStats(@world.getPlayers(), stats)
 			)
-			###
+			return

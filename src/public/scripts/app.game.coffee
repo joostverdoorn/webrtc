@@ -229,7 +229,7 @@ require [
 		# broadcasted into the network.
 		#
 		_onPlayerDied: ( ) =>
-			@overlay.showStats(@game.stats)
+			@overlay.showStats()
 			@waitPlayerSpawn()
 
 	window.App = new App.Game

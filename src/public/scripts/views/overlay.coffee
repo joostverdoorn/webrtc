@@ -15,6 +15,8 @@ define [
 		# @param forceKeyboard [Boolean] Force to use the keyboard as input without showing the selection screen
 		#
 		constructor: ( ) ->
+			@stats = {}
+
 			$('head').append('<link rel="stylesheet" type="text/css" href="/stylesheets/overlay.css">')
 
 			@container = $('<div id="overlay"></div>')
