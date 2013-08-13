@@ -156,6 +156,8 @@ define [
 			if @player and not @player._dead
 				return
 
+			@queryStats()
+
 			@player = @world.createPlayer(@node.id, true, position: position.toArray())
 
 			@broadcastInterval = setInterval( ( ) =>
