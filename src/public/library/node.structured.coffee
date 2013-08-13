@@ -38,7 +38,7 @@ define [
 		type: 'node.structured'
 
 		_updatePositionInterval : 2000
-		_updateFoundationNodesInterval : 10000
+		_ensureNetworkIntegrityInterval : 10000
 		_recommendParentInterval: 10000
 		_demotionTimeout: 11000
 		_tokenInfoTimeout: 3000
@@ -46,7 +46,7 @@ define [
 		_pingCandidateTimeout : 1000
 		_coordinateDelta : 1
 		_maxChildren : 8
-		_foundationNodes : 5
+		_foundationNodes : 3
 		_superNodeSwitchThreshold : 0.7
 		_tokenMoveThreshold : 1
 
@@ -58,7 +58,7 @@ define [
 
 			@timers = []
 			setInterval(@_updatePosition, @_updatePositionInterval)
-			setInterval(@_updateFoundationNodes, @_updateFoundationNodesInterval)
+			setInterval(@_ensureNetworkIntegrity, @_ensureNetworkIntegrityInterval)
 			setInterval(@_recommendParent, @_recommendParentInterval)
 
 
@@ -447,14 +447,16 @@ define [
 		# by connecting to supernodes when required, or setting a parent when we
 		# don't have one.
 		#
-		_updateFoundationNodes: () =>
-			# Make sure we have a parent when we need one.
+		_ensureNetworkIntegrity: () =>
+
+			@_checkForInconsistencies()
+
 			if not @isSuperNode and not @_parent?
-				@_selectParent()
 				return
 
 			# Request all nodes from the server and set all supernodes as siblings.
 			if @isSuperNode
+				# If a node has no children, start a timer to become a normal node
 				if @getChildren().length is 0
 					@_demotionTimer = setTimeout( () =>
 						@setSuperNode(false)
@@ -508,9 +510,44 @@ define [
 					@connect(superNode.id) for superNode in superNodes
 				)
 
-		# Updates our position by requesting latencies and positions
-		# of all connected nodes, and computing our position from that.
+		# Check for inconsistencies in the network such as broken relationships
 		#
+		_checkForInconsistencies: () =>
+
+			if @isSuperNode
+				# Ensure all siblings are superNodes and vice versa
+				for sibling in @getSiblings()
+					if !sibling.isSuperNode
+						@removeSibling(sibling)
+
+				superNodes = _(@getPeers()).filter( ( node ) -> node.isSuperNode)
+				for superNode in superNodes
+					unless @getSibling(superNode.id)?
+						@addSibling(superNode)
+
+				# Children automatically checked by siblings guarante
+
+				# Ensure we have no parent
+				if @_parent?
+					@removeParent()
+
+				if not @token?
+					@setSuperNode(false)
+
+			else
+				# Make sure we have a parent when we need one.
+				if not @_parent?
+					@_selectParent()
+
+				# Make sure we have no siblings
+				for sibling in @getSiblings()
+					@removeSibling(sibling)
+
+				# Make sure we have no children
+				for sibling in @getChildren()
+					@removeChild(sibling)
+
+
 		_updatePosition: ( ) =>
 			i = 0
 			#console.group("Pingsessie")

@@ -75,7 +75,7 @@ define [
 			, @_connectionTimeout )
 
 			@_controller.queryTo(@id, Infinity, 'requestConnection', @_controller.id, ( accepted ) =>
-				console.log "connection #{accepted} to node #{@id}"
+				console.log "connection request #{accepted} to node #{@id}"
 				unless accepted
 					@trigger('failed')
 					clearTimeout(timer)
