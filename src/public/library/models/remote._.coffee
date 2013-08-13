@@ -128,7 +128,7 @@ define [
 		# @param message [Message] the message to send
 		#
 		send: ( message ) ->
-			if --message.ttl <= 0 then return
+			if --message.ttl < 0 then return
 
 			unless message.isStored(@_controller.messageStorage)
 				message.storeHash(@_controller.messageStorage)
