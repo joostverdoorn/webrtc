@@ -100,9 +100,9 @@ define [
 		# @param instantiate [Boolean] whether to instantiate the connection
 		#
 		connect: ( id, callback, instantiate = true ) ->
-			if peer = @getPeer(id)
-				callback?(true)
-				return
+			if peer = @getPeer(id, null, true)
+				_( ( ) => callback?(peer.isConnected)).defer()
+				return peer
 
 			peer = new Peer(@, id, instantiate)
 			peer.once

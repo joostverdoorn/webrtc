@@ -219,11 +219,6 @@ define [
 				peer.role = Peer.Role.None
 				peer.emit('peer.abandonChild', @id)
 
-			if @getChildren().length is 0
-				@_demotionTimer = setTimeout( () =>
-					@setSuperNode(false)
-				, @_demotionTimeout)
-
 		# Returns a child specified by an id
 		#
 		# @param id [String] the id of the requested child
@@ -359,9 +354,13 @@ define [
 				if superNode and @isSuperNode
 					peer = @connect(id, ( success ) =>
 						if success
+							peer.isSuperNode = superNode
 							@addSibling(peer)
 					)
-			else peer.isSuperNode = superNode
+			else
+				peer.isSuperNode = superNode
+				if @isSuperNode and superNode
+					@addSibling(peer)
 
 		# Attempts to enter the network by requesting a list of supernodes
 		# and selecting and connecting to a parent from the list.
@@ -456,6 +455,11 @@ define [
 
 			# Request all nodes from the server and set all supernodes as siblings.
 			if @isSuperNode
+				if @getChildren().length is 0
+					@_demotionTimer = setTimeout( () =>
+						@setSuperNode(false)
+					, @_demotionTimeout)
+
 				@server.query('nodes', 'node.structured', ( nodes ) =>
 					superNodes = _(nodes).filter( ( node ) -> node.isSuperNode)
 					superNodes = _(superNodes).filter( ( node ) => node.id isnt @id)
@@ -482,7 +486,7 @@ define [
 			# lose our parent.
 			else
 				for peer in @getPeers()
-					unless peer.isSuperNode then peer.die()
+					unless peer.isSuperNode then @removePeer(peer)
 
 				current = _(@getPeers()).filter( (peer) -> peer.isSuperNode).length
 				needed = @_foundationNodes - current
@@ -689,7 +693,6 @@ define [
 			@token.targetPosition = @token.position.add(force)
 			magnitude = @position.getDistance(@token.targetPosition)
 
-			console.groupEnd();
 			if magnitude > @_tokenMoveThreshold and not @isSuperNode
 				@broadcast('token.requestCandidate', @token.serialize())
 

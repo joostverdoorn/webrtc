@@ -29,8 +29,8 @@ define [
 		#
 		die: ( ) ->
 			if @isConnected()
+				@emit("disconnect")
 				@disconnect()
-
 			@off()
 
 		# Is called when a data channel message is received. Discards any

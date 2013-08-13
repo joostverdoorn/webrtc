@@ -75,11 +75,12 @@ define [
 			, @_connectionTimeout )
 
 			@_controller.queryTo(@id, Infinity, 'requestConnection', @_controller.id, ( accepted ) =>
+				console.log "connection #{accepted} to node #{@id}"
 				unless accepted
-					console.log 'connection request denied'
 					@trigger('failed')
 					clearTimeout(timer)
 					return
+
 
 				@_connection.createOffer( ( description ) =>
 					@_setLocalDescription(description, ( description ) =>
