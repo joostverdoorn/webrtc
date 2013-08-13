@@ -15,7 +15,6 @@ define [
 		# @param forceKeyboard [Boolean] Force to use the keyboard as input without showing the selection screen
 		#
 		constructor: ( ) ->
-			@_stats = {}
 			$('head').append('<link rel="stylesheet" type="text/css" href="/stylesheets/overlay.css">')
 
 			@container = $('<div id="overlay"></div>')
@@ -105,9 +104,9 @@ define [
 		showPlayerDiedScreen: ( ) =>
 			@display('player_died')
 
-		showStats: ( @_stats ) ->
+		_sortStats: ( stats ) ->
 			statsFormatted = {}
-			for id, kills of _stats.kills
+			for id, kills of stats.kills
 				unless statsFormatted[id]
 					statsFormatted[id] = {
 						kills: 0
@@ -116,7 +115,7 @@ define [
 
 				statsFormatted[id].kills = kills
 
-			for id, deaths of _stats.deaths
+			for id, deaths of stats.deaths
 				unless statsFormatted[id]
 					statsFormatted[id] = {
 						kills: 0
@@ -137,20 +136,30 @@ define [
 				a[1] - b[1]
 			)
 
+			return sortedStats
+
+		_updateStatTable: ( sortedStats ) ->
+			statRows = $('#statRows')
+			statRows.empty()
+			rank = 1
+			for stat in sortedStats
+				statRows.append("<tr><td>#{rank++}</td><td>#{stat[0]}</td><td>#{stat[1]}</td><td>#{stat[2]}</td><td>#{stat[3]}</td></tr>")
+
+		showStats: ( stats ) ->
+			@_statsVisible = true
+
+			sortedStats = @_sortStats(stats)
+
 			@display('stats', ( ) =>
-				@_statsVisible = true
-				statRows = $('#statRows')
-				statRows.empty()
-				rank = 1
-				for stat in sortedStats
-					statRows.append("<tr><td>#{rank++}</td><td>#{stat[0]}</td><td>#{stat[1]}</td><td>#{stat[2]}</td><td>#{stat[3]}</td></tr>")
+				@_updateStatTable(sortedStats)
 			, ( ) =>
 				@_statsVisible = false
 			)
 
-		setStats: ( @_stats ) =>
+		setStats: ( stats ) =>
 			if @_statsVisible
-				@showStats(@_stats)
+				sortedStats = @_sortStats(stats)
+				@_updateStatTable(sortedStats)
 
 		# Shows the InfoView
 		#
