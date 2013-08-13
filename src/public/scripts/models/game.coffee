@@ -190,9 +190,10 @@ define [
 		time: ( ) ->
 			return @node.time()
 
+		# Queries nearby nodes for their stats and merges the result to hopefully get complete stats
+		#
 		queryStats: ( ) =>
 			@node.queryTo('*', 2, 'stats', @stats, ( stats ) =>
 				if stats isnt null
 					Stats.mergeStats(@world.getPlayers(), stats)
 			)
-			return
