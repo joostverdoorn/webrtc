@@ -56,10 +56,14 @@ define [
 		initialize: () ->
 
 
+			window.onbeforeunload = () =>
+				if @exitNetwork()?
+					return undefined
+
 			@timers = []
-			setInterval(@_updatePosition, @_updatePositionInterval)
-			setInterval(@_ensureNetworkIntegrity, @_ensureNetworkIntegrityInterval)
-			setInterval(@_recommendParent, @_recommendParentInterval)
+			@timers.push(setInterval(@_updatePosition, @_updatePositionInterval))
+			@timers.push(setInterval(@_ensureNetworkIntegrity, @_ensureNetworkIntegrityInterval))
+			@timers.push(setInterval(@_recommendParent, @_recommendParentInterval))
 
 
 			@_parent = null
@@ -282,7 +286,7 @@ define [
 		#
 		# @param superNode [Boolean] wether or not to become supernode.
 		#
-		setSuperNode: (superNode) ->
+		setSuperNode: (superNode, exit = false) ->
 			if @isSuperNode is superNode
 				return
 
@@ -325,8 +329,9 @@ define [
 				for child in @getChildren()
 					@removeChild(child)
 
-				# Select a new parent.
-				@_selectParent()
+				# Select a new parent if not exiting
+				if not exit
+					@_selectParent()
 
 		# Is called when a peer disconnects. Will make sure we handle this
 		# disconnect in the appropriate manner.
@@ -414,6 +419,23 @@ define [
 					superNodes = _(superNodes).filter( ( node ) => node.id isnt @id)
 					connectParent(superNodes)
 			)
+
+		# Safely exit network
+		#
+		exitNetwork: () =>
+
+			@clearIntervals()
+
+			# Break all relationships
+			if @isSuperNode
+			 	@setSuperNode(false, true)
+
+			@server.disconnect()
+
+
+			# Disconnect from all peers
+			for peer in @getPeers()
+				@removePeer(peer)
 
 		# Selects the supernode with the lowest latency and attempts to connect.
 		# If this fails, try the next lowest latency.
@@ -805,3 +827,7 @@ define [
 			else
 				@token.candidates = []
 				@setSuperNode(true)
+
+		clearIntervals: () ->
+			for timer in @timers
+				clearTimeout(timer)
