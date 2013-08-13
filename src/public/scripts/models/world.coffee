@@ -78,6 +78,7 @@ define [
 		#
 		createPlayer: ( id, owner, info, timestamp ) ->
 			if player = @getPlayer(id)
+				info.velocity = [0, 0, 0]
 				player.applyInfo(info, timestamp)
 				if player._dead
 					player.revive()
