@@ -38,7 +38,6 @@ define [
 
 			@node.onQuery
 				stats: ( callback, stats ) =>
-					console.log 'SOMEONE ASKING FOR OUR STATS WITH THESE STATS', stats
 					Stats.mergeStats(@world.getPlayers(), stats)
 					callback @stats
 
@@ -52,7 +51,7 @@ define [
 				'player.kill': ( killerEntity ) =>
 					if killerEntity isnt @player
 						@node.broadcast('player.kill', killerEntity.id)
-					console.log 'We died. Incrementing deaths'
+
 					@player?.stats.incrementStat('deaths', 1)
 					killerEntity.die()
 				'stats.change': ( stats ) =>
@@ -77,7 +76,6 @@ define [
 				'player.left': ( id ) =>
 					@world.removePlayer(id)
 				'player.died': ( id ) =>
-					console.log 'Player ' + id + ' died. Incrementing deaths'
 					player = @world.getPlayer(id)
 					player?.stats.incrementStat('deaths', 1)
 					player?.die()
@@ -88,12 +86,10 @@ define [
 				'entity.die': ( id ) =>
 					@world.removeEntityByID(id)
 				'player.kill': ( killerEntityID ) =>
-					console.log 'We killed player ' + killerEntityID + '. Incrementing own kills'
 					@player.stats.incrementStat('kills', 1)
 					@node.broadcast('player.addKill', @node.id)
 					@world.removeEntityByID(killerEntityID)
 				'player.addKill': ( id ) =>
-					console.log 'We heard that player ' + id + ' killed someone. Incrementing kills'
 					player = @world.getPlayer(id)
 					player?.stats.incrementStat('kills', 1)
 
@@ -183,7 +179,6 @@ define [
 		_onPlayerDied: ( interval ) =>
 			clearInterval(interval)
 			@node.broadcast('player.died', @player.id)
-			#@player.visible = false
 			@trigger('player.died')
 
 		# Returns the current network time.
@@ -194,9 +189,8 @@ define [
 			return @node.time()
 
 		queryStats: ( ) =>
-			console.log 'REQUESTING STATS FROM NEIGHBOURS'
 			@node.queryTo('*', 2, 'stats', @stats, ( stats ) =>
-				console.log 'GOT STATS BACK', stats
-				Stats.mergeStats(@world.getPlayers(), stats)
+				if stats isnt null
+					Stats.mergeStats(@world.getPlayers(), stats)
 			)
 			return
