@@ -42,19 +42,19 @@ define [
 		_recommendParentInterval: 10000
 		_demotionTimeout: 11000
 		_tokenInfoTimeout: 3000
-
 		_pingCandidateTimeout : 1000
+
 		_coordinateDelta : 1
-		_maxChildren : 8
+		_maxChildren : 4
 		_foundationNodes : 3
 		_superNodeSwitchThreshold : 0.7
 		_tokenMoveThreshold : 1
+		_superNodeFoundation: 3
 
 
 		position : new Vector((Math.random()-0.5)*4, (Math.random()-0.5)*4, (Math.random()-0.5)*4)
 
 		initialize: () ->
-
 
 			window.onbeforeunload = () =>
 				if @exitNetwork()?
@@ -478,18 +478,31 @@ define [
 
 			# Request all nodes from the server and set all supernodes as siblings.
 			if @isSuperNode
-				# If a node has no children, start a timer to become a normal node
-				if @getChildren().length is 0
-					@_demotionTimer = setTimeout( () =>
-						@setSuperNode(false)
-					, @_demotionTimeout)
 
 				@server.query('nodes', 'node.structured', ( nodes ) =>
+					nodes = _(nodes).filter( ( node ) => node.id isnt @id)
 					superNodes = _(nodes).filter( ( node ) -> node.isSuperNode)
-					superNodes = _(superNodes).filter( ( node ) => node.id isnt @id)
+
+					if superNodes.length > @_superNodeFoundation
+						@_maxChildren = 8
+					else
+						@_maxChildren = 4
+
+					# Ensure there are always 3 superNodes available
+					if @getSiblings().length < 2
+						siblingsNeeded = Math.min(@_superNodeFoundation - 1 - @getSiblings().length , nodes.length)
+						while siblingsNeeded isnt 0
+							@_distributeToken()
+							siblingsNeeded--
 
 					if superNodes.length is 0
 						return
+
+					# If a node has no children, start a timer to become a normal node
+					if @getChildren().length is 0 and superNodes.length >= @_superNodeFoundation
+						@_demotionTimer = setTimeout( () =>
+							@setSuperNode(false)
+						, @_demotionTimeout)
 
 					for superNode in superNodes
 						( ( superNode ) =>
@@ -503,6 +516,8 @@ define [
 										console.warn "can not connect to ", peer.id
 								)
 						) (superNode)
+
+
 				)
 
 			# Ensure we are connected to enough supernodes to aid us in finding
@@ -676,6 +691,9 @@ define [
 		# Creates a new token and passes it on to a random child.
 		#
 		_distributeToken: ( ) =>
+			if @getChildren().length is 0
+				return
+
 			token = new Token()
 			children = @getChildren()
 			randomChild = children[_.random(0,children.length-1)]
