@@ -52,6 +52,23 @@ require [
 				$(".self-row .superNode").text(isSuperNode)
 			)
 
+			@node._peers.on('channel.opened', ( peer ) =>
+				if @stream?
+					peer.addStream(@stream)
+			)
+
+			@node._peers.on('peer.streamAdded', ( peer ) =>
+				console.log arguments
+				attachMediaStream($('#audio')[0], peer.stream)
+			)
+
+			getUserMedia({audio:true}, (stream) =>
+				@stream = stream
+				console.log stream
+				for peer in @node.getPeers()
+					peer.addStream(@stream)
+			)
+
 		# Displays all available nodes.
 		#
 		displayNodes: () =>
