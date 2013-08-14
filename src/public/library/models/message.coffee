@@ -53,7 +53,7 @@ define [], ( ) ->
 		#
 		storeHash: ( storage ) ->
 			storage.push(@_hash)
-			unless storage.length < 1000
+			unless storage.length < 5000
 				storage.splice(0, 200)
 
 		# Returns true if and only if this message was already hashed and stored
