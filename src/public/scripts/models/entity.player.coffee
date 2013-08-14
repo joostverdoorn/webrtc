@@ -232,6 +232,7 @@ define [
 		_onImpactWorld: ( position, velocity ) ->
 			downVelocity = velocity.projectOnVector(position)
 			if downVelocity.length() > 30
+				@die()
 				@world.trigger('player.kill', @)
 			else
 				@landed = true

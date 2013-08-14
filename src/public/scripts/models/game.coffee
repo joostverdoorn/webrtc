@@ -55,11 +55,11 @@ define [
 						killer = @world.getPlayer(killerEntity.ownerID)
 						console.log 'AH, IT IS', killer
 						killer.stats.incrementStat('kills', 1)
-						killerEntity.die()
+						#killerEntity.die()
 
 					@node.broadcast('player.kill', killerEntity.id, killerEntity.ownerID, @player.id)
 					@player?.stats.incrementStat('deaths', 1)
-					@player.die()
+					#@player.die()
 				'stats.change': ( stats ) =>
 					@stats = stats
 					@trigger('stats.change', stats)

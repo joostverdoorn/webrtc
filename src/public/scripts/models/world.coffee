@@ -175,9 +175,11 @@ define [
 			if ownPlayer?._dead
 				return
 
-			entities = _(@_entities).filter( ( entity ) -> entity instanceof Projectile and entity.ownerID isnt ownPlayer?.id)
+			entities = _(@_entities).filter( ( entity ) -> (entity instanceof Projectile) and not entity.owner)
 			if entities
 				if entity = ownPlayer?.isColliding(entities)
+					console.log 'WE GOT KILLED BY', entity
+					console.error entity, 'IS A FRIGGIN Player' unless entity instanceof Projectile
+					entity.die()
+					ownPlayer.die()
 					@trigger('player.kill', entity)
-					#entity.die()
-					#ownPlayer.die()

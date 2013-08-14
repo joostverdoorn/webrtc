@@ -123,7 +123,7 @@ define [
 
 				# Check if the player intersects with the planet.
 				if intersect = @world.planet.isInside(@position)
-					triggerImpact(intersect)
+					@die()
 				if owner
 					if intersect = @world.planet.getIntersect(@position, 4, 0)
 						triggerImpact(intersect)
