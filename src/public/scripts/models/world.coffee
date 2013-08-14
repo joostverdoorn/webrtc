@@ -47,7 +47,7 @@ define [
 			@scene.add(hemisphereLight)
 
 			# Create planet.
-			@planet = new Planet(@, false)
+			@planet = new Planet(@, null, false)
 			@planet.position = new Three.Vector3(0, 0, 0)
 
 		# Adds a physics entity to the world
@@ -85,7 +85,7 @@ define [
 				player.new = false
 				return player
 
-			player = new Player(@, owner, id, info, timestamp)
+			player = new Player(@, id, owner, id, info, timestamp)
 			player.stats.on('change', ( stats ) =>
 				@stats[id] = stats
 				@trigger('stats.change', @stats)
@@ -150,7 +150,7 @@ define [
 		# @param info [Object] the object containing the projectile info
 		#
 		createProjectile: ( info, timestamp ) ->
-			projectile = new Projectile(@, false, null, null, info)
+			projectile = new Projectile(@, info.ownerID, false, null, null, info)
 			@addEntity(projectile)
 
 		getSurface: ( position = new Three.Vector3(0, 1, 0)) ->
@@ -170,13 +170,14 @@ define [
 		# @param ownPlayer [Entity] entity to check against collisions with projectiles
 		#
 		update: ( @dt, ownPlayer ) ->
-			entity?.update(dt) for entity in @_entities
+			entity?.update(dt, ownPlayer) for entity in @_entities
 
 			if ownPlayer?._dead
 				return
 
-			entities = _(@_entities).filter( ( entity ) -> entity instanceof Projectile and not entity.owner)
+			entities = _(@_entities).filter( ( entity ) -> entity instanceof Projectile and entity.ownerID isnt ownPlayer?.id)
 			if entities
-				if ownPlayer?.isColliding(entities)
+				if entity = ownPlayer?.isColliding(entities)
 					@trigger('player.kill', entity)
-					ownPlayer.die()
+					#entity.die()
+					#ownPlayer.die()

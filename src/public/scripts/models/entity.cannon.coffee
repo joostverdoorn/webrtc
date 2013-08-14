@@ -58,7 +58,7 @@ define [
 		#
 		# @param dt [Float] the time that has elapsed since last update was called.
 		#
-		update: ( dt ) ->
+		update: ( dt, ownPlayer ) ->
 			unless @loaded
 				return
 
@@ -69,7 +69,7 @@ define [
 			@addAngularForce(new Three.Euler(0, 0, -.4 * @rotateDownward, 'YXZ'))
 
 			# Update physics.
-			super(dt, false, true)
+			super(dt, ownPlayer, false, true)
 
 			# Set a maximal angles for the cannon.
 			if @rotation.z > Math.PI / 4
@@ -121,7 +121,7 @@ define [
 
 			# Create faux projectile. This will simulate the reloading
 			# of the cannon.
-			@_fauxProjectile = new Projectile(scene: @_cannonBaseMesh, false)
+			@_fauxProjectile = new Projectile(scene: @_cannonBaseMesh, null, false)
 
 			# Set the correct rotation order.
 			@rotation.order = 'YXZ'

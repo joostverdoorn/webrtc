@@ -20,7 +20,7 @@ define [
 		# @param args... [Any] any params to pass onto the subclass
 		# @param callback [Function] the function to call when the entity is loaded
 		#
-		constructor: ( @world, @owner, args... ) ->
+		constructor: ( @world, @ownerID, @owner, args... ) ->
 			@scene = @world.scene
 			@loaded = false
 
@@ -83,7 +83,9 @@ define [
 		#
 		# @param dt [Float] the time that has elapsed since last update
 		#
-		update: ( dt, updatePosition = true, updateRotation = true ) ->
+		update: ( dt, ownPlayer, updatePosition = true, updateRotation = true ) ->
+			owner = @owner
+
 			# Don't update unless we're completely done loading
 			unless @loaded
 				return
@@ -105,7 +107,7 @@ define [
 				@position.add(deltaPosition)
 
 				# Apply dead reckoning of position.
-				if @_targetPosition and not @owner
+				if @_targetPosition and not owner
 					@_targetPosition.add(deltaPosition)
 
 					if @position.distanceTo(@_targetPosition) > 20
@@ -122,7 +124,7 @@ define [
 				# Check if the player intersects with the planet.
 				if intersect = @world.planet.isInside(@position)
 					triggerImpact(intersect)
-				if @owner
+				if owner
 					if intersect = @world.planet.getIntersect(@position, 4, 0)
 						triggerImpact(intersect)
 
@@ -159,7 +161,7 @@ define [
 				rotationQuaternion.multiply(angularDeltaQuaternion)
 
 				# Apply dead reckoning of rotation.
-				if @_targetRotation and not @owner
+				if @_targetRotation and not owner
 					targetRotationQuaternion = new Three.Quaternion().setFromEuler(@_targetRotation)
 					targetRotationQuaternion.multiply(angularDeltaQuaternion)
 					rotationQuaternion.slerp(targetRotationQuaternion, dt)
@@ -190,7 +192,7 @@ define [
 			@_angularForces = []
 
 			# History
-			unless @owner
+			unless owner
 				@_updates[App.time()] =
 					position: @position
 					rotation: @rotation
@@ -205,6 +207,9 @@ define [
 
 			if info.id
 				@id = info.id
+
+			if info.ownerID
+				@ownerID = info.ownerID
 
 			# We received a timed update. From it we will compute
 			# the target position, and rotation, and slowly ease
@@ -296,6 +301,7 @@ define [
 				angularVelocity: @angularVelocity.toArray()
 				position: @position.toArray()
 				rotation: @rotation.toArray()
+				ownerID: @ownerID
 
 			return info
 
@@ -356,6 +362,6 @@ define [
 
 				entityRadius = entity.mesh.geometry.boundingSphere.radius
 				if @position.distanceTo(entity.position) < (entityRadius + selfRadius)
-					return true
+					return entity
 
 			return false

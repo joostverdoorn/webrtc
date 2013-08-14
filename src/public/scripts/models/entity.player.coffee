@@ -80,7 +80,7 @@ define [
 		#
 		# @param dt [Float] the time that has elapsed since last update was called.
 		#
-		update: ( dt ) ->
+		update: ( dt, ownPlayer ) ->
 			unless @loaded
 				return
 
@@ -135,10 +135,10 @@ define [
 			@addForce(thrustVector)
 
 			# Update physics.
-			super(dt, not @landed)
+			super(dt, ownPlayer, not @landed)
 
 			# Update our cannon.
-			@cannon.update(dt)
+			@cannon.update(dt, ownPlayer)
 
 			# Update visuals.
 			@_updateVisuals(dt)
@@ -172,7 +172,7 @@ define [
 		fire: ( ) ->
 			if @_cannonReady and @cannon.extended
 
-				projectile = new Projectile(@world, @owner, @, @cannon)
+				projectile = new Projectile(@world, @ownerID, @owner, @, @cannon)
 				@trigger('fire', projectile)
 				@_cannonReady = false
 
@@ -214,7 +214,7 @@ define [
 			@mesh.add(@_ufoBaseMesh)
 
 			# Create the cannon.
-			@cannon = new Cannon(@world, @owner, @)
+			@cannon = new Cannon(@world, @ownerID, @owner, @)
 
 			# Set the rotation of the player to be level with relation to the planet.
 			levelRotation = @calculateLevelRotation().clone()
