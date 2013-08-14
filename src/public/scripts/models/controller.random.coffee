@@ -60,9 +60,9 @@ define [
 
 		_cycleBoost: ( time ) ->
 			if not @game.player or @game.player?.position?.length() < 400
-				@Boost = true
+				@Boost = 1
 			else
-				@Boost = false
+				@Boost = 0
 
 		_time: ( ) ->
 			Date.now() / 1000

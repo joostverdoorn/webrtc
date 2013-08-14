@@ -62,8 +62,8 @@ define [
 				@_app.use(express.static("#{dir}/public"))
 
 			# Redirect a controller url for lees typing
-			@_app.get('/controller/:nodeId', ( req, res ) =>
-				res.redirect('/controller.html?nodeId=' + req.params.nodeId)
+			@_app.get('/controller/:nodeID', ( req, res ) =>
+				res.redirect('/controller.html?nodeID=' + req.params.nodeID)
 				res.end()
 			)
 

@@ -66,7 +66,7 @@ define [
 				'D': ( pressed ) => @FlyRight = pressed ? 1 : 0
 				'W': ( pressed ) => @FlyForward = pressed ? 1 : 0
 				'S': ( pressed ) => @FlyBackward = pressed ? 1 : 0
-				'SPACE': ( pressed ) => @Boost = pressed
+				'SPACE': ( pressed ) => @Boost = pressed ? 1 : 0
 				'MOUSE': ( pressed ) => @Fire = pressed
 				'Q': ( pressed ) => @Leaderboard = pressed
 				'MOUSEMOVE': ( dx, dy ) =>

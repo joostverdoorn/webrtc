@@ -19,27 +19,26 @@ define [
 					@trigger('disconnected')
 
 			@node.onReceive
-				'controller.orientation': ( orientation ) =>
-					# orientation.roll -= 360 if orientation.roll > 180
-					# orientation.roll += 360 if orientation.roll < -180
-					# orientation.pitch -= 360 if orientation.pitch > 180
-					# orientation.pitch += 360 if orientation.pitch < -180
-
-					if orientation.roll > 0
-						@trigger('FlyForward', orientation.roll / 40)
+				'controller.orientation': ( roll, pitch ) =>
+					if pitch > 0
+						@FlyForward = pitch
+						@FlyBackward = 0
 					else
-						@trigger('FlyBackward', orientation.roll / 40)
+						@FlyForward = 0
+						@FlyBackward = -pitch
 
-					if orientation.pitch > 0
-						@trigger('FlyRight', orientation.pitch / 40)
+					if roll > 0
+						@FlyRight = roll
+						@FlyLeft = 0
 					else
-						@trigger('FlyLeft', orientation.pitch / 40)	
+						@FlyRight = 0
+						@FlyLeft = -roll
 
-				'controller.cannon': ( x, y ) =>
-					@RotateCannonLeft = if x < 0 then -x * .1 else 0
-					@RotateCannonRight = if x > 0 then x * .1 else 0
-					@RotateCannonUpward = if y < 0 then -y * .1 else 0
-					@RotateCannonDownward = if y > 0 then y * .1 else 0
+				'controller.analog': ( x, y ) =>
+					@RotateCannonLeft = if x < 0 then Math.pow(x, 2) else 0
+					@RotateCannonRight = if x > 0 then Math.pow(x, 2) else 0
+					@RotateCannonUpward = if y < 0 then Math.pow(y, 2) else 0
+					@RotateCannonDownward = if y > 0 then Math.pow(y, 2) else 0
 
 				'controller.boost': ( val ) =>
 					@Boost = val

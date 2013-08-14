@@ -278,7 +278,7 @@ define [
 				peer.send(message) for peer in @getPeers()
 			else if peer = @getPeer(message.to)
 				peer.send(message)
-			else server.send(message)
+			else @server.send(message)
 
 		# Is called when the server connects. Will ping the server and compute
 		# the network time based on the server time and latency.

@@ -32,7 +32,7 @@ define [
 			@flyForward = 0
 			@flyBackward = 0
 
-			@boost = false
+			@boost = 0
 			@landed = false
 			@landedPosition = new Three.Vector3()
 			@baseExtended = false
@@ -122,17 +122,14 @@ define [
 			# Add thrust straight downward from the player. If the player's boosting,
 			# the thrust will be significantly higher than then she's not.
 			thrustVector = new Three.Vector3(0, 1, 0).applyQuaternion(rotationQuaternion)
-
-			if @boost
-				@landed = false
-				thrustVector.multiplyScalar(19 * @mass * dt)
-			else
-				thrustVector.multiplyScalar(3 * @mass * dt)
+			thrustVector.multiplyScalar(@mass * (3 + @boost * 16) * dt)
 
 			if @position.length() > 1000
 				thrustVector.divideScalar(@position.length() - 1000)
 
 			@addForce(thrustVector)
+
+			if @boost then @landed = false
 
 			# Update physics.
 			super(dt, ownPlayer, not @landed)

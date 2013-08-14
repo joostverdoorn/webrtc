@@ -10,7 +10,7 @@ define [
 
 		@Controls:
 			Fire: false
-			Boost: false
+			Boost: 0
 			Leaderboard: false
 
 			FlyLeft: 0
