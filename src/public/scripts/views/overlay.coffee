@@ -144,7 +144,6 @@ define [
 
 		setStats: ( @stats ) =>
 			if @_statsVisible
-				console.log 'Updating stats'
 				sortedStats = @_sortStats(@stats)
 				@_updateStatTable(sortedStats)
 

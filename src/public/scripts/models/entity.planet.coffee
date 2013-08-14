@@ -36,7 +36,6 @@ define [
 					Planet.Model.Mesh = new Three.Mesh(Planet.Model.Geometry, Planet.Model.Material)
 					Planet.Model.Mesh.castShadow = true
 
-					console.log @
 					@trigger('loaded')
 
 		_onLoaded: ( ) =>
