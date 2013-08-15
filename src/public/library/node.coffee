@@ -280,8 +280,9 @@ define [
 		# @param message [Message] the message to relay.
 		#
 		relay: ( message ) ->
+			message.route.push @id
 			if message.to is '*'
-				peer.send(message) for peer in @getPeers()
+				peer.send(message) for peer in @getPeers() when peer not in message.route
 			else if peer = @getPeer(message.to)
 				peer.send(message)
 			else @server.send(message)

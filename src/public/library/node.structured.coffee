@@ -142,14 +142,15 @@ define [
 		# @param message [Message] the message to relay.
 		#
 		relay: ( message ) ->
+			message.route.push @id
 			if message.to is '*'
-				peer.send(message) for peer in @getSiblings().concat(@getChildren()).concat(@getParent()) when peer?
+				peer.send(message) for peer in @getSiblings().concat(@getChildren()).concat(@getParent()) when peer? and peer.id not in message.route
 			else if peer = @getChild(message.to) or peer = @getSibling(message.to)
 				peer.send(message)
 			else if parent = @getParent()
 				parent.send(message)
 			else if @isSuperNode
-				sibling.send(message) for sibling in @getSiblings() when sibling.id isnt message.from
+				sibling.send(message) for sibling in @getSiblings() when sibling.id isnt message.from and sibling.id not in message.route
 			else
 				@server.send(message)
 

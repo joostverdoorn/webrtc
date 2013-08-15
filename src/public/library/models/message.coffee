@@ -11,7 +11,7 @@ define [], ( ) ->
 		# @param event [String] the event to send
 		# @param args [Array<Any>] any arguments to pass along with the message
 		#
-		constructor: ( @to, @from, @event, @args = [], @timestamp = null, @ttl = Infinity ) ->
+		constructor: ( @to, @from, @event, @args = [], @timestamp = null, @ttl = Infinity, @route = [@from] ) ->
 			unless @timestamp?
 				@timestamp = Date.now()
 
@@ -20,16 +20,21 @@ define [], ( ) ->
 
 		# Serializes this message to a JSON string
 		#
+		# @param includeMeta [Boolean] include changing metadata like routing table and TTL
 		# @return [String] the JSON string representing this message
 		#
-		serialize: ( includeTTL = true ) ->
+		serialize: ( includeMeta = true ) ->
 			object =
 				to: @to
 				from: @from
 				event: @event
 				args: @args
 				timestamp: @timestamp
-			if includeTTL then object.ttl = @ttl
+
+			if includeMeta
+				object.ttl = @ttl
+				object.route = @route
+
 			return JSON.stringify(object)
 
 		# Generates a unique hash for this message to check for duplicates.
@@ -70,4 +75,4 @@ define [], ( ) ->
 		#
 		@deserialize: ( messageString ) ->
 			object = JSON.parse(messageString)
-			return new Message(object.to, object.from, object.event, object.args, object.timestamp, object.ttl)
+			return new Message(object.to, object.from, object.event, object.args, object.timestamp, object.ttl, object.route)
