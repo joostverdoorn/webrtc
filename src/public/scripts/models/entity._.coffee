@@ -1,4 +1,4 @@
-define [ 
+define [
 	'public/scripts/helpers/mixable'
 	'public/scripts/helpers/mixin.eventbindings'
 	'public/scripts/helpers/mixin.dynamicproperties'
@@ -12,19 +12,21 @@ define [
 		@concern EventBindings
 		@concern DynamicProperties
 
+		@Loader = new Three.JSONLoader()
+
 		# Constructs a new basic physics entity. Baseclass for other entities.
 		# Will call initialize on the subclass.
 		#
 		# @param args... [Any] any params to pass onto the subclass
 		# @param callback [Function] the function to call when the entity is loaded
 		#
-		constructor: ( @world, @owner, args... ) ->
+		constructor: ( @world, @ownerID, @owner, args... ) ->
 			@scene = @world.scene
-			@_loader = new Three.JSONLoader()
 			@loaded = false
 
 			@_updates = {}
-			
+			@_lastUpdate = 0
+
 			@mass = 1
 			@drag = .01
 			@angularDrag = 0
@@ -32,12 +34,12 @@ define [
 
 			@velocity = new Three.Vector3(0, 0, 0)
 			@angularVelocity = new Three.Euler(0, 0, 0, 'YXZ')
-			
+
 			@_forces = []
 			@_angularForces = []
 
 			@mesh = new Three.Mesh()
-			
+
 			# Create getters and setters for position and rotation.
 			@getter
 				position: -> @mesh.position
@@ -58,6 +60,10 @@ define [
 			@scene.remove(@mesh)
 			@trigger('die', @position.clone(), @velocity.clone())
 
+		revive: ( ) ->
+			@_dead = false
+			@scene.add(@mesh)
+
 		# Adds a force to the forces stack. Forces will be applied next update.
 		#
 		# @param vector [Three.Vector3] the vector force to add
@@ -77,7 +83,9 @@ define [
 		#
 		# @param dt [Float] the time that has elapsed since last update
 		#
-		update: ( dt, updatePosition = true, updateRotation = true ) ->
+		update: ( dt, ownPlayer, updatePosition = true, updateRotation = true ) ->
+			owner = @owner
+
 			# Don't update unless we're completely done loading
 			unless @loaded
 				return
@@ -99,7 +107,7 @@ define [
 				@position.add(deltaPosition)
 
 				# Apply dead reckoning of position.
-				if @_targetPosition and not @owner
+				if @_targetPosition and not owner
 					@_targetPosition.add(deltaPosition)
 
 					if @position.distanceTo(@_targetPosition) > 20
@@ -107,16 +115,21 @@ define [
 					else
 						@position.lerp(@_targetPosition, dt)
 
-				# Check if the player intersects with the planet.
-				if @owner
-					if intersect = @world.planet.getIntersect(@position, 4, 0)
-						@trigger('impact.world', @position.clone(), @velocity.clone())
+				triggerImpact = ( intersect ) =>
+					@trigger('impact.world', @position.clone(), @velocity.clone())
 
-						@position = intersect.point
-						@velocity = new Three.Vector3()
+					@position = intersect.point
+					@velocity = new Three.Vector3()
+
+				# Check if the player intersects with the planet.
+				if intersect = @world.planet.isInside(@position)
+					@die()
+				if owner
+					if intersect = @world.planet.getIntersect(@position, 4, 0)
+						triggerImpact(intersect)
 
 				# Loop through all forces and calculate the acceleration.
-				acceleration = new Three.Vector3(0, 0, 0)			
+				acceleration = new Three.Vector3(0, 0, 0)
 				while force = @_forces.pop()
 					acceleration.add(force.clone().divideScalar(@mass))
 
@@ -124,12 +137,12 @@ define [
 				@velocity.add(acceleration)
 
 				# Calculate the drag force. We assume a fluid density of 1.2 (air at 20 degrees C)
-				# and a cross-sectional area of 1. Any larger or smaller area will have to be 
+				# and a cross-sectional area of 1. Any larger or smaller area will have to be
 				# compensated by a larger or smaller @drag.
 				dragForce = @velocity.clone().normalize().negate().multiplyScalar(.5 * 1.2 * @drag * @velocity.lengthSq())
 				@velocity.add(dragForce.divideScalar(@mass))
 
-			# ... and apply rotational forces. The method of applying rotational forces and 
+			# ... and apply rotational forces. The method of applying rotational forces and
 			# mainly for using angular velocity may look a bit strange, but this does really
 			# seem to be the best way of doing it.
 			if updateRotation
@@ -144,11 +157,11 @@ define [
 				angularDeltaQuaternion = new Three.Quaternion().setFromEuler(angularDelta)
 
 				# ... and multiply this delta with the current rotation to get the new rotation.
-				rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)		
-				rotationQuaternion.multiply(angularDeltaQuaternion)				
+				rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
+				rotationQuaternion.multiply(angularDeltaQuaternion)
 
 				# Apply dead reckoning of rotation.
-				if @_targetRotation and not @owner
+				if @_targetRotation and not owner
 					targetRotationQuaternion = new Three.Quaternion().setFromEuler(@_targetRotation)
 					targetRotationQuaternion.multiply(angularDeltaQuaternion)
 					rotationQuaternion.slerp(targetRotationQuaternion, dt)
@@ -179,8 +192,8 @@ define [
 			@_angularForces = []
 
 			# History
-			unless @owner
-				@_updates[App.time()] = 
+			unless owner
+				@_updates[App.time()] =
 					position: @position
 					rotation: @rotation
 
@@ -192,45 +205,51 @@ define [
 			unless info?
 				return
 
+			if info.id
+				@id = info.id
+
+			if info.ownerID
+				@ownerID = info.ownerID
+
 			# We received a timed update. From it we will compute
-			# the target position, and rotation, and slowly ease 
-			# toward it. This will look much better and will be more 
+			# the target position, and rotation, and slowly ease
+			# toward it. This will look much better and will be more
 			# accurate than setting the position and rotation directly.
-			if timestamp?
+			if timestamp? and timestamp > @_lastUpdate
 				# Extract position and rotation from info object
 				infoPosition = new Three.Vector3().fromArray(info.position)
 				infoRotation = new Three.Euler().fromArray(info.rotation)
 
 				# Get updates behind and ahead of timestamp
-				previousTime = 0				
+				previousTime = 0
 				for time, update of @_updates
-					
-					# This update's time is smaller, but we don't 
+
+					# This update's time is smaller, but we don't
 					# know if the next update is, so we remove the one
 					# before the current.
-					if time < timestamp 
+					if time < timestamp
 						delete @_updates[previousTime]
 						previousTime = time
 
 					# We have found the two updates!
-					else 
+					else
 						behind = @_updates[previousTime]
 						ahead = update
 						break
 
-				# When we found the updates, we will apply the delta position 
+				# When we found the updates, we will apply the delta position
 				# and delta rotation that happened since that update to the
 				# the received info and set the resultant position and rotation
 				# as our target position and target rotation.
 				if behind? and ahead?
-					# Get the time fraction between the two updates at which the 
+					# Get the time fraction between the two updates at which the
 					# info was sent.
 					deltaTime = time - previousTime
 					fraction = (timestamp - previousTime) / deltaTime
 
 					# Get the target position.
 					position = behind.position.clone().lerp(ahead.position, fraction)
-					deltaPosition = @position.clone().sub(position)					
+					deltaPosition = @position.clone().sub(position)
 					@_targetPosition = infoPosition.clone().add(deltaPosition)
 
 					# Get the target rotation.
@@ -245,19 +264,21 @@ define [
 					targetRotation = new Three.Quaternion().setFromEuler(infoRotation)
 					targetRotation.multiply(deltaRotation)
 					@_targetRotation = new Three.Euler().setFromQuaternion(targetRotation)
-				
+
 				# Else we will just set our target position and target rotation
 				# directly.
 				else
 					@_targetPosition = infoPosition
 					@_targetRotation = infoRotation
-			
+
+				@_lastUpdate = timestamp
+
 			# We didn't receive a timed update. Just set the position and rotation
 			# directly.
 			else
 				if info.position?
 					@position.fromArray(info.position)
-				
+
 				if info.rotation?
 					@rotation.fromArray(info.rotation)
 
@@ -267,18 +288,20 @@ define [
 
 			if info.angularVelocity?
 				@angularVelocity.fromArray(info.angularVelocity)
-				
+
 
 		# Returns the current info in an object.
 		#
 		# @return [Object] an object of all the info
 		#
 		getInfo: ( ) =>
-			info = 
+			info =
+				id: @id
 				velocity: @velocity.toArray()
 				angularVelocity: @angularVelocity.toArray()
 				position: @position.toArray()
 				rotation: @rotation.toArray()
+				ownerID: @ownerID
 
 			return info
 
@@ -293,7 +316,7 @@ define [
 		getIntersect: ( point, behind, ahead ) ->
 			radius = @mesh.geometry.boundingSphere.radius
 			distance = @position.distanceTo(point)
-			
+
 			if distance <= radius
 				direction = @position.clone().sub(point).normalize()
 				origin = @position.clone().add(direction.clone().negate().setLength(distance + behind))
@@ -301,13 +324,26 @@ define [
 
 				# origin = @position.clone().add(@position.clone().setLength(behind))
 				raycaster = new Three.Raycaster(origin, direction, 0, behind + ahead)
-				
+
 				intersects = raycaster.intersectObject(@mesh)
 				if intersect = intersects[0]
 					intersect.distance -= behind
 					return intersect
 				else
-					return null
+					return @isInside(point)
+
+		isInside: ( point ) ->
+			radius = @mesh.geometry.boundingSphere.radius
+			distance = @position.distanceTo(point)
+			if distance <= radius / 2
+				return {
+					distance: 0
+					point: point.clone()
+					face:
+						normal: new Three.Vector3()
+				}
+			else
+				return null
 
 		# Returns if the bounding sphere of this entity is colliding with a bounding sphere
 		# of a given set of objects.
@@ -326,6 +362,6 @@ define [
 
 				entityRadius = entity.mesh.geometry.boundingSphere.radius
 				if @position.distanceTo(entity.position) < (entityRadius + selfRadius)
-					return true
+					return entity
 
 			return false

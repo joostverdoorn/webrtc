@@ -10,8 +10,8 @@ requirejs.config
 			exports: 'sigma'
 		'forceatlas': [ 'sigma' ]
 
-	# We want the following paths for 
-	# code-sharing reasons. Now it doesn't 
+	# We want the following paths for
+	# code-sharing reasons. Now it doesn't
 	# matter from where we require a module.
 	paths:
 		'public': './'
@@ -21,7 +21,7 @@ requirejs.config
 		'sigma': 'vendor/scripts/sigma.min'
 		'forceatlas': 'vendor/scripts/sigma.forceatlas2'
 
-		
+
 require [
 	'scripts/app._'
 	'jquery'
@@ -36,7 +36,7 @@ require [
 	class App.NodeGraph extends App
 
 		# This method will be called from the baseclass when it has been constructed.
-		# 
+		#
 		initialize: ( ) ->
 
 			# The update URL
@@ -118,12 +118,12 @@ require [
 									n.color = '#0F0'
 						)
 					setTimeout (
-						() => 
+						() =>
 							@update()
 						), 1000
 
 
-			
+
 		# Generates a random RGB color as CSS3 string
 		#
 		randomColor: ( ) ->
@@ -144,7 +144,7 @@ require [
 
 			@_animating = true
 
-			
+
 			@_sigmaInstance.startForceAtlas2()
 
 		# Stops the Force Atlas 2 algorithm to draw the graph nicely
@@ -206,7 +206,7 @@ require [
 			@_addedEdges[node2][node1] = true
 
 			@_sigmaInstance.addEdge(node1 + '_' + node2, node1, node2)#.draw()
-			
+
 
 		# Removes an edge between two nodes
 		#
@@ -220,5 +220,5 @@ require [
 
 			@_sigmaInstance.dropEdge("#{node1}_#{node2}")#.draw()
 			@_sigmaInstance.dropEdge("#{node2}_#{node1}")#.draw()
-			
+
 	window.App = new App.NodeGraph

@@ -20,7 +20,7 @@ define [
 			@on('setSuperNode', @_onSetSuperNode)
 
 			@query('type', ( type ) => @type = type)
-			@query('isSuperNode', ( isSuperNode ) => @isSuperNode = isSuperNode)
+			@isSuperNode = false
 
 		# Disconnects from the client.
 		#
@@ -39,7 +39,7 @@ define [
 		# @param message [Message] the message to send
 		#
 		_send: ( message ) ->
-			@_connection.emit('message', message.serialize()) 
+			@_connection.emit('message', message.serialize())
 
 		# Is called when a SuperNode state is changed
 		#

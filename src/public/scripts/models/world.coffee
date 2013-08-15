@@ -24,10 +24,17 @@ define [
 		# @param scene [Three.Scene] the scene to draw upon
 		#
 		constructor: ( @scene ) ->
+			@stats = {}
+
 			@_loader = new Three.JSONLoader()
 
 			@_entities = new Collection()
-			@_entities.on('die', ( entity ) => @removeEntity(entity))
+			@_entities.on('die', ( entity ) =>
+					if entity.owner and entity.id
+						@trigger('die', entity.id)
+					unless entity instanceof Player
+						@removeEntity(entity)
+				)
 
 			# Add lights to the scene.
 			directionalLight = new Three.DirectionalLight(0xffffff, 2)
@@ -40,7 +47,7 @@ define [
 			@scene.add(hemisphereLight)
 
 			# Create planet.
-			@planet = new Planet(@, false)
+			@planet = new Planet(@, null, false)
 			@planet.position = new Three.Vector3(0, 0, 0)
 
 		# Adds a physics entity to the world
@@ -57,18 +64,38 @@ define [
 		removeEntity: ( entity ) ->
 			@_entities.remove(entity)
 
+		# Removes a physics entity from the world
+		#
+		# @param entity [Entity] the entity to remove
+		#
+		removeEntityByID: ( id ) ->
+			_(@_entities).find( ( entity ) -> entity.id is id)?.die()
+
 		# Creates and adds a player to the world.
 		#
 		# @param id [String] the string id of the player
 		# @param info [Object] an object of the player's info
 		#
 		createPlayer: ( id, owner, info, timestamp ) ->
-			player = new Player(@, owner, id, info, timestamp)
+			if player = @getPlayer(id)
+				info.velocity = [0, 0, 0]
+				player.applyInfo(info, timestamp)
+				if player._dead
+					player.revive()
+				player.new = false
+				return player
+
+			player = new Player(@, id, owner, id, info, timestamp)
+			player.stats.on('change', ( stats ) =>
+				@stats[id] = stats
+				@trigger('stats.change', @stats)
+			)
 
 			if owner
 				player.on('fire', ( projectile ) => @addEntity(projectile))
 
 			@addEntity(player)
+			player.new = true
 			return player
 
 		# Removes a player from the world.
@@ -94,7 +121,7 @@ define [
 		getPlayers: ( ) ->
 			return _(@_entities).filter( ( entity ) -> entity instanceof Player)
 
-		# Updates a player's info. If the player doesn't exist, 
+		# Updates a player's info. If the player doesn't exist,
 		# it will create the player using addPlayer().
 		#
 		# @param id [String] the string id of the player
@@ -103,14 +130,27 @@ define [
 		applyPlayerInfo: ( id, info, timestamp ) ->
 			if player = @getPlayer(id)
 				player.applyInfo(info, timestamp)
-			else @createPlayer(id, false, info)
+			else
+				player = @createPlayer(id, false, info)
+
+			if player._dead
+				player.revive()
+
+			if player.lastUpdate
+				clearTimeout(player.lastUpdate)
+			player.lastUpdate = setTimeout(=>
+				delete @stats[player.id]
+				@trigger('stats.change', @stats)
+				player.die()
+				@removeEntity(player)
+			, 30000)
 
 		# Creates a new projectile.
-		# 
+		#
 		# @param info [Object] the object containing the projectile info
 		#
 		createProjectile: ( info, timestamp ) ->
-			projectile = new Projectile(@, false, null, null, info)
+			projectile = new Projectile(@, info.ownerID, false, null, null, info)
 			@addEntity(projectile)
 
 		getSurface: ( position = new Three.Vector3(0, 1, 0)) ->
@@ -130,9 +170,14 @@ define [
 		# @param ownPlayer [Entity] entity to check against collisions with projectiles
 		#
 		update: ( @dt, ownPlayer ) ->
-			entity?.update(dt) for entity in @_entities
+			entity?.update(dt, ownPlayer) for entity in @_entities
 
-			entities = _(@_entities).filter( ( entity ) -> entity instanceof Projectile and not entity.owner)
+			if ownPlayer?._dead
+				return
+
+			entities = _(@_entities).filter( ( entity ) -> (entity instanceof Projectile) and not entity.owner)
 			if entities
-				if ownPlayer?.isColliding(entities)
+				if entity = ownPlayer?.isColliding(entities)
+					entity.die()
 					ownPlayer.die()
+					@trigger('player.kill', entity)

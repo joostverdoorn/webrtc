@@ -52,22 +52,25 @@ require [
 				expect(message.hash()).not.toEqual(otherMessage.hash())
 
 		describe 'when its hash is stored', ->
-			
+
 			it 'should have increased the stored hashes\' length', ->
-				length = Message.hashes.length
-				message.storeHash()
-				expect(Message.hashes.length).toBeGreaterThan(length)
+				storage = []
+				length = storage.length
+				message.storeHash(storage)
+				expect(storage.length).toBeGreaterThan(length)
 
 			it 'should not increase the stored hashes\' length to above 1000', ->
+				storage = []
 				for i in [0..1001]
 					message = new Message(i, i, i, i)
-					message.storeHash()
+					message.storeHash(storage)
 
-				expect(Message.hashes.length).toBeLessThan(1000)
+				expect(storage.length).toBeLessThan(1000)
 
 			it 'should say that its message is stored', ->
-				message.storeHash()
-				expect(message.isStored()).toBe(true)
+				storage = []
+				message.storeHash(storage)
+				expect(message.isStored(storage)).toBe(true)
 
 
 

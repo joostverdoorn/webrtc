@@ -17,6 +17,7 @@ require [
 				query: (request, args..., callback) -> callback(true)
 				relay: ->
 				time: -> return Date.now()
+				messageStorage: []
 			}
 			spyOn(fakeController, 'query').andCallThrough()
 			spyOn(fakeController, 'relay')
@@ -59,10 +60,10 @@ require [
 				message = new Message(to, from, 'testEvent')
 
 				# Trigger twice, hash is the same, so should only be processed once
-				expect(Message.hashes.length).toBe(0)
+				expect(fakeController.messageStorage.length).toBe(0)
 				remote.trigger('message', message.serialize())
 				remote.trigger('message', message.serialize())
-				expect(Message.hashes.length).toBe(1)
+				expect(fakeController.messageStorage.length).toBe(1)
 
 			it 'should trigger the event from the message on our instance if `to` is our controller', ->
 				to = fakeController.id
@@ -136,10 +137,10 @@ require [
 				from = fakeController.id + '1'
 				message = new Message(to, from, 'testEvent')
 
-				expect(Message.hashes.length).toBe(0)
+				expect(fakeController.messageStorage.length).toBe(0)
 				remote.send(message)
 				remote.send(message)
-				expect(Message.hashes.length).toBe(1)
+				expect(fakeController.messageStorage.length).toBe(1)
 				expect(remote._send.callCount).toBe(2)
 
 		describe 'when querying', ->

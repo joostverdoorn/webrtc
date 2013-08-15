@@ -44,14 +44,18 @@ require [
 
 			class FakeServer
 				emitTo: ->
-			
-			constructor: ->		
+
+			constructor: ->
 				@server = new FakeServer()
 
 			id: '2'
 			query: ->
+			queryTo: ->
+			emitTo: ->
 			relay: ->
 			time: -> Date.now()
+			messageStorage: []
+
 
 		beforeEach ->
 			fakeController = new FakeController()
@@ -93,15 +97,6 @@ require [
 				expect(peer._onChannelOpened).toHaveBeenCalled()
 				expect(peer._onChannelClosed).toHaveBeenCalled()
 
-			it 'should instantiate the Vivaldi parameters correctly', ->
-				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
-
-				expect(peer.latency).toBe(0)
-				expect(peer.coordinates.length).toBe(3)
-				expect(peer.coordinates[0]).toBe(0)
-				expect(peer.coordinates[1]).toBe(0)
-				expect(peer.coordinates[2]).toBe(0)
-
 			it 'should actually start a connection (or not) depending on the instantiate parameter', ->
 				spyOn(Peer.prototype, 'connect')
 				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
@@ -116,19 +111,11 @@ require [
 				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
 				expect(peer._isConnector).toBe(true)
 
-			it 'should tell the server about the connection request', ->
-				spyOn(fakeController.server, 'emitTo')
+			it 'should route the connection query via the controller', ->
+				spyOn(fakeController, 'queryTo')
 				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
 
-				expect(fakeController.server.emitTo).toHaveBeenCalled()
-
-				callArgs = fakeController.server.emitTo.mostRecentCall.args
-				expect(callArgs).toEqual([
-						'1'
-						'peer.connectionRequest'
-						fakeController.id
-						undefined		# old type identifier, currently unused but not yet removed
-					])
+				expect(fakeController.queryTo).toHaveBeenCalled()
 
 			it 'should create a data channel', ->
 				peer = new Peer(fakeController, '1', false, FakeRTCPeerConnection)
@@ -185,25 +172,11 @@ require [
 				spyOn(peer._channel, 'send')
 
 				message = new Message('a', 'b', 'event')
-				
+
 				result = peer._send(message)
 
 				expect(result).toBe(true)
 
-			it 'should try to send the message multiple times when there are errors', ->
-				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
-				spyOn(peer, 'isChannelOpen').andReturn(true)
-				spyOn(peer._channel, 'send')
-				spyOn(peer, '_send').andCallThrough()
-				
-				result = peer._send(null)
-
-				expect(result).toBe(undefined)
-				# _send will asynchronous recall itself so we had to spy on it above and now wait for the fail count to rise to 6 (initial call + 5 retries)
-				waitsFor(->
-						return peer._send.callCount is 6
-					, 1000)
-		
 		describe 'when adding a channel', ->
 			it 'should set _channel to the channel', ->
 				peer = new Peer(fakeController, '1', false, FakeRTCPeerConnection)
@@ -221,38 +194,6 @@ require [
 				expect(peer._channel.onopen).toEqual(peer._onChannelOpen)
 				expect(peer._channel.onclose).toEqual(peer._onChannelClose)
 				expect(peer._channel.onerror).toEqual(peer._onChannelError)
-
-		describe 'when a local description is created', ->
-			it 'should be sent to the remote node via the central server', ->
-				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
-				spyOn(peer._connection, 'setLocalDescription')
-				spyOn(fakeController.server, 'emitTo')
-
-				spyOn(peer, '_higherBandwidthSDP').andCallThrough()
-
-				fakeOffer = {
-					sdp: 'ABC'
-				}
-				peer._onLocalDescription(fakeOffer)
-
-				expect(peer._higherBandwidthSDP).toHaveBeenCalled()
-
-				expect(peer._connection.setLocalDescription).toHaveBeenCalled()
-
-				callArgs = peer._connection.setLocalDescription.mostRecentCall.args
-				expect(callArgs).toEqual([
-						fakeOffer
-					])
-
-				expect(fakeController.server.emitTo).toHaveBeenCalled()
-
-				callArgs = fakeController.server.emitTo.mostRecentCall.args
-				expect(callArgs).toEqual([
-						'1'
-						'peer.setRemoteDescription'
-						fakeController.id
-						fakeOffer
-					])
 
 			it 'should try to increase the bandwidth to 100MBit/s', ->
 				# Actual SDP token

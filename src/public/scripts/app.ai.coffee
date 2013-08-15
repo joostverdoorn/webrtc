@@ -12,8 +12,8 @@ requirejs.config
 		'qrcode': [ 'jquery' ]
 		'jquery.plugins': [ 'jquery' ]
 
-	# We want the following paths for 
-	# code-sharing reasons. Now it doesn't 
+	# We want the following paths for
+	# code-sharing reasons. Now it doesn't
 	# matter from where we require a module.
 	paths:
 		'public': './'
@@ -26,9 +26,11 @@ requirejs.config
 
 require [
 	'public/scripts/app._'
-	'public/scripts/app.aigame'
-	], ( App, AIGame ) -> 
-	
+	'public/scripts/models/game'
+	'public/scripts/models/controller.random'
+	'three'
+	], ( App, GameModel, RandomController, Three ) ->
+
 	# Application base class
 	#
 
@@ -39,9 +41,33 @@ require [
 		initialize: ( ) ->
 			@bots = []
 			console.log 'INIT'
-			for i in [0...5]
-				console.log 'CREATING'
-				console.log AIGame
-				@bots.push(new AIGame())
+
+			@newBot()
+
+			window.requestAnimationFrame(@update)
+
+		newBot: ( ) =>
+			console.log 'CREATING'
+
+			scene = new Three.Scene()
+			game = new GameModel(scene)
+			game.controller = new RandomController(game)
+			game.on
+				'joined': =>
+					game.startGame()
+					console.log 'spawned on', game.player.position
+				'player.died': =>
+					game.startGame()
+			@bots.push(game)
+
+			if @bots.length < 10
+				setTimeout(@newBot, 5000)
+
+		update: ( timestamp ) =>
+			for game in @bots
+				game.player?.mesh?.updateMatrixWorld()
+				game.update(timestamp)
+
+			window.requestAnimationFrame(@update)
 
 	window.App = new AIApp

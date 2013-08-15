@@ -9,6 +9,6 @@ define [], (  ) ->
 
 	originalPrototype = Client.prototype
 	spyOn(global, 'Client').andCallThrough()
-	
+
 	#Client.prototype = originalPrototype
-	
+

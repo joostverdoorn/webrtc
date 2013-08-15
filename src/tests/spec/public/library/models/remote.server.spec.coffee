@@ -19,8 +19,8 @@ require [
 
 			class FakeServer
 				emitTo: ->
-			
-			constructor: ->		
+
+			constructor: ->
 				@server = new FakeServer()
 
 			#id: '2'

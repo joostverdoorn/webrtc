@@ -2,266 +2,280 @@ requirejs.config
 	baseUrl: '../'
 
 	shim:
-		'jquery':
-			exports: '$'
+		'kinetic':
+			exports: 'Kinetic'
 
-		'bootstrap': [ 'jquery' ]
-		'jquery.plugins': [ 'jquery' ]
+		'kinetic.multitouch': [ 'kinetic', 'touchy', 'underscore' ]
 
-	# We want the following paths for 
-	# code-sharing reasons. Now it doesn't 
+	# We want the following paths for
+	# code-sharing reasons. Now it doesn't
 	# matter from where we require a module.
 	paths:
 		'public': './'
 
-		'jquery': 'vendor/scripts/jquery'
-		'bootstrap': 'vendor/scripts/bootstrap'
-		'canvas': 'vendor/scripts/ocanvas'
-		
+		'underscore': 'vendor/scripts/underscore'
+		'kinetic': 'vendor/scripts/kinetic.min'
+		'touchy': 'vendor/scripts/touchy'
+		'kinetic.multitouch': 'vendor/scripts/kinetic.multitouch'
+
 require [
 	'scripts/app._'
 	'library/node'
-	'jquery'
-	'canvas'
-	], ( App, Node, $ ) ->
+
+	'kinetic'
+	'touchy'
+	'kinetic.multitouch'
+	], ( App, Node, Kinetic ) ->
 
 	# Mobile Controller Class
 	#
-
 	class App.Controller extends App
-		
+
 		# This method will be called from the baseclass when it has been constructed.
-		# 
+		#
 		initialize: ( ) ->
+			peerID = @getURLParameter('nodeID')
+
 			@node = new Node()
-
-			nodeId =  @getURLParameter("nodeId")
 			@node.server.on('connect', ( ) =>
-				@node.connect(nodeId)
-			)
-			@node._peers.on('channel.opened', ( ) =>
-
-				@node.server.disconnect()
-				@node.server = null
-
-				# Set canvas controls
-				@boost = null
-				@fire = null
-				@poke = {}
-				@pokeCanvas = null
-
-				@drawControllers()
-
-				@_lastBoost = false
-				@_lastFire = false
-
-
-				# Send the device orientation 10 times a second
-				if window.DeviceOrientationEvent
-					setTimeout( @sendDeviceOrientation, 100)
-
-				$(window).on('orientationchange resize', () =>
-					@drawControllers()
+				@peer = @node.connect(peerID, ( success ) =>
+					if success then @node.server.disconnect()
 				)
-				
 			)
 
-		
-		drawControllers: () =>
-			@canvas = oCanvas.create({
-				canvas: "#canvas"
-				disableScrolling : true
-			})
+			# Create the container and add it to the document.
+			@container = document.createElement 'div'
+			@container.id = 'container'
+			document.body.appendChild @container
 
-			width = @canvas.width  = $(window).width()
-			height = @canvas.height = $(window).height()
+			# Get the width and height of the window.
+			@width = window.innerWidth
+			@height = window.innerHeight
 
-			if width > height
+			# Create Kinetic stage
+			@stage = new Kinetic.MultiTouch.Stage
+				container: 'container'
+				width: @width
+				height: @height
+				multitouch: true
 
-				@shoot = @canvas.display.rectangle({
-					x: width / 4,
-					y: height / 4,
-					origin: { x: "center", y: "center" },
-					width: width / 2,
-					height: height / 2,
-					fill: "#48ef48"
-				})
-				@boost = @canvas.display.rectangle({
-					x: width / 4,
-					y: height *3 / 4,
-					origin: { x: "center", y: "center" },
-					width: width / 2,
-					height: height / 2,
-					fill: "#0aa"
-				})
-				@fire = @canvas.display.rectangle({
-					x: width * 3 / 4,
-					y: height / 2,
-					origin: { x: "center", y: "center" },
-					width: width / 2,
-					height: height,
-					fill: "#f21"
-				})
+			# Add controls
+			controls = new Kinetic.Layer
+			@_setupOrientationControl()
+			@_setupFireButton(controls)
+			@_setupThrottle(controls)
+			@_setupAnalogStick(controls)
+			@stage.add(controls)
 
-				@poke.x = $(window).width() * 3 / 4
-				@poke.y = $(window).height() / 2
-
-			else
-
-				@shoot = @canvas.display.rectangle({
-					x: width / 4,
-					y: height / 4,
-					origin: { x: "center", y: "center" },
-					width: width / 2,
-					height: height / 2,
-					fill: "#0ef"
-				})
-				@boost = @canvas.display.rectangle({
-					x: width * 3 / 4,
-					y: height / 4,
-					origin: { x: "center", y: "center" },
-					width: width / 2,
-					height: height / 2,
-					fill: "#0aa"
-				})
-				@fire = @canvas.display.rectangle({
-					x: width / 2,
-					y: height * 3 / 4,
-					origin: { x: "center", y: "center" },
-					width: width,
-					height: height /2,
-					fill: "#f21"
-				})
-
-				@poke.x = $(window).width() / 2
-				@poke.y = $(window).height() * 3 / 4
-
-			shootText = @canvas.display.text({
-				x: 0,
-				y: 0,
-				origin: { x: "center", y: "top" },
-				font: "bold 25px/1.5 sans-serif",
-				text: "Fire",
-				fill: "#000"
-			})
-
-			boostText = @canvas.display.text({
-				x: 0,
-				y: 0,
-				origin: { x: "center", y: "top" },
-				font: "bold 25px/1.5 sans-serif",
-				text: "Boost",
-				fill: "#000"
-			})
-
-			@pokeCanvas = fireText = @canvas.display.ellipse({
-				x: 0,
-				y: 0,
-				origin: { x: "center", y: "center" },
-				font: "bold 25px/1.5 sans-serif",
-				radius: 48,
-				fill: "#000"
-			})
-
-			@canvas.addChild(@shoot)
-			@shoot.addChild(shootText)
-
-			@canvas.addChild(@boost)
-			@boost.addChild(boostText)
-
-			@canvas.addChild(@fire)
-			@fire.addChild(fireText)
-
-			@bindEvents()
-
-		bindEvents: () =>
-
-			@boost.bind("touchstart", () => @sendBoostEvent(true))
-			@boost.bind("touchend", () => @sendBoostEvent(false))
-			@boost.bind("touchcancel", () => @sendBoostEvent(false))
-
-			@shoot.bind("touchstart", () => @sendShootEvent(true))
-			@shoot.bind("touchend", () => @sendShootEvent(false))
-			@shoot.bind("touchcancel", () => @sendShootEvent(false))
-
-			@fire.bind("touchmove", @handlePoke, false )
-			@fire.bind("touchend", @stopPoke, false )
-			#@fire.bind("touchcancel", @stopPoke, false )
-
-
-
-		handlePoke: (event) =>
-			unless @pokePosition?
-				window.requestAnimationFrame(@sendPoke)
-			
-			@pokePosition = {}
-			@pokePosition.x = Math.round((event.x - @poke.x) / 8)
-			@pokePosition.y = Math.round((event.y - @poke.y) / 8)
-		
-			@pokeController = {}
-			@pokeController.x = @fire.x - event.x
-			@pokeController.y = @fire.y - event.y
-
-		stopPoke: (event) =>
-
-			@pokePosition = null
-			@pokeController = {0,0}
-
-		sendPoke: () =>
-			if @pokePosition?
-				@node.getPeers()[0].emit('controller.cannon', @pokePosition.x, @pokePosition.y)
-				window.requestAnimationFrame(@sendPoke)
-			if @pokeController?
-				@pokeCanvas.moveTo(-@pokeController.x, -@pokeController.y)
-				@canvas.redraw()
-
-			
-		# Get values stored in the url of the controller
+		# Sets up the listener for the device's orientation.
 		#
-		# @param name [String] the name of the parameter
-		# @return [String] the value of the parameter
+		_setupOrientationControl: ( ) ->
+			window.addEventListener('deviceorientation', ( event ) =>
+				roll = Math.round(event.beta)
+				pitch = Math.round(event.gamma)
+
+				if window.orientation is -90
+					roll *= -1
+					pitch *= -1
+
+				if pitch < -90
+					pitch = -90
+				else if pitch > 0
+					pitch = 0
+				pitch = (pitch + 45) / 45
+
+				if roll < -30
+					roll = -30
+				else if roll > 30
+					roll = 30
+				roll = roll / 30
+
+				@peer?.emit('controller.orientation', roll, pitch)
+			)
+
+		# Draws the fire button and the logic behind it.
 		#
-		getURLParameter: (name) ->
+		_setupFireButton: ( layer ) ->
+			button = new Kinetic.Circle
+				radius: 40
+				x: @width / 3
+				y: @height / 2
+				fill: '#bb3333'
+				stroke: '#000000'
+				strokeWidth: 2
+				multitouch: true
+
+			button.on(Kinetic.MultiTouch.TOUCHSTART, ( e ) =>
+				@peer?.emit('controller.fire', true)
+			)
+
+			button.on(Kinetic.MultiTouch.TOUCHEND, ( e) =>
+				@peer?.emit('controller.fire', false)
+			)
+
+			layer.add(button)
+
+		# Draws the throttle control and the logic behind it.
+		#
+		_setupThrottle: ( layer ) ->
+			defaults =
+				width: 80
+				height: 40
+				x: @width / 8
+				y: @height * 4 / 5
+				range: @height * 3 / 5
+
+			throttle = new Kinetic.Group
+				x: defaults.x
+				y: defaults.y
+				multitouch:
+					draggable: true
+
+			bar = new Kinetic.Rect
+				width: defaults.width
+				height: defaults.height
+				x: -defaults.width / 2
+				y: -defaults.height / 2
+				fill: 'black'
+
+			touchBar = new Kinetic.Rect
+				width: defaults.width
+				height: defaults.range
+				x: -defaults.width / 2
+				y: -defaults.range
+
+			background = new Kinetic.Rect
+				width: defaults.width
+				height: defaults.range + defaults.height
+				x: defaults.x - defaults.width / 2
+				y: defaults.y - defaults.range - defaults.height / 2
+				fill: '#555555'
+				stroke: '#000000'
+				strokeWidth: 2
+				opacity: .5
+
+			throttle.add(touchBar)
+			throttle.add(bar)
+
+			layer.add(background)
+			layer.add(throttle)
+
+			emitPosition = ( ) =>
+				boost = -(bar.getY() + throttle.getY() - defaults.y + defaults.height / 2) / (defaults.range)
+				@peer?.emit('controller.boost', boost)
+				console.log 'controller.boost', boost
+
+			throttle.on(Kinetic.MultiTouch.TOUCHSTART, ( e ) =>
+				bar.setY(e.y - defaults.y - defaults.height / 2)
+				layer.draw()
+				emitPosition()
+			)
+
+			throttle.on(Kinetic.MultiTouch.DRAGMOVE, ( e ) =>
+				throttle.setX(defaults.x)
+
+				if throttle.getY() + bar.getY() > defaults.y - defaults.height / 2
+					throttle.setY(defaults.y - bar.getY() - defaults.height / 2)
+
+				else if throttle.getY() + bar.getY() < defaults.y - defaults.range - defaults.height / 2
+					throttle.setY(defaults.y - defaults.range - bar.getY() - defaults.height / 2)
+
+				emitPosition()
+			)
+
+			throttle.on(Kinetic.MultiTouch.DRAGEND, ( e ) =>
+				bar.setY(bar.getY() + throttle.getY() - defaults.y)
+				throttle.setY(defaults.y)
+				emitPosition()
+			)
+
+		# Draws the analog stick and the logic behind it.
+		#
+		_setupAnalogStick: ( layer ) ->
+			defaults =
+				x: @width * 3 / 4
+				y: @height / 2
+				range: Math.min(@width / 4, @height / 2) * .8
+
+			analogStick = new Kinetic.Group
+				x: defaults.x
+				y: defaults.y
+				multitouch:
+					draggable: true
+
+			circle = new Kinetic.Circle
+				radius: 40
+				x: 0
+				y: 0
+				fill: '#000000'
+
+			touchCircle = new Kinetic.Circle
+				radius: defaults.range
+				x: 0
+				y: 0
+
+			background = new Kinetic.Circle
+				radius: defaults.range
+				x: defaults.x
+				y: defaults.y
+				fill: '#555555'
+				stroke: '#000000'
+				strokeWidth: 2
+				opacity: .5
+
+			analogStick.add(touchCircle)
+			analogStick.add(circle)
+
+			layer.add(background)
+			layer.add(analogStick)
+
+			emitPosition = ( ) =>
+				x = (circle.getX() + analogStick.getX() - defaults.x) / defaults.range
+				y = (circle.getY() + analogStick.getY() - defaults.y) / defaults.range
+
+				@peer?.emit('controller.analog', x, y)
+
+			analogStick.on(Kinetic.MultiTouch.DRAGSTART, ( e ) =>
+				circle.setX(e.x - defaults.x)
+				circle.setY(e.y - defaults.y)
+				emitPosition()
+			)
+
+			analogStick.on(Kinetic.MultiTouch.DRAGMOVE, ( e ) =>
+				x = analogStick.getX() - defaults.x + circle.getX()
+				y = analogStick.getY() - defaults.y + circle.getY()
+
+				if Math.sqrt(x * x + y * y) > defaults.range
+					angle = Math.atan2(y, x)
+
+					x = Math.cos(angle) * defaults.range + defaults.x - circle.getX()
+					y = Math.sin(angle) * defaults.range + defaults.y - circle.getY()
+
+					analogStick.setX(x)
+					analogStick.setY(y)
+
+				emitPosition()
+			)
+
+			analogStick.on(Kinetic.MultiTouch.DRAGEND, ( e ) =>
+				analogStick.setX(defaults.x)
+				analogStick.setY(defaults.y)
+
+				circle.setX(0)
+				circle.setY(0)
+
+				emitPosition()
+			)
+
+		# Returns a parameter from the url.
+		#
+		# @param name [String] the parameter to return
+		#
+		getURLParameter: ( name ) ->
 			results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href)
 			unless results?
 				return null
 			else
 				return results[1] || 0
-
-		# Send device orientation to the Game. Only available on mobile devices with support
-		# of device orientation
-		# 
-		sendDeviceOrientation: ( ) =>
-			window.addEventListener('deviceorientation', (eventData) =>
-				@_roll = Math.round(eventData.gamma)
-				@_pitch = Math.round(eventData.beta)
-
-				orientation =
-					roll: @_roll + 45 # Tilting
-					pitch: @_pitch
-
-				@node.getPeers()[0].emit('controller.orientation', orientation)
-			)
-
-		# Send a boost event to the Game
-		#
-		# @param boost [Boolean] The incoming touchevent
-		# 
-		sendBoostEvent: ( boost ) ->
-			if boost isnt @_lastBoost
-				console.log "boost ", boost
-				@_lastBoost = boost
-				@node.getPeers()[0].emit('controller.boost', boost)
-
-		# Send a fire event to the Game
-		#
-		# @param fire [Boolean] The incoming touchevent
-		# 
-		sendShootEvent: ( fire = true ) ->
-			if fire isnt @_lastFire
-				console.log "fire ", fire
-				@_lastFire = fire
-				@node.getPeers()[0].emit('controller.fire', fire)
-
 
 	window.App = new App.Controller

@@ -1,9 +1,9 @@
 
-require [ 
+require [
 	'Isolate'
 	], ( Isolate ) ->
 
-	console.log Isolate 	
+	console.log Isolate
 	Isolate.map 'public/models/remote.server',
 		connect: -> true
 

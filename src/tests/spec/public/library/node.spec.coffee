@@ -3,7 +3,7 @@ require.config
 	paths:
 		'public/library/models/remote.server': 'tests/mock/remote.server.mock'
 		'public/library/models/remote.peer': 'tests/mock/remote.peer.mock'
-		
+
 require [
 	'public//library/node'
 	'public//library/models/collection'
@@ -12,7 +12,7 @@ require [
 		describe 'Node', ->
 			node = null
 			peer = null
-			
+
 			beforeEach ->
 				node = new Node()
 

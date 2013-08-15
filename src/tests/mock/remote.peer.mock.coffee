@@ -21,5 +21,3 @@ define [
 		disconnect: () ->
 			@connected = false
 			@trigger('disconnect')
-
-		

@@ -6,8 +6,8 @@ requirejs.config
 	# are loaded relative to the top-level JS file.
 	nodeRequire: require
 
-	shim: 
-		'underscore': 
+	shim:
+		'underscore':
 			exports: '_'
 
 requirejs [

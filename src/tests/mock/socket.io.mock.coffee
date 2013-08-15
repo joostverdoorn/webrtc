@@ -16,5 +16,3 @@ define [], (  ) ->
 			emit: ->
 			@listen: ->
 				new IO()
-
-	

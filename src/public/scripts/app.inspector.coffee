@@ -19,8 +19,8 @@ requirejs.config
 		'stats':
 			exports: 'Stats'
 
-	# We want the following paths for 
-	# code-sharing reasons. Now it doesn't 
+	# We want the following paths for
+	# code-sharing reasons. Now it doesn't
 	# matter from where we require a module.
 	paths:
 		'public': './'
@@ -34,7 +34,7 @@ requirejs.config
 
 require [
 	'scripts/app._'
-	'library/models/remote.server'
+	'library/node'
 
 	'three'
 	'stats'
@@ -42,37 +42,25 @@ require [
 	'jquery'
 	'underscore'
 	'orbitControls'
-	], ( App, Server, Three, Stats, $, _ ) ->
+	], ( App, NetworkNode, Three, Stats, $, _ ) ->
 
 	# Inspector app class. This will create and draw a 3d scene
 	# containing all nodes and their connections.
 	#
 	class App.Inspector extends App
 
-		type: 'inspector'
-		serverAddress: ':8080/'
-
 		nodes: []
-		
-		# Constructs a new inspector app. 
+		messageStorage: []
+
+		# Constructs a new inspector app.
 		#
 		constructor: ( ) ->
 			viewAngle = 45
 			nearClip = 0.1
 			farClip = 10000
 
-			@_zoom = 1
-
-			@_deltaX = 0
-			@_deltaY = 0
-			@_lastMouseX = 0
-			@_lastMouseY = 0
-			@_mouseDown = false		
-
-			@_cameraAngle = new Three.Quaternion()
-
 			# Connect to the server.
-			@server = new Server(@, @serverAddress)
+			@node = new NetworkNode()
 
 			# Create container element.
 			container = document.createElement 'div'
@@ -101,7 +89,7 @@ require [
 			@projector = new THREE.Projector();
 			@label = $('<div class="label"></div>')
 			$('body').append(@label)
-			
+
 			@label.hide()
 			@label.css('position', 'absolute')
 
@@ -150,18 +138,18 @@ require [
 			# Various callbacks and the like.
 			window.requestAnimationFrame(@update)
 			$(window).resize(@setDimensions)
-			
+
 			$(window).mousemove ( event ) =>
 
 				# Detect mouse intersects
 				mouseX = ( event.clientX / window.innerWidth ) * 2 - 1
 				mouseY = - ( event.clientY / window.innerHeight ) * 2 + 1
 				vector = new THREE.Vector3( mouseX, mouseY, 0.5 )
-				
+
 				@projector.unprojectVector( vector, @camera )
 				raycaster = new THREE.Raycaster( @camera.position, vector.sub( @camera.position ).normalize() )
 				intersects = raycaster.intersectObjects( node.mesh for node in @nodes )
-				
+
 				if node = _(@nodes).find( ( node ) -> node.mesh is intersects[0]?.object )
 					@label.html(node.id)
 					@label.css('left', event.clientX)
@@ -170,19 +158,19 @@ require [
 				else
 					@label.hide()
 
-			$(window).mousedown ( ) => 
+			$(window).mousedown ( ) =>
 				@_mouseDown = true
 				@_lastMouseX = event.offsetX
 				@_lastMouseY = event.offsetY
 
-			$(window).mouseup ( ) => 
+			$(window).mouseup ( ) =>
 				@_mouseDown = false
 
 			$(window).scroll ( event ) =>
 				console.log event
 
 			setInterval( =>
-				@server.query('nodes', 'node.structured', true, @processNodesInfo)
+				@node.server.query('nodes', 'node.structured', true, @processNodesInfo)
 			, 1000)
 
 		# Sets the dimensions of the viewport and the aspect ration of the camera
@@ -199,7 +187,7 @@ require [
 
 			return [width, height]
 
-		# Updates the scene, calling update on every node in the scene. Also 
+		# Updates the scene, calling update on every node in the scene. Also
 		# requests a new animation frame to keep on updating.
 		#
 		# @param timestamp [Integer] the time that has elapsed since the first update
@@ -229,6 +217,7 @@ require [
 		# @param nodesInfo [Array<Object>] an array of objects representing the nodes
 		#
 		processNodesInfo: ( nodesInfo ) =>
+			console.log nodesInfo
 			for node in @nodes
 				if nodeInfo = _(nodesInfo).find( ( nodeInfo ) -> nodeInfo.id is node.id)
 					node.setInfo(nodeInfo)
@@ -270,7 +259,7 @@ require [
 			@scene = @app.scene
 
 			geometry = new Three.SphereGeometry(0.5, 6, 8)
-			@mesh = new Three.Mesh(geometry)			
+			@mesh = new Three.Mesh(geometry)
 			@scene.add(@mesh)
 
 			@peers = []
@@ -309,7 +298,7 @@ require [
 							color: 0xffaaff
 							linewidth: 1
 						)
-						
+
 						edge = new Three.Line(geometry, material)
 						@edges.push(edge)
 						@scene.add(edge)
@@ -332,23 +321,24 @@ require [
 			@id = nodeInfo.id
 			@isSuperNode = nodeInfo.isSuperNode
 			@token = nodeInfo.token
-			
+
 			if @token?
+				console.log @token
 				unless @tokenMesh?
 					geometry = new Three.SphereGeometry(0.2, 6, 8)
 					material = new THREE.MeshLambertMaterial( color:0xffff00 )
 					@tokenMesh = new Three.Mesh(geometry, material)
-					@tokenMesh.position.set(@token.position[0], @token.position[1], @token.position[2])			
+					@tokenMesh.position.set(@token.targetPosition[0], @token.targetPosition[1], @token.targetPosition[2])
 					@scene.add(@tokenMesh)
 
-				x = @token.position[0]
-				y = @token.position[1]
-				z = @token.position[2]
+				x = @token.targetPosition[0]
+				y = @token.targetPosition[1]
+				z = @token.targetPosition[2]
 				@tokenPosition = new Three.Vector3(x, y, z)
 
 			else
 				@scene.remove(@tokenMesh)
-				@scene.remove(@tokenEdge)			
+				@scene.remove(@tokenEdge)
 				delete @tokenMesh
 				delete @tokenEdge
 
@@ -356,15 +346,15 @@ require [
 
 			# Set supernodes to display as red, normal nodes as green.
 			if @isSuperNode then material = new THREE.MeshLambertMaterial( color:0xff0000 )
-			else if @token then material = new THREE.MeshLambertMaterial( color:0xffff00 )
+			else if @token? then material = new THREE.MeshLambertMaterial( color:0xffff00 )
 			else material = new Three.MeshLambertMaterial( color:0x00ff00 )
 
 			@mesh.material = material
 
 			# Update coordinates.
-			x = nodeInfo.coordinates[0]
-			y = nodeInfo.coordinates[1]
-			z = nodeInfo.coordinates[2]
+			x = nodeInfo.position[0]
+			y = nodeInfo.position[1]
+			z = nodeInfo.position[2]
 			@position = new Three.Vector3(x, y, z)
 
 	window.App = new App.Inspector()
