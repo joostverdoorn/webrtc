@@ -43,6 +43,9 @@ define [
 			if message.isStored(@_controller.messageStorage)
 				return
 
+			if message.from is @_controller.id
+				return
+
 			message.storeHash(@_controller.messageStorage)
 
 			if message.event is 'partial'
