@@ -26,7 +26,7 @@ define [
 		# 'RtpDataChannels: true' is mandatory for current Chrome (27).
 		_connectionConfiguration:
 			optional: [
-				{ DtlsSrtpKeyAgreement: true },
+				{ DtlsSrtpKeyAgreement: false },
 				{ RtpDataChannels: true }
 				]
 
@@ -35,8 +35,11 @@ define [
 		_channelConfiguration:
 			reliable: false
 
-		_connectionTimeout: 10000
-		_iceCandidateGenerationTimeout: 1000
+		# Provides default sdp constraints for the exchanged offers and answers.
+		_sdpConstraints:
+			mandatory:
+				OfferToReceiveAudio: true
+				OfferToReceiveVideo: true
 
 		# Initializes this class. Will attempt to connect to a remote peer through WebRTC.
 		# Is called from the baseclass' constructor.
@@ -44,13 +47,15 @@ define [
 		# @param id [String] the id of the peer to connect to
 		# @param instantiate [Booelean] wether to instantiate the connection or wait for the remote
 		#
-		initialize: ( @id, instantiate = true, WebRTCObject = RTCPeerConnection ) ->
+		initialize: ( @id, instantiate = true, PeerConnection = RTCPeerConnection ) ->
 			@iceCandidates = []
 
-			@_connection = new WebRTCObject(@_serverConfiguration, @_connectionConfiguration)
+			@_connection = new PeerConnection(@_serverConfiguration, @_connectionConfiguration)
+			@_connection.onnegotiationneeded = @_startNegotiation
 			@_connection.onicecandidate = @_onIceCandidate
 			@_connection.oniceconnectionstatechange = @_onIceConnectionStateChange
 			@_connection.ondatachannel = @_onDataChannel
+			@_connection.onaddstream = @_onAddStream
 
 			@on('connect', @_onConnect)
 			@on('disconnect', @_onDisconnect)
@@ -70,28 +75,12 @@ define [
 			channel = @_connection.createDataChannel('a', @_channelConfiguration)
 			@_addChannel(channel)
 
-			timer = setTimeout( ( ) =>
-				@trigger('timeout')
-			, @_connectionTimeout )
-
 			@_controller.queryTo(@id, Infinity, 'requestConnection', @_controller.id, ( accepted ) =>
 				console.log "connection request #{accepted} to node #{@id}"
+
 				unless accepted
 					@trigger('failed')
-					clearTimeout(timer)
-					return
-
-
-				@_connection.createOffer( ( description ) =>
-					@_setLocalDescription(description, ( description ) =>
-						@_controller.queryTo(@id, Infinity, 'remoteDescription', @_controller.id, description, ( data ) =>
-							if data? then @setRemoteDescription(data)
-						)
-					)
-				)
 			)
-
-			@once('channel.opened', ( ) => clearTimeout(timer))
 
 		# Disconnects from the peer.
 		#
@@ -151,7 +140,17 @@ define [
 			@_channel.onclose = @_onChannelClose
 			@_channel.onerror = @_onChannelError
 
+		# Adds a video and/or audio stream to the connection. The rtc connection
+		# will fire a negotiationneeded event, which in turn will call the
+		# _startNegotiation method.
+		#
+		addStream: ( stream ) ->
+			@_connection.addStream(stream)
+
 		# Ups bandwidth limit on SDP. Meant to be called during offer/answer.
+		#
+		# @param sdp [RTCSessionDescription] the sdp to increase the bandwidth of
+		#
 		_higherBandwidthSDP: ( sdp ) ->
 			# AS stands for Application-Specific Maximum.
 			# Bandwidth number is in kilobits / sec.
@@ -162,35 +161,48 @@ define [
 				return parts[0] + replace + parts[1]
 			return sdp
 
-		# Is called when a local description has been added. Will send this description
-		# to the remote.
+		# Starts the negotiation process with the remote. It does this
+		# by creating an RTCSessionDescription and sending it to the remote,
+		# and expects the remote's RTCSessionDescription as answer. Does the
+		# same for ice candidates.
 		#
-		# @param description [RTCSessionDescription] the local session description
-		#
-		_setLocalDescription: ( description, callback ) =>
-			description.sdp = @_higherBandwidthSDP(description.sdp)
-			@_connection.setLocalDescription(description)
-			callback?(description)
+		_startNegotiation: ( ) =>
+			@_connection.createOffer( ( description ) =>
+				description.sdp = @_higherBandwidthSDP(description.sdp)
+				@_connection.setLocalDescription(description)
+
+				@_controller.queryTo(@id, Infinity, 'remoteDescription', @_controller.id, description, ( data ) =>
+					if data? then @setRemoteDescription(data)
+				)
+
+				@once('candidates.done', ( candidates ) =>
+					@_controller.queryTo(@id, Infinity, 'iceCandidates', @_controller.id, candidates, ( arr ) =>
+						@addIceCandidates(arr)
+					)
+				)
+			, null, @_sdpConstraints)
 
 		# Is called when a remote description has been received. It will create an answer.
 		#
 		# @param id [String] a string representing the remote peer
 		# @param description [Object] an object representing the remote session description
 		#
-		setRemoteDescription: ( data, callback ) =>
+		setRemoteDescription: ( data ) ->
 			description = new RTCSessionDescription(data)
 			@_connection.setRemoteDescription(description)
 
-			if @_isConnector
-				setTimeout( ( ) =>
-					@_controller.queryTo(@id, Infinity, 'iceCandidates', @_controller.id, @iceCandidates, ( arr ) =>
-						if arr? then @addIceCandidates(arr)
-					)
-				, @_iceCandidateGenerationTimeout)
-			else
-				@_connection.createAnswer( ( description ) =>
-					@_setLocalDescription(description, callback)
-				, null, {})
+		# Creates an answer RTCSessionDescription to be sent to the remote, and
+		# passes it on to the callback.
+		#
+		# @param callback [Function] the callback to call
+		#
+		createAnswer: ( callback ) ->
+			@_connection.createAnswer( ( description ) =>
+				description.sdp = @_higherBandwidthSDP(description.sdp)
+				@_connection.setLocalDescription(description)
+
+				callback(description)
+			, null, @_sdpConstraints)
 
 		# Provides a callback for adding ice candidates. When a candidate is present,
 		# call candidate.add on the remote to add it.
@@ -200,11 +212,11 @@ define [
 		_onIceCandidate: ( event ) =>
 			if event.candidate?
 				@iceCandidates.push(event.candidate)
+			else @trigger('candidates.done', @iceCandidates)
 
 		# Is called when the remote wants to add an ice candidate.
 		#
-		# @param id [String] the id of the remote
-		# @param candidate [Object] an object representing the ice candidate
+		# @param arr [String] an array of basic objects representing ice candidates
 		#
 		addIceCandidates: ( arr ) =>
 			for data in arr
@@ -231,6 +243,13 @@ define [
 		_onDataChannel: ( event ) =>
 			@_addChannel(event.channel)
 
+		# Is called when an audio or video stream is added to the connection.
+		#
+		# @param event [Event] the stream event
+		#
+		_onAddStream: ( event ) =>
+			@trigger('stream.added', event.stream)
+
 		# Is called when a message was received on channel.
 		#
 		# @param messageEvent [MessageEvent] an RTC message event
@@ -255,12 +274,12 @@ define [
 		# Is called when a connection has been established.
 		#
 		_onConnect: ( ) ->
-			#console.log "connected to node #{@id}"
+			console.log "connected to node #{@id}"
 
 		# Is called when a connection has been broken.
 		#
 		_onDisconnect: ( ) ->
-			#console.log "disconnected from node #{@id}"
+			console.log "disconnected from node #{@id}"
 
 		# Is called when the channel has opened.
 		#

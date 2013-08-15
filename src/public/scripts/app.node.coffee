@@ -57,14 +57,14 @@ require [
 					peer.addStream(@stream)
 			)
 
-			@node._peers.on('peer.streamAdded', ( peer ) =>
-				console.log arguments
-				attachMediaStream($('#audio')[0], peer.stream)
+			@node._peers.on('stream.added', ( peer, stream ) =>
+				attachMediaStream($('#audio')[0], stream)
+				@remoteStream = stream
 			)
 
+		addStream: ( ) ->
 			getUserMedia({audio:true}, (stream) =>
 				@stream = stream
-				console.log stream
 				for peer in @node.getPeers()
 					peer.addStream(@stream)
 			)
@@ -159,11 +159,5 @@ require [
 				else
 					@tokens[token.nodeId] = 1
 			)
-
-
-
-
-
-
 
 	window.App = new App.Master

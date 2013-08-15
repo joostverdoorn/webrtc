@@ -64,20 +64,26 @@ define [
 			@onQuery
 				'ping': ( callback ) =>
 					callback 'pong', @time()
+
 				'type': ( callback ) =>
 					callback @type
+
 				'requestConnection': ( callback, id ) =>
 					@connect(id, null, false)
 					callback true
+
 				'remoteDescription': ( callback, id, data ) =>
 					if peer = @getPeer(id, null, true)
-						peer.setRemoteDescription(data, callback)
+						peer.setRemoteDescription(data)
+						peer.createAnswer(callback)
 					else callback null
+
 				'iceCandidates': ( callback, id, arr ) =>
 					if peer = @getPeer(id, null, true)
 						peer.addIceCandidates(arr)
 						callback peer.iceCandidates
 					else callback null
+
 				'info': ( callback ) =>
 					info =
 						id: @id
