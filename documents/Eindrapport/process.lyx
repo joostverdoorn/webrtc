@@ -121,6 +121,30 @@ The runtime of our project is very limited.
 Behaviour-Driven Development
 \end_layout
 
+\begin_layout Standard
+To deliver a fully tested library we decided to use Behaviour-Driven Development
+ (BDD).
+ BDD can be seen as an extension to Test-Driven Development (TDD).
+ The difference is that tests in BDD try to be as close to user-stories
+ as possible.
+ These stories abd soecufucatuibs can easily be deduced from the Product
+ Backlog items we use in Scrum.
+ Just like with TDD, tests in BDD are written before the actual unit is
+ being implemented.
+ After writing all (at that moment failing) tests, the developer will try
+ to get test after test to pass by implementing the least amount of code
+ possible for this.
+\end_layout
+
+\begin_layout Standard
+The tests will not only be used to determine if the software acts as described.
+ Another use is to make sure new code does not break older functionality.
+\end_layout
+
+\begin_layout Standard
+As testing framework we use Jasmine, a BDD-test-framework for JavaScript.
+\end_layout
+
 \begin_layout Subsection
 Planning
 \end_layout
