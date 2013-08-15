@@ -1,4 +1,4 @@
-exec = require('child_process').exec;
+exec = require('child_process').exec
 spawn = require('child_process').spawn
 os = require('os')
 fs = require('fs')
@@ -37,7 +37,12 @@ task 'watch', ->
 task 'test', ->
 	test()
 
-# Starts a new process by executing the execString, and 
+# Runs the lint tests
+#
+task 'lint', ->
+	lint()
+
+# Starts a new process by executing the execString, and
 # logs all stdout and stderr output.
 #
 # @param processString [String] the string to execute
@@ -66,7 +71,7 @@ deploy = ( ) ->
 		unless err
 			build()
 	)
-	
+
 
 # Builds application
 #
@@ -108,15 +113,15 @@ watch = ( ) ->
 
 		startProcess("coffee -mwco ./#{targetDir} ./#{sourceDir}")
 		buildOthers()
-		
+
 		watchTree(sourceDir, ( event ) ->
 			retries = 0
 			file = event.name
-			
+
 			split = file.split('.')
 			if split[split.length - 1] is 'coffee'
 				return
-				
+
 			target = file.replace(sourceDir, targetDir)
 			if event.isDelete()
 				fs.remove(target, ( err ) ->
@@ -124,7 +129,7 @@ watch = ( ) ->
 						log "removed #{target}"
 				)
 
-			else 
+			else
 				if not event.isDirectory()
 					copy(file, target)
 
@@ -165,6 +170,20 @@ test = ( ) ->
 			)
 		)
 	)
+
+# Runs the coffeelint tests
+
+lint = () ->
+	walk(sourceDir, (err, files) ->
+		if files
+			files.forEach( ( file ) ->
+				split = file.split('.')
+				if split[split.length - 1] is 'coffee'
+					startProcess('coffeelint ' + file + ' -f coffeelint_config.json')
+
+			)
+	)
+	startProcess('coffeelint Cakefile -f coffeelint_config.json')
 
 # Copies a file to the target. If the path doesn't exist,
 # creates the path.

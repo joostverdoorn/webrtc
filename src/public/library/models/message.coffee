@@ -11,7 +11,7 @@ define [], ( ) ->
 		# @param event [String] the event to send
 		# @param args [Array<Any>] any arguments to pass along with the message
 		#
-		constructor: ( @to, @from, @event, @args = [], @timestamp = null ) ->
+		constructor: ( @to, @from, @event, @args = [], @timestamp = null, @ttl = Infinity ) ->
 			unless @timestamp?
 				@timestamp = Date.now()
 
@@ -22,51 +22,52 @@ define [], ( ) ->
 		#
 		# @return [String] the JSON string representing this message
 		#
-		serialize: ( ) ->
-			object = 
+		serialize: ( includeTTL = true ) ->
+			object =
 				to: @to
 				from: @from
 				event: @event
 				args: @args
 				timestamp: @timestamp
+			if includeTTL then object.ttl = @ttl
 			return JSON.stringify(object)
 
 		# Generates a unique hash for this message to check for duplicates.
-		# We use the djb2 hashing method described here: 
+		# We use the djb2 hashing method described here:
 		# http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
 		# as it provides excellent speed vs distribution.
 		#
 		# @return [String] the hash of this message
 		#
 		hash: ( ) ->
-			string = @serialize()
-			hash = 5381;
+			string = @serialize(false)
+			hash = 5381
 
-			for i in [0...string.length] 
+			for i in [0...string.length]
 				char = string.charCodeAt(i)
 				hash = ((hash << 5) + hash) + char
-		
+
 			return hash
 
 		# Stores this message's hash in the static hash array for later lookup
 		#
-		storeHash: ( ) ->
-			Message.hashes.push(@_hash)
-			unless Message.hashes.length < 1000
-				Message.hashes.splice(0, 200)
+		storeHash: ( storage ) ->
+			storage.push(@_hash)
+			unless storage.length < 5000
+				storage.splice(0, 200)
 
 		# Returns true if and only if this message was already hashed and stored
 		#
 		# @return [Boolean] wether or this message was already stored
 		#
-		isStored: ( ) ->
-			return @_hash in Message.hashes
+		isStored: ( storage ) ->
+			return @_hash in storage
 
 		# Generates a message from a JSON string and returns this
 		#
 		# @param messageString [String] a string in JSON format
-		# @return [Message] a new Message 
+		# @return [Message] a new Message
 		#
 		@deserialize: ( messageString ) ->
 			object = JSON.parse(messageString)
-			return new Message(object.to, object.from, object.event, object.args, object.timestamp)
+			return new Message(object.to, object.from, object.event, object.args, object.timestamp, object.ttl)

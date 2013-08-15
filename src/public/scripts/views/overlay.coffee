@@ -1,7 +1,7 @@
 define [
 	'public/library/helpers/mixable'
 	'public/library/helpers/mixin.eventbindings'
-	
+
 	'jquery'
 	'qrcode'
 	], ( Mixable, EventBindings, $, QRCode ) ->
@@ -14,7 +14,10 @@ define [
 		# @param context [jQuery DOM-object] The object to add this info view to.
 		# @param forceKeyboard [Boolean] Force to use the keyboard as input without showing the selection screen
 		#
-		constructor: ( ) ->			
+		constructor: ( ) ->
+			@stats = {}
+			@_statsVisible = false
+
 			$('head').append('<link rel="stylesheet" type="text/css" href="/stylesheets/overlay.css">')
 
 			@container = $('<div id="overlay"></div>')
@@ -54,7 +57,7 @@ define [
 
 		# Shows a welcome screen to the user that the user can click away to get to the controller selection
 		#
-		showWelcomeScreen: ( ) ->			
+		showWelcomeScreen: ( ) ->
 			clickHandler = ( ) => @showControllerSelectionScreen()
 			onShow = ( ) => @container.click(clickHandler)
 			onHide = ( ) => @container.unbind('click', clickHandler)
@@ -67,7 +70,7 @@ define [
 			clickHandlerDesktop = ( ) =>
 				@trigger('controller.select', 'desktop')
 
-			clickHandlerMobile = ( ) => 
+			clickHandlerMobile = ( ) =>
 				@trigger('controller.select', 'mobile')
 
 			onShow = ( ) =>
@@ -103,6 +106,46 @@ define [
 		#
 		showPlayerDiedScreen: ( ) =>
 			@display('player_died')
+
+		_sortStats: ( stats ) ->
+			sortedStats = []
+
+			for id, stat of stats
+				if stat.deaths is 0
+					kdr = stat.kills
+				else
+					kdr = Math.round(stat.kills / stat.deaths * 100) / 100
+
+				sortedStats.push([id, stat.kills, stat.deaths, kdr])
+
+			sortedStats.sort(( a, b ) ->
+				b[3] - a[3]
+			)
+
+			return sortedStats
+
+		_updateStatTable: ( sortedStats ) ->
+			statRows = $('#statRows')
+			statRows.empty()
+			rank = 1
+			for stat in sortedStats
+				statRows.append("<tr><td>#{rank++}</td><td>#{stat[0]}</td><td>#{stat[1]}</td><td>#{stat[2]}</td><td>#{stat[3]}</td></tr>")
+
+		showStats: ( stats = @stats ) ->
+			@_statsVisible = true
+
+			sortedStats = @_sortStats(stats)
+
+			@display('stats', ( ) =>
+				@_updateStatTable(sortedStats)
+			, ( ) =>
+				@_statsVisible = false
+			)
+
+		setStats: ( @stats ) =>
+			if @_statsVisible
+				sortedStats = @_sortStats(@stats)
+				@_updateStatTable(sortedStats)
 
 		# Shows the InfoView
 		#

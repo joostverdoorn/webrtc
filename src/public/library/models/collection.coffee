@@ -33,7 +33,7 @@ define [
 			fn = ( event, args... ) =>
 				args = [event, object].concat(args)
 				@trigger.apply(@, args)
-			
+
 			object.on?('*', fn, @)
 
 		# Removes an object from the collection. This will stop listening to the

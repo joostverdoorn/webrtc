@@ -4,7 +4,7 @@ jsc = require './tools/jscoverage-reporter/src/jasmine.jscoverage_reporter.js'
 jasmineEnv = jasmine.getEnv()
 jasmineEnv.addReporter(new jsc('./reports'))
 
-jasmine.executeSpecsInFolder 
+jasmine.executeSpecsInFolder
 	specFolders: [__dirname + '/spec']
 	isVerbose: true
 	showColors: true

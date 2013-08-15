@@ -2,14 +2,15 @@ define [
 	'public/scripts/models/entity._'
 
 	'three'
-	], ( Entity, Three ) ->
+	'underscore'
+	], ( Entity, Three, _ ) ->
 
 	# This class implements projectile-specific properties for the entity physics object.
 	#
 	class Entity.Projectile extends Entity
 
 
-		# Is called from the baseclass' constructor. Will set up projectile specific 
+		# Is called from the baseclass' constructor. Will set up projectile specific
 		# properties for the entity
 		#
 		# @param player [Player] Player who fires the projectile
@@ -17,12 +18,15 @@ define [
 		# @param info [Object] an object containing all info to apply to the player
 		#
 		initialize: ( player = null, cannon = null, info = null ) ->
-			@mass = 2
+			if player?.id
+				@id = "#{player.id}_#{_.uniqueId('P')}"
+
+			@mass = 10
 			@drag = .0005
 			@angularDrag = 10
 			@applyGravity = true
 
-			@_projectileVelocity = 100
+			@_projectileVelocity = 200
 
 			sphereMaterial = new THREE.MeshPhongMaterial( {color:0x333333 })
 			radius = 0.45
@@ -57,8 +61,6 @@ define [
 				# Add the player velocity to the force.
 				@velocity.add(player.velocity)
 
-				# Add the force to the pending forces
-				player.addForce(@velocity.clone().negate().multiplyScalar(@mass))
 			else @applyInfo(info)
 
 			# Add the projectile to the scene

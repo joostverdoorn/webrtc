@@ -6,7 +6,6 @@ define [
 	class Controller.Random extends Controller
 
 		initialize: ( @game ) ->
-			console.log('game', @game)
 			@_updateAll()
 
 		_updateAll: ( ) =>
@@ -54,16 +53,16 @@ define [
 				@RotateCannonDownward = -upDown
 
 		_cycleFire: ( time ) ->
-			if true or Math.round(time) % 5 == 0
+			if Math.round(time) % 5 == 0
 				@Fire = true
 			else
 				@Fire = false
 
 		_cycleBoost: ( time ) ->
-			if @game.player?.position?.length() < 400
-				@Boost = true
+			if not @game.player or @game.player?.position?.length() < 400
+				@Boost = 1
 			else
-				@Boost = false
+				@Boost = 0
 
 		_time: ( ) ->
 			Date.now() / 1000

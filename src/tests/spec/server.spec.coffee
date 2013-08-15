@@ -16,7 +16,7 @@ require [
 		describe 'Server', ->
 
 			server = null
-			
+
 			beforeEach ->
 				server = new Server('.')
 
@@ -113,7 +113,7 @@ require [
 
 						expect(server.removeNode.mostRecentCall.args).toEqual([
 								fakeClient
-							])						
+							])
 
 				describe 'when emitting', ->
 					it 'should create a new message without a sender and relay it', ->
@@ -266,7 +266,7 @@ require [
 
 						waitsFor(->
 							return callback.wasCalled
-						)						
+						)
 
 					it 'should reply all serialized nodes on a non-extensive "nodes" query', ->
 
@@ -316,7 +316,7 @@ require [
 						waitsFor(->
 							return callback.wasCalled
 						)
-						
+
 				describe 'when timed', ->
 					it 'should give precise incremental numbers representing the time', ->
 						# Bad test, but Jasmine's mock clock does not allow faking Date.now() results...

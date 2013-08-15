@@ -3,7 +3,7 @@ define [
 	], ( _ ) ->
 
 	# These event bindings are modelled after the ones that Backbone.js uses. There
-	# was a strong internal struggle to either use those or the ones provided by 
+	# was a strong internal struggle to either use those or the ones provided by
 	# node.js's events.EventEmitter. If in the future those prove better, I have no
 	# problem switching. - Joost Verdoorn
 
@@ -11,8 +11,8 @@ define [
 
 		ClassMethods: {}
 
-		InstanceMethods: 
-			
+		InstanceMethods:
+
 			# Binds an event to a callback.
 			#
 			# @overload on(name, callback, context = null)
@@ -34,7 +34,7 @@ define [
 					@_events = {} unless @_events?
 					@_events[name] = [] unless @_events[name]?
 
-					event = 
+					event =
 						callback: callback
 						context: context
 
@@ -44,7 +44,7 @@ define [
 					bindings = arguments[0]
 
 					for name, callback of bindings
-						@on(name, callback) 
+						@on(name, callback)
 
 				return @
 
@@ -59,8 +59,9 @@ define [
 
 				names = if name then [ name ] else _.keys(@_events)
 				for name in names
+					unless @_events[name]? then return
 					for event in @_events[name]
-						if ( not callback? or callback is event.callback ) and 
+						if ( not callback? or callback is event.callback ) and
 								( not context? or context is event.context )
 							@_events[name] = _(@_events[name]).without event
 
@@ -96,7 +97,7 @@ define [
 					for name, callback of bindings
 						@once(name, callback)
 
-				return @				
+				return @
 
 			# Triggers an event.
 			#
@@ -104,6 +105,7 @@ define [
 			# @param args [Any*] any arguments to pass to the callback
 			#
 			trigger: ( name, args... ) ->
+				#console.log name, args if @role? and name isnt '*'
 				@_events = {} unless @_events?
 				for event in @_events[name] ? []
 					event.callback.apply(event.context ? @, args)

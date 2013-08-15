@@ -2,21 +2,26 @@ define [
 	'public/scripts/models/entity._'
 	'public/scripts/models/entity.cannon'
 	'public/scripts/models/entity.projectile'
+	'public/scripts/models/stats'
 
 	'three'
-	], ( Entity, Cannon, Projectile, Three ) ->
+	], ( Entity, Cannon, Projectile, Stats, Three ) ->
 
 	# This class implements player-specific properties for the entity physics object.
 	#
 	class Entity.Player extends Entity
 
-		# Is called from the baseclass' constructor. Will set up player specific 
+		# Is called from the baseclass' constructor. Will set up player specific
 		# properties for the entity
 		#
 		# @param id [String] the string id of the player
 		# @param info [Object] an object containing all info to apply to the player
 		#
-		initialize: ( @id, info = null, timestamp = null ) ->		
+		initialize: ( @id, info = null, timestamp = null ) ->
+			@stats = new Stats()
+			@stats.addStat('kills')
+			@stats.addStat('deaths')
+
 			@mass = 100
 			@drag = .01
 			@angularDrag = 7
@@ -27,65 +32,55 @@ define [
 			@flyForward = 0
 			@flyBackward = 0
 
-			@boost = false
+			@boost = 0
 			@landed = false
 			@landedPosition = new Three.Vector3()
 			@baseExtended = false
 
 			@_cannonReady = true
 
-			@_ufoBase = new Three.Mesh()
-
-			@_loader.load('/meshes/ufo.js', ( geometry, material ) =>
-				geometry.computeBoundingSphere()
-
-				# Set up skinned geometry mesh.
-				@mesh = new Three.SkinnedMesh(geometry, new Three.MeshFaceMaterial(material))
-				@mesh.receiveShadow = true
-				material.skinning = true for material in @mesh.material.materials
-
-				# Set up animations for the mesh.
-				Three.AnimationHandler.add(@mesh.geometry.animation)
-				@animation = new Three.Animation(@mesh, 'ArmatureAction', Three.AnimationHandler.CATMULLROM)
-				@animation.play()
-
-				# Create our cannon.
-				@cannon = new Cannon(@world, @owner, @)
-
-				# Apply passed info.
-				@applyInfo(info)
-
-				# Set the rotation of the player to be level with relation to the planet.
-				levelRotation = @calculateLevelRotation().clone()
-				levelRotationQuaternion = new Three.Quaternion().setFromEuler(levelRotation)
-
-				rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
-				rotationQuaternion.multiply(levelRotationQuaternion)
-
-				@rotation.setFromQuaternion(rotationQuaternion)
-				@rotation.order = 'YXZ'
-
-				# Add the mesh to the scene and set loaded state.
-				@scene.add(@mesh)
-
-				@_loader.load('/meshes/ufoBase.js', ( geometry, material ) =>
-					@_ufoBase.geometry = geometry
-					@_ufoBase.material = new Three.MeshFaceMaterial(material)
-					@mesh.add(@_ufoBase)
-
-					@loaded = true
-				)
-			)
-
 			# Add listeners to common events.
-			@on('impact.world', @_onImpactWorld)
+			@on
+				'loaded': =>
+					@_onLoaded()
+					@applyInfo(info)
+				'impact.world': @_onImpactWorld
 
-		# Updates the physics state of the player. Adds forces to simulate gravity and 
+			# Load meshes.
+			if Player.Model? then @trigger('loaded')
+			else
+				Entity.Loader.load '/meshes/ufo.js', ( geometry, material ) =>
+					Player.Model = {}
+
+					# Setup geometry.
+					Player.Model.Geometry = geometry
+					Player.Model.Geometry.computeBoundingSphere()
+					Three.AnimationHandler.add(Player.Model.Geometry.animation)
+
+					# Setup materials.
+					Player.Model.Material = new Three.MeshFaceMaterial(material)
+					material.skinning = true for material in Player.Model.Material.materials
+
+					# Setup mesh.
+					Player.Model.Mesh = new Three.SkinnedMesh(Player.Model.Geometry, Player.Model.Material)
+					Player.Model.Mesh.receiveShadow = true
+
+					# Setup base.
+					Entity.Loader.load '/meshes/ufoBase.js', ( geometry, material ) =>
+						Player.Model.Base = {}
+
+						Player.Model.Base.Geometry = geometry
+						Player.Model.Base.Material = new Three.MeshFaceMaterial(material)
+						Player.Model.Base.Mesh = new Three.Mesh(Player.Model.Base.Geometry, Player.Model.Base.Material)
+
+						@trigger('loaded')
+
+		# Updates the physics state of the player. Adds forces to simulate gravity and
 		# the propulsion system. Calls baseclass' update after.
 		#
 		# @param dt [Float] the time that has elapsed since last update was called.
 		#
-		update: ( dt ) ->
+		update: ( dt, ownPlayer ) ->
 			unless @loaded
 				return
 
@@ -127,23 +122,20 @@ define [
 			# Add thrust straight downward from the player. If the player's boosting,
 			# the thrust will be significantly higher than then she's not.
 			thrustVector = new Three.Vector3(0, 1, 0).applyQuaternion(rotationQuaternion)
-
-			if @boost
-				@landed = false
-				thrustVector.multiplyScalar(19 * @mass * dt)
-			else
-				thrustVector.multiplyScalar(3 * @mass * dt)
+			thrustVector.multiplyScalar(@mass * (3 + @boost * 16) * dt)
 
 			if @position.length() > 1000
 				thrustVector.divideScalar(@position.length() - 1000)
 
 			@addForce(thrustVector)
-			
+
+			if @boost then @landed = false
+
 			# Update physics.
-			super(dt, not @landed)
+			super(dt, ownPlayer, not @landed)
 
 			# Update our cannon.
-			@cannon.update(dt)
+			@cannon.update(dt, ownPlayer)
 
 			# Update visuals.
 			@_updateVisuals(dt)
@@ -159,11 +151,11 @@ define [
 
 			# Retract or extend the base.
 			if @baseExtended
-				@_ufoBase.position.lerp(new Three.Vector3(0, 0, 0), dt * 8)
-				@_ufoBase.scale.lerp(new Three.Vector3(1, 2, 1), dt * 8)
+				@_ufoBaseMesh.position.lerp(new Three.Vector3(0, 0, 0), dt * 8)
+				@_ufoBaseMesh.scale.lerp(new Three.Vector3(1, 2, 1), dt * 8)
 			else
-				@_ufoBase.position.lerp(new Three.Vector3(0, .8, 0), dt * 5)
-				@_ufoBase.scale.lerp(new Three.Vector3(1, .5, 1), dt * 5)
+				@_ufoBaseMesh.position.lerp(new Three.Vector3(0, .8, 0), dt * 5)
+				@_ufoBaseMesh.scale.lerp(new Three.Vector3(1, .5, 1), dt * 5)
 
 				@addAngularForce(new Three.Euler(0, @cannon.rotation.y * 20 * dt, 0, 'YXZ'))
 				@cannon.addAngularForce(new Three.Euler(0, -@cannon.rotation.y * 20 * dt, 0, 'YXZ'))
@@ -177,20 +169,20 @@ define [
 		fire: ( ) ->
 			if @_cannonReady and @cannon.extended
 
-				projectile = new Projectile(@world, @owner, @, @cannon)
+				projectile = new Projectile(@world, @ownerID, @owner, @, @cannon)
 				@trigger('fire', projectile)
 				@_cannonReady = false
 
 				setTimeout( =>
 					@_cannonReady = true
-				, 500)
+				, 400)
 
 		# Calculates a level rotation with relation to the planet surface and returns
 		# an euler representation of this rotation.
 		#
 		# @param vector [Three.Vector3] the normal vector.
 		# @return [Three.Euler] the ideal (level) rotation.
-		# 
+		#
 		calculateLevelRotation: ( vector = @position ) ->
 			upVector = vector.clone().normalize()
 			rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
@@ -204,7 +196,34 @@ define [
 			levelRotation = new Three.Euler().setFromRotationMatrix(rotationMatrix, 'YXZ')
 			return levelRotation
 
-		# Is called when the player impacts the world. Used to determine if the 
+		_onLoaded: ( ) =>
+			@loaded = true
+
+			# Setup UFO
+			@mesh = Player.Model.Mesh.clone()
+			@scene.add(@mesh)
+
+			@animation = new Three.Animation(@mesh, 'ArmatureAction', Three.AnimationHandler.CATMULLROM)
+			@animation.play()
+
+			# Setup UFO base
+			@_ufoBaseMesh = Player.Model.Base.Mesh.clone()
+			@mesh.add(@_ufoBaseMesh)
+
+			# Create the cannon.
+			@cannon = new Cannon(@world, @ownerID, @owner, @)
+
+			# Set the rotation of the player to be level with relation to the planet.
+			levelRotation = @calculateLevelRotation().clone()
+			levelRotationQuaternion = new Three.Quaternion().setFromEuler(levelRotation)
+
+			rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
+			rotationQuaternion.multiply(levelRotationQuaternion)
+
+			@rotation.setFromQuaternion(rotationQuaternion)
+			@rotation.order = 'YXZ'
+
+		# Is called when the player impacts the world. Used to determine if the
 		# player should systain damage.
 		#
 		# @param position [Three.Vector3] the position of the player at the moment of impact
@@ -214,6 +233,7 @@ define [
 			downVelocity = velocity.projectOnVector(position)
 			if downVelocity.length() > 30
 				@die()
+				@world.trigger('player.kill', @)
 			else
 				@landed = true
 				@landedPosition = position
@@ -227,7 +247,7 @@ define [
 				return
 
 			super(info, timestamp)
-			
+
 			if info.flyLeft?
 				@flyLeft = info.flyLeft
 
@@ -252,8 +272,8 @@ define [
 			if info.baseExtended?
 				@baseExtended = info.baseExtended
 
-			@cannon.applyInfo(info.cannon, timestamp)
-			
+			@cannon?.applyInfo(info.cannon, timestamp)
+
 		# Returns the current info in an object.
 		#
 		# @return [Object] an object of all the info
