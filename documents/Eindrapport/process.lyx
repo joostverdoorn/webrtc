@@ -64,8 +64,61 @@
 Methodology
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Standard
+In this chapter we will explain how we decided to execute this project.
+ First we will tell about our software development methodology and after
+ that we will continue with software development technique.
+\end_layout
+
+\begin_layout Subsubsection
 Scrum
+\end_layout
+
+\begin_layout Standard
+While studying Computer Science we encountered several software development
+ methodologies.
+ From this we know that agile methodologies like Scrum fit very well in
+ relatively short and small projects with a small team.
+ Scrum uses small developmentcycli called sprints to stimulate a fast completion
+ of the project.
+ At the beginning of each sprint the team decides which features shall be
+ implemented and at the end of the sprint there has to be a working product.
+ Unimplemented features will remain in the 
+\begin_inset Quotes eld
+\end_inset
+
+Product Backlog
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+In our team Karens is the Scrum Master.
+ The task of the Scrum Master is to remove all distracting influences for
+ the development team.
+ Our Product Owner is Victor Klos from TNO.
+ He prioritizes our Product Backlog and will ensure our product meets the
+ requirements for TNO.
+ Eelco Cramer from TNO will assist us with technical problems.
+\end_layout
+
+\begin_layout Standard
+The runtime of our project is very limited.
+ Therefore we will have sprints of one week, from Thursday to Wednesday.
+ Everyday at 10 o'clock we will have a daily standup that takes up 15 minutes
+ at most.
+ In this time we will discuss what we did the previous day and we will do
+ the next day.
+ Every Thursday morning there will be a Sprint Planning Meeting to determine
+ which Product Backlog items will get included in the upcoming sprint.
+ The Product Owner will try to always attend at least this weekly meeting
+ to properly prioritize the backlog items.
+\end_layout
+
+\begin_layout Subsubsection
+Behaviour-Driven Development
 \end_layout
 
 \begin_layout Subsection
