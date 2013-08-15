@@ -67,15 +67,70 @@ Client
 \begin_layout Standard
 This client and supervisor of this BSc project are the same organisation:
  TNO.
- TNO is an independant researchorganisation
+ TNO is a non-profit researchorganization that focuses on applied sciences.
 \end_layout
 
 \begin_layout Subsection
 Problem description
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Problem-description"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+TNO tries to always keep up with new advancements in technology.
+ This is necessary so they can advise their own customers about these technologi
+es.
+\end_layout
+
+\begin_layout Standard
+Recently the department of Multimedia Network Systems saw an increase in
+ the demand of information about the usability of WebRTC.
+ TNO wants to know about the applicability and use-cases of this new technology.
+\end_layout
+
+\begin_layout Standard
+At this moment rudimentary knowledge about WebRTC is available within TNO.
+ Therefore a basic demonstration of WebRTC is not what TNO is looking for.
+ Instead they are looking for high-level use-cases that explore the boundaries
+ of this technology.
 \end_layout
 
 \begin_layout Subsection
 Goal
+\end_layout
+
+\begin_layout Standard
+As described in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Problem-description"
+
+\end_inset
+
+ TNO's first goal is to explore the boundaries of what is possible with
+ WebRTC.
+ There are several subjects to think of when trying to reach this goal.
+ You can think about number of simultanious users, different media sources
+ for streaming, media synchronization, limitation of bandwidth and cross-browser
+ compatibility.
+ In chapter 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Assignment-formulation"
+
+\end_inset
+
+ we will make chose the subjects for our assignment.
+\end_layout
+
+\begin_layout Standard
+The second goal is to create a demonstration of our work to easily show
+ to others what we have done with WebRTC.
 \end_layout
 
 \begin_layout Subsubsection
@@ -84,10 +139,90 @@ Philosophy
 
 \begin_layout Subsection
 Assignment formulation
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Assignment-formulation"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+After learning about the different aspects of WebRTC, trying out some experiment
+s and encountering our own problems with it, we decided to focus our project
+ on the scalability of WebRTC-networks.
+ We chose this because WebRTC makes it possible to connect multiple users
+ with each other without a central server relaying all traffic.
+ Properly designed a system could then construct a large global peer-to-peer
+ network.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Quotes eld
+\end_inset
+
+Distributed networks
+\begin_inset Quotes erd
+\end_inset
+
+ is a subject with large amounts of research already done.
+ Most research focusses on specialised clients connecting to such a network.
+ Because WebRTC runs without external software directly in the user's browser,
+ where computer ressources are not easily given to a script requesting it,
+ we thought it would be very interesting to focus on scalability.
+ From here we constructed this mainresearchquestion: 
+\begin_inset Quotes eld
+\end_inset
+
+How is it possible to create a dynamic peer-to-peer multiplayer-game-network
+ that scales with the amount of users participating by only using WebRTC?
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Related questions to this main-question are:
+\end_layout
+
+\begin_layout Itemize
+How can we distribute essential networktasks over all peers?
+\end_layout
+
+\begin_layout Itemize
+How can the impact unpredictable circumstances (peers suddenly leaving the
+ network) be reduced?
+\end_layout
+
+\begin_layout Itemize
+How can all data reach all peers in a bandwidth-efficient way?
+\end_layout
+
+\begin_layout Standard
+To cover all these questions we decided to develop a small Massively Multiplayer
+ Online Game (MMOG) as demonstration of our underlying WebRTC network structure.
 \end_layout
 
 \begin_layout Subsection
 Deliverables
+\end_layout
+
+\begin_layout Standard
+In addition to the deliverables from the University (proces documentation,
+ progress-reports, this document) we have two deliverables for TNO.
+\end_layout
+
+\begin_layout Standard
+The first is a JavaScript library that allows anyone to easily create a
+ scalable network with WebRTC.
+ This library will contain all functionality to cover the researchquestions
+ posed in the previous chapter.
+\end_layout
+
+\begin_layout Standard
+The second deliverable for TNO is a demonstration that fully uses the created
+ library.
+ We picked a browser-based MMOG which will function as one big integration
+ test for the library.
 \end_layout
 
 \begin_layout Subsection
