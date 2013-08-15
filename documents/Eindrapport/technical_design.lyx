@@ -5,7 +5,7 @@
 \textclass article
 \use_default_options true
 \maintain_unincluded_children false
-\language dutch
+\language american
 \language_package default
 \inputencoding auto
 \fontencoding global
@@ -61,7 +61,146 @@
 \begin_body
 
 \begin_layout Subsection
+Node Communication
+\end_layout
 
+\begin_layout Standard
+The basis of the network is what we call the unstructured network: individual
+ unstructured nodes that have the ability to connect and communicate to
+ each other.
+ The unstructured network - as the name implies - does not organize or structure
+ itself, and requires an additional layer to be fully useful as a peer-to-peer
+ network.
+ It does have a lot of value: the structured network described in the section
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Network-Topology"
+
+\end_inset
+
+ relies heavily on the functionality provided by the unstructured network.
+ Also, individual peer-to-peer connections, such as the connection between
+ the game and the mobile controller, are easily established using unstructured
+ nodes.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename node-server-node.png
+	lyxscale 50
+	width 12cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Communication between server and nodes
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Event Driven Networking
+\end_layout
+
+\begin_layout Standard
+The networking library is almost entirely event driven, meaning that events
+ trigger actions via listeners on that event.
+ Events can be triggered on remote parties by emitting a message, and the
+ event of that message is triggered on the remote party.
+ The Message class is at the heart of this system.
+ Messages have properties that dictate the intended receiver and the event
+ to trigger when it has arrived there, including any arguments to pass along
+ with that event.
+ Aside from that, messages also contain flags for the time when it was sent
+ and the node that sent the message.
+ The Message class contains hashing functionality that generates a unique
+ hash for that message, which allows for filtering of duplicate messages
+ and reassembling disassembled messages.
+\end_layout
+
+\begin_layout Subsubsection
+Controllers
+\end_layout
+
+\begin_layout Standard
+Both nodes and the server represent a Controller - an interface that provides
+ relay functionality to route messages.
+\end_layout
+
+\begin_layout Subsubsection
+Remotes
+\end_layout
+
+\begin_layout Standard
+All remote communicating entities - a peer, a server or a client - are represent
+ed by a Remote sub class.
+ The Remote base class provides a common API for all communication, whether
+ this communication is implemented by WebSockets or WebRTC.
+ This allows network communication to flow transparently via either a peer
+ connection or a 
+\end_layout
+
+\begin_layout Subsubsection
+Initialization
+\end_layout
+
+\begin_layout Standard
+As discussed in the section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Initialization"
+
+\end_inset
+
+, we route the connection negotiation between two peers via the server using
+ WebSockets.
+ The server, as other controllers, relays any message where the message
+ indicates the controller is not the intended receiver.
+\end_layout
+
+\begin_layout Subsection
+Network Topology
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Network-Topology"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Vivaldi
+\end_layout
+
+\begin_layout Subsubsection
+PoPCorn
+\end_layout
+
+\begin_layout Subsection
+Game
 \end_layout
 
 \end_body

@@ -61,7 +61,31 @@
 \begin_body
 
 \begin_layout Subsection
+Technology
+\end_layout
 
+\begin_layout Subsubsection
+WebRTC
+\end_layout
+
+\begin_layout Subsubsection
+WebSockets
+\end_layout
+
+\begin_layout Subsubsection
+WebGL
+\end_layout
+
+\begin_layout Subsubsection
+Canvas
+\end_layout
+
+\begin_layout Subsection
+Frameworks
+\end_layout
+
+\begin_layout Subsection
+CoffeeScript
 \end_layout
 
 \end_body

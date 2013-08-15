@@ -5,7 +5,7 @@
 \textclass article
 \use_default_options true
 \maintain_unincluded_children false
-\language dutch
+\language american
 \language_package default
 \inputencoding auto
 \fontencoding global
@@ -62,6 +62,38 @@
 
 \begin_layout Subsection
 WebRTC
+\end_layout
+
+\begin_layout Standard
+As WebRTC is an integral part of the project, a lot of early research has
+ gone into reading the official documentation and producing prototypes that
+ demonstrate the uses of the technology.
+ In this phase of the project we've experimented with different techniques
+ for establishing connections, methods of sending and receiving data and
+ developing a useful application structure.
+\end_layout
+
+\begin_layout Subsubsection
+Initialization
+\end_layout
+
+\begin_layout Standard
+Before a WebRTC peer-to-peer connection is made, the peers first have to
+ exchange identifying information and agree on several aspects of the connection.
+ Since there's no connection between the peers yet, this communication can't
+ be direct, and has to be routed through a third party both peers are in
+ some way connected with.
+ The official W3C WebRTC specifications do not provide any details on how
+ to go about this exchange of information, but we identified several different
+ ways.
+ One way is to use AJAX requests to a web server, which in turn routes informati
+on from one peer to the other, but this has the disadvantage that either
+ both peers have to be aware that the other peer is requesting a connection,
+ or that the use of continuous AJAX polling is required.
+ Another way to establish the connection is to have all peers to be connected
+ to a web server using a WebSocket, which is always available and open for
+ sending and receiving data.
+ 
 \end_layout
 
 \begin_layout Subsection
