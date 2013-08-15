@@ -23,7 +23,9 @@ define [
 				]
 
 		# Provides default connection configuration for RTCPeerConnection. Note that
-		# 'RtpDataChannels: true' is mandatory for current Chrome (27).
+		# 'RtpDataChannels: true' is mandatory for current Chrome (27). Expermiments
+		# show that 'DtlsSrtpKeyAgreement: false' is required for current Chrome to
+		# allow on-the-fly adding of media streams.
 		_connectionConfiguration:
 			optional: [
 				{ DtlsSrtpKeyAgreement: false },
@@ -67,7 +69,10 @@ define [
 			if instantiate
 				@connect()
 
-		# Attempts to connect to the remote peer.
+		# Attempts to connect to the remote peer. Will query the remote to
+		# see if it accepts our connection, and the connection will trigger
+		# an negotiationneeded event that will be caught to start the
+		# negotiation process.
 		#
 		connect: ( ) ->
 			@_isConnector = true
@@ -144,8 +149,19 @@ define [
 		# will fire a negotiationneeded event, which in turn will call the
 		# _startNegotiation method.
 		#
+		# @param stream [MediaStream] the stream to be added
+		#
 		addStream: ( stream ) ->
 			@_connection.addStream(stream)
+
+		# Removes a video and/or audio stream from the connection. The rtc
+		# connection will fire a negotiationneeded event, which in turn will call
+		# the _startNegotiation method.
+		#
+		# @param stream [MediaStream] the stream to be removed
+		#
+		removeStream: ( stream ) ->
+			@_connection.removeStream(stream)
 
 		# Ups bandwidth limit on SDP. Meant to be called during offer/answer.
 		#
@@ -182,10 +198,10 @@ define [
 				)
 			, null, @_sdpConstraints)
 
-		# Is called when a remote description has been received. It will create an answer.
+		# Is called when a remote description has been received. It will
+		# create an answer.
 		#
-		# @param id [String] a string representing the remote peer
-		# @param description [Object] an object representing the remote session description
+		# @param data [Object] a plain object representation of the RTCSessionDescription
 		#
 		setRemoteDescription: ( data ) ->
 			description = new RTCSessionDescription(data)
@@ -216,7 +232,7 @@ define [
 
 		# Is called when the remote wants to add an ice candidate.
 		#
-		# @param arr [String] an array of basic objects representing ice candidates
+		# @param arr [Array] an array of basic objects representing ice candidates
 		#
 		addIceCandidates: ( arr ) =>
 			for data in arr
