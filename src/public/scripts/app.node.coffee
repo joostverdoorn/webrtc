@@ -152,12 +152,6 @@ require [
 
 		updateTokenInfo: () ->
 			$('.self-row .token').text(@node.token?)
-			@tokens = {}
-			@node._tokens.map( (token) =>
-				if @tokens[token.nodeId]?
-					@tokens[token.nodeId]++
-				else
-					@tokens[token.nodeId] = 1
-			)
+			@tokens = @node.groupTokens()
 
 	window.App = new App.Master

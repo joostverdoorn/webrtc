@@ -44,12 +44,13 @@ define [
 		_tokenInfoTimeout: 3000
 		_pingCandidateTimeout : 1000
 
-		_coordinateDelta : 1
-		_maxChildren : 4
-		_foundationNodes : 3
-		_superNodeSwitchThreshold : 0.7
-		_tokenMoveThreshold : 1
-		_superNodeFoundation: 3
+		_coordinateDelta : 1			# while updating coordinates
+		_maxChildren : 4				# maximum amount of children, changing dynamically
+		_foundationNodes : 3			# a minimum amount of supernodes to connect
+		_superNodeSwitchThreshold : 0.7 # while recommending a better superNode
+		_tokenSwitchThreshold : 0.7 	# while selecting a better token
+		_tokenMoveThreshold : 4			# while requesting a token candidate
+		_superNodeFoundation: 3			# a minimum amound of superNodes
 
 
 		position : new Vector((Math.random()-0.5)*4, (Math.random()-0.5)*4, (Math.random()-0.5)*4)
@@ -585,6 +586,7 @@ define [
 					@removeChild(sibling)
 
 
+
 		_updatePosition: ( ) =>
 			i = 0
 			#console.group("Pingsessie")
@@ -688,14 +690,28 @@ define [
 			if oldToken = _(@_tokens).find( ( t ) -> token.id is t.id)
 				@_tokens.remove(oldToken)
 
+
+		# Groups tokens by Node id
+		#
+		groupTokens: () ->
+			groupedTokens = {}
+			for token in @_tokens
+				if groupedTokens[token.nodeId]?
+					groupedTokens[token.nodeId]++
+				else
+					groupedTokens[token.nodeId] = 1
+			return groupedTokens
+
 		# Creates a new token and passes it on to a random child.
 		#
 		_distributeToken: ( ) =>
-			if @getChildren().length is 0
+			groupedTokens = @groupTokens()
+			children = _(@getChildren()).filter( ( child ) => not groupedTokens[child.id])
+
+			if children.length is 0
 				return
 
 			token = new Token()
-			children = @getChildren()
 			randomChild = children[_.random(0,children.length-1)]
 			randomChild.emit('token.receive', token.serialize())
 			console.log  randomChild.id +  " received a token with id", token.id
@@ -793,7 +809,10 @@ define [
 			closestChild = null
 			closestDistance = Infinity
 
-			for child in @getChildren() when child.position?
+			groupedTokens = @groupTokens()
+			children = _(@getChildren()).filter( ( child ) => not groupedTokens[child.id])
+
+			for child in children when child.position?
 				distance = child.position.getDistance(token.targetPosition)
 				if distance < closestDistance
 					closestDistance = distance
@@ -829,7 +848,7 @@ define [
 			closestDistance = Infinity
 
 			for candidate in @token.candidates
-				if candidate.distance < closestDistance
+				if candidate.distance < closestDistance * @_tokenSwitchThreshold
 					closestDistance = candidate.distance
 					closestCandidate = candidate.id
 
