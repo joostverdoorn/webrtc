@@ -149,6 +149,171 @@ As testing framework we use Jasmine, a BDD-test-framework for JavaScript.
 Planning
 \end_layout
 
+\begin_layout Standard
+Because we utilize Scrum, there was no 
+\begin_inset Quotes eld
+\end_inset
+
+locked
+\begin_inset Quotes erd
+\end_inset
+
+ day-by-day planning before we started this project.
+ We only had our Product Backlog and a global direction of the project on
+ a week-by-week basis.
+ At the start of every sprint we then decided what to implement specifically.
+\end_layout
+
+\begin_layout Itemize
+Week 0
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Pick project
+\end_layout
+
+\begin_layout Itemize
+Plan of Action
+\end_layout
+
+\begin_layout Itemize
+Set up development environment
+\end_layout
+
+\begin_layout Itemize
+Start work on library
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Week 1
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Library
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Week 2
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Library
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Week 3
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Start work on game
+\end_layout
+
+\begin_layout Itemize
+Library
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Week 4
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Game
+\end_layout
+
+\begin_layout Itemize
+Library
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Week 5
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Game
+\end_layout
+
+\begin_layout Itemize
+Library
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Week 6
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Game
+\end_layout
+
+\begin_layout Itemize
+Library
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Week 7
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Game
+\end_layout
+
+\begin_layout Itemize
+Finalize Library
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Week 8
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Game
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Week 9
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Finalize Game
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Week 10
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Finalize reports
+\end_layout
+
+\begin_layout Itemize
+Evaluation
+\end_layout
+
+\begin_layout Itemize
+Presentation
+\end_layout
+
+\end_deeper
 \begin_layout Subsection
 Planning Tools
 \end_layout
