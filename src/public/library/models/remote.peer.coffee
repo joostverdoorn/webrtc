@@ -1,10 +1,10 @@
 define [
 	'public/library/models/remote._'
-	'public/library/models/vector'
+	'public/library/models/message'
 
 	'underscore'
 	'adapter'
-	], ( Remote, Vector, _ ) ->
+	], ( Remote, Message, _ ) ->
 
 	class Remote.Peer extends Remote
 
@@ -80,7 +80,7 @@ define [
 			channel = @_connection.createDataChannel('a', @_channelConfiguration)
 			@_addChannel(channel)
 
-			@_controller.queryTo(@id, Infinity, 'requestConnection', @_controller.id, ( accepted ) =>
+			@_controller.queryTo(@id, 'requestConnection', @_controller.id, ( accepted ) =>
 				console.log "connection request #{accepted} to node #{@id}"
 
 				unless accepted
@@ -187,13 +187,15 @@ define [
 				description.sdp = @_higherBandwidthSDP(description.sdp)
 				@_connection.setLocalDescription(description)
 
-				@_controller.queryTo(@id, Infinity, 'remoteDescription', @_controller.id, description, ( data ) =>
+				@_controller.queryTo(@id, 'remoteDescription', @_controller.id, description, ( data ) =>
 					if data? then @setRemoteDescription(data)
+					else @trigger('failed')
 				)
 
 				@once('candidates.done', ( candidates ) =>
-					@_controller.queryTo(@id, Infinity, 'iceCandidates', @_controller.id, candidates, ( arr ) =>
-						@addIceCandidates(arr)
+					@_controller.queryTo(@id, 'iceCandidates', @_controller.id, candidates, ( arr ) =>
+						if arr? then @addIceCandidates(arr)
+						else @trigger('failed')
 					)
 				)
 			, null, @_sdpConstraints)
@@ -271,7 +273,8 @@ define [
 		# @param messageEvent [MessageEvent] an RTC message event
 		#
 		_onChannelMessage: ( messageEvent ) =>
-			@trigger('message', messageEvent.data)
+			message = Message.deserialize(messageEvent.data)
+			@trigger('message', message)
 
 		# Is called when the data channel is opened.
 		#

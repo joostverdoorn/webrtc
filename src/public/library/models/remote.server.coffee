@@ -1,9 +1,10 @@
 define [
 	'public/library/models/remote._'
+	'public/library/models/message'
 
 	'socket.io'
 	'underscore'
-	], ( Remote, io, _ ) ->
+	], ( Remote, Message, io, _ ) ->
 
 	class Remote.Server extends Remote
 
@@ -23,7 +24,7 @@ define [
 		connect: ( ) ->
 			@_connection = io.connect(@_address, {'force new connection': true})
 
-			@_connection.on('message', ( message ) => @trigger('message', message))
+			@_connection.on('message', ( message ) => @trigger('message', Message.deserialize(message)))
 			@_connection.on('connect', ( ) => @trigger('connect', @_connection.socket.sessionid))
 			@_connection.on('disconnect', ( ) => @trigger('disconnect'))
 

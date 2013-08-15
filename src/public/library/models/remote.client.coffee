@@ -1,8 +1,9 @@
 define [
 	'public/library/models/remote._'
+	'public/library/models/message'
 
 	'underscore'
-	], ( Remote, _ ) ->
+	], ( Remote, Message, _ ) ->
 
 	class Remote.Client extends Remote
 
@@ -14,7 +15,7 @@ define [
 		initialize: ( @_connection ) ->
 			@id = @_connection.id
 
-			@_connection.on('message', ( message ) => @trigger('message', message))
+			@_connection.on('message', ( message ) => @trigger('message', Message.deserialize(message)))
 			@_connection.on('disconnect', ( ) => @trigger('disconnect'))
 
 			@on('setSuperNode', @_onSetSuperNode)

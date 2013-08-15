@@ -24,6 +24,8 @@ define [
 			@on('message', @_onMessage)
 			@on('ping', @_onPing)
 			@on('query', @_onQuery)
+			@on('relay', @_onRelay)
+			@on('log', -> console.log(arguments))
 
 		# Disconnects the remote and removes all bindings.
 		#
@@ -38,12 +40,8 @@ define [
 		#
 		# @param message [String] the unparsed message
 		#
-		_onMessage: ( messageString ) =>
-			message = Message.deserialize(messageString)
-			if message.isStored(@_controller.messageStorage)
-				return
-
-			if message.from is @_controller.id
+		_onMessage: ( message ) =>
+			if message.isStored(@_controller.messageStorage) or message.from is @_controller.id
 				return
 
 			message.storeHash(@_controller.messageStorage)
@@ -66,64 +64,20 @@ define [
 		# parts are received, in which case it triggers a message event
 		# so the message is handled as usual.
 		#
-		# @param messageID [Integer] the ID (hash) of the message
-		# @param totalParts [Integer] the total number of parts the message consists of
-		# @param partNumber [Integer] the number of this part
-		# @param partData [String] the data of this part
+		# @param part [Object] the message part
 		#
-		_assemble: ( messageID, totalParts, partNumber, partData ) =>
-			# Store the part.
-			unless @_controller.partialMessages[messageID]?
-				@_controller.partialMessages[messageID] = []
-
-			@_controller.partialMessages[messageID][partNumber] = partData
-
-			# Try to assemble the message.
-			if @_controller.partialMessages[messageID].length < totalParts
-				return
-
-			messageString = ""
-			for data in @_controller.partialMessages[messageID]
-				unless data? then return
-				messageString += data
-
-			delete @_controller.partialMessages[messageID]
-			@trigger('message', messageString)
+		_assemble: ( part ) =>
+			if message = Message.assemble(part, @_controller.partialMessages)
+				@trigger('message', message)
 
 		# Disassembles a message and emits the pieces.
 		#
 		# @param message [Message] the message to disassemble
-		# @param maxSize [Integer] the maximum size of the pieces
+		# @param maxLength [Integer] the maximum size of the pieces
 		#
-		_disassemble: ( message, maxSize = 400 ) =>
-			messageString = message.serialize()
-			length = messageString.length
-
-			messageID = message.hash()
-			totalParts = Math.ceil(length / maxSize)
-
-			for partNumber in [0...totalParts]
-				partData = messageString.substr(maxSize * partNumber, maxSize)
-				@emit('partial', messageID, totalParts, partNumber, partData)
-
-		# Compiles and sends a message to the remote.
-		#
-		# @param event [String] the event to send
-		# @param args... [Any] any parameters you may want to pass
-		#
-		emit: ( event, args... ) ->
-			message = new Message(@id, @_controller.id, event, args, @_controller.time())
-			@send(message)
-
-		# Tells the remote to forward a message to a peer specified by to.
-		#
-		# @param to [String] the id of the receiving peer
-		# @param event [String] the event to send
-		# @param args... [Any] any paramters you may want to pass
-		#
-		emitTo: ( to, event, args..., ttl ) ->
-			message = new Message(to, @_controller.id, event, args, @_controller.time(), ttl)
-			@send(message)
+		_disassemble: ( message, maxLength = 300 ) =>
+			for part in message.disassemble(maxLength)
+				@emit('partial', part)
 
 		# Sends a predefined message to the remote, but first hashes the message
 		# to make sure it's ignored when someone bounces it back to us.
@@ -136,32 +90,92 @@ define [
 			unless message.isStored(@_controller.messageStorage)
 				message.storeHash(@_controller.messageStorage)
 
+			message.route.push @_controller.id
 			@_send(message)
 
-		# Queries the remote. Calls the callback function when a response is received, or
-		# when the query has timed out, in which case the first argument passed to the
-		# callback is null.
+		# Attempts to emit a message to the remote.
 		#
-		# @param request [String] the request string identifier
-		# @param callback [Function] the function to call when a response was received
-		# @param args [Any] any other arguments to be passed along with the query
+		# @overload emit( event, args... )
+		# 	 Convenient way to send a message to the peer.
+		#	 @param event [String] the event to pass to the peer
+		# 	 @param args... [Any] any other arguments to pass along
 		#
-		query: ( request, args..., callback ) ->
+		# @overload emit( params )
+		# 	 More advanced way that allows for specifying ttl and route.
+		#	 @param params [Object] an object containing params
+		#	 @option params event [String] the event to pass to the peer
+		# 	 @option params args [Array<Any>] any other arguments to pass along
+		#	 @option params path [Array] the route the message should take
+		# 	 @option params ttl [Integer] the number of hops the message may take
+		#
+		emit: ( ) ->
+			params = {}
+
+			if typeof arguments[0] is 'string'
+				event = arguments[0]
+				args  = Array::slice.call(arguments, 1)
+
+			else if typeof arguments[0] is 'object'
+				event 	= arguments[0].event
+				args 	= arguments[0].args
+
+				params.path = arguments[0].path
+				params.ttl  = arguments[0].ttl
+
+			message = new Message(@id, @_controller.id, @_controller.time(), event, args, params)
+			@send(message)
+
+		# Attempts to query the remote.
+		#
+		# @overload query( to, request, args..., callback )
+		# 	 Convenient way to query a peer by id.
+		# 	 @param request [String] the request string identifier
+		# 	 @param args... [Any] any other arguments to be passed along with the query
+		# 	 @param callback [Function] the function to call when a response has arrived
+		#
+		# @overload query( params )
+		# 	 More advanced way that allows for specifying ttl and route.
+		#	 @param params [Object] an object containing params
+		#	 @option params request [String] the request string identifier
+		# 	 @option params args [Array<Any>] any other arguments to be passed along with the quer
+		# 	 @option params callback [Function] the function to call when a response has arrived
+		#	 @option params path [Array] the route the message should take
+		# 	 @option params ttl [Integer] the number of hops the message may take
+		#
+		query: ( ) ->
+			if typeof arguments[0] is 'string'
+				request  = arguments[0]
+				args 	 = Array::slice.call(arguments, 1, arguments.length - 1)
+				callback = arguments[arguments.length - 1]
+
+			else if typeof arguments[0] is 'object'
+				request  = arguments[0].request
+				args 	 = arguments[0].args
+				callback = arguments[0].callback
+
+				path 	 = arguments[0].path
+				ttl  	 = arguments[0].ttl
+
+			# Setup callbacks and timeout.
 			queryID = _.uniqueId('query')
 
 			timer = setTimeout( ( ) =>
-				@off(queryID)
 				callback(null)
 			, @_controller.queryTimeout)
 
 			fn = ( argms... ) =>
 				callback.apply(@, argms)
 				clearTimeout(timer)
-
 			@once(queryID, fn)
 
-			args = ['query', request, queryID].concat(args)
-			@emit.apply(@, args)
+			# Emit the message.
+			params =
+				event: 'query'
+				args:  [request, queryID].concat(args)
+				path:  path ? []
+				ttl:   ttl  ? Infinity
+
+			@emit(params)
 
 		# Is called when a remote query is received. Will query the parent and emit
 		# the results back.
@@ -172,11 +186,26 @@ define [
 		#
 		_onQuery: ( request, queryID, args..., message ) =>
 			callback = ( argms... ) =>
-				argms = [message.from, queryID].concat(argms, Infinity)
-				@emitTo.apply(@, argms)
+				@_controller.emitTo
+					to: message.from
+					event: queryID
+					args: argms
+					path: _(message.route.reverse()).without(message.from)
 
 			args = [request, callback].concat(args)
 			@_controller.queries.trigger.apply(@_controller.queries, args)
+
+		# Is called when we are requested by the remote to relay a message.
+		#
+		# @param messageString [String] a serialized version of the message to be relayed
+		# @param msg [Message] the message containing the relay request
+		#
+		_onRelay: ( messageString, msg ) ->
+			message = Message.deserialize(messageString)
+			message.route = message.route.concat(msg.route)
+			if message.to is @_controller.id
+				@trigger('message', message)
+			else @_controller.relay(message)
 
 		# Pings the server. A callback function should be provided to do anything
 		# with the ping.

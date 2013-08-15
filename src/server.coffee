@@ -51,7 +51,6 @@ define [
 								)
 							) ( node )
 
-
 			@_app = express()
 			@_server = http.createServer(@_app)
 			@_io = io.listen(@_server, log: false)
@@ -130,14 +129,40 @@ define [
 		onQuery: ( args... ) ->
 			@queries.on.apply(@queries, args)
 
-		# Sends a message to a certain node.
+		# Attempts to emit a message to a node by id.
 		#
-		# @param to [String] the id of the node to pass the message to
-		# @param event [String] the event to pass to the node
-		# @param args... [Any] any arguments to pass along
+		# @overload emitTo( to, event, args... )
+		# 	 Convenient way to send a message to a peer by id.
+		# 	 @param to [String] the id of the peer to pass the message to
+		#	 @param event [String] the event to pass to the peer
+		# 	 @param args... [Any] any other arguments to pass along
 		#
-		emitTo: ( to, event, args... ) ->
-			message = new Message(to, null, event, args)
+		# @overload emitTo( params )
+		# 	 More advanced way that allows for specifying ttl and route.
+		#	 @param params [Object] an object containing params
+		#	 @option params to [String] the id of the peer to pass the message to
+		#	 @option params event [String] the event to pass to the peer
+		# 	 @option params args [Array<Any>] any other arguments to pass along
+		#	 @option params path [Array] the route the message should take
+		# 	 @option params ttl [Integer] the number of hops the message may take
+		#
+		emitTo: ( ) ->
+			params = {}
+
+			if typeof arguments[0] is 'string'
+				to 	  = arguments[0]
+				event = arguments[1]
+				args  = Array::slice.call(arguments, 2)
+
+			else if typeof arguments[0] is 'object'
+				to 		= arguments[0].to
+				event 	= arguments[0].event
+				args 	= arguments[0].args ? []
+
+				params.path = arguments[0].path
+				params.ttl  = arguments[0].ttl
+
+			message = new Message(to, @id, @time(), event, args, params)
 			@relay(message)
 
 		# Relays a composed message to a certain node.

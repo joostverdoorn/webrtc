@@ -189,7 +189,10 @@ define [
 		# Queries nearby nodes for their stats and merges the result to hopefully get complete stats
 		#
 		queryStats: ( ) =>
-			@node.queryTo('*', 2, 'stats', @stats, ( stats ) =>
-				if stats isnt null
-					Stats.mergeStats(@world.getPlayers(), stats)
-			)
+			@node.queryTo
+				to: '*'
+				request: 'stats'
+				ttl: 2
+				callback: ( stats ) =>
+					if stats isnt null
+						Stats.mergeStats(@world.getPlayers(), stats)

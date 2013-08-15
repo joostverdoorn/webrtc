@@ -58,17 +58,16 @@ define [
 		initialize: () ->
 
 			window.onbeforeunload = () =>
-				if @exitNetwork()?
-					return undefined
+				@exitNetwork()
+				return undefined
 
 			@timers = []
 			@timers.push(setInterval(@_updatePosition, @_updatePositionInterval))
 			@timers.push(setInterval(@_ensureNetworkIntegrity, @_ensureNetworkIntegrityInterval))
 			@timers.push(setInterval(@_recommendParent, @_recommendParentInterval))
 
-
-			@_parent = null
 			@isSuperNode = false
+			@_parent = null
 
 			@token = null
 			@_tokens = new Collection()
@@ -77,8 +76,7 @@ define [
 			@_peers.on
 				'channel.opened': ( peer ) =>
 					peer.query('isSuperNode', ( superNode ) =>
-						if superNode?
-							peer.isSuperNode = superNode
+						if superNode? then peer.isSuperNode = superNode
 					)
 				'disconnect': @_onPeerDisconnect
 
@@ -106,7 +104,7 @@ define [
 
 			@onQuery
 				'ping': ( callback ) =>
-					callback 'pong', @position.serialize(), @token?.serialize()
+					callback 'pong', @position.serialize(), @isSuperNode, @token?.serialize()
 				'position': ( callback ) =>
 					callback @position.serialize()
 				'isSuperNode': ( callback ) =>
@@ -142,17 +140,28 @@ define [
 		# @param message [Message] the message to relay.
 		#
 		relay: ( message ) ->
-			message.route.push @id
+			# If the message is a broadcast, send it to all connected peers.
 			if message.to is '*'
-				peer.send(message) for peer in @getSiblings().concat(@getChildren()).concat(@getParent()) when peer? and peer.id not in message.route
-			else if peer = @getChild(message.to) or peer = @getSibling(message.to)
+				peer.send(message) for peer in @getPeers() when peer.id not in message.route and peer.role isnt Peer.Role.None
+
+			# If the message is intended for the server, send it there.
+			else if message.to is 'server'
+				@server.send(message)
+
+			# If we are connected to the intended receiver, send it there.
+			else if peer = @getPeer(message.to)
 				peer.send(message)
+
+			# Try and route the message via our parent.
 			else if parent = @getParent()
 				parent.send(message)
+
+			# When we're supernode, route the message via our peers.
 			else if @isSuperNode
-				sibling.send(message) for sibling in @getSiblings() when sibling.id isnt message.from and sibling.id not in message.route
-			else
-				@server.send(message)
+				sibling.send(message) for sibling in @getSiblings() when sibling.id not in message.route
+
+			# If all else fails, route the message via the server.
+			else @server.send(message)
 
 		# Sets a peer as the parent node of this node.
 		#
@@ -472,7 +481,6 @@ define [
 		# don't have one.
 		#
 		_ensureNetworkIntegrity: () =>
-
 			@_checkForInconsistencies()
 
 			if not @isSuperNode and not @_parent?
@@ -534,8 +542,6 @@ define [
 				if needed <= 0
 					return
 
-
-
 				@_parent.query('siblings', ( superNodes ) =>
 					if not superNodes? or superNodes.length is 0
 						return
@@ -583,30 +589,28 @@ define [
 					@removeSibling(sibling)
 
 				# Make sure we have no children
-				for sibling in @getChildren()
-					@removeChild(sibling)
+				for child in @getChildren()
+					@removeChild(child)
 
 
 
 		_updatePosition: ( ) =>
 			i = 0
-			#console.group("Pingsessie")
 			for peer in @getPeers()
 				( ( peer ) =>
-					peer.ping( ( latency, position, tokenString ) =>
+					peer.ping( ( latency, position, isSuperNode, tokenString ) =>
 						peer.position = Vector.deserialize(position)
+						peer.isSuperNode = isSuperNode
+
 						if tokenString?
 							token = Token.deserialize(tokenString)
 							@addToken(token)
+
 						i++
-
-						#console.log "#{i} van de #{@getPeers().length} gepingd - #{peer.id}"
-
 						if i is @getPeers().length
 							@_computePosition()
 					)
 				) ( peer )
-			#console.groupEnd()
 
 		# Computes our position in the network from the positions of our neighbours
 		# and the latency to them. This implements the vivaldi network coordinates:
@@ -752,7 +756,7 @@ define [
 			@addToken(token)
 
 			if @token? and instantiate
-				@emitTo(token.nodeId, 'token.info', @token.serialize(), false, Infinity)
+				@emitTo(token.nodeId, 'token.info', @token.serialize(), false)
 
 		# Is called when a token is killed. We will destroy any stored information
 		# on the token.
@@ -820,7 +824,7 @@ define [
 					closestChild = child
 
 			if closestChild?
-				@emitTo(token.nodeId, 'token.candidate', closestChild.id, distance, Infinity)
+				@emitTo(token.nodeId, 'token.candidate', closestChild.id, distance)
 
 		# Is called when we receive a candidate for our token. We will store this
 		# information in the token.
@@ -856,7 +860,7 @@ define [
 			@token.candidates = []
 			if closestCandidate? and closestCandidate isnt @id
 				console.log "best candidate is #{closestCandidate}, distance is #{closestDistance}"
-				@emitTo(closestCandidate, 'token.receive', @token.serialize(), Infinity)
+				@emitTo(closestCandidate, 'token.receive', @token.serialize())
 
 				@token = null
 				if @isSuperNode
