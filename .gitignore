@@ -4,4 +4,5 @@ doc/
 reports/
 *.log
 *.lyx~
-*lyx#
+*.lyx#
+*.bak
