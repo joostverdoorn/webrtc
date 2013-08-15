@@ -66,13 +66,24 @@ WebRTC
 
 \begin_layout Standard
 WebRTC, or Web Real-Time Communication, is an API definition that enables
- the webbrowser to directly communicate with other webbrowsers.
+ the web browser to directly communicate with other web browsers.
  At the time of writing, the API is still being drafted by the World Wide
  Web Consortium (W3C), the main standards organization for the World Wide
  Web.
  WebRTC first saw the light of day when Google open-sourced an early version
  of the API in May 2011, and has evolved to the point that there are now
- advanced implementations in several modern webbrowsers.
+ advanced implementations in several modern web browsers.
+ WebRTC was developed out of a need to allow for richer web applications
+ that simply run in the browser without any third party software.
+ With the advent of WebRTC, a myriad of completely new web applications
+ are being developed that take advantage of the new possibilities it provides,
+ for example torrent clients, voice-over-IP applications and customer service
+ applications that allow customer clients to share their screens with customer
+ service representatives.
+ WebRTC is yet another omen of a future where more and more applications
+ move from the desktop to the browser, and where consumers never have to
+ download and install a piece of software on their operating system ever
+ again.
 \end_layout
 
 \begin_layout Subsection
