@@ -60,8 +60,67 @@
 
 \begin_body
 
-\begin_layout Subsection
+\begin_layout Standard
+During the development of our library and demonstrational game we used several
+ frameworks for quality assurance and testing.
+ 
+\end_layout
 
+\begin_layout Subsection
+Jasmine
+\end_layout
+
+\begin_layout Standard
+Jasmine is a Behaviour-Driven Development (BDD) testing framework for JavaScript.
+ It allows the developer to easily convert user-stories to proper BDD test-cases.
+ These test cases can then be run from a command-line interface to create
+ an easy to read overview of failing and passing tests.
+\end_layout
+
+\begin_layout Standard
+This helped us a lot in debugging functionality that broke older functionality.
+\end_layout
+
+\begin_layout Subsection
+JS Coverage
+\end_layout
+
+\begin_layout Standard
+JS Coverage is a framework that 
+\begin_inset Quotes eld
+\end_inset
+
+instruments
+\begin_inset Quotes erd
+\end_inset
+
+ JavaScript code to include counting executions of lines of code before
+ Jasmine runs the test.
+ After running the test, JS Coverage will then read out how often a specific
+ line of code was executed and creates easy to read reports about this.
+\end_layout
+
+\begin_layout Standard
+Unfortunately JS Coverage only reports line coverage, which of course does
+ not say a lot about code.
+ A better framework would've been Istanbul which features a lot more (for
+ example branch coverage).
+ Unfortunately it turned out to be a lot of work to get Istanbul to work
+ with our CoffeeScript code.
+ Therefore work on this was abandoned to not spend more work on getting
+ the testing framework to work than to actually develop the library and
+ game.
+\end_layout
+
+\begin_layout Subsection
+CoDo
+\end_layout
+
+\begin_layout Standard
+Good code needs to be documented well.
+ CoDo specifies a way to write comments in CoffeeScript code that allows
+ CoDo to easily extract this metainformation about the code and automatically
+ create documentation.
 \end_layout
 
 \end_body
