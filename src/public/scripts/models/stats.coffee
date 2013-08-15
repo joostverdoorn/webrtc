@@ -22,7 +22,7 @@ define [
 
 		# Merges stats with player objects
 		#
-		# @param players [[Player]] The players to merge with
+		# @param players [Array<Player>] The players to merge with
 		# @param stats [Object] The new stats
 		#
 		@mergeStats: ( players, stats ) ->
