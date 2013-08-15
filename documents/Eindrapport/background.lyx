@@ -150,8 +150,14 @@ reference "sub:Peer-to-Peer"
  for some functions for example when a node enters network.
 \end_layout
 
-\begin_layout Paragraph
+\begin_layout Subsection
 MMOG
+\end_layout
+
+\begin_layout Standard
+A massively multiplayer online game (MMOG) is a videogame with the ability
+ to support a large amount of players to play the game together at once.
+ As the name states, this has to work over the internet.
 \end_layout
 
 \end_body
