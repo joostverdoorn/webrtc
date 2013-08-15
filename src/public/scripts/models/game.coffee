@@ -76,9 +76,6 @@ define [
 					@world.createPlayer(id, false, info)
 				'player.left': ( id ) =>
 					@world.removePlayer(id)
-				'player.died': ( id ) =>
-					player = @world.getPlayer(id)
-					player?.die()
 				'player.update': ( id, info, message ) =>
 					@world.applyPlayerInfo(id, info, message.timestamp)
 				'player.fire': ( id, info, message ) =>
@@ -92,9 +89,6 @@ define [
 					if killee isnt killer
 						killer?.stats.incrementStat('kills', 1)
 					@world.removeEntityByID(killerEntityID)
-				'player.addKill': ( id ) =>
-					player = @world.getPlayer(id)
-					player?.stats.incrementStat('kills', 1)
 
 		# Updates the phyics for all objects and renders the scene. Requests a new animation frame
 		# to repeat this methods.
@@ -183,7 +177,6 @@ define [
 		#
 		_onPlayerDied: ( interval ) =>
 			clearInterval(interval)
-			#@node.broadcast('player.died', @player.id)
 			@trigger('player.died')
 
 		# Returns the current network time.
