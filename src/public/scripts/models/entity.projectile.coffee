@@ -21,12 +21,12 @@ define [
 			if player?.id
 				@id = "#{player.id}_#{_.uniqueId('P')}"
 
-			@mass = 2
+			@mass = 10
 			@drag = .0005
 			@angularDrag = 10
 			@applyGravity = true
 
-			@_projectileVelocity = 100
+			@_projectileVelocity = 200
 
 			sphereMaterial = new THREE.MeshPhongMaterial( {color:0x333333 })
 			radius = 0.45
@@ -61,8 +61,6 @@ define [
 				# Add the player velocity to the force.
 				@velocity.add(player.velocity)
 
-				# Add the force to the pending forces
-				player.addForce(@velocity.clone().negate().multiplyScalar(@mass))
 			else @applyInfo(info)
 
 			# Add the projectile to the scene

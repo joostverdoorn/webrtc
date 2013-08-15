@@ -135,7 +135,7 @@ define [
 			setTimeout( =>
 				@_fauxProjectile.mesh.visible = true
 				@_fauxProjectile.position = new Three.Vector3(.1, 1, 0)
-			, 150)
+			, 100)
 
 		# Applies information given in an object to the entity.
 		#

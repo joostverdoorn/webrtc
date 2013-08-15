@@ -175,7 +175,7 @@ define [
 
 				setTimeout( =>
 					@_cannonReady = true
-				, 500)
+				, 400)
 
 		# Calculates a level rotation with relation to the planet surface and returns
 		# an euler representation of this rotation.
