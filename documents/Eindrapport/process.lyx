@@ -61,7 +61,43 @@
 \begin_body
 
 \begin_layout Subsection
+Methodology
+\end_layout
 
+\begin_layout Subsection
+Scrum
+\end_layout
+
+\begin_layout Subsection
+Planning
+\end_layout
+
+\begin_layout Subsection
+Planning Tools
+\end_layout
+
+\begin_layout Subsubsection
+GitHub issues
+\end_layout
+
+\begin_layout Subsubsection
+HUboard
+\end_layout
+
+\begin_layout Subsection
+Development tools
+\end_layout
+
+\begin_layout Subsubsection
+GitHub
+\end_layout
+
+\begin_layout Subsubsection
+npm
+\end_layout
+
+\begin_layout Subsubsection
+cake
 \end_layout
 
 \end_body
