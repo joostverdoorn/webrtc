@@ -299,7 +299,7 @@ These best practices should be taken in mind while researching the different
 \end_layout
 
 \begin_layout Subsubsection
-Supernode topologies
+Supernode topologies and approaches
 \end_layout
 
 \begin_layout Standard
@@ -319,9 +319,62 @@ key "sacha2009exploiting"
 
 \end_inset
 
- We would like to compare a couple of topologies below.
- Because of the enormous amount of the topologies, we will only mention
- the ones, we have considered to use.
+ 
+\end_layout
+
+\begin_layout Standard
+Because of the enormous amount of the network topologies we will split them
+ in different categories.
+ Jan Sacha defines four groups that use a different supernode election mechanism
+s:
+\end_layout
+
+\begin_layout Enumerate
+Simple approaches are the first generation algorithms.
+ Here a no supernode election processes described or the election approach
+ is very simple or static.
+ Some algorithms in this group use a central server to point a supernode.
+\end_layout
+
+\begin_layout Enumerate
+Group based
+\end_layout
+
+\begin_layout Enumerate
+DHT based
+\end_layout
+
+\begin_layout Enumerate
+Adaptive
+\end_layout
+
+\begin_layout Standard
+Because this and this we chose for groud based
+\end_layout
+
+\begin_layout Subsubsection
+Group based network systems
+\end_layout
+
+\begin_layout Standard
+We would like to compare a couple of group based topologies below.
+ we will only mention the ones, we have considered to use.
+\end_layout
+
+\begin_layout Enumerate
+Crown
+\end_layout
+
+\begin_layout Enumerate
+PopCorn
+\end_layout
+
+\begin_layout Enumerate
+Edutella 
+\end_layout
+
+\begin_layout Standard
+our choice will be described later...
 \end_layout
 
 \begin_layout Subsection
