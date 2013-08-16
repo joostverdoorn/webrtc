@@ -172,5 +172,16 @@ The text-editor sublime helped us slightly in keeping the code clean by
 SIG
 \end_layout
 
+\begin_layout Standard
+The Software Improvement Group try to evaluate the quality of code by automatic
+ and manual analysis.
+ For the this project we are required to send our code to SIG twice.
+ Once halfway of the project and the second time at the end of the project.
+ After sending it in the first time we are expected to read the comments
+ carefully and adjust the code accordingly so the second feedback points
+ out less issues.
+ Our first review van be found in Appendix ....
+\end_layout
+
 \end_body
 \end_document
