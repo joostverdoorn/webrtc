@@ -227,14 +227,82 @@ key "Agarwal:2009:MOG:1594977.1592605"
 \end_layout
 
 \begin_layout Subsubsection
-The need of hierarchy
+Structuring the network
 \end_layout
 
 \begin_layout Standard
-
+Now we know that there are differences between nodes, we should pick a network
+ topology which fits the best for our network technology - WebRTC and our
+ goal application - arcade action game.
+ A lot of research is done in this field, so we decided to check the existent
+ topologies and in first to not try to come up with our own.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Standard
+WebRTC is a new technology and first we decided to run some tests of how
+ the WebRTC unstructured overlay network will perform, so if all nodes will
+ be connected to all other nodes and send a significant amount data through.
+ Already after 15 nodes the network started to display connection errors
+ and sometimes failed to successfully send a message.
+ Off course, you can quickly see that this is not the way to go, so we should
+ structure the network.
+\end_layout
+
+\begin_layout Standard
+Leitao 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Leitão_onthe"
+
+\end_inset
+
+ summarized a couple of guidelines that introduce some degree of structure
+ in randomly overlay networks.
+\end_layout
+
+\begin_layout Enumerate
+So should every adaptation of the system involve a limited number of nodes.
+\end_layout
+
+\begin_layout Enumerate
+Each adaptation should also use limited information to reduce communication
+ between nodes for scalability purposes.
+\end_layout
+
+\begin_layout Enumerate
+The adaption mechanisms should not break the network if a node functions
+ with a limited or incorrect information.
+ This can be expected in large networks.
+\end_layout
+
+\begin_layout Enumerate
+A network should strive to keep an up-to-date track of all nodes connected
+ to the network to ensure the connectivity of each node is constant.
+\end_layout
+
+\begin_layout Enumerate
+The adaption mechanisms should dynamically improve the network stability.
+\end_layout
+
+\begin_layout Enumerate
+Different application should be able to be run on the designed overlay network.
+\end_layout
+
+\begin_layout Standard
+These best practices should be taken in mind while researching the different
+ implementation of the overlay networks.
+ Especially guideline 4 is very important for our game application.
+ Each player should always be aware of all other players participating in
+ the game and he should always have a route to communicate with him with
+ as little as possible delay.
+ This will be our base by investigating the peer-to-peer network topologies.
+\end_layout
+
+\begin_layout Subsubsection
+Super peer topologies
+\end_layout
+
+\begin_layout Paragraph
 MMOG
 \end_layout
 
