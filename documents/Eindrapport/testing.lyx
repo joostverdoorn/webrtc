@@ -62,11 +62,22 @@
 
 \begin_layout Standard
 During the development of our library and demonstrational game we used several
- frameworks for quality assurance and testing.
- 
+ frameworks and tools to assure the quality of the written code and to test
+ it properly.
+ We also had access to the expertise of the Software Improvement Group (SIG)
+ to review our code.
 \end_layout
 
 \begin_layout Subsection
+Frameworks
+\end_layout
+
+\begin_layout Standard
+The used frameworks for testing are essentially Jasmine for Behaviour-Driven
+ Development and CoDo for automated code documentation generation.
+\end_layout
+
+\begin_layout Subsubsection
 Jasmine
 \end_layout
 
@@ -81,7 +92,22 @@ Jasmine is a Behaviour-Driven Development (BDD) testing framework for JavaScript
 This helped us a lot in debugging functionality that broke older functionality.
 \end_layout
 
+\begin_layout Subsubsection
+CoDo
+\end_layout
+
+\begin_layout Standard
+Good code needs to be documented well.
+ CoDo specifies a way to write comments in CoffeeScript code that allows
+ CoDo to easily extract this metainformation about the code and automatically
+ create documentation.
+\end_layout
+
 \begin_layout Subsection
+Tools
+\end_layout
+
+\begin_layout Subsubsection
 JS Coverage
 \end_layout
 
@@ -112,15 +138,38 @@ Unfortunately JS Coverage only reports line coverage, which of course does
  game.
 \end_layout
 
-\begin_layout Subsection
-CoDo
+\begin_layout Subsubsection
+cake
 \end_layout
 
 \begin_layout Standard
-Good code needs to be documented well.
- CoDo specifies a way to write comments in CoffeeScript code that allows
- CoDo to easily extract this metainformation about the code and automatically
- create documentation.
+With cake it is possible to create buildscripts that run on every computer
+ independant from settings and operating system.
+ This helped us a lot in building the project on regular basis and automatically
+ run all tests to ensure the codes quality.
+\end_layout
+
+\begin_layout Subsubsection
+CoffeeLint
+\end_layout
+
+\begin_layout Standard
+CoffeeLint checks the code to ensure a coherent style of coding.
+ This helps reading the code because it is ensured that code-aspects like
+ whitespacing are the same in every file.
+\end_layout
+
+\begin_layout Subsubsection
+Sublime
+\end_layout
+
+\begin_layout Standard
+The text-editor sublime helped us slightly in keeping the code clean by
+ automatically removing unnecessary whitespace at line endings.
+\end_layout
+
+\begin_layout Subsection
+SIG
 \end_layout
 
 \end_body
