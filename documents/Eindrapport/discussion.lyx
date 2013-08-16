@@ -64,8 +64,68 @@
 Network security
 \end_layout
 
+\begin_layout Standard
+During this project the main goal was to create a scalable distributed network
+ using WebRTC.
+ As requirement we posed that we would be in a secured research environment
+ without unknown threats from the outside and therefore securing the network
+ against malicious users was not required.
+\end_layout
+
+\begin_layout Standard
+To use the developed network in a production environment, security is an
+ issue though.
+\end_layout
+
+\begin_layout Standard
+In this chapter we will go into possibilities to make the entire system
+ more secure.
+ We begin with preventing the network to collapse after being flooded.
+ Then we continue with the game's state integrity after malformed packets
+ arrive or get lost.
+ Last we will discuss problems with security of the game with the current
+ network implementation.
+\end_layout
+
 \begin_layout Subsubsection
 Overloading the network or server
+\end_layout
+
+\begin_layout Standard
+Currently all nodes in the network connect to a central server.
+ This is done to track all nodes so new nodes can easily find an entrypoint
+ to the network.
+ The WebRTC connection initialization is also sent via this central server.
+ Once the first WebRTC connection is established, this connection will get
+ used to establish further connections with nodes in the network.
+\end_layout
+
+\begin_layout Standard
+Currently the central server, nor nodes in the network are prepared for
+ a user requesting uncountable connections and the server and all nodes
+ will happily reply to all requests.
+ In a final product this should be prevented.
+\end_layout
+
+\begin_layout Standard
+One option would be to limit the amount of connections a single user can
+ open to the central server.
+ When the central server detects many incoming connections from the same
+ computer, it can just block this user for a certain time.
+ This will reduce the serverload significantly.
+\end_layout
+
+\begin_layout Standard
+When a computer is already connected to the network it could decided to
+ flood the network.
+ This can be countered by letting every node check if a user did not send
+ too many messages in the recent time.
+ If the amount of messages reaches a certain threshold, the node could decide
+ to not relay a single packet from the spammer and disconnect the connection.
+ Eventually all sane nodes will block the spamming node because they all
+ use the same rules.
+ This results in the malfunctioning or malicious spamming node to be split
+ from the network.
 \end_layout
 
 \begin_layout Subsubsection
