@@ -137,6 +137,37 @@ The second goal is to create a demonstration of our work to easily show
 Philosophy
 \end_layout
 
+\begin_layout Standard
+Nowadays common people have access to very fast and cheap internet connections.
+ In countries like the Netherlands the available bandwidth often extremely
+ exceeds the actual use of the average customer.
+ This means that many private customers pay for more than they need.
+ This gives website operators the ability to (ab-)use their visitors connections
+ to save money themselves.
+ Hosting and distributing a simple website usually isn't a problem, large
+ multiplayer games however can use insane amounts of data and CPU power.
+\end_layout
+
+\begin_layout Standard
+If the network of a game is completely centralized this means that the developer
+ has to pay and maintain many servers, even when the game itself is free
+ to play.
+ This is often impossible to do for a long time for small development teams.
+ Luckily the before mentioned bandwidth of users can now effectively be
+ used via WebRTC.
+ This allows large games to be hosted on a very cheap server without any
+ impact on the users.
+\end_layout
+
+\begin_layout Standard
+Decentralizing this network over many independant users can also have the
+ advantage of being harder to take down because there is not a single authority
+ available.
+ This results in an overall increase of stability at all times and does
+ not even require the original developer to permanently maintain their own
+ systems (in case of bankruptcy for example).
+\end_layout
+
 \begin_layout Subsection
 Assignment formulation
 \begin_inset CommandInset label
@@ -227,6 +258,21 @@ The second deliverable for TNO is a demonstration that fully uses the created
 
 \begin_layout Subsection
 Risks
+\end_layout
+
+\begin_layout Standard
+Before we started this project we saw bad timemanagement as the biggest
+ risk.
+ In the original plan of action this was described as possibly not finishing
+ the library or the game.
+ In the end did make two working parts, but both do not contain all planned
+ features.
+\end_layout
+
+\begin_layout Standard
+Luckily Scrum saved us from our initial fear and made sure that we at least
+ do have two working products now that can easily be extended after the
+ project is over.
 \end_layout
 
 \end_body
