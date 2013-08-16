@@ -92,10 +92,12 @@ Peer-to-Peer
 
 \begin_layout Standard
 A peer-to-peer network is a decentralized distributed network architecture.
+ All connected nodes are allowed to function like a client and a server.
  It means that the nodes in this network can communicate with each other
  without any interaction with the central server which keeps a track of
  all nodes.
- All connected nodes are allowed to function like a client and a server.
+ A node usually does not have a full knowledge of the network but instead
+ has a limited awareness of the peer he communicates with, his neighbors.
  
 \end_layout
 
@@ -136,11 +138,11 @@ structured
  network.
  For example the nodes with more bandwidth operate as super nodes and help
  the other nodes to communicate with each other.
- Geo location can also be one of the ways to structure the network.
+ Node availability can also be one of the ways to structure the network.
  There are many implementations of structured networks, discussed later
- in paragraph 
+ in 
 \begin_inset CommandInset ref
-LatexCommand ref
+LatexCommand formatted
 reference "sub:Peer-to-Peer"
 
 \end_inset
