@@ -299,10 +299,32 @@ These best practices should be taken in mind while researching the different
 \end_layout
 
 \begin_layout Subsubsection
-Super peer topologies
+Supernode topologies
 \end_layout
 
-\begin_layout Paragraph
+\begin_layout Standard
+A supernode is a node who acts like a server to a group of clients, we can
+ compare it to parent-child relationship.
+ A supernode also acts as an equal to other supernodes - a sibling relationship.
+ These connected supernodes form a supernode overlay network which handles
+ the core functionality of the network.
+ Network topologies that implement an supernode structure make use of the
+ heterogeneity of the nodes.
+ There is a lot of research done on supernode topologies..
+ The key question in here: How many supernodes are desired and which node
+ is the best candidate? 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sacha2009exploiting"
+
+\end_inset
+
+ We would like to compare a couple of topologies below.
+ Because of the enormous amount of the topologies, we will only mention
+ the ones, we have considered to use.
+\end_layout
+
+\begin_layout Subsection
 MMOG
 \end_layout
 

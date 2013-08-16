@@ -53,13 +53,13 @@ require [
 			# Create scene.
 			@scene = new Three.Scene()
 			@scene.add(@camera)
-			@scene.fog = new Three.FogExp2( 0xaabbff, 0.0015 );
+			@scene.fog = new Three.FogExp2( 0xaabbff, 0.0015 )
 
 			# Create sky dome.
 			geometry = new THREE.SphereGeometry( 1500, 6, 8 )
 			material = new THREE.MeshBasicMaterial(map: THREE.ImageUtils.loadTexture('/images/sky.jpg'))
 			@sky = new THREE.Mesh(geometry, material)
-			@sky.scale.x = -1;
+			@sky.scale.x = -1
 			@scene.add( @sky )
 
 			@game = new GameModel(@scene)

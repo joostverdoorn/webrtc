@@ -18,7 +18,6 @@ require [
 			onmessage: ->
 			onopen: ->
 			onclose: ->
-			onmessage: ->
 			send: ->
 
 		class global.FakeRTCPeerConnection

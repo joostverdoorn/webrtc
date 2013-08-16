@@ -82,11 +82,11 @@ require [
 			@scene.add(@camera)
 
 			# Add lights to the scene.
-			hemisphereLight = new THREE.HemisphereLight( 0xffffff, 0xaaaaaa, 1 );
+			hemisphereLight = new THREE.HemisphereLight( 0xffffff, 0xaaaaaa, 1 )
 			@scene.add(hemisphereLight)
 
 			# Create projector for tracking mouse in 3d world
-			@projector = new THREE.Projector();
+			@projector = new THREE.Projector()
 			@label = $('<div class="label"></div>')
 			$('body').append(@label)
 
