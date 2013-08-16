@@ -162,5 +162,32 @@ A massively multiplayer online game (MMOG) is a videogame with the ability
  As the name states, this has to work over the internet.
 \end_layout
 
+\begin_layout Standard
+MMOG's can chose to have a persistent world that is ever changing or the
+ opposite, a world that is static and immutable.
+\end_layout
+
+\begin_layout Standard
+Our game 
+\begin_inset Quotes eld
+\end_inset
+
+Orbit Impossible
+\begin_inset Quotes erd
+\end_inset
+
+ is a HTML5 3D dogfighting game.
+ All players start in a small aerial vehicle on the surface of a planet.
+ From here they can fly arouond the planet and shoot down other players
+ with little bullets.
+ Because we wanted the game to be easily playable for short amounts of time
+ without a steep learning curve, we picked the immutable world variant.
+ An immutable world is easy to understand and does not require much explanation
+ to the user.
+ The only interaction a player can have with the world is landing on it,
+ and when approaching with a too large velocity, crashing into it.
+ The other possible interaction is shooting down other players.
+\end_layout
+
 \end_body
 \end_document
