@@ -180,7 +180,14 @@ The Software Improvement Group tries to evaluate the quality of code by
  After sending it in the first time we are expected to read the comments
  carefully and adjust the code accordingly so the second feedback points
  out less issues.
- Our first review can be found in Appendix ....
+ Our first review can be found in Appendix 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Software-Improvement-Group-Review-1"
+
+\end_inset
+
+.
 \end_layout
 
 \end_body
