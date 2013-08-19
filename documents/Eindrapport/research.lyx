@@ -437,5 +437,56 @@ Location based systems
 MMOG
 \end_layout
 
+\begin_layout Standard
+The game is our second delivery with the only purpose to demonstrate the
+ functionality of our networkinglibrary in a fun way.
+ Therefore we did not properly design a game and just brainstormed about
+ gameideas until we found something we all liked.
+\end_layout
+
+\begin_layout Standard
+For a game we had two different options.
+ We would either make a fast-paced action game where low latency is essential
+ or a role-playing-game where a low latency was not absolutely necessary.
+\end_layout
+
+\begin_layout Standard
+Because WebRTC offers low-latency data channels we picked the first option.
+ We did not want to create a generic first-person shooter though because
+ that did not interest anyone in our group.
+\end_layout
+
+\begin_layout Standard
+We did pick a 3D dogfighting game around a planet with little 
+\begin_inset Quotes eld
+\end_inset
+
+alien
+\begin_inset Quotes erd
+\end_inset
+
+-spaceships.
+ Every player controls a single spaceship in 3rd person view.
+ When the player decends to quickly he or she will crash into the planet
+ and die.
+ Players can also fire small projectiles that kill other players on hit
+ as well.
+ To further demonstrate synchronization in the network, the game contains
+ a leaderboard showing all accumulated kills and deaths of active players.
+\end_layout
+
+\begin_layout Standard
+We also picked this gameidea because initially we wanted to create an applicatio
+n or game that would make extensive use of orientation sensors in the users
+ smartphone.
+ This quickly changed to be a desktop game but we still liked the idea of
+ being able to control the game with a smartphone.
+\end_layout
+
+\begin_layout Standard
+Therefore the ability to fly the spaceship by tilting the phone is included
+ in this game.
+\end_layout
+
 \end_body
 \end_document
