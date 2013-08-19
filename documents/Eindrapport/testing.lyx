@@ -99,7 +99,7 @@ CoDo
 \begin_layout Standard
 Good code needs to be documented well.
  CoDo specifies a way to write comments in CoffeeScript code that allows
- CoDo to easily extract this metainformation about the code and automatically
+ CoDo to easily extract this meta-information about the code and automatically
  create documentation.
 \end_layout
 
@@ -133,7 +133,7 @@ Unfortunately JS Coverage only reports line coverage, which of course does
  example branch coverage).
  Unfortunately it turned out to be a lot of work to get Istanbul to work
  with our CoffeeScript code.
- Therefore work on this was abandoned to not spend more work on getting
+ Therefore work on this was abandoned to not spend more time on getting
  the testing framework to work than to actually develop the library and
  game.
 \end_layout
@@ -164,7 +164,7 @@ Sublime
 \end_layout
 
 \begin_layout Standard
-The text-editor sublime helped us slightly in keeping the code clean by
+The text-editor Sublime helped us slightly in keeping the code clean by
  automatically removing unnecessary whitespace at line endings.
 \end_layout
 
@@ -173,14 +173,14 @@ SIG
 \end_layout
 
 \begin_layout Standard
-The Software Improvement Group try to evaluate the quality of code by automatic
- and manual analysis.
- For the this project we are required to send our code to SIG twice.
+The Software Improvement Group tries to evaluate the quality of code by
+ automatic and manual analysis.
+ For this project we are required to send our code to SIG twice.
  Once halfway of the project and the second time at the end of the project.
  After sending it in the first time we are expected to read the comments
  carefully and adjust the code accordingly so the second feedback points
  out less issues.
- Our first review van be found in Appendix ....
+ Our first review can be found in Appendix ....
 \end_layout
 
 \end_body

@@ -125,12 +125,12 @@ reference "sub:Assignment-formulation"
 
 \end_inset
 
- we will make chose the subjects for our assignment.
+ we will chose the subjects for our assignment.
 \end_layout
 
 \begin_layout Standard
 The second goal is to create a demonstration of our work to easily show
- to others what we have done with WebRTC.
+ others what we have accomplished with WebRTC.
 \end_layout
 
 \begin_layout Subsubsection
@@ -165,7 +165,7 @@ Decentralizing this network over many independant users can also have the
  available.
  This results in an overall increase of stability at all times and does
  not even require the original developer to permanently maintain their own
- systems (in case of bankruptcy for example).
+ systems.
 \end_layout
 
 \begin_layout Subsection
@@ -220,8 +220,8 @@ How can we distribute essential networktasks over all peers?
 \end_layout
 
 \begin_layout Itemize
-How can the impact unpredictable circumstances (peers suddenly leaving the
- network) be reduced?
+How can the impact of unpredictable circumstances (peers suddenly leaving
+ the network) be reduced?
 \end_layout
 
 \begin_layout Itemize

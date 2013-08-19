@@ -116,8 +116,8 @@ One option would be to limit the amount of connections a single user can
 \end_layout
 
 \begin_layout Standard
-When a computer is already connected to the network it could decided to
- flood the network.
+When a computer is already connected to the network it could decide to flood
+ the network.
  This can be countered by letting every node check if a user did not send
  too many messages in the recent time.
  If the amount of messages reaches a certain threshold, the node could decide

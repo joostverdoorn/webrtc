@@ -127,8 +127,8 @@ To deliver a fully tested library we decided to use Behaviour-Driven Development
  BDD can be seen as an extension to Test-Driven Development (TDD).
  The difference is that tests in BDD try to be as close to user-stories
  as possible.
- These stories abd soecufucatuibs can easily be deduced from the Product
- Backlog items we use in Scrum.
+ These stories can easily be deduced from the Product Backlog items we use
+ in Scrum.
  Just like with TDD, tests in BDD are written before the actual unit is
  being implemented.
  After writing all (at that moment failing) tests, the developer will try
