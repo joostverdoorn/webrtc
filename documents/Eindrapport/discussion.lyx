@@ -132,8 +132,76 @@ When a computer is already connected to the network it could decide to flood
 Game integrity
 \end_layout
 
+\begin_layout Standard
+Another problem is the integrity of the games state.
+ In the current implementation the game will broadcast the information about
+ its own player (location and speed) five times a second to all other players.
+ This information is picked up and treated as if it must be the truth.
+\end_layout
+
+\begin_layout Standard
+We cannot expect this package to be correct though, because in our networklibrar
+y we use UDP to transfer our data, which is unreliable.
+ A way to do this better is to only send updates when it is absolutely mandatory.
+ Combined with only sending state changes instead of full updates, transmitting
+ these new packets via a reliable channel, for example TCP, should reduce
+ the bandwidth substantially and reduces the risk of out-of-sync players.
+ These reliable channels in Google Chrome's WebRTC implementation do not
+ exist yet, though.
+\end_layout
+
 \begin_layout Subsubsection
 Game security
+\end_layout
+
+\begin_layout Standard
+Apart from the ability to easily overload the network there are more issues
+ regarding the security of the network and the game.
+ The biggest problem we are facing is the total lack of sanity checks on
+ received packets.
+ First of all we expect all packets to be in a specific format and if a
+ packet arrives that does not fit in this format, the resulting behaviour
+ will be unpredictable.
+ Depending on where the packet contains malformed information, the entire
+ game might stop working, the connection to the network drops or nothing
+ bad happens at all.
+\end_layout
+
+\begin_layout Standard
+Another flaw arising from the lack of sanity checks is the ability to inject
+ arbitrary packets about other players into the network, allowing a user
+ to teleport himself, but if done right also others to a desired place.
+ Since the most difficult task in the game is actually hitting other players,
+ the ability to do harm is limited with teleporting.
+ A bigger problem is the ability to create an uncountable amount of projectiles
+ flying in all directions and automatically remove all projectiles by other
+ players.
+ Doing so is easier than teleporting another player and renders the game
+ unplayable for everyone.
+\end_layout
+
+\begin_layout Standard
+To counter these issues, the networkinglibrary has to first check if a packet
+ fits the defined format.
+ It also has to include a reliable way of finding out who really sent a
+ specific packet.
+ If it turns out that the claimed sender and actual sender don't match up,
+ it should just get ignored.
+\end_layout
+
+\begin_layout Standard
+The game then does not receive corrupt or wrong data but the problem of
+ projectile manipulation still exists.
+ To counter this, the game has to tie each packet that modifies an entity
+ to the owner of said entity.
+ If someone else tries to modify an entity that he or she does not own,
+ it should just get ignored.
+ To prevent players from creating more bullets than allowed or teleporting
+ themselves, all players should check if all other players obey the gamerules.
+ If this is not the case (this could also happen if two users play on two
+ different versions) the game should drop the connection to the malfunctioning
+ node because otherwise these two clients would just ignore each others
+ packets which makes the connection between them useless.
 \end_layout
 
 \end_body
