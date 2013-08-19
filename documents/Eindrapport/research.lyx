@@ -391,27 +391,49 @@ Group based network systems
 \end_layout
 
 \begin_layout Standard
-We would like to compare a couple of group based topologies below.
- we will only mention the ones, we have considered to use.
+We would like to compare a couple of group based systems below.
+ They are divided into three classes by how nodes are organized.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sacha2009exploiting"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Enumerate
-Crown
+Location-based systems are organized by their physical location, defined
+ for example by communication latency between two nodes.
 \end_layout
 
 \begin_layout Enumerate
-PopCorn
+Semantic based systems are organized by their semantics.
+ For example it could be a node position in the game world.
 \end_layout
 
 \begin_layout Enumerate
-Edutella
+Grid based systems are organized by an administrative domain.
+ The large-scale grid consists of small-scale grids what are actually a
+ network themselves.
 \end_layout
 
 \begin_layout Standard
-our choice will be described later...
+The choice of structuring the nodes was a tough one.
+ Location based systems are better for optimal communication for all purposes,
+ while semantic based systems can implement the structure for specific purposes.
+ In our game example for example, you would not send any data to a player
+ who can not interact with you.
+ We choose to implement a location-based structure to keep our library useful
+ for the different purposes.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
+Location based systems
+\end_layout
+
+\begin_layout Paragraph
 MMOG
 \end_layout
 
