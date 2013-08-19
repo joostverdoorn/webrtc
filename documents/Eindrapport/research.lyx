@@ -433,15 +433,131 @@ The choice of structuring the nodes was a tough one.
 Location based systems
 \end_layout
 
+\begin_layout Standard
+Now we made a choice which type of algorithm we are going to use, we started
+ to discover the available systems.
+ Below four proposed systems are described.
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+Crown
+\series default
+ is organizes the network by the prefix of the ip of the user.
+ The users with the same prefix are likely to have low latency and high
+ bandwidth.
+ Nodes in the same group elect a supernode with criteria of high bandwidth,
+ high availability, large computational power and a low load 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "conf/euc/WangTL04"
+
+\end_inset
+
+.
+ This approach looks very simple and sorting the nodes by ip can be very
+ unreliable.
+ Also no situation is described when there are too much nodes in the same
+ group.
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+PASS
+\series default
+ (Peer-to-peer Asymmetric file Sharing System), like the name says it is
+ designed for sharing files.
+ The approach is similar to crown by grouping the nodes by latency.
+ An interesting idea here is that PASS introduces a strong single node that
+ handles all communication between separate groups.
+ Also in PASS a supernode keeps track a backup supernode for case it leaves
+\begin_inset CommandInset citation
+LatexCommand cite
+key "conf/saint/KwonR03"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+PoPCorn
+\series default
+ uses an external algorithm like Vivaldi to structure the network in n-dimension
+al space.
+ First a token is given to a random node, after he decides to negotiate
+ with his peers if he 4may keep it.
+ He advertises his token and calculates the combined repulsion force of
+ all other tokens in the network.
+ If the force is lower than a certain threshold for a certain number of
+ time steps, a node may keep it and becomes a supernode.
+ This approach does not describe how a token generation works in a real
+ time scenario 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Lo:2005:SSS:1090948.1091371"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+Wolf and Merz 
+\series default
+heuristic evolutionary algorithm tries to minimize the distance between
+ the supernodes and their clients and the distance between the supernodes.
+ This algorithm uses the local search principle to hopefully find a suitable
+ solution 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "wolf"
+
+\end_inset
+
+.
+ An interesting fact is that in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "wolf"
+
+\end_inset
+
+ illustrates that location based supernode selection problem a NP-hard is.
+\end_layout
+
+\begin_layout Standard
+We chose for the PoPCorn algorithm because the organization of nodes based
+ on latency aims to reach the fastest communication in the network.
+ The token distribution principle seems reliable to dynamically elect the
+ supernodes dependent of the real time coordinates.
+ However a lot of implementation details are missing which offers an opportunity
+ to edit PoPCorn to our own needs.
+ The technical design explained later in 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "sub:Network-Topology"
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 MMOG
 \end_layout
 
 \begin_layout Standard
 The game is our second delivery with the only purpose to demonstrate the
- functionality of our networkinglibrary in a fun way.
+ functionality of our networking library in a fun way.
  Therefore we did not properly design a game and just brainstormed about
- gameideas until we found something we all liked.
+ game ideas until we found something we all liked.
 \end_layout
 
 \begin_layout Standard
@@ -457,7 +573,7 @@ Because WebRTC offers low-latency data channels we picked the first option.
 \end_layout
 
 \begin_layout Standard
-We did pick a 3D dogfighting game around a planet with little 
+We did pick a 3D dog fighting game around a planet with little 
 \begin_inset Quotes eld
 \end_inset
 
@@ -467,7 +583,7 @@ alien
 
 -spaceships.
  Every player controls a single spaceship in 3rd person view.
- When the player decends to quickly he or she will crash into the planet
+ When the player descends to quickly he or she will crash into the planet
  and die.
  Players can also fire small projectiles that kill other players on hit
  as well.
@@ -476,8 +592,8 @@ alien
 \end_layout
 
 \begin_layout Standard
-We also picked this gameidea because initially we wanted to create an applicatio
-n or game that would make extensive use of orientation sensors in the users
+We also picked this game idea because initially we wanted to create an applicati
+on or game that would make extensive use of orientation sensors in the users
  smartphone.
  This quickly changed to be a desktop game but we still liked the idea of
  being able to control the game with a smartphone.
