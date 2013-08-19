@@ -311,8 +311,8 @@ A supernode is a node who acts like a server to a group of clients, we can
  Network topologies that implement an supernode structure make use of the
  heterogeneity of the nodes.
  There is a lot of research done on supernode topologies..
- The key question in here: How many supernodes are desired and which node
- is the best candidate? 
+ The key question in here is: How many supernodes are desired and which
+ node is the best candidate? 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "sacha2009exploiting"
@@ -323,33 +323,67 @@ key "sacha2009exploiting"
 \end_layout
 
 \begin_layout Standard
-Because of the enormous amount of the network topologies we will split them
- in different categories.
+Because of the enormous amount of the supernode algorithms we will split
+ them in different categories.
  Jan Sacha defines four groups that use a different supernode election mechanism
 s:
 \end_layout
 
 \begin_layout Enumerate
-Simple approaches are the first generation algorithms.
- Here a no supernode election processes described or the election approach
+
+\series bold
+Simple approaches
+\series default
+ are the first generation algorithms.
+ Here are no supernode election processes described or the election approach
  is very simple or static.
- Some algorithms in this group use a central server to point a supernode.
+ Some algorithms in this group use a central server to assign a supernode.
+ Simple approaches of supernode selection don't produce an optimal network
+ topology, so we disregard this class.
 \end_layout
 
 \begin_layout Enumerate
+
+\series bold
 Group based
+\series default
+ algorithms split a node population in different groups and elect a supernode
+ independently.
+ The grouped are usually split by peer properties like network proximity.
+ Group based algorithms have as advantage that a global supernode election
+ problem can be decomposed in local group-level supernode selection problem.
+ As disadvantage are these groups hard to create and manage
 \end_layout
 
 \begin_layout Enumerate
+
+\series bold
 DHT based
+\series default
+ algorithms make use of the well-know DHT peer-to-peer system.
+ In this class nodes use a DHT overlay to discover which nodes are close
+ to them in a DHT defined space.
+ The advantage of the DHT-based systems is that parent-children clusters
+ can be split and merged very easily.
+ However these algorithms can not real time select a supernode and distribute
+ the clients to the supernodes.
+ This is an important aspect of our game, so we disregard this class.
 \end_layout
 
 \begin_layout Enumerate
-Adaptive
+
+\series bold
+Adaptive algorithms
+\series default
+ elect supernodes based on pre defined rules, for example: the maximum number
+ of clients a supernode can have.
 \end_layout
 
 \begin_layout Standard
-Because this and this we chose for groud based
+We chose the group based algorithms to go further with because of the decentrali
+zed approach of supernode selection.
+ However the rule sets of the adaptive algorithms can also be very valuable
+ during the implementation of the group base algorithm.
 \end_layout
 
 \begin_layout Subsubsection
@@ -370,7 +404,7 @@ PopCorn
 \end_layout
 
 \begin_layout Enumerate
-Edutella 
+Edutella
 \end_layout
 
 \begin_layout Standard
