@@ -385,76 +385,13 @@ name "sec:Software-Improvement-Group-Review-1"
 \end_layout
 
 \begin_layout Standard
-Vanwege de gebruikte technologie, Coffeescript, is het op dit moment helaas
- niet mogelijk om een score voor onderhoudbaarheid uit te rekenen volgens
- ons standaardmodel.
- Een combinatie van grove statische analyse en manuele analyse wijst echter
- uit dat de codebase relatief klein is.
- Daarnaast maakt de aanwezigheid van tests het makkelijker om aanpassingen
- te doen zonder de huidige functionaliteit te breken.
- 
-\end_layout
+\begin_inset CommandInset include
+LatexCommand input
+filename "sig_review1.lyx"
 
-\begin_layout Standard
-De keuze voor het gebruik van de Coffeescript technologie als basis voor
- dit project is waarschijnlijk onderbouwd in de documentatie.
- Het gebruik van deze technologie is op zichzelf geen minpunt, zolang er
- rekening mee is gehouden dat door de benodigde voorkennis minder makkelijk
- nieuwe ontwikkelaars gevonden kunnen worden.
-\end_layout
+\end_inset
 
-\begin_layout Standard
-Wat wel opvalt is het hoge percentage duplicatie (16%).
- Alhoewel de documentatie aangeeft dat er zowel een library als een spel
- gemaakt wordt is het uit de directory-structuur niet meteen duidelijk welke
- code bij de library en welke code bij het spel hoort.
- Daarnaast is het mij niet duidelijk waarom er code gedupliceerd moet worden,
- kan er geen 'common' library gemaakt worden welke door zowel de te ontwikkelen
- library als het spel gebruikt kan worden? Het is aan te raden deze keuze
- nogmaals te overwegen.
-\end_layout
 
-\begin_layout Standard
-Daarnaast zijn er een aantal methodes die aan de lange kant zijn.
- Het opsplitsen van dit soort methodes in kleinere stukken zorgt ervoor
- dat elk onderdeel makkelijker te begrijpen, te testen en daardoor eenvoudiger
- te onderhouden wordt.
- Binnen de langere methodes in dit systeem, zoals bijvoorbeeld de 'update'-metho
-de in 'entity.player.coffee', zijn aparte stukken functionaliteit te vinden
- welke ge-refactored kunnen worden naar aparte methodes.
- Commentaarregels zoals bijvoorbeeld '# Add tilt forces' en '# Add thrust
- straight downward from the player.
- If the player's boosting,' zijn een goede indicatie dat er een autonoom
- stuk functionaliteit te ontdekken is.
- Het is aan te raden kritisch te kijken naar de langere methodes binnen
- dit systeem en deze waar mogelijk op te splitsen.
-\end_layout
-
-\begin_layout Standard
-Het ander code-niveau punt heeft betrekking op het functiecommentaar.
- In een deel van de gevallen bevat dit commentaar niet meer informatie dan
- al gegeven wordt door de naam van de methode.
- Het is aan te raden dit type commentaar uit te breiden of te verwijderen
- om zo de codebase overzichtelijker te maken.
-\end_layout
-
-\begin_layout Standard
-Als laatste de opmerking dat niet alle code meegestuurd lijkt te zijn.
- Op verschillende plekken worden JavaScript files uit een 'meshes' directory
- geladen welke niet aanwezig is in de aanlevering.
- Mocht deze geschreven zijn voor dit project dan ontvangen wij deze code
- ook graag in de tweede aanlevering.
- 
-\end_layout
-
-\begin_layout Standard
-Over het algemeen lijkt de onderhoudbaarheid van de code bovengemiddeld
- te zijn, hopelijk lukt het om dit niveau te behouden tijdens de rest van
- de ontwikkelfase.
- De aanwezigheid van test-code is in ieder geval veelbelovend, hopelijk
- zal het volume van de test-code ook groeien op het moment dat er nieuwe
- functionaliteit toegevoegd wordt.
- 
 \end_layout
 
 \end_body
