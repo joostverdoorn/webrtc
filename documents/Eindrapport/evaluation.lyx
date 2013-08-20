@@ -61,7 +61,60 @@
 \begin_body
 
 \begin_layout Subsection
+Technical challenges
+\end_layout
 
+\begin_layout Subsubsection
+Testing
+\end_layout
+
+\begin_layout Standard
+After setting up our development environment we noticed that testing in
+ this environment wasn't as easy as expected.
+ Our combination of having shared code between the server and the clients,
+ that code being written in CoffeeScript and included via Require.js turned
+ out to be something most standard testing frameworks for JavaScript were
+ not able to accomplish.
+\end_layout
+
+\begin_layout Standard
+We solved this by daisychaining several processes.
+ First we found a modified CoffeeScript to JavaScript compiler that also
+ adds code-coverage information to the code as explained in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:JS-Coverage"
+
+\end_inset
+
+.
+ After this we would tell Jasmine to execute the tests as JavaScript and
+ use Require.js and at the same time keep track of the global code-coverage
+ array JSCoverage created.
+ After this was done, JSCoverage would generate the report about the code-covera
+ge and Jasmine would create the report about failing and succeeding tests.
+\end_layout
+
+\begin_layout Standard
+As pointed out in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:JS-Coverage"
+
+\end_inset
+
+ as well, we wanted more than just code-coverage.
+ We found a tool called Istanbul that could also generate statement, branch
+ and function coverage but it turned out to be a lot of work to get this
+ working with CoffeeScript because in order to instrument the code it used
+ a JavaScript parser which we had to replace with a CoffeeScript parser
+ with the same functionality.
+ Technically this is possible but would require too much time to do during
+ our project.
+\end_layout
+
+\begin_layout Subsection
+Process challenges
 \end_layout
 
 \end_body

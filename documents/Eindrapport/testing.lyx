@@ -109,6 +109,13 @@ Tools
 
 \begin_layout Subsubsection
 JS Coverage
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:JS-Coverage"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
