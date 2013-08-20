@@ -84,6 +84,28 @@ Canvas
 Application Cache
 \end_layout
 
+\begin_layout Standard
+Our networklibrary and game don't use any dynamic serverside components.
+ Therefore caching everything is a feasible option.
+ Unfortunately browsers may decide to redownload files even though they
+ are still in the cache.
+\end_layout
+
+\begin_layout Standard
+Luckily the HTML5 Application Cache offers the ability to permanently cache
+ a website on the users computer and load the website even if the internet
+ is not available (yet).
+ Obviously, connecting to the network will not work without any internet
+ connection, but even with an active connection loading the website will
+ go much faster.
+\end_layout
+
+\begin_layout Standard
+The only thing required to get this working was adding a new attribute to
+ the HTML-tag in the game and creating an almost empty Appcache-manifest
+ specifying that everything should be cached.
+\end_layout
+
 \begin_layout Subsection
 Frameworks
 \end_layout
