@@ -102,8 +102,8 @@ Luckily the HTML5 Application Cache offers the ability to permanently cache
 
 \begin_layout Standard
 The only thing required to get this working was adding a new attribute to
- the HTML-tag in the game and creating an almost empty Appcache-manifest
- specifying that everything should be cached.
+ the HTML-tag in the game and creating an Appcache-manifest marking the
+ big files like textures and object-meshes to be cached.
 \end_layout
 
 \begin_layout Subsection
