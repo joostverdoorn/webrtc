@@ -800,5 +800,32 @@ Therefore the ability to fly the spaceship by tilting the phone is included
  in this game.
 \end_layout
 
+\begin_layout Subsubsection
+Dead Reckoning
+\end_layout
+
+\begin_layout Standard
+After developing major parts of the game we noticed that the spaceships
+ of other players were not moving smoothly on the screen.
+ This happened due to slight variances in bandwidth speed between two nodes.
+ We improved the placement of players on screen by implementing dead reckoning.
+ Dead reckoning tries to calculate the current position of an object by
+ having a previous location, the elapsed time and the speed and direction
+ the object moved since the last location.
+\end_layout
+
+\begin_layout Standard
+As time we take the time that has elapsed since the last position arrived.
+ As speed and direction we take the values from the previous packet.
+ As soon as we arrive a new packet with a real location, we smoothly move
+ the spaceship from the calculated fake position to the actual deterministic
+ location.
+\end_layout
+
+\begin_layout Standard
+Implementing this feature now makes sure that movements look very natural
+ at all times.
+\end_layout
+
 \end_body
 \end_document
