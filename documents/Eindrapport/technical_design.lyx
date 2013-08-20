@@ -199,16 +199,119 @@ name "sub:Network-Topology"
 
 \end_layout
 
+\begin_layout Standard
+In this section the whole network topology is being explained.
+ Like in 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "sub:Peer-to-Peer"
+
+\end_inset
+
+ said, we chose for PoPCorn as supernode election algorithm.
+ In this section we will explain how we implemented it.
+ PoPCorn uses Vivaldi coordinate system and therefore we will discuss it
+ too.
+\end_layout
+
+\begin_layout Subsubsection
+Server communication
+\end_layout
+
+\begin_layout Standard
+Our philosophy is to minimize the communication to the server and to aspire
+ the stand alone working peer-to-peer system.
+ However this may not be at the expense of the network reliability.
+ Our network uses server for several purposes.
+\end_layout
+
+\begin_layout Enumerate
+When going to the game url, a server distributes the needed files which
+ are cached thereafter in the local storage.
+\end_layout
+
+\begin_layout Enumerate
+When entering network a new node receives a list of existing supernodes
+ to chose from and guides the first connection.
+\end_layout
+
+\begin_layout Enumerate
+When a node becomes supernode and vice versa, a message is sent to the server
+ with the mutation information.
+\end_layout
+
+\begin_layout Enumerate
+Once in a while a supernode updates it's supernode list from the server
+ to be 100% sure the list is up to date.
+\end_layout
+
 \begin_layout Subsubsection
 Vivaldi
+\end_layout
+
+\begin_layout Standard
+When a node joins the network, it sets it's 3-dimensional coordinates between
+ [-2, 2] to ensure the diversity in the coordinates.
+ Every 2 seconds a node pings it's peers and gets all theirs positions and
+ latencies.
+ When all peers answered own position is being calculated.
+ For each peer, a node tries to to equalize the latency and the distance
+ between two nodes by changing his own position.
+ When a node joins the network this process executes fast but after a after
+ a couple of steps, approximate position is assumed to be found.
+ After that, a position is changing slowly to prevent the oscillating of
+ the node.
+ 
+\end_layout
+
+\begin_layout Standard
+This algorithm performs weak if a node has only one connection to it's parent.
+ A stable foundation is needed to find a place in the space.
+ That's why every node has connection to at least three supernodes.
+ Not only for position purposes but also for backup when a parent leaves.The
+ first three nodes joining the network automatically become a supernode.
+ Nodes joining the network receive a list of existing supernodes from the
+ server and choose a random supernode as parent.
+ When a node has settled it gets a recommendation from his parent with the
+ closest supernode.
+ If it is worth it, the node switches from parent.
+ After switching is checked if a node has children then it can lose it's
+ supernode status.
 \end_layout
 
 \begin_layout Subsubsection
 PoPCorn
 \end_layout
 
+\begin_layout Standard
+Now, we have a coordinate system we can start electing supernodes.
+ When a parent can not accept more children it generates a token and distributes
+ it to the random child - the game of tokens can begin.
+ When a node receives a token, it broadcasts the token to all supernodes
+ holding a token.
+ The supernodes save the token information and send their own token back.
+ After a certain threshold, when all tokens assumed to be received a token
+ force is being calculated based on the distances of the other tokens.
+ If the token position is close enough to own position, the node becomes
+ a supernode.
+ Other way all supernodes are being asked to give the closest child to the
+ token which receives a that token - and the game of tokens starts over.
+\end_layout
+
+\begin_layout Subsubsection
+Quirks
+\end_layout
+
+\begin_layout Standard
+adaptive
+\end_layout
+
 \begin_layout Subsection
 Game
+\end_layout
+
+\begin_layout Standard
+game uitleg
 \end_layout
 
 \end_body

@@ -860,6 +860,7 @@ define [
 			@token.candidates = []
 			if closestCandidate? and closestCandidate isnt @id
 				console.log "best candidate is #{closestCandidate}, distance is #{closestDistance}"
+				@token.candidates = []
 				@emitTo(closestCandidate, 'token.receive', @token.serialize())
 
 				@token = null

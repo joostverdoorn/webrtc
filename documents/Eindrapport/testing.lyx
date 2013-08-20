@@ -5,7 +5,7 @@
 \textclass article
 \use_default_options true
 \maintain_unincluded_children false
-\language dutch
+\language american
 \language_package default
 \inputencoding auto
 \fontencoding global
@@ -105,6 +105,77 @@ Good code needs to be documented well.
 
 \begin_layout Subsection
 Tools
+\end_layout
+
+\begin_layout Subsubsection
+Node Inspector
+\end_layout
+
+\begin_layout Standard
+We made our own Node Inspector in WebGL that shows all nodes in a 3-dimensional
+ space.
+ This tool has been very handy during debugging Vivaldi and PoPCorn.
+ 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "fig:Node-Inspector"
+
+\end_inset
+
+ illustrates an example network configuration.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/inspector.PNG
+	lyxscale 20
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Node Inspector
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Node-Inspector"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Map
+\end_layout
+
+\begin_layout Standard
+map
+\end_layout
+
+\begin_layout Subsection
+External Tools
 \end_layout
 
 \begin_layout Subsubsection
