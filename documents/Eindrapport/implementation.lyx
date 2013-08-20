@@ -80,8 +80,36 @@ WebGL
 Canvas
 \end_layout
 
+\begin_layout Subsubsection
+Application Cache
+\end_layout
+
 \begin_layout Subsection
 Frameworks
+\end_layout
+
+\begin_layout Subsubsection
+Node.js
+\end_layout
+
+\begin_layout Subsubsection
+Require.js
+\end_layout
+
+\begin_layout Subsubsection
+Socket.io
+\end_layout
+
+\begin_layout Subsubsection
+Three.js
+\end_layout
+
+\begin_layout Subsubsection
+KineticJS
+\end_layout
+
+\begin_layout Subsubsection
+Adapter.js
 \end_layout
 
 \begin_layout Subsection
