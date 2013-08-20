@@ -204,5 +204,26 @@ The game then does not receive corrupt or wrong data but the problem of
  packets which makes the connection between them useless.
 \end_layout
 
+\begin_layout Subsection
+Cross Platform
+\end_layout
+
+\begin_layout Standard
+Currently our library only works with Google Chrome 28 and above.
+ This limitation has to do with the lack of implementations of WebRTC in
+ most other browsers.
+ The only other browser having a limited amount of WebRTC capabilities is
+ Mozilla Firefox.
+ Unfortunately this browser does not implement all callbacks as the W3C
+ defined them in the API.
+ Luckily it is only a matter of time until more browsers start implementing
+ WebRTC and Mozilla Firefox switching to the official API definition and
+ this problem should fix itself.
+\end_layout
+
+\begin_layout Subsection
+Peer discovery
+\end_layout
+
 \end_body
 \end_document
