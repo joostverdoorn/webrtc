@@ -94,9 +94,9 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename node-server-node.png
+	filename images/node-server-node.png
 	lyxscale 50
-	width 12cm
+	width 100line%
 
 \end_inset
 

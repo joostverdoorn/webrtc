@@ -5,7 +5,7 @@
 \textclass article
 \use_default_options true
 \maintain_unincluded_children false
-\language dutch
+\language american
 \language_package default
 \inputencoding auto
 \fontencoding global
@@ -75,12 +75,12 @@ Scrum
 \end_layout
 
 \begin_layout Standard
-While studying Computer Science we encountered several software development
+During the study Computer Science, we encountered several software development
  methodologies.
  From this we know that agile methodologies like Scrum fit very well in
  relatively short and small projects with a small team.
- Scrum uses small developmentcycli called sprints to stimulate a fast completion
- of the project.
+ Scrum uses small development cycles called sprints to stimulate a fast
+ completion of the project.
  At the beginning of each sprint the team decides which features shall be
  implemented and at the end of the sprint there has to be a working product.
  Unimplemented features will remain in the 
@@ -95,13 +95,25 @@ Product Backlog
 \end_layout
 
 \begin_layout Standard
-In our team Karens is the Scrum Master.
+In our team 
+\noun on
+Karens
+\noun default
+ is the Scrum Master.
  The task of the Scrum Master is to remove all distracting influences for
  the development team.
- Our Product Owner is Victor Klos from TNO.
+ Our Product Owner is 
+\noun on
+Victor Klos
+\noun default
+ from TNO.
  He prioritizes our Product Backlog and will ensure our product meets the
  requirements for TNO.
- Eelco Cramer from TNO will assist us with technical problems.
+ 
+\noun on
+Eelco Cramer
+\noun default
+ from TNO will assist us with technical problems.
 \end_layout
 
 \begin_layout Standard
@@ -139,191 +151,7 @@ To deliver a fully tested library we decided to use Behaviour-Driven Development
 \begin_layout Standard
 The tests will not only be used to determine if the software acts as described.
  Another use is to make sure new code does not break older functionality.
-\end_layout
-
-\begin_layout Standard
-As testing framework we use Jasmine, a BDD-test-framework for JavaScript.
-\end_layout
-
-\begin_layout Subsection
-Planning
-\end_layout
-
-\begin_layout Standard
-Because we utilize Scrum, there was no 
-\begin_inset Quotes eld
-\end_inset
-
-locked
-\begin_inset Quotes erd
-\end_inset
-
- day-by-day planning before we started this project.
- We only had our Product Backlog and a global direction of the project on
- a week-by-week basis.
- At the start of every sprint we then decided what to implement specifically.
-\end_layout
-
-\begin_layout Itemize
-Week 0
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-Pick project
-\end_layout
-
-\begin_layout Itemize
-Plan of Action
-\end_layout
-
-\begin_layout Itemize
-Set up development environment
-\end_layout
-
-\begin_layout Itemize
-Start work on library
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-Week 1
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-Library
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-Week 2
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-Library
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-Week 3
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-Start work on game
-\end_layout
-
-\begin_layout Itemize
-Library
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-Week 4
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-Game
-\end_layout
-
-\begin_layout Itemize
-Library
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-Week 5
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-Game
-\end_layout
-
-\begin_layout Itemize
-Library
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-Week 6
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-Game
-\end_layout
-
-\begin_layout Itemize
-Library
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-Week 7
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-Game
-\end_layout
-
-\begin_layout Itemize
-Finalize Library
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-Week 8
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-Game
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-Week 9
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-Finalize Game
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-Week 10
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-Finalize reports
-\end_layout
-
-\begin_layout Itemize
-Evaluation
-\end_layout
-
-\begin_layout Itemize
-Presentation
-\end_layout
-
-\end_deeper
-\begin_layout Subsection
-Planning Tools
-\end_layout
-
-\begin_layout Subsubsection
-GitHub issues
-\end_layout
-
-\begin_layout Subsubsection
-HUboard
+ As testing framework we use Jasmine, a BDD-test-framework for JavaScript.
 \end_layout
 
 \begin_layout Subsection
@@ -332,6 +160,13 @@ Development tools
 
 \begin_layout Subsubsection
 GitHub
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:GitHub"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -340,6 +175,175 @@ npm
 
 \begin_layout Subsubsection
 cake
+\end_layout
+
+\begin_layout Subsection
+Planning Tools
+\end_layout
+
+\begin_layout Standard
+In this chapter we will explain which tools did we use to gain an overview
+ of the amount of work to be done.
+ These tools also helped our mentors to keep a track what we are doing.
+\end_layout
+
+\begin_layout Subsubsection
+GitHub issues
+\end_layout
+
+\begin_layout Standard
+Like in 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "sub:GitHub"
+
+\end_inset
+
+ explained, we used GitHub for version control.
+ A very handy GitHub feature available is the Issues.
+ A new issue created ends up in the backlog.
+ When the issue is chosen for the sprint, it gets a tag of the sprint, or
+ so called milestones.
+ That way we could easily filter the sprintlog from all other issues.
+ In 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "fig:Github-issues-image"
+
+\end_inset
+
+ a sprintlog is illustrated.
+\end_layout
+
+\begin_layout Standard
+We also used labeling of the issues.
+ Some issues clearly belong to each other.
+ For example in 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "fig:Github-issues-image"
+
+\end_inset
+
+, labels 
+\begin_inset Quotes eld
+\end_inset
+
+login" and 
+\begin_inset Quotes eld
+\end_inset
+
+controllers" are used to get overview of what kind of work has to be done.
+ We also used some default semantic issues like: bug, enchacement, duplicate,
+ invalid etc.
+ when needed.
+\end_layout
+
+\begin_layout Standard
+To prevent the same issue is been worked on by different persons, each issue
+ has to be assigned to someone before someone starts working on it.
+ It makes also easy to filter all issues assigned to you to keep your personal
+ to do list.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/github issues.PNG
+	width 100line%
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Github issues
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Github-issues-image"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+HUboard
+\end_layout
+
+\begin_layout Standard
+HUboard is an instant project management tool for GitHub whick helped us
+ with an overview of the sprintlog.
+ HUboard makes also use of labels, in our case: To do, In progress, Testing
+ and Done.
+ When an issue changes of status, you can drag it to other column.
+ We also benefit of the prioritization possibilities in the To do category
+ to order the issues how the scrum product owner it wanted.
+ See 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "fig:HUboard"
+
+\end_inset
+
+ for an example of our sprintlog.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/huboard.PNG
+	width 100line%
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+HUboard
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:HUboard"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_body

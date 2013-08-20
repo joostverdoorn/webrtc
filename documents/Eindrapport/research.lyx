@@ -472,14 +472,14 @@ PASS
  The approach is similar to crown by grouping the nodes by latency.
  An interesting idea here is that PASS introduces a strong single node that
  handles all communication between separate groups.
- Also in PASS a supernode keeps track a backup supernode for case it leaves
+ Also in PASS a supernode keeps track a backup supernode for case it leaves.
 \begin_inset CommandInset citation
 LatexCommand cite
 key "conf/saint/KwonR03"
 
 \end_inset
 
-.
+
 \end_layout
 
 \begin_layout Enumerate
@@ -555,9 +555,9 @@ MMOG
 
 \begin_layout Standard
 The game is our second delivery with the only purpose to demonstrate the
- functionality of our networking library in a fun way.
+ functionality of our networkinglibrary in a fun way.
  Therefore we did not properly design a game and just brainstormed about
- game ideas until we found something we all liked.
+ gameideas until we found something we all liked.
 \end_layout
 
 \begin_layout Standard
@@ -583,7 +583,7 @@ alien
 
 -spaceships.
  Every player controls a single spaceship in 3rd person view.
- When the player descends to quickly he or she will crash into the planet
+ When the player decends to quickly he or she will crash into the planet
  and die.
  Players can also fire small projectiles that kill other players on hit
  as well.
