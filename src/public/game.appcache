@@ -1,2 +1,78 @@
 CACHE MANIFEST
+
+# VERSION 1
+
+CACHE:
+
+# some views
+views/mobile_connect.html
+views/info_desktop.html
+views/paused.html
+views/controller_selection.html
+views/info_mobile.html
+views/stats.html
+views/player_died.html
+views/welcome.html
+views/loading.html
+
+# (animation-)meshes
+meshes/animation.js
+meshes/planet.jpg
+meshes/ufoBase.js
+meshes/cannon.js
+meshes/ufo.js
+meshes/cannonBase.js
+meshes/planet.js
+meshes/stoner.js
+
+# textures
+images/sky2.jpg
+images/checkerboard.png
+images/mobile.png
+images/sky3.jpg
+images/keyboard.png
+images/sky1.png
+images/sky.jpg
+
+# stylesheets
+./stylesheets/controller.css
+./stylesheets/main.css
+./stylesheets/inspector.css
+./stylesheets/map.css
+./stylesheets/overlay.css
+
+# Vendor scripts
+vendor/scripts/three_lambertoon_c.js
+vendor/scripts/orbitControls.js
+vendor/scripts/underscore.js
+vendor/scripts/stats.min.js
+vendor/scripts/qrcode.min.js
+vendor/scripts/three.js
+vendor/scripts/require.js
+vendor/scripts/three.min.js
+vendor/scripts/touchy.js
+vendor/scripts/jquery.js
+vendor/scripts/bootstrap.min.js
+vendor/scripts/jquery.plugins.js
+vendor/scripts/kinetic.min.js
+vendor/scripts/three_lambertoon_a.js
+vendor/scripts/kinetic.multitouch.js
+vendor/scripts/graph.js
+vendor/scripts/ocanvas.js
+vendor/scripts/bootstrap.js
+
+# Vendor images
+vendor/images/glyphicons-halflings-white.png
+vendor/images/glyphicons-halflings.png
+
+# Vendor stylesheets
+vendor/stylesheets/bootstrap-responsive.css
+vendor/stylesheets/bootstrap-responsive.min.css
+vendor/stylesheets/bootstrap.min.css
+vendor/stylesheets/bootstrap.css
+
+# App
+scripts/app.game.js
+
+NETWORK:
 *
