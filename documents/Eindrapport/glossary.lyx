@@ -60,16 +60,52 @@
 
 \begin_body
 
+\begin_layout Standard
+API
+\end_layout
+
+\begin_layout Standard
+W3C
+\end_layout
+
+\begin_layout Standard
+P2P
+\end_layout
+
+\begin_layout Standard
+SDP
+\end_layout
+
+\begin_layout Standard
+DNS
+\end_layout
+
+\begin_layout Standard
+WebSocket
+\end_layout
+
+\begin_layout Standard
+NodeJS
+\end_layout
+
+\begin_layout Standard
+NAT
+\end_layout
+
+\begin_layout Standard
+UDP
+\end_layout
+
+\begin_layout Standard
+TCP
+\end_layout
+
 \begin_layout Subsection
 p2p
 \end_layout
 
 \begin_layout Standard
 overlay networks
-\end_layout
-
-\begin_layout Standard
-
 \end_layout
 
 \end_body

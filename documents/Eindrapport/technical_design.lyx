@@ -125,6 +125,14 @@ Event Driven Networking
 \end_layout
 
 \begin_layout Standard
+The networking library makes use of an event driven approach to networking.
+ Nodes communicate with each other by sending events, packed into Message
+ objects, to their peers.
+ These messages allow for connected peers to trigger events on each other
+ which allows for complex procedures to be orchestrated in a precise manner.
+\end_layout
+
+\begin_layout Standard
 The networking library is almost entirely event driven, meaning that events
  trigger actions via listeners on that event.
  Events can be triggered on remote parties by emitting a message, and the
