@@ -182,9 +182,9 @@ Planning Tools
 \end_layout
 
 \begin_layout Standard
-In this chapter we will explain which tools did we use to gain an overview
- of the amount of work to be done.
- These tools also helped our mentors to keep a track what we are doing.
+In this chapter we will explain which tools we used to gain insights about
+ the amount of work to be done.
+ These tools also helped our mentors to keep track of what we are doing.
 \end_layout
 
 \begin_layout Subsubsection
@@ -192,14 +192,14 @@ GitHub issues
 \end_layout
 
 \begin_layout Standard
-Like in 
+As explained in 
 \begin_inset CommandInset ref
 LatexCommand formatted
 reference "sub:GitHub"
 
 \end_inset
 
- explained, we used GitHub for version control.
+, we used GitHub for version control.
  A very handy GitHub feature available is the Issues.
  A new issue created ends up in the backlog.
  When the issue is chosen for the sprint, it gets a tag of the sprint, or
@@ -234,16 +234,17 @@ login" and
 \end_inset
 
 controllers" are used to get overview of what kind of work has to be done.
- We also used some default semantic issues like: bug, enchacement, duplicate,
+ We also used some default semantic issues like: bug, enhancement, duplicate,
  invalid etc.
  when needed.
 \end_layout
 
 \begin_layout Standard
-To prevent the same issue is been worked on by different persons, each issue
- has to be assigned to someone before someone starts working on it.
- It makes also easy to filter all issues assigned to you to keep your personal
- to do list.
+To prevent the same issue from being worked on by different persons at once,
+ each issue has to be assigned to someone before someone starts working
+ on it.
+ This also makes it easy to filter all issues assigned to you to keep your
+ personal to do list.
 \end_layout
 
 \begin_layout Standard
@@ -288,13 +289,13 @@ HUboard
 \end_layout
 
 \begin_layout Standard
-HUboard is an instant project management tool for GitHub whick helped us
+HUboard is an instant project management tool for GitHub which helped us
  with an overview of the sprintlog.
  HUboard makes also use of labels, in our case: To do, In progress, Testing
  and Done.
  When an issue changes of status, you can drag it to other column.
  We also benefit of the prioritization possibilities in the To do category
- to order the issues how the scrum product owner it wanted.
+ to order the issues the way the the Scrum product owner wanted it.
  See 
 \begin_inset CommandInset ref
 LatexCommand formatted
