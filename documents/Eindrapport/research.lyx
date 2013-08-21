@@ -5,7 +5,7 @@
 \textclass article
 \use_default_options true
 \maintain_unincluded_children false
-\language american
+\language british
 \language_package default
 \inputencoding auto
 \fontencoding global
@@ -118,7 +118,7 @@ Reliably establishing a peer-to-peer connection between two consumer devices
  by firewalls and located behind a Network Address Translation service (NAT).
  WebRTC utilizes several technologies to enable peers to connect through
  environments that limit the connectivity of the peers.
- 
+
 \end_layout
 
 \begin_layout Standard
@@ -140,7 +140,7 @@ key "ietficespec"
  up streaming media connections such as Bluetooth headsets streaming audio
  to and from mobile phones and videoconferencing where both video and audio
  are streamed between a multitude of entities.
- 
+
 \end_layout
 
 \begin_layout Subsubsection*
@@ -196,7 +196,7 @@ Before a peer connection is established, the peers have to exchange the
  on what form this signaling channel should take on and instead leave it
  to the developer to guide the exchange of SDP packets.
  We identified several possible manners to achieve this initialization.
- 
+
 \end_layout
 
 \begin_layout Itemize
@@ -205,7 +205,7 @@ Using a web server, one can use AJAX requests which in turn routes information
  has to be aware that the other peer is requesting a connection, or that
  the use of continuous AJAX polling, continuously requesting the server
  for an update, is required.
- 
+
 \end_layout
 
 \begin_layout Itemize
@@ -220,7 +220,7 @@ Another way to establish the connection is to have all peers connected to
 Apart from that, it would in theory be possible to use a DNS discovery technique
 s such as Apple's Bonjour to detect WebRTC nodes on the local network, but
  this isn't (yet) possible without the use third party plugins.
- 
+
 \end_layout
 
 \begin_layout Itemize
@@ -243,7 +243,7 @@ The choice of which technology to use for the signaling channel was a relatively
  applications.
  This choice, however, requires a more advanced web server than the well-known
  Apache-PHP-MySQL setup which runs a better part of the internet.
- 
+
 \end_layout
 
 \begin_layout Standard
@@ -311,7 +311,7 @@ name "sub:Peer-to-Peer"
 \end_layout
 
 \begin_layout Standard
-In 
+In
 \begin_inset CommandInset ref
 LatexCommand nameref
 reference "sub:Assignment-formulation"
@@ -332,7 +332,7 @@ Node heterogeneity
 Our goal is to create a stable, fast performing network with WebRTC technology.
  It is important to realize that every node which wants to connect to the
  network is different, and thus will not perform the on same way.
- According to Jan Sacha 
+ According to Jan Sacha
 \begin_inset CommandInset citation
 LatexCommand cite
 key "sacha2009exploiting"
@@ -385,7 +385,7 @@ Sending a large amount of data leads to processing a large amount of data.
 Some of the nodes can be located behind firewalls and be only able to connect
  to a limited amount of nodes.
  It is definitely our goal to ensure everyone who is able make a WebRTC
- connection to at least one of the nodes (and that is not so hard, see 
+ connection to at least one of the nodes (and that is not so hard, see
 \begin_inset CommandInset ref
 LatexCommand formatted
 reference "sub:WebRTC"
@@ -445,7 +445,7 @@ WebRTC is a new technology and first we decided to run some tests of how
 \end_layout
 
 \begin_layout Standard
-Leitao 
+Leitao
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Leitão_onthe"
@@ -496,6 +496,13 @@ These best practices should be taken in mind while researching the different
 
 \begin_layout Subsubsection
 Supernode topologies and approaches
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Supernode-topologies-and"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -508,14 +515,14 @@ A supernode is a node who acts like a server to a group of clients, we can
  heterogeneity of the nodes.
  There is a lot of research done on supernode topologies..
  The key question in here is: How many supernodes are desired and which
- node is the best candidate? 
+ node is the best candidate?
 \begin_inset CommandInset citation
 LatexCommand cite
 key "sacha2009exploiting"
 
 \end_inset
 
- 
+
 \end_layout
 
 \begin_layout Standard
@@ -589,7 +596,7 @@ Group based network systems
 \begin_layout Standard
 We would like to compare a couple of group based systems below.
  They are divided into three classes by how nodes are organized.
- 
+
 \begin_inset CommandInset citation
 LatexCommand cite
 key "sacha2009exploiting"
@@ -644,7 +651,7 @@ Crown
  The users with the same prefix are likely to have low latency and high
  bandwidth.
  Nodes in the same group elect a supernode with criteria of high bandwidth,
- high availability, large computational power and a low load 
+ high availability, large computational power and a low load
 \begin_inset CommandInset citation
 LatexCommand cite
 key "conf/euc/WangTL04"
@@ -692,7 +699,7 @@ al space.
  If the force is lower than a certain threshold for a certain number of
  time steps, a node may keep it and becomes a supernode.
  This approach does not describe how a token generation works in a real
- time scenario 
+ time scenario
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Lo:2005:SSS:1090948.1091371"
@@ -705,12 +712,12 @@ key "Lo:2005:SSS:1090948.1091371"
 \begin_layout Enumerate
 
 \series bold
-Wolf and Merz 
+Wolf and Merz
 \series default
 heuristic evolutionary algorithm tries to minimize the distance between
  the supernodes and their clients and the distance between the supernodes.
  This algorithm uses the local search principle to hopefully find a suitable
- solution 
+ solution
 \begin_inset CommandInset citation
 LatexCommand cite
 key "wolf"
@@ -718,7 +725,7 @@ key "wolf"
 \end_inset
 
 .
- An interesting fact is that in 
+ An interesting fact is that in
 \begin_inset CommandInset citation
 LatexCommand cite
 key "wolf"
@@ -735,7 +742,7 @@ We chose for the PoPCorn algorithm because the organization of nodes based
  supernodes dependent of the real time coordinates.
  However a lot of implementation details are missing which offers an opportunity
  to edit PoPCorn to our own needs.
- The technical design explained later in 
+ The technical design explained later in
 \begin_inset CommandInset ref
 LatexCommand formatted
 reference "sub:Network-Topology"
@@ -769,7 +776,7 @@ Because WebRTC offers low-latency data channels we picked the first option.
 \end_layout
 
 \begin_layout Standard
-We did pick a 3D dog fighting game around a planet with little 
+We did pick a 3D dog fighting game around a planet with little
 \begin_inset Quotes eld
 \end_inset
 

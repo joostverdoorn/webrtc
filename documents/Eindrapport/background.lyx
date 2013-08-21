@@ -5,7 +5,7 @@
 \textclass article
 \use_default_options true
 \maintain_unincluded_children false
-\language english
+\language british
 \language_package default
 \inputencoding auto
 \fontencoding global
@@ -98,7 +98,7 @@ A peer-to-peer network is a decentralized distributed network architecture.
  all nodes.
  A node usually does not have a full knowledge of the network but instead
  has a limited awareness of the peer he communicates with, his neighbors.
- 
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -123,7 +123,7 @@ Infrastructure
 \end_layout
 
 \begin_layout Standard
-The simplest form of a peer to peer network is an 
+The simplest form of a peer to peer network is an
 \emph on
 unstructured
 \emph default
@@ -131,7 +131,7 @@ unstructured
  Nodes are randomly connected with each other and share data inefficiently.
  All nodes have the same roles in this network.
  It is usually better to implement some kind of overlay network to help
- the nodes find each other and transmit data, by creating a 
+ the nodes find each other and transmit data, by creating a
 \emph on
 structured
 \emph default
@@ -140,7 +140,7 @@ structured
  the other nodes to communicate with each other.
  Node availability can also be one of the ways to structure the network.
  There are many implementations of structured networks, discussed later
- in 
+ in
 \begin_inset CommandInset ref
 LatexCommand formatted
 reference "sub:Peer-to-Peer"
@@ -168,7 +168,7 @@ MMOG's can chose to have a persistent world that is ever changing or the
 \end_layout
 
 \begin_layout Standard
-Our game 
+Our game
 \begin_inset Quotes eld
 \end_inset
 

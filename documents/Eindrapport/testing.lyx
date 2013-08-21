@@ -5,7 +5,7 @@
 \textclass article
 \use_default_options true
 \maintain_unincluded_children false
-\language american
+\language british
 \language_package default
 \inputencoding auto
 \fontencoding global
@@ -115,7 +115,7 @@ Node Inspector
 We made our own Node Inspector in WebGL that shows all nodes in a 3-dimensional
  space.
  This tool has been very handy during debugging Vivaldi and PoPCorn.
- 
+
 \begin_inset CommandInset ref
 LatexCommand formatted
 reference "fig:Node-Inspector"
@@ -190,7 +190,7 @@ name "sub:JS-Coverage"
 \end_layout
 
 \begin_layout Standard
-JS Coverage is a framework that 
+JS Coverage is a framework that
 \begin_inset Quotes eld
 \end_inset
 
@@ -258,7 +258,7 @@ The Software Improvement Group tries to evaluate the quality of code by
  After sending it in the first time we are expected to read the comments
  carefully and adjust the code accordingly so the second feedback points
  out less issues.
- Our first review can be found in Appendix 
+ Our first review can be found in Appendix
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Software-Improvement-Group-Review-1"

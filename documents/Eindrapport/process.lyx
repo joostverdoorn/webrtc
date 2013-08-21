@@ -5,7 +5,7 @@
 \textclass article
 \use_default_options true
 \maintain_unincluded_children false
-\language american
+\language british
 \language_package default
 \inputencoding auto
 \fontencoding global
@@ -83,7 +83,7 @@ During the study Computer Science, we encountered several software development
  completion of the project.
  At the beginning of each sprint the team decides which features shall be
  implemented and at the end of the sprint there has to be a working product.
- Unimplemented features will remain in the 
+ Unimplemented features will remain in the
 \begin_inset Quotes eld
 \end_inset
 
@@ -95,21 +95,21 @@ Product Backlog
 \end_layout
 
 \begin_layout Standard
-In our team 
+In our team
 \noun on
 Karens
 \noun default
  is the Scrum Master.
  The task of the Scrum Master is to remove all distracting influences for
  the development team.
- Our Product Owner is 
+ Our Product Owner is
 \noun on
 Victor Klos
 \noun default
  from TNO.
  He prioritizes our Product Backlog and will ensure our product meets the
  requirements for TNO.
- 
+
 \noun on
 Eelco Cramer
 \noun default
@@ -192,7 +192,7 @@ GitHub issues
 \end_layout
 
 \begin_layout Standard
-As explained in 
+As explained in
 \begin_inset CommandInset ref
 LatexCommand formatted
 reference "sub:GitHub"
@@ -205,7 +205,7 @@ reference "sub:GitHub"
  When the issue is chosen for the sprint, it gets a tag of the sprint, or
  so called milestones.
  That way we could easily filter the sprintlog from all other issues.
- In 
+ In
 \begin_inset CommandInset ref
 LatexCommand formatted
 reference "fig:Github-issues-image"
@@ -218,18 +218,18 @@ reference "fig:Github-issues-image"
 \begin_layout Standard
 We also used labeling of the issues.
  Some issues clearly belong to each other.
- For example in 
+ For example in
 \begin_inset CommandInset ref
 LatexCommand formatted
 reference "fig:Github-issues-image"
 
 \end_inset
 
-, labels 
+, labels
 \begin_inset Quotes eld
 \end_inset
 
-login" and 
+login" and
 \begin_inset Quotes eld
 \end_inset
 
@@ -296,7 +296,7 @@ HUboard is an instant project management tool for GitHub which helped us
  When an issue changes of status, you can drag it to other column.
  We also benefit of the prioritization possibilities in the To do category
  to order the issues the way the the Scrum product owner wanted it.
- See 
+ See
 \begin_inset CommandInset ref
 LatexCommand formatted
 reference "fig:HUboard"

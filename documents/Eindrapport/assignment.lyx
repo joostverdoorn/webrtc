@@ -5,7 +5,7 @@
 \textclass article
 \use_default_options true
 \maintain_unincluded_children false
-\language american
+\language british
 \language_package default
 \inputencoding auto
 \fontencoding global
@@ -105,7 +105,7 @@ Goal
 \end_layout
 
 \begin_layout Standard
-As described in 
+As described in
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Problem-description"
@@ -118,7 +118,7 @@ reference "sub:Problem-description"
  You can think about number of simultaneous users, different media sources
  for streaming, media synchronization, limitation of bandwidth and cross-browser
  compatibility.
- In chapter 
+ In chapter
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Assignment-formulation"
@@ -202,7 +202,7 @@ Distributed networks
  Because WebRTC runs without external software directly in the user's browser,
  where computer resources are not easily given to a script requesting it,
  we thought it would be very interesting to focus on scalability.
- From here we constructed this mainresearchquestion: 
+ From here we constructed this mainresearchquestion:
 \begin_inset Quotes eld
 \end_inset
 

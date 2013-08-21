@@ -5,7 +5,7 @@
 \textclass article
 \use_default_options true
 \maintain_unincluded_children false
-\language american
+\language british
 \language_package default
 \inputencoding auto
 \fontencoding global
@@ -64,12 +64,38 @@
 Network topology
 \end_layout
 
+\begin_layout Standard
+At this moment we have implemented an advanced network topology and we are
+ still improving it.
+ In this section, we would like to discuss a couple of possible improvements
+\end_layout
+
 \begin_layout Subsubsection
 Supernode overlay network
 \end_layout
 
 \begin_layout Standard
-ok
+The supernodes have a important role to provide for communication between
+ all nodes.
+ At this moment if a child node wants to send a message to a random node,
+ it sends it to it's parent.
+ If the receiver does not have the same parent, the parent sends a package
+ to all siblings and one of them will hopefully deliver the message to it's
+ children.
+ All supernodes are connected with each other what makes the network less
+ scalable.
+ A lot of research is done in field of managing supernode connections.
+ Adaptive algorithms discussed in
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Supernode-topologies-and"
+
+\end_inset
+
+ offer a solution to connect the supernodes if the latency is smaller than
+ a threshold.
+ More research is needed to determine if the network stays reliable after
+ this change
 \end_layout
 
 \begin_layout Subsubsection
@@ -77,15 +103,12 @@ Routing tables
 \end_layout
 
 \begin_layout Standard
-ok
-\end_layout
-
-\begin_layout Subsubsection
-Token distribution
-\end_layout
-
-\begin_layout Standard
-ok
+At this moment all supernodes receive a message when a message has to be
+ delivered.
+ It should be a good idea to remember the route after the first time the
+ message is delivered.
+ This is one of the examples of the optimizations we can implement for routing
+ of messages.
 \end_layout
 
 \begin_layout Subsection

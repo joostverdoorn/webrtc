@@ -5,7 +5,7 @@
 \textclass article
 \use_default_options true
 \maintain_unincluded_children false
-\language dutch
+\language british
 \language_package default
 \inputencoding auto
 \fontencoding global
@@ -80,7 +80,7 @@ After setting up our development environment we noticed that testing in
 \begin_layout Standard
 We solved this by daisychaining several processes.
  First we found a modified CoffeeScript to JavaScript compiler that also
- adds code-coverage information to the code as explained in 
+ adds code-coverage information to the code as explained in
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:JS-Coverage"
@@ -96,7 +96,7 @@ ge and Jasmine would create the report about failing and succeeding tests.
 \end_layout
 
 \begin_layout Standard
-As pointed out in 
+As pointed out in
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:JS-Coverage"
