@@ -523,7 +523,7 @@ define [
 									if success
 										@addSibling(peer)
 									else
-										console.log "can not connect to ", peer.id
+										console.warn "can not connect to ", peer.id
 								)
 						) (superNode)
 
@@ -792,6 +792,7 @@ define [
 			magnitude = @position.getDistance(@token.targetPosition)
 
 			if magnitude > @_tokenMoveThreshold and not @isSuperNode
+				@token.candidates = []
 				@broadcast('token.requestCandidate', @token.serialize())
 
 				setTimeout( ( ) =>
@@ -810,6 +811,7 @@ define [
 				return
 
 			token = Token.deserialize(tokenString)
+			@addToken(token)
 
 			closestChild = null
 			closestDistance = Infinity
@@ -856,9 +858,10 @@ define [
 				if candidate.distance < closestDistance * @_tokenSwitchThreshold
 					closestDistance = candidate.distance
 					closestCandidate = candidate.id
-
 			@token.candidates = []
-			if closestCandidate? and closestCandidate isnt @id
+
+			ownDistance = @position.getDistance(@token.targetPosition)
+			if closestCandidate? and closestCandidate isnt @id and ownDistance > closestDistance
 				console.log "best candidate is #{closestCandidate}, distance is #{closestDistance}"
 				@token.candidates = []
 				@emitTo(closestCandidate, 'token.receive', @token.serialize())

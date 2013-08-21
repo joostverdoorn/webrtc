@@ -79,8 +79,8 @@ define [
 			@_addChannel(channel)
 
 			@_controller.queryTo(@id, 'requestConnection', @_controller.id, ( accepted ) =>
+				console.timeStamp()
 				console.log "connection request #{accepted} to node #{@id}"
-				console.trace()
 
 				unless accepted
 					@trigger('failed')
