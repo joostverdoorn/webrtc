@@ -110,16 +110,90 @@ The only thing required to get this working was adding a new attribute to
 Frameworks
 \end_layout
 
+\begin_layout Standard
+In this project we used several tools and frameworks that are essential
+ for our networklibrary and game to work.
+\end_layout
+
 \begin_layout Subsubsection
 Node.js
 \end_layout
 
-\begin_layout Subsubsection
-Require.js
+\begin_layout Standard
+Wikipedia currently has a good description of what Node.js is: 
+\begin_inset Quotes eld
+\end_inset
+
+Node.js is a software platform that is used to build scalable network (especially
+ server-side) applications.
+ Node.js utilizes JavaScript as its scripting language, and achieves high
+ throughput via non-blocking I/O and a single-threaded event loop.
+\begin_inset Quotes erd
+\end_inset
+
+
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+http://en.wikipedia.org/wiki/Nodejs accessed on August 21, 2013
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In our project this platform is used on the central server in the networklibrary.
+ It is used to deliver the clientside library code, the actual application
+ (in our case a game) and kickstart the WebRTC communication between new
+ peers.
 \end_layout
 
 \begin_layout Subsubsection
-Socket.io
+RequireJS
+\end_layout
+
+\begin_layout Standard
+RequireJS is a module loader for JavaScript.
+ It gives developers the ability to load other classes in an easy to read
+ and write way.
+\end_layout
+
+\begin_layout Standard
+In our project it is used in every piece of code we made.
+ RequireJS works in both the clients browser and also the Node.js server
+ so sharing code was easy to do thanks to RequireJS.
+\end_layout
+
+\begin_layout Subsubsection
+Socket.IO
+\end_layout
+
+\begin_layout Standard
+Socket.IO is a library that allows developers to easily set up realtime two-way
+ communication channels between browsers and a Node.js server.
+ It tries to use WebSockets for this, but several fallbacks are included
+ to make Socket.IO work in nearly every browser.
+\end_layout
+
+\begin_layout Standard
+Since our project is limited to Google Chrome 28, WebSockets are available
+ and the fallback methods are not necessary.
+ We use Socket.IO to send all WebRTC initialization information from and
+ to peers that have not yet entered the network.
+\end_layout
+
+\begin_layout Subsubsection
+Underscore
+\end_layout
+
+\begin_layout Standard
+Underscore is a library for JavaScript that adds many useful functions to
+ extend the usefulness of Arrays and Objects in JavaScript.
+ Our project does not heavily rely on this functionality but it makes some
+ tasks easier to do.
 \end_layout
 
 \begin_layout Subsubsection
