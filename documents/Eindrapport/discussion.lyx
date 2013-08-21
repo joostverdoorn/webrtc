@@ -188,7 +188,7 @@ Apart from the ability to easily overload the network there are more issues
  The biggest problem we are facing is the total lack of sanity checks on
  received packets.
  First of all we expect all packets to be in a specific format and if a
- packet arrives that does not fit in this format, the resulting behaviour
+ packet arrives that does not fit in this format, the resulting behavior
  will be unpredictable.
  Depending on where the packet contains malformed information, the entire
  game might stop working, the connection to the network drops or nothing

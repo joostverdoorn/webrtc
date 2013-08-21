@@ -65,7 +65,7 @@ Client
 \end_layout
 
 \begin_layout Standard
-This client and supervisor of this BSc project are the same organisation:
+This client and supervisor of this BSc project are the same organization:
  TNO.
  TNO is a non-profit researchorganization that focuses on applied sciences.
 \end_layout
@@ -115,7 +115,7 @@ reference "sub:Problem-description"
  TNO's first goal is to explore the boundaries of what is possible with
  WebRTC.
  There are several subjects to think of when trying to reach this goal.
- You can think about number of simultanious users, different media sources
+ You can think about number of simultaneous users, different media sources
  for streaming, media synchronization, limitation of bandwidth and cross-browser
  compatibility.
  In chapter 
@@ -160,7 +160,7 @@ If the network of a game is completely centralized this means that the developer
 \end_layout
 
 \begin_layout Standard
-Decentralizing this network over many independant users can also have the
+Decentralizing this network over many independent users can also have the
  advantage of being harder to take down because there is not a single authority
  available.
  This results in an overall increase of stability at all times and does
@@ -198,9 +198,9 @@ Distributed networks
 \end_inset
 
  is a subject with large amounts of research already done.
- Most research focusses on specialised clients connecting to such a network.
+ Most research focuses on specialized clients connecting to such a network.
  Because WebRTC runs without external software directly in the user's browser,
- where computer ressources are not easily given to a script requesting it,
+ where computer resources are not easily given to a script requesting it,
  we thought it would be very interesting to focus on scalability.
  From here we constructed this mainresearchquestion: 
 \begin_inset Quotes eld
@@ -238,7 +238,7 @@ Deliverables
 \end_layout
 
 \begin_layout Standard
-In addition to the deliverables from the University (proces documentation,
+In addition to the deliverables from the University (process documentation,
  progress-reports, this document) we have two deliverables for TNO.
 \end_layout
 
