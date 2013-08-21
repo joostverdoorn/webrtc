@@ -83,11 +83,7 @@ During the study Computer Science, we encountered several software development
  completion of the project.
  At the beginning of each sprint the team decides which features shall be
  implemented and at the end of the sprint there has to be a working product.
- Unimplemented features will remain in the
-\begin_inset Quotes eld
-\end_inset
-
-Product Backlog
+ Unimplemented features will remain in the Product Backlog
 \begin_inset Quotes erd
 \end_inset
 
@@ -97,21 +93,21 @@ Product Backlog
 \begin_layout Standard
 In our team
 \noun on
-Karens
+ Karens
 \noun default
  is the Scrum Master.
  The task of the Scrum Master is to remove all distracting influences for
  the development team.
  Our Product Owner is
 \noun on
-Victor Klos
+ Victor Klos
 \noun default
  from TNO.
  He prioritizes our Product Backlog and will ensure our product meets the
  requirements for TNO.
 
 \noun on
-Eelco Cramer
+ Eelco Cramer
 \noun default
  from TNO will assist us with technical problems.
 \end_layout
@@ -121,11 +117,11 @@ The runtime of our project is very limited.
  Therefore we will have sprints of one week, from Thursday to Wednesday.
  Everyday at 10 o'clock we will have a daily standup that takes up 15 minutes
  at most.
- In this time we will discuss what we did the previous day and we will do
- the next day.
+ In this time we will discuss what we did the previous day and what we will
+ do the upcoming day.
  Every Thursday morning there will be a Sprint Planning Meeting to determine
  which Product Backlog items will get included in the upcoming sprint.
- The Product Owner will try to always attend at least this weekly meeting
+ The Product Owner will always try to attend at least this weekly meeting
  to properly prioritize the backlog items.
 \end_layout
 
@@ -144,7 +140,7 @@ To deliver a fully tested library we decided to use Behaviour-Driven Development
  Just like with TDD, tests in BDD are written before the actual unit is
  being implemented.
  After writing all (at that moment failing) tests, the developer will try
- to get test after test to pass by implementing the least amount of code
+ to get test after test asto pass by implementing the least amount of code
  possible for this.
 \end_layout
 
@@ -192,7 +188,7 @@ GitHub issues
 \end_layout
 
 \begin_layout Standard
-As explained in
+As explained in 
 \begin_inset CommandInset ref
 LatexCommand formatted
 reference "sub:GitHub"
@@ -204,28 +200,28 @@ reference "sub:GitHub"
  A new issue created ends up in the backlog.
  When the issue is chosen for the sprint, it gets a tag of the sprint, or
  so called milestones.
- That way we could easily filter the sprintlog from all other issues.
- In
+ That way we could easily filter the sprint log from all other issues.
+ In 
 \begin_inset CommandInset ref
 LatexCommand formatted
 reference "fig:Github-issues-image"
 
 \end_inset
 
- a sprintlog is illustrated.
+ a sprint log is illustrated.
 \end_layout
 
 \begin_layout Standard
-We also used labeling of the issues.
+We also used labelling of the issues.
  Some issues clearly belong to each other.
- For example in
+ For example in 
 \begin_inset CommandInset ref
 LatexCommand formatted
 reference "fig:Github-issues-image"
 
 \end_inset
 
-, labels
+, labels 
 \begin_inset Quotes eld
 \end_inset
 
@@ -264,7 +260,7 @@ status open
 \begin_inset Caption
 
 \begin_layout Plain Layout
-Github issues
+GitHub issues
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:Github-issues-image"
@@ -290,20 +286,20 @@ HUboard
 
 \begin_layout Standard
 HUboard is an instant project management tool for GitHub which helped us
- with an overview of the sprintlog.
+ with an overview of the sprint log.
  HUboard makes also use of labels, in our case: To do, In progress, Testing
  and Done.
  When an issue changes of status, you can drag it to other column.
  We also benefit of the prioritization possibilities in the To do category
  to order the issues the way the the Scrum product owner wanted it.
- See
+ See 
 \begin_inset CommandInset ref
 LatexCommand formatted
 reference "fig:HUboard"
 
 \end_inset
 
- for an example of our sprintlog.
+ for an example of our sprint log.
 \end_layout
 
 \begin_layout Standard

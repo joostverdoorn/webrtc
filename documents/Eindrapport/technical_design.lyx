@@ -72,7 +72,6 @@ The basis of the network is what we call the unstructured network: individual
  itself, and requires an additional layer to be fully useful as a peer-to-peer
  network.
  It does have a lot of value: the structured network described in the section
-
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Network-Topology"
@@ -83,7 +82,6 @@ reference "sub:Network-Topology"
  Also, individual peer-to-peer connections, such as the connection between
  the game and the mobile controller, are easily established using unstructured
  nodes.
-
 \end_layout
 
 \begin_layout Standard
@@ -260,8 +258,14 @@ When a node joins the network, it sets it's 3-dimensional coordinates between
  When a node joins the network this process executes fast but after a after
  a couple of steps, approximate position is assumed to be found.
  After that, a position is changing slowly to prevent the oscillating of
- the node.
+ the node 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "vivaldi"
 
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsubsection
@@ -280,7 +284,15 @@ Now, we have a coordinate system we can start electing supernodes.
  If the token position is close enough to own position, the node becomes
  a supernode.
  Other way all supernodes are being asked to give the closest child to the
- token which receives a that token - and the game of tokens starts over.
+ token which receives a that token - and the game of tokens starts over
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "PoPCorn"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsubsection
@@ -332,7 +344,21 @@ Game
 \end_layout
 
 \begin_layout Standard
-game uitleg
+Our game 
+\noun on
+Orbit Impossible
+\noun default
+ is a HTML5 3D dogfighting game.
+ All players start in a small aerial vehicle on the surface of a planet.
+ From here they can fly around the planet and shoot down other players with
+ little bullets.
+ Because we wanted the game to be easily playable for short amount of time
+ without a steep learning curve, we picked the immutable world variant.
+ An immutable world is easy to understand and does not require much explanation
+ to the user.
+ The only interaction a player can have with the world is landing on it,
+ and when approaching with a too large velocity, crashing into it.
+ The other possible interaction is shooting down other players.
 \end_layout
 
 \end_body

@@ -97,8 +97,7 @@ A peer-to-peer network is a decentralized distributed network architecture.
  without any interaction with the central server which keeps a track of
  all nodes.
  A node usually does not have a full knowledge of the network but instead
- has a limited awareness of the peer he communicates with, his neighbors.
-
+ has a limited awareness of the peer it communicates with, it's neighbours.
 \end_layout
 
 \begin_layout Subsubsection
@@ -107,13 +106,13 @@ Applications
 
 \begin_layout Standard
 There are countless applications where peer-to-peer technology is used.
- The most known application is for sure file sharing.
+ The most known application is definitely file sharing.
  Because of no need of the central server, peer-to-peer file sharing application
 s scale better for a huge amount of data is being sent through the network
  and benefit of high bandwidth.
  Some instant messaging software also relies on peer-to-peer networks.
- Beside traffic savings, IM software also profits from the ensured privacy
- because the messages are not stored on some server on Internet.
+ Beside traffic savings, instant messaging software also profits from the
+ ensured privacy because the messages are not stored on some server on Internet.
  Peer-to-peer is also used in many other applications for media streaming
  or content distribution purposes.
 \end_layout
@@ -125,22 +124,22 @@ Infrastructure
 \begin_layout Standard
 The simplest form of a peer to peer network is an
 \emph on
-unstructured
+ unstructured
 \emph default
  network.
  Nodes are randomly connected with each other and share data inefficiently.
  All nodes have the same roles in this network.
  It is usually better to implement some kind of overlay network to help
- the nodes find each other and transmit data, by creating a
+ the nodes to better find each other and transmit data, by creating a
 \emph on
-structured
+ structured
 \emph default
  network.
- For example the nodes with more bandwidth operate as super nodes and help
+ For example the nodes with more bandwidth operate as supernodes and help
  the other nodes to communicate with each other.
  Node availability can also be one of the ways to structure the network.
  There are many implementations of structured networks, discussed later
- in
+ in 
 \begin_inset CommandInset ref
 LatexCommand formatted
 reference "sub:Peer-to-Peer"
@@ -157,36 +156,11 @@ MMOG
 \end_layout
 
 \begin_layout Standard
-A massively multiplayer online game (MMOG) is a videogame with the ability
+A massively multiplayer online game (MMOG) is a video game with the ability
  to support a large amount of players to play the game together at once.
  As the name states, this has to work over the internet.
-\end_layout
-
-\begin_layout Standard
-MMOG's can chose to have a persistent world that is ever changing or the
+ MMOG's can choose to have a persistent world that is ever changing or the
  opposite, a world that is static and immutable.
-\end_layout
-
-\begin_layout Standard
-Our game
-\begin_inset Quotes eld
-\end_inset
-
-Orbit Impossible
-\begin_inset Quotes erd
-\end_inset
-
- is a HTML5 3D dogfighting game.
- All players start in a small aerial vehicle on the surface of a planet.
- From here they can fly arouond the planet and shoot down other players
- with little bullets.
- Because we wanted the game to be easily playable for short amounts of time
- without a steep learning curve, we picked the immutable world variant.
- An immutable world is easy to understand and does not require much explanation
- to the user.
- The only interaction a player can have with the world is landing on it,
- and when approaching with a too large velocity, crashing into it.
- The other possible interaction is shooting down other players.
 \end_layout
 
 \end_body

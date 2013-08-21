@@ -73,7 +73,7 @@ name "sub:WebRTC"
 
 \begin_layout Standard
 As WebRTC is an integral part of the project, a lot of early research has
- gone into reading the official W3C WebRTC specifications
+ gone into reading the official W3C WebRTC specifications 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "w3cwebrtcspec"
@@ -93,10 +93,10 @@ API differences
 \end_layout
 
 \begin_layout Standard
-We found early on that even though the Firefox and Chrome web browsers are
- able to communicate to each other through WebRTC, they don't yet use the
- same JavaScript API for their connections.
- Comparing their respective APIs with the official WebRTC specifications
+In an early phase we discovered that even though the Firefox and Chrome
+ web browsers are able to communicate to each other through WebRTC, they
+ don't yet use the same JavaScript API for their connections.
+ Comparing their respective API's with the official WebRTC specifications
  we found that Chrome's implementation came closest, and keeping in mind
  that we were merely conducting research on WebRTC and not building a consumer
  product, we decided to drop support for Firefox.
@@ -118,11 +118,10 @@ Reliably establishing a peer-to-peer connection between two consumer devices
  by firewalls and located behind a Network Address Translation service (NAT).
  WebRTC utilizes several technologies to enable peers to connect through
  environments that limit the connectivity of the peers.
-
 \end_layout
 
 \begin_layout Standard
-ICE, Interactive Connectivity Establishment
+ICE, Interactive Connectivity Establishment 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "ietficespec"
@@ -138,9 +137,8 @@ key "ietficespec"
  These offers and answers are in a format defined by the Session Description
  Protocol, which is a standard created back in 1998 to assist in setting
  up streaming media connections such as Bluetooth headsets streaming audio
- to and from mobile phones and videoconferencing where both video and audio
+ to and from mobile phones and video conferencing where both video and audio
  are streamed between a multitude of entities.
-
 \end_layout
 
 \begin_layout Subsubsection*
@@ -148,7 +146,7 @@ STUN and TURN
 \end_layout
 
 \begin_layout Standard
-ICE heavily relies on STUN, Session Traversal Utilities for NAT
+ICE heavily relies on STUN, Session Traversal Utilities for NAT 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "ietfstunspec"
@@ -165,7 +163,7 @@ key "ietfstunspec"
 \end_layout
 
 \begin_layout Standard
-TURN, Traversal Using Relay NAT
+TURN, Traversal Using Relay NAT 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "ietfturnspec"
@@ -183,7 +181,7 @@ key "ietfturnspec"
 \end_layout
 
 \begin_layout Subsubsection*
-Signaling channels
+Signalling channels
 \end_layout
 
 \begin_layout Standard
@@ -191,12 +189,11 @@ Before a peer connection is established, the peers have to exchange the
  connectivity information in the form of SDP packets.
  Since there's no connection between these peers yet, these packets have
  to be routed through a third party that can communicate with either node,
- also called a signaling channel.
+ also called a signalling channel.
  The official W3C WebRTC specifications do not provide a detailed description
- on what form this signaling channel should take on and instead leave it
+ on what form this signalling channel should take on and instead leave it
  to the developer to guide the exchange of SDP packets.
  We identified several possible manners to achieve this initialization.
-
 \end_layout
 
 \begin_layout Itemize
@@ -205,7 +202,6 @@ Using a web server, one can use AJAX requests which in turn routes information
  has to be aware that the other peer is requesting a connection, or that
  the use of continuous AJAX polling, continuously requesting the server
  for an update, is required.
-
 \end_layout
 
 \begin_layout Itemize
@@ -220,12 +216,11 @@ Another way to establish the connection is to have all peers connected to
 Apart from that, it would in theory be possible to use a DNS discovery technique
 s such as Apple's Bonjour to detect WebRTC nodes on the local network, but
  this isn't (yet) possible without the use third party plugins.
-
 \end_layout
 
 \begin_layout Itemize
-Aside from using a web server or nonexistent technology, it would also be
- possible, although cumbersome, to exchange the information in manually,
+Aside from using a web server or non-existent technology, it would also
+ be possible, although cumbersome, to exchange the information in manually,
  like using QR-encoding to encode the SDP into an image which can be scanned
  by another machine.
 \end_layout
@@ -235,15 +230,14 @@ WebSockets
 \end_layout
 
 \begin_layout Standard
-The choice of which technology to use for the signaling channel was a relatively
- easy one: WebSockets seemed to be the best technology for our purposes
+The choice of which technology to use for the signalling channel was a relativel
+y easy one: WebSockets seemed to be the best technology for our purposes
  as it has very few downsides and provides a reliable way for exchanging
  data, and this choice was backed up by numerous sources on the internet
- where the use of WebSockets as signaling channel was ubiquitous among WebRTC
- applications.
+ where the use of WebSockets as signalling channel was ubiquitous among
+ WebRTC applications.
  This choice, however, requires a more advanced web server than the well-known
  Apache-PHP-MySQL setup which runs a better part of the internet.
-
 \end_layout
 
 \begin_layout Standard
@@ -255,7 +249,7 @@ ls, we found that a NodeJS server best fit our needs, not the least because
  of functionality and make the whole application less error prone because
  the shared functionality has to be tested only once instead of twice.
  NodeJS is perfectly capable of opening and maintaining numerous WebSocket
- connections to provide the signaling functionality we require.
+ connections to provide the signalling functionality we require.
 \end_layout
 
 \begin_layout Subsubsection
@@ -275,9 +269,9 @@ Once a connection has been established, exchanging data is trivial.
 \end_layout
 
 \begin_layout Standard
-In our prototypes, we found that data channels are by default ratelimited
+In our prototypes, we found that data channels are by default rate limited
  to 30 kilobits per second, and if one attempted to send data faster, WebRTC
- would throw mysterious and indescriptive error messages.
+ would throw mysterious and in-descriptive error messages.
  After some research we discovered that the (automatically generated) SDP
  packet generated at initialization can be simply edited to increase the
  data rate, although this method is very unintuitive and feels a bit awkward.
@@ -311,7 +305,7 @@ name "sub:Peer-to-Peer"
 \end_layout
 
 \begin_layout Standard
-In
+In 
 \begin_inset CommandInset ref
 LatexCommand nameref
 reference "sub:Assignment-formulation"
@@ -320,7 +314,7 @@ reference "sub:Assignment-formulation"
 
  we already have defined that the type of peer-to-peer application will
  be a browser based game.
- Out research on peer-to-peer networks will consequently be related to our
+ Our research on peer-to-peer networks will consequently be related on our
  choice.
 \end_layout
 
@@ -332,7 +326,7 @@ Node heterogeneity
 Our goal is to create a stable, fast performing network with WebRTC technology.
  It is important to realize that every node which wants to connect to the
  network is different, and thus will not perform the on same way.
- According to Jan Sacha
+ According to Jan Sacha 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "sacha2009exploiting"
@@ -385,7 +379,7 @@ Sending a large amount of data leads to processing a large amount of data.
 Some of the nodes can be located behind firewalls and be only able to connect
  to a limited amount of nodes.
  It is definitely our goal to ensure everyone who is able make a WebRTC
- connection to at least one of the nodes (and that is not so hard, see
+ connection to at least one of the nodes (and that is not so hard, see 
 \begin_inset CommandInset ref
 LatexCommand formatted
 reference "sub:WebRTC"
@@ -393,7 +387,7 @@ reference "sub:WebRTC"
 \end_inset
 
  ), can communicate to all others.
- Therefor, we have to provide a path that allows every node to reach every
+ Therefore, we have to provide a path that allows every node to reach every
  other node.
  This connectivity is one of our key properties that allows our players
  to play the game with each other.
@@ -445,7 +439,7 @@ WebRTC is a new technology and first we decided to run some tests of how
 \end_layout
 
 \begin_layout Standard
-Leitao
+Leitao 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Leitão_onthe"
@@ -466,7 +460,7 @@ Each adaptation should also use limited information to reduce communication
 \end_layout
 
 \begin_layout Enumerate
-The adaption mechanisms should not break the network if a node functions
+The adoption mechanisms should not break the network if a node functions
  with a limited or incorrect information.
  This can be expected in large networks.
 \end_layout
@@ -477,7 +471,7 @@ A network should strive to keep an up-to-date track of all nodes connected
 \end_layout
 
 \begin_layout Enumerate
-The adaption mechanisms should dynamically improve the network stability.
+The adoption mechanisms should dynamically improve the network stability.
 \end_layout
 
 \begin_layout Enumerate
@@ -516,20 +510,20 @@ A supernode is a node who acts like a server to a group of clients, we can
  There is a lot of research done on supernode topologies..
  The key question in here is: How many supernodes are desired and which
  node is the best candidate?
-\begin_inset CommandInset citation
-LatexCommand cite
-key "sacha2009exploiting"
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
 Because of the enormous amount of the supernode algorithms we will split
  them in different categories.
  Jan Sacha defines four groups that use a different supernode election mechanism
-s:
+s 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sacha2009exploiting"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Enumerate
@@ -595,15 +589,14 @@ Group based network systems
 
 \begin_layout Standard
 We would like to compare a couple of group based systems below.
- They are divided into three classes by how nodes are organized.
-
+ They are divided into three classes by how nodes are organized 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "sacha2009exploiting"
 
 \end_inset
 
-
+.
 \end_layout
 
 \begin_layout Enumerate
@@ -647,11 +640,11 @@ Now we made a choice which type of algorithm we are going to use, we started
 \series bold
 Crown
 \series default
- is organizes the network by the prefix of the ip of the user.
+ is organizes the network by the prefix of the IP of the user.
  The users with the same prefix are likely to have low latency and high
  bandwidth.
  Nodes in the same group elect a supernode with criteria of high bandwidth,
- high availability, large computational power and a low load
+ high availability, large computational power and a low load 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "conf/euc/WangTL04"
@@ -659,7 +652,7 @@ key "conf/euc/WangTL04"
 \end_inset
 
 .
- This approach looks very simple and sorting the nodes by ip can be very
+ This approach looks very simple and sorting the nodes by IP can be very
  unreliable.
  Also no situation is described when there are too much nodes in the same
  group.
@@ -675,14 +668,15 @@ PASS
  The approach is similar to crown by grouping the nodes by latency.
  An interesting idea here is that PASS introduces a strong single node that
  handles all communication between separate groups.
- Also in PASS a supernode keeps track a backup supernode for case it leaves.
+ Also in PASS a supernode keeps track a backup supernode for case it leaves
+ 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "conf/saint/KwonR03"
 
 \end_inset
 
-
+.
 \end_layout
 
 \begin_layout Enumerate
@@ -699,10 +693,10 @@ al space.
  If the force is lower than a certain threshold for a certain number of
  time steps, a node may keep it and becomes a supernode.
  This approach does not describe how a token generation works in a real
- time scenario
+ time scenario 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "Lo:2005:SSS:1090948.1091371"
+key "PoPCorn"
 
 \end_inset
 
@@ -714,10 +708,10 @@ key "Lo:2005:SSS:1090948.1091371"
 \series bold
 Wolf and Merz
 \series default
-heuristic evolutionary algorithm tries to minimize the distance between
+ heuristic evolutionary algorithm tries to minimize the distance between
  the supernodes and their clients and the distance between the supernodes.
  This algorithm uses the local search principle to hopefully find a suitable
- solution
+ solution 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "wolf"
@@ -725,7 +719,7 @@ key "wolf"
 \end_inset
 
 .
- An interesting fact is that in
+ An interesting fact is that 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "wolf"
@@ -742,14 +736,14 @@ We chose for the PoPCorn algorithm because the organization of nodes based
  supernodes dependent of the real time coordinates.
  However a lot of implementation details are missing which offers an opportunity
  to edit PoPCorn to our own needs.
- The technical design explained later in
+ The technical design explained later in 
 \begin_inset CommandInset ref
 LatexCommand formatted
 reference "sub:Network-Topology"
 
 \end_inset
 
-
+.
 \end_layout
 
 \begin_layout Subsection
@@ -757,10 +751,10 @@ MMOG
 \end_layout
 
 \begin_layout Standard
-The game is our second delivery with the only purpose to demonstrate the
- functionality of our networkinglibrary in a fun way.
+The game is our second deliverable with the only purpose to demonstrate
+ the functionality of our networking library in a fun way.
  Therefore we did not properly design a game and just brainstormed about
- gameideas until we found something we all liked.
+ game ideas until we found something we all liked.
 \end_layout
 
 \begin_layout Standard
@@ -791,7 +785,7 @@ alien
  Players can also fire small projectiles that kill other players on hit
  as well.
  To further demonstrate synchronization in the network, the game contains
- a leaderboard showing all accumulated kills and deaths of active players.
+ a leader board showing all accumulated kills and deaths of active players.
 \end_layout
 
 \begin_layout Standard

@@ -65,9 +65,9 @@ Client
 \end_layout
 
 \begin_layout Standard
-This client and supervisor of this BSc project are the same organization:
+The client and supervisor of this BSc project is the same organization:
  TNO.
- TNO is a non-profit researchorganization that focuses on applied sciences.
+ TNO is a non-profit research organization that focuses on applied sciences.
 \end_layout
 
 \begin_layout Subsection
@@ -105,7 +105,7 @@ Goal
 \end_layout
 
 \begin_layout Standard
-As described in
+As described in 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Problem-description"
@@ -118,7 +118,7 @@ reference "sub:Problem-description"
  You can think about number of simultaneous users, different media sources
  for streaming, media synchronization, limitation of bandwidth and cross-browser
  compatibility.
- In chapter
+ In chapter 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Assignment-formulation"
@@ -202,7 +202,7 @@ Distributed networks
  Because WebRTC runs without external software directly in the user's browser,
  where computer resources are not easily given to a script requesting it,
  we thought it would be very interesting to focus on scalability.
- From here we constructed this mainresearchquestion:
+ From here we constructed this main research question: 
 \begin_inset Quotes eld
 \end_inset
 
@@ -216,7 +216,7 @@ How is it possible to create a dynamic peer-to-peer multiplayer-game-network
 \end_layout
 
 \begin_layout Itemize
-How can we distribute essential networktasks over all peers?
+How can we distribute essential network tasks over all peers?
 \end_layout
 
 \begin_layout Itemize
@@ -245,7 +245,7 @@ In addition to the deliverables from the University (process documentation,
 \begin_layout Standard
 The first is a JavaScript library that allows anyone to easily create a
  scalable network with WebRTC.
- This library will contain all functionality to cover the researchquestions
+ This library will contain all functionality to cover the research questions
  posed in the previous chapter.
 \end_layout
 
@@ -261,7 +261,7 @@ Risks
 \end_layout
 
 \begin_layout Standard
-Before we started this project we saw bad timemanagement as the biggest
+Before we started this project we saw bad time management as the biggest
  risk.
  In the original plan of action this was described as possibly not finishing
  the library or the game.
