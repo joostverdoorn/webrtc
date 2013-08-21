@@ -75,13 +75,12 @@ define [
 		# negotiation process.
 		#
 		connect: ( ) ->
-			@_isConnector = true
-
 			channel = @_connection.createDataChannel('a', @_channelConfiguration)
 			@_addChannel(channel)
 
 			@_controller.queryTo(@id, 'requestConnection', @_controller.id, ( accepted ) =>
 				console.log "connection request #{accepted} to node #{@id}"
+				console.trace()
 
 				unless accepted
 					@trigger('failed')

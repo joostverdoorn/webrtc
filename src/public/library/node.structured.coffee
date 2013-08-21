@@ -523,7 +523,7 @@ define [
 									if success
 										@addSibling(peer)
 									else
-										console.warn "can not connect to ", peer.id
+										console.log "can not connect to ", peer.id
 								)
 						) (superNode)
 

@@ -46,6 +46,14 @@ define [
 		# @param serverAddress [String] the uri address of the server
 		#
 		constructor: ( @serverAddress = @serverAddress ) ->
+			console._log = console.log
+
+			console.log = ( args... ) =>
+				timestamp = '[' + @time() + '] '
+				args = [timestamp].concat(args)
+				console._log.apply(console, args)
+
+
 			@messageStorage = []
 			@partialMessages = {}
 
