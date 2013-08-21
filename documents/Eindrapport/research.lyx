@@ -817,7 +817,7 @@ After developing major parts of the game we noticed that the spaceships
 \begin_layout Standard
 As time we take the time that has elapsed since the last position arrived.
  As speed and direction we take the values from the previous packet.
- As soon as we arrive a new packet with a real location, we smoothly move
+ As soon as we receive a new packet with a real location, we smoothly move
  the spaceship from the calculated fake position to the actual deterministic
  location.
 \end_layout
