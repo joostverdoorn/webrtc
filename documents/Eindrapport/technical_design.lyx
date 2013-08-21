@@ -264,21 +264,6 @@ When a node joins the network, it sets it's 3-dimensional coordinates between
  
 \end_layout
 
-\begin_layout Standard
-This algorithm performs weak if a node has only one connection to it's parent.
- A stable foundation is needed to find a place in the space.
- That's why every node has connection to at least three supernodes.
- Not only for position purposes but also for backup when a parent leaves.The
- first three nodes joining the network automatically become a supernode.
- Nodes joining the network receive a list of existing supernodes from the
- server and choose a random supernode as parent.
- When a node has settled it gets a recommendation from his parent with the
- closest supernode.
- If it is worth it, the node switches from parent.
- After switching is checked if a node has children then it can lose it's
- supernode status.
-\end_layout
-
 \begin_layout Subsubsection
 PoPCorn
 \end_layout
@@ -303,7 +288,43 @@ Quirks
 \end_layout
 
 \begin_layout Standard
-adaptive
+Vivaldi and PoPCorn describe the basic idea of how the network topology
+ should look like and how it evolutes.
+ However not all details are explained in the papers.
+ In this subsection we would like to tell about our additions to the network
+ topology.
+\end_layout
+
+\begin_layout Standard
+Vivaldi performs weak if a node has only one connection to it's parent.
+ A stable foundation is needed to find a place in the space.
+ That's why every node has connection to at least three supernodes.
+ Not only for position purposes but also for backup when a parent leaves.
+ The first three nodes which join the network automatically become a supernode.
+ New nodes joining the network receive a list of existing supernodes from
+ the server and choose a random supernode as parent.
+ When a node has settled it gets a recommendation from it's parent with
+ the closest supernode.
+ If it is worth it, the node switches from parent.
+ After switching, we check if a node has children then it can lose it's
+ supernode status.
+ So is the amount of supernodes dynamically adjusts to the size of the network.
+\end_layout
+
+\begin_layout Standard
+An interesting detail is how the nodes are getting a parent node.
+ Due to continuously changing network where the nodes are changing of the
+ supernode status, asynchronous errors are very easy to get.
+ That is why we use a query functionality to request adoption of a supernode.
+ A supernode can always reject new requests if the situation has changed.
+\end_layout
+
+\begin_layout Standard
+As just said, asynchronous requests make the network vulnerable for errors.
+ We implemented some functionality that can automatically detect and fix
+ errors.
+ Checking for inconsistencies is an important part of the network to ensure
+ the network keeps running.
 \end_layout
 
 \begin_layout Subsection
