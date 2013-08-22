@@ -836,5 +836,22 @@ Implementing this feature now makes sure that movements look very natural
  at all times.
 \end_layout
 
+\begin_layout Subsubsection
+Network utilisation
+\end_layout
+
+\begin_layout Standard
+In order to keep the game playable with a decent amount of players (around
+ 50) we need to make sure the game does not use too much bandwidth.
+ Currently the game sends five packets per second about the players location
+ and velocity.
+ Every projectile results in one more packet.
+ Bandwidth monitoring showed us that for every additional player in the
+ game the total bandwidth usage increased with an average of 0.1 kilobyte/second
+ (up- and download together).
+ 50 people playing together therefore results in an average bandwidth usage
+ of 5 kilobyte/second, which is by any terms acceptable.
+\end_layout
+
 \end_body
 \end_document
