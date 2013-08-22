@@ -70,6 +70,21 @@ The client and supervisor of this BSc project is the same organization:
  TNO is a non-profit research organization that focuses on applied sciences.
 \end_layout
 
+\begin_layout Standard
+This chapter will start with a description of our problem.
+ Following the description is the project's goal and philosophy about why
+ we chose this subject.
+ Thirdly we specify the main research question and explain why we picked
+ it.
+ After that the pre-determined deliverables are discussed and last but not
+ least we compare the previously determined risks to the actual problems
+ we encountered with the planning of this project.
+\end_layout
+
+\begin_layout Standard
+Most of this information can also be found in the original plan of action.
+\end_layout
+
 \begin_layout Subsection
 Problem description
 \begin_inset CommandInset label
@@ -82,7 +97,7 @@ name "sub:Problem-description"
 \end_layout
 
 \begin_layout Standard
-TNO tries to always keep up with new advancements in technology.
+TNO always keeps up with new advancements in technology.
  This is necessary so they can advise their own customers about these technologi
 es.
 \end_layout
@@ -138,34 +153,29 @@ Philosophy
 \end_layout
 
 \begin_layout Standard
-Nowadays common people have access to very fast and cheap internet connections.
+Nowadays people have access to very fast and relatively cheap internet connectio
+ns.
  In countries like the Netherlands the available bandwidth often extremely
  exceeds the actual use of the average customer.
- This means that many private customers pay for more than they need.
- This gives website operators the ability to (ab-)use their visitors connections
- to save money themselves.
- Hosting and distributing a simple website usually isn't a problem, large
- multiplayer games however can use insane amounts of data and CPU power.
 \end_layout
 
 \begin_layout Standard
-If the network of a game is completely centralized this means that the developer
- has to pay and maintain many servers, even when the game itself is free
- to play.
- This is often impossible to do for a long time for small development teams.
- Luckily the before mentioned bandwidth of users can now effectively be
- used via WebRTC.
- This allows large games to be hosted on a very cheap server without any
- impact on the users.
-\end_layout
-
-\begin_layout Standard
-Decentralizing this network over many independent users can also have the
- advantage of being harder to take down because there is not a single authority
- available.
- This results in an overall increase of stability at all times and does
- not even require the original developer to permanently maintain their own
- systems.
+This makes peer-to-peer networks easier to implement because users are no
+ longer very limited in the ability to up- and download huge amounts of
+ data.
+ Advantages of peer-to-peer networks are the lack of a central authority
+ or when a central authority is used to bootstrap the network, this entity
+ can easily be replaced by other parties that do not trust the original
+ party.
+ Another advantage compared to a centralised system is the ability to store
+ the complete application offline and prevent unwillingly sharing personal
+ information.
+ Direct connections to other peers also stimulate the performance by offering
+ a lower latency in the connection because the middleman is cut out.
+ These direct connections also make it harder to track users and transferred
+ data, offering a higher degree of privacy for its users.
+ This added privacy and lack of a central authority in decentralised networks
+ make it nearly impossible to take down a peer-to-peer network.
 \end_layout
 
 \begin_layout Subsection
@@ -229,8 +239,8 @@ How can all data reach all peers in a bandwidth-efficient way?
 \end_layout
 
 \begin_layout Standard
-To cover all these questions we decided to develop a small Massively Multiplayer
- Online Game (MMOG) as demonstration of our underlying WebRTC network structure.
+To cover all these questions we decided to develop a simple Massively Multiplaye
+r Online Game (MMOG) as demonstration of our underlying WebRTC network structure.
 \end_layout
 
 \begin_layout Subsection
@@ -265,7 +275,7 @@ Before we started this project we saw bad time management as the biggest
  risk.
  In the original plan of action this was described as possibly not finishing
  the library or the game.
- In the end did make two working parts, but both do not contain all planned
+ In the end we did make two working parts, but both do not contain all planned
  features.
 \end_layout
 
