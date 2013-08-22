@@ -109,13 +109,19 @@ Tools
 
 \begin_layout Subsubsection
 Node Inspector
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Node-Inspector"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
 We made our own Node Inspector in WebGL that shows all nodes in a 3-dimensional
  space.
  This tool has been very handy during debugging Vivaldi and PoPCorn.
-
 \begin_inset CommandInset ref
 LatexCommand formatted
 reference "fig:Node-Inspector"
@@ -168,6 +174,13 @@ name "fig:Node-Inspector"
 
 \begin_layout Subsubsection
 Map
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Map"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard

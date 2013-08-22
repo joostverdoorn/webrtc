@@ -65,10 +65,6 @@ Technology
 \end_layout
 
 \begin_layout Subsubsection
-WebRTC
-\end_layout
-
-\begin_layout Subsubsection
 WebSockets
 \end_layout
 
@@ -78,6 +74,15 @@ WebGL
 
 \begin_layout Subsubsection
 Canvas
+\end_layout
+
+\begin_layout Standard
+Our interface of the mobile controller is fully designed in canvas.
+ Canvas is used to draw 2D graphics on the fly and is supported by all modern
+ mobile browsers.
+ A canvas element is defined in HTML and is editable through JavaScript
+ and in our case CoffeeScript.
+ A lot of 2D drawing functions can be used.
 \end_layout
 
 \begin_layout Subsubsection
@@ -112,7 +117,7 @@ Frameworks
 
 \begin_layout Standard
 In this project we used several tools and frameworks that are essential
- for our networklibrary and game to work.
+ for our network library and game to work.
 \end_layout
 
 \begin_layout Subsubsection
@@ -201,8 +206,35 @@ Underscore is a library for JavaScript that adds many useful functions to
 Three.js
 \end_layout
 
+\begin_layout Standard
+Three.js is the only well documented and full featured JavaScript 3D library
+ that renders 3D objects with WebGL.
+ The library implements all we needed for the game design and we even used
+ it for visualisation of the nodes (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Node-Inspector"
+
+\end_inset
+
+) and visualisation of the game world (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Map"
+
+\end_inset
+
+).
+\end_layout
+
 \begin_layout Subsubsection
 KineticJS
+\end_layout
+
+\begin_layout Standard
+KineticJS is a HTML5 canvas JavaScript Framework that makes it easy to render
+ canvas elements and also implements multi touch event for mobile browsers.
+ Using an external library helped us a lot while designing the mobile controller.
 \end_layout
 
 \begin_layout Subsubsection
