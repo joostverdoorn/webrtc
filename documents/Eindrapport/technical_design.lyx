@@ -85,15 +85,44 @@ reference "sub:Network-Topology"
 \end_layout
 
 \begin_layout Subsubsection
-Event Driven Architecture
+Mixins
 \end_layout
 
 \begin_layout Standard
-The networking library makes use of an event driven approach to networking.
- Nodes communicate with each other by sending events, packed into Message
- objects, to their peers.
- These messages allow for connected peers to trigger events on each other
- which enables them to orchestrate complex procedures in a precise manner.
+To achieve multiple inheritance we use mixins, a design pattern common with
+ JavaScript (and therefore CoffeeScript) development.
+ Mixins work by having a class extend the Mixable class, which provides
+ the functionality to include mixins.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Event-Driven Architecture
+\end_layout
+
+\begin_layout Standard
+The networking library makes extensive use of events, for which the functionalit
+y is provided by a mixin.
+ Events are used for most of the internal functionality of the nodes, and
+ networking is also entirely event driven.
+ Nodes communicate with each other by emitting events on their remotes,
+ where they are transparently handled.
+ This enables peers to execute complex procedures by triggering a sequence
+ of events on their peers.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Messages
+\end_layout
+
+\begin_layout Standard
+Events are packed into Message objects that, beside the event, contains
+ the event parameters, the sender and intended receiver, the travelled route
+ and the maximum number of hops the message may take.
+ Message objects can be serialized and deserialized for network transfer,
+ and also provide functionality for splitting and reassembling messages
+ that are too large.
 \end_layout
 
 \begin_layout Subsubsection
@@ -104,7 +133,32 @@ Controllers
 Nodes as well as the server represent a Controller - an interface that provides
  some common functionality like the relaying of messages or responding to
  queries.
+ Controllers bind all networking functionality together, and maintain a
+ collection of their connected nodes.
  
+\end_layout
+
+\begin_layout Subsubsection
+Remotes
+\end_layout
+
+\begin_layout Standard
+All remote communicating entities - a peer, a server or a client - are represent
+ed by a Remote sub class.
+ The Remote base class provides a common transparent API for all communication,
+ whether this communication is implemented by WebSockets or WebRTC.
+ Remotes are handled by the controller, as displayed in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Communication-between-server-and-nodes"
+
+\end_inset
+
+.
+ When a Remote object receives a message, it checks if the message is intended
+ for its controller.
+ If it is, it triggers the event packed in the message.
+ If not, the message is relayed to reach its intended receiver.
 \end_layout
 
 \begin_layout Standard
@@ -129,6 +183,12 @@ status open
 \begin_inset Caption
 
 \begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Communication-between-server-and-nodes"
+
+\end_inset
+
 Communication between server and nodes
 \end_layout
 
@@ -143,19 +203,6 @@ Communication between server and nodes
 \end_layout
 
 \begin_layout Subsubsection
-Remotes
-\end_layout
-
-\begin_layout Standard
-All remote communicating entities - a peer, a server or a client - are represent
-ed by a Remote sub class.
- The Remote base class provides a common API for all communication, whether
- this communication is implemented by WebSockets or WebRTC.
- This allows network communication to flow transparently via either a peer
- connection or a
-\end_layout
-
-\begin_layout Subsubsection
 Initialization
 \end_layout
 
@@ -163,7 +210,7 @@ Initialization
 As discussed in the section
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:Initialization"
+reference "sub:Establishing-a-peer"
 
 \end_inset
 
@@ -171,6 +218,20 @@ reference "sub:Initialization"
  WebSockets.
  The server, as other controllers, relays any message where the message
  indicates the controller is not the intended receiver.
+ 
+\end_layout
+
+\begin_layout Standard
+Let Alice and Bob be two nodes.
+ Alice wants to connect to Bob.
+ See figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Initialisation-of-the"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -184,7 +245,7 @@ status open
 \begin_inset Graphics
 	filename images/initialisation.png
 	lyxscale 50
-	width 70line%
+	width 100line%
 
 \end_inset
 
@@ -214,89 +275,6 @@ Initialisation of the connection
 
 \end_layout
 
-\begin_layout Standard
-With assistance of 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Initialisation-of-the"
-
-\end_inset
-
- we can explain how the peer-to-peer connection between two nodes Alice
- and Bob is established.
- 
-\end_layout
-
-\begin_layout Enumerate
-Alice tells the server to ask Bob if he wants to connect to her.
-\end_layout
-
-\begin_layout Enumerate
-Bob receives the connection request from the server.
-\end_layout
-
-\begin_layout Enumerate
-If Bob wants to connect, he tells the server to confirm this to Alice.
-\end_layout
-
-\begin_layout Enumerate
-Alice receives the confirmation from the server, and starts generating a
- connection offer.
-\end_layout
-
-\begin_layout Enumerate
-Alice calls the STUN-server to determine her external IP-address.
-\end_layout
-
-\begin_layout Enumerate
-The STUN-server responds with Alice's external IP-address.
-\end_layout
-
-\begin_layout Enumerate
-Alice now has a complete connection offer and tells the server to forward
- this to Bob.
-\end_layout
-
-\begin_layout Enumerate
-Bob receives the connection offer and starts generating an answer.
-\end_layout
-
-\begin_layout Enumerate
-Bob calls the STUN-server to determine his external IP-address.
-\end_layout
-
-\begin_layout Enumerate
-The STUN-server responds with Bob's external IP-address.
-\end_layout
-
-\begin_layout Enumerate
-Bob now has a complete connection answer and tells the server to forward
- this to Alice.
-\end_layout
-
-\begin_layout Enumerate
-Alice receives the answer and starts generating ICE candidates.
-\end_layout
-
-\begin_layout Enumerate
-When Alice is done generating ICE candidates, she tells the server to relay
- these candidates to Bob.
-\end_layout
-
-\begin_layout Enumerate
-Bob receives Alice's ICE candidates.
- By now, Bob has also generated ICE candidates.
-\end_layout
-
-\begin_layout Enumerate
-Bob tells the server to relay his ICE candidates to Alice.
-\end_layout
-
-\begin_layout Enumerate
-Alice receives the ICE candidates from Bob.
- Alice and Bob now have enough information and the connection is opened.
-\end_layout
-
 \begin_layout Subsection
 Network Topology
 \begin_inset CommandInset label
@@ -310,14 +288,14 @@ name "sub:Network-Topology"
 
 \begin_layout Standard
 In this section the whole network topology is being explained.
- Like in
+ As discussed in
 \begin_inset CommandInset ref
 LatexCommand formatted
 reference "sub:Peer-to-Peer"
 
 \end_inset
 
- said, we chose for PoPCorn as supernode election algorithm.
+, we chose for PoPCorn as supernode election algorithm.
  In this section we will explain how we implemented it.
  PoPCorn uses Vivaldi coordinate system and therefore we will discuss it
  too.

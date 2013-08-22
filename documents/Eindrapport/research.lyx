@@ -109,6 +109,13 @@ In an early phase we discovered that even though the Firefox and Chrome
 
 \begin_layout Subsubsection
 Establishing a peer connection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Establishing-a-peer"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -243,13 +250,13 @@ y easy one: WebSockets seemed to be the best technology for our purposes
 
 \begin_layout Standard
 Among the possibilities, which also included a custom Java server or Ruby-on-Rai
-ls, we found that a NodeJS server best fit our needs, not the least because
- NodeJS, like web browsers, runs JavaScript.
+ls, we found that a Node.js server best fit our needs, not the least because
+ Node.js, like web browsers, runs JavaScript.
  This means that both client and server are able to run the same code, which
  has the advantages of slimming down the code base by avoiding the duplication
  of functionality and make the whole application less error prone because
  the shared functionality has to be tested only once instead of twice.
- NodeJS is perfectly capable of opening and maintaining numerous WebSocket
+ Node.js is perfectly capable of opening and maintaining numerous WebSocket
  connections to provide the signalling functionality we require.
 \end_layout
 
