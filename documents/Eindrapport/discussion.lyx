@@ -263,13 +263,70 @@ Cross Platform
 Currently our library only works with Google Chrome 28 and above.
  This limitation has to do with the lack of implementations of WebRTC in
  most other browsers.
- The only other browser having a limited amount of WebRTC capabilities is
- Mozilla Firefox.
+ The only other browser with WebRTC support that is commonly used is Mozilla
+ Firefox.
  Unfortunately this browser does not implement all callbacks as the W3C
  defined them in the API.
  Luckily it is only a matter of time until more browsers start implementing
  WebRTC and Mozilla Firefox switching to the official API definition and
  this problem should fix itself.
+\end_layout
+
+\begin_layout Standard
+In our research we neglected Opera because of its tiny amount of the marketshare
+ (1.15% worldwide and even less in the Netherlands; see fig 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Marketshare-of-browsers"
+
+\end_inset
+
+ for reference).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/browser-stats-21082013.jpg
+	width 100line%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Marketshare of browsers on August 21, 2013; http://gs.statcounter.com/#browser-ww-
+daily-20130821-20130821-bar
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Marketshare-of-browsers"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection

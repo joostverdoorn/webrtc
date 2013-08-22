@@ -103,7 +103,8 @@ In an early phase we discovered that even though the Firefox and Chrome
  We had our hopes that Firefox would fix their implementation but as of
  this writing this has yet to happen.
  We do expect that Mozilla, Firefox's developer, will eventually bow to
- the official specifications and that our library will work on Firefox as well.
+ the official specifications and that our library will work on Firefox as
+ well.
 \end_layout
 
 \begin_layout Subsubsection
@@ -770,7 +771,7 @@ Because WebRTC offers low-latency data channels we picked the first option.
 \end_layout
 
 \begin_layout Standard
-We did pick a 3D dog fighting game around a planet with little
+We did pick a 3D dog fighting game around a planet with little 
 \begin_inset Quotes eld
 \end_inset
 
