@@ -91,11 +91,9 @@ Peer-to-Peer
 \end_layout
 
 \begin_layout Standard
-A peer-to-peer network is a decentralized distributed network architecture.
- All connected nodes are allowed to function like a client and a server.
- It means that the nodes in this network can communicate with each other
- without any interaction with the central server which keeps a track of
- all nodes.
+A peer-to-peer network is a decentralized distributed network architecture.The
+ nodes in the network can communicate with each other without any interaction
+ with the central server which keeps a track of all nodes.
  A node usually does not have a full knowledge of the network but instead
  has a limited awareness of the peer it communicates with, it's neighbours.
 \end_layout
@@ -107,9 +105,9 @@ Applications
 \begin_layout Standard
 There are countless applications where peer-to-peer technology is used.
  The most known application is definitely file sharing.
- Because of no need of the central server, peer-to-peer file sharing application
-s scale better for a huge amount of data is being sent through the network
- and benefit of high bandwidth.
+ The communication between peers does not proceed through the server and
+ therefore peer-to-peer file sharing applications scale better for a huge
+ amount of data is being sent through the network and benefit of high bandwidth.
  Some instant messaging software also relies on peer-to-peer networks.
  Beside traffic savings, instant messaging software also profits from the
  ensured privacy because the messages are not stored on some server on Internet.

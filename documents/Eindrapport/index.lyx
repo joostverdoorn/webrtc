@@ -377,7 +377,7 @@ Bibliography
 \begin_inset CommandInset bibtex
 LatexCommand bibtex
 btprint "btPrintAll"
-bibfiles "mybibfile"
+bibfiles "sources"
 options "plain"
 
 \end_inset

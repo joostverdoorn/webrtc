@@ -263,5 +263,41 @@ mozRTCPeerConnection".
 CoffeeScript
 \end_layout
 
+\begin_layout Standard
+CoffeeScript is a programming language and it compiles own source to JavaScript.
+ source so it can can be executed in browsers.
+ CoffeeScript has many advantages above JavaScript.
+ We are very happy we made a decision to use CoffeeScript and would like
+ to explain the advantages we loved the most.
+\end_layout
+
+\begin_layout Itemize
+Cleaner syntax.
+ We have been paranoia about the quality, readability and the beauty of
+ the code.
+ CoffeeScript syntax helped us to keep the code clean.
+\end_layout
+
+\begin_layout Itemize
+Fat Arrow (=>) allows the access to the coffee objects context inside the
+ callback function.
+\end_layout
+
+\begin_layout Itemize
+Object Orientation with 
+\begin_inset Quotes eld
+\end_inset
+
+class" keywords.
+ JavaScript self uses prototype approach for object orientation and does
+ not support classes.
+\end_layout
+
+\begin_layout Standard
+We are planning to release our library and the good part is that the library
+ can be used in all JavaScript projects because the compiled version of
+ the library is in JavaScript.
+\end_layout
+
 \end_body
 \end_document
