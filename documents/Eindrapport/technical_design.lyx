@@ -335,7 +335,7 @@ Our philosophy is to minimize the communication to the server and to aspire
 \end_layout
 
 \begin_layout Enumerate
-When going to the game url, a server distributes the needed files which
+When going to the game URL, a server distributes the needed files which
  are cached thereafter in the local storage.
 \end_layout
 

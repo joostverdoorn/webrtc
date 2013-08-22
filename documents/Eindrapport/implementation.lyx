@@ -85,9 +85,9 @@ Application Cache
 \end_layout
 
 \begin_layout Standard
-Our networklibrary and game don't use any dynamic serverside components.
+Our network library and game don't use any dynamic server side components.
  Therefore caching everything is a feasible option.
- Unfortunately browsers may decide to redownload files even though they
+ Unfortunately browsers may decide to re-download files even though they
  are still in the cache.
 \end_layout
 
@@ -145,9 +145,10 @@ http://en.wikipedia.org/wiki/Nodejs accessed on August 21, 2013
 \end_layout
 
 \begin_layout Standard
-In our project this platform is used on the central server in the networklibrary.
- It is used to deliver the clientside library code, the actual application
- (in our case a game) and kickstart the WebRTC communication between new
+In our project this platform is used on the central server in the network
+ library.
+ It is used to deliver the client-side library code, the actual application
+ (in our case a game) and kick start the WebRTC communication between new
  peers.
 \end_layout
 
@@ -172,8 +173,8 @@ Socket.IO
 \end_layout
 
 \begin_layout Standard
-Socket.IO is a library that allows developers to easily set up realtime two-way
- communication channels between browsers and a Node.js server.
+Socket.IO is a library that allows developers to easily set up real-time
+ two-way communication channels between browsers and a Node.js server.
  It tries to use WebSockets for this, but several fallbacks are included
  to make Socket.IO work in nearly every browser.
 \end_layout
@@ -206,6 +207,24 @@ KineticJS
 
 \begin_layout Subsubsection
 Adapter.js
+\end_layout
+
+\begin_layout Standard
+Adapter.js is a tiny library that suppose to take care of the differences
+ in the WebRTC implementation in Firefox and Chrome.
+ For example Chrome implements 
+\begin_inset Quotes eld
+\end_inset
+
+webkitRTCPeerConnection" while Firefox implements 
+\begin_inset Quotes eld
+\end_inset
+
+mozRTCPeerConnection".
+ Unfortunately not only the names differ, the implementation of WebRTC is
+ also different.
+ Firefox does not implement the needed event handlers specified by W3C to
+ set up the connection and implements an old specification from 2011.
 \end_layout
 
 \begin_layout Subsection

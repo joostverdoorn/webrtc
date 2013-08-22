@@ -155,7 +155,7 @@ Development tools
 \end_layout
 
 \begin_layout Subsubsection
-GitHub
+Git
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:GitHub"
@@ -165,12 +165,152 @@ name "sub:GitHub"
 
 \end_layout
 
-\begin_layout Subsubsection
-npm
+\begin_layout Standard
+As version control system we used git hosted on GitHub with web interface.
+ We decided to use git because of the many advantages above other version
+ control systems like speed and decentralisation.
+ Our project is about distributed systems after all.
+ Git helped us a lot to get more overview of continuously changing files.
 \end_layout
 
 \begin_layout Subsubsection
-cake
+Cake
+\end_layout
+
+\begin_layout Standard
+Cake is a tool that with we use to distribute our project.
+ Our so called Cakefile has the following features:
+\end_layout
+
+\begin_layout Itemize
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+cake deploy
+\end_layout
+
+\end_inset
+
+Automatically downloads the server dependencies from internet using Node
+ Package Manager (NPM), then runs a build command.
+ After this command a game is ready to play.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+cake build
+\end_layout
+
+\end_inset
+
+Compiles all coffee files and stores them in a the compiled folder.
+ Also copies all not coffee files to the compiled folder.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+cake clean
+\end_layout
+
+\end_inset
+
+Removes all not source files
+\end_layout
+
+\begin_layout Itemize
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+cake watch
+\end_layout
+
+\end_inset
+
+Watches the file system and if needed compiles and copies the edited files.
+ This is an continuous process until aborted.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+cake test
+\end_layout
+
+\end_inset
+
+Runs all tests for the library and starts a server up with the results
+\end_layout
+
+\begin_layout Itemize
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+cake lint
+\end_layout
+
+\end_inset
+
+Tests all coffee files on coding style
+\end_layout
+
+\begin_layout Itemize
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+cake run
+\end_layout
+
+\end_inset
+
+Starts a server on 
+\emph on
+localhost:8080
+\emph default
+ which responds to index.html for the game.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+cake doc
+\end_layout
+
+\end_inset
+
+Generates documentation based on the code and comments.
+ The documentation can be opened in 
+\emph on
+doc/index.html
 \end_layout
 
 \begin_layout Subsection
