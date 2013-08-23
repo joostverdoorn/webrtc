@@ -474,20 +474,49 @@ reference "fig:Mouse/Keyboard-control-mapping"
 
 ).
  When the mobile phone is selected, the user is asked to scan a QR code
- to connect his or her phone to the game.
+ to connect his or her phone to the game (figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:QR-code-to"
+
+\end_inset
+
+).
  After this is done, a similar control mapping is shown.
 \end_layout
 
 \begin_layout Standard
 After pressing the boost button, which is used to ascend from the planet,
- the player spawns in the world and starts to fly upwards.
+ the player spawns in the world and starts to fly upwards (figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:A-newly-spawned"
+
+\end_inset
+
+).
  The goal of the game is to kill as many opponents as possible while trying
  not to die yourself.
  Killing other players is possible by shooting tiny projectiles from a cannon
- attached to the bottom of the spacecraft.
+ attached to the bottom of the spacecraft (figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:A-player-firing"
+
+\end_inset
+
+).
  When a player dies, scores for the victim and the killer are updated in
  the scoreboard and the deceased player can respawn by pressing the boost
- button again.
+ button again (figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:The-leaderboard"
+
+\end_inset
+
+; the death in that screenshot resulted from a suicide, so no killer is
+ visible).
 \end_layout
 
 \begin_layout Standard
@@ -554,6 +583,166 @@ Mouse/Keyboard control mapping in Orbit Impossible
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:Mouse/Keyboard-control-mapping"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/qr-code-controller.png
+	width 100line%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+QR code to connect a mobile phone to Orbit Impossible
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:QR-code-to"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/player-spawn.png
+	width 100line%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+A newly spawned player
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:A-newly-spawned"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/player-fire.png
+	width 100line%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+A player firing projectiles
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:A-player-firing"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/leaderboard.png
+	width 100line%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+The leaderboard
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:The-leaderboard"
 
 \end_inset
 
