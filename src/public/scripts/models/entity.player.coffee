@@ -213,6 +213,10 @@ define [
 			# Create the cannon.
 			@cannon = new Cannon(@world, @ownerID, @owner, @)
 
+			@light = new Three.PointLight(0xffffff, 1, 0)
+			@light.position = @position
+			@scene.add(@light)
+
 			# Set the rotation of the player to be level with relation to the planet.
 			levelRotation = @calculateLevelRotation().clone()
 			levelRotationQuaternion = new Three.Quaternion().setFromEuler(levelRotation)

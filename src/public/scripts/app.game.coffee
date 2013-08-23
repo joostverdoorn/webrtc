@@ -15,6 +15,13 @@ requirejs.config
 		'qrcode': [ 'jquery' ]
 		'jquery.plugins': [ 'jquery' ]
 
+		'postprocessing/EffectComposer': [ 'three' ]
+		'postprocessing/RenderPass': [ 'three' ]
+		'postprocessing/ShaderPass': [ 'three' ]
+		'postprocessing/MaskPass': [ 'three' ]
+		'shaders/CopyShader': [ 'three' ]
+		'shaders/AdditiveBlendShader': [ 'three' ]
+
 	# We want the following paths for
 	# code-sharing reasons. Now it doesn't
 	# matter from where we require a module.
@@ -28,6 +35,13 @@ requirejs.config
 		'qrcode': 'vendor/scripts/qrcode.min'
 		'stats': 'vendor/scripts/stats.min'
 
+		'postprocessing/EffectComposer': 'vendor/scripts/postprocessing/EffectComposer'
+		'postprocessing/RenderPass': 'vendor/scripts/postprocessing/RenderPass'
+		'postprocessing/ShaderPass': 'vendor/scripts/postprocessing/ShaderPass'
+		'postprocessing/MaskPass': 'vendor/scripts/postprocessing/MaskPass'
+		'shaders/CopyShader': 'vendor/scripts/shaders/CopyShader'
+		'shaders/AdditiveBlendShader': 'vendor/scripts/shaders/AdditiveBlendShader'
+
 require [
 	'public/scripts/app._'
 
@@ -40,6 +54,7 @@ require [
 
 	'three'
 	'stats'
+
 	], ( App, GameModel, DesktopController, MobileController, Overlay, Three, Stats ) ->
 
 	# This game class implements the node structure created in the library.
@@ -47,20 +62,43 @@ require [
 	#
 	class App.Game extends App
 
+		viewAngle: 80
+		nearClip: 0.1
+		farClip: 20000
+
 		# This method will be called from the baseclass when it has been constructed.
 		#
 		initialize: ( ) ->
 			# Create scene.
 			@scene = new Three.Scene()
 			@scene.add(@camera)
-			@scene.fog = new Three.FogExp2( 0xaabbff, 0.0015 )
+			@scene.fog = new Three.FogExp2( 0x444fff, 0.0025 )
 
 			# Create sky dome.
-			geometry = new THREE.SphereGeometry( 1500, 6, 8 )
-			material = new THREE.MeshBasicMaterial(map: THREE.ImageUtils.loadTexture('/images/sky.jpg'))
-			@sky = new THREE.Mesh(geometry, material)
-			@sky.scale.x = -1
+			imagePrefix = "images/nebula-"
+			directions  = ["xpos", "xneg", "ypos", "yneg", "zpos", "zneg"]
+			imageSuffix = ".png"
+			skyGeometry = new Three.CubeGeometry( 5000, 5000, 5000 )
+
+			imageURLs = []
+			for i in [0...6]
+				imageURLs.push( imagePrefix + directions[i] + imageSuffix )
+
+			textureCube = Three.ImageUtils.loadTextureCube( imageURLs )
+			shader = Three.ShaderLib[ "cube" ]
+			shader.uniforms[ "tCube" ].value = textureCube
+
+			skyMaterial = new Three.ShaderMaterial
+				fragmentShader: shader.fragmentShader
+				vertexShader: 	shader.vertexShader
+				uniforms: 		shader.uniforms
+				depthWrite: 	false
+				side: 			Three.BackSide
+
+			@sky = new Three.Mesh( skyGeometry, skyMaterial )
 			@scene.add( @sky )
+
+
 
 			@game = new GameModel(@scene)
 
@@ -91,11 +129,21 @@ require [
 			@renderer.shadowMapSoft = true
 			@container.appendChild(@renderer.domElement)
 
+
 			# Create camera.
 			@aspectRatio = width / height
 			@camera = new Three.PerspectiveCamera(@viewAngle, @aspectRatio, @nearClip, @farClip)
 			@camera.position = new Three.Vector3(-300, 600, 0)
 			@camera.lookAt(new Three.Vector3(0, 300, 0))
+
+			# # Composing.
+			# @composer = new Three.EffectComposer(@renderer)
+			# renderPass = new Three.RenderPass(@scene, @camera)
+			# renderPass.renderToScreen = true
+			# @composer.addPass(renderPass)
+
+			# if @game.world.planet.loaded then @addAtmosphere
+			# else @game.world.planet.on('loaded', @addAtmosphere)
 
 			# Create stats display.
 			@stats = new Stats()
@@ -147,7 +195,7 @@ require [
 				cameraDirection.applyQuaternion(new Three.Quaternion().setFromEuler(@player.rotation.clone()))
 
 				# Get the target position of the camera
-				targetPosition = @player.position.clone().add(cameraDirection.multiplyScalar(80))
+				targetPosition = @player.position.clone().add(cameraDirection.multiplyScalar(60))
 
 				# If the distance to the target position is not too great, ease toward it.
 				if targetPosition.distanceTo(@camera.position) < 200
@@ -166,6 +214,9 @@ require [
 				# towards the player
 				@camera.up.set(@camera.position.x, @camera.position.y, @camera.position.z)
 				@camera.lookAt(@player.position)
+
+			# @atmosphere.material.uniforms.c.value = (@camera.position.length() - 300) / 300
+			# @game.world.planet.atmosphere?.material.uniforms.viewVector.value = new THREE.Vector3().subVectors(@camera.position, @game.world.planet.atmosphere.position)
 
 			# Update sky position
 			@sky.position = @camera.position.clone()

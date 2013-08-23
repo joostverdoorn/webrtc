@@ -21,10 +21,6 @@ define [
 
 		paused = true
 
-		viewAngle = 45
-		nearClip = 0.1
-		farClip = 2000
-
 		_lastUpdateTime = 0
 
 		# This method will be called from the baseclass when it has been constructed.

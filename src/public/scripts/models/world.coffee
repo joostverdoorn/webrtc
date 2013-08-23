@@ -43,12 +43,13 @@ define [
 			directionalLight.shadowDarkness = .5
 			@scene.add(directionalLight)
 
-			hemisphereLight = new Three.HemisphereLight(0x999999, 0x999999)
+			hemisphereLight = new Three.HemisphereLight(0xcccfff, 0xcccfff)
 			@scene.add(hemisphereLight)
 
 			# Create planet.
 			@planet = new Planet(@, null, false)
 			@planet.position = new Three.Vector3(0, 0, 0)
+			@addEntity(@planet)
 
 		# Adds a physics entity to the world
 		#
