@@ -100,6 +100,13 @@ reference "sub:Supernode-topologies-and"
 
 \begin_layout Subsubsection
 Routing tables
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Routing-tables"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard

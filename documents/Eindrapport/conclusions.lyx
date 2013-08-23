@@ -64,16 +64,36 @@
 Scalability
 \end_layout
 
+\begin_layout Standard
+Scalability is currently still an issue.
+ This is a direct result of all supernodes trying to stay connected to all
+ other supernodes.
+ Eventually some of these connections have to be dropped to allow an expansion
+ of the entire network.
+ More about this future process is explained in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Routing-tables"
+
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Subsection
 Speed
 \end_layout
 
 \begin_layout Standard
-The networklibrary hardly has any overhead for the network at all and almost
+The network library hardly has any overhead for the network at all and almost
  all traffic results from data the application using the library sends.
  In the case of Orbit Impossible, which is not optimised at all, this still
  results in quite a pleasant player experience with only 5 kilobyte/second
  bandwidth usage with 50 active players.
+\end_layout
+
+\begin_layout Subsection
+Testresults
 \end_layout
 
 \end_body
