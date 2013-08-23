@@ -72,6 +72,23 @@ WebSockets
 WebGL
 \end_layout
 
+\begin_layout Standard
+WebGL (Web Graphics Library) is a relatively new technology that allows
+ developers to utilise OpenGL-like 2D and 3D graphics programming directly
+ in the browser.
+ Most modern browsers implement WebGL and allow it to execute on the GPU,
+ making it very fast.
+ WebGL is used in the game through Three.js, which will be described in section
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Three.js"
+
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Subsubsection
 Canvas
 \end_layout
@@ -204,6 +221,13 @@ Underscore is a library for JavaScript that adds many useful functions to
 
 \begin_layout Subsubsection
 Three.js
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Three.js"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
