@@ -60,8 +60,23 @@
 
 \begin_body
 
+\begin_layout Standard
+During our bachelor project we have been involved in a software development
+ project completely from the beginning.
+ In this chapter we would like to reflect on our experiences during this
+ project.
+\end_layout
+
 \begin_layout Subsection
 Technical challenges
+\end_layout
+
+\begin_layout Subsubsection
+webrtc
+\end_layout
+
+\begin_layout Standard
+is wel handig denk ik
 \end_layout
 
 \begin_layout Subsubsection
@@ -115,6 +130,52 @@ reference "sub:JS-Coverage"
 
 \begin_layout Subsection
 Process challenges
+\end_layout
+
+\begin_layout Subsubsection
+Scrum
+\end_layout
+
+\begin_layout Standard
+The most of us haven't experienced scrum in business environment.
+ After some reading in and assigning roles to ourselfs, we were ready to
+ go.
+ What we did not expect in the first couple of weeks is that gaining more
+ insight in WebRTC technology or gaining more insight in node topology does
+ not fit well in scrum philosophy because the amount of time the task is
+ going to last is hard to predict.
+ That is why we started with scrum in week 3 when we fully specified what
+ we are really going to build and deliver.
+\end_layout
+
+\begin_layout Standard
+An interesting detail is also that because of the vacation period, we have
+ had a second scrum product owner who first had to get in to the project.
+ It succeeded very well and he brought new insights with him.
+ It was good experience because falling out of the scrum team also happens
+ in real work environment
+\end_layout
+
+\begin_layout Subsubsection
+Behaviour driven development
+\end_layout
+
+\begin_layout Standard
+In our plan of action we described that we will maintain the behaviour driven
+ development discussed earlier in 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "sub:Behaviour-Driven-Development"
+
+\end_inset
+
+.
+ In hindsight it turned out to be a bad decision.
+ BDD can only work if a clear product requirements are defined in the beginning.
+ We built a prototype which later became an end product.
+ After the prototype was ready and the end goal was clear, we decided to
+ test the whole existing application and try to continuously achieve the
+ 100% code coverage.
 \end_layout
 
 \end_body
