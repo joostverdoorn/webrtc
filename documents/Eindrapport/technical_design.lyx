@@ -72,6 +72,7 @@ The basis of the networking library is what we call the unstructured network:
  itself, and requires an additional layer to be fully useful as a peer-to-peer
  network.
  It does have a lot of value: the structured network described in the section
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Network-Topology"
@@ -207,7 +208,7 @@ Initialization
 \end_layout
 
 \begin_layout Standard
-As discussed in the section
+As discussed in the section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Establishing-a-peer"
@@ -307,7 +308,7 @@ Server communication
 
 \begin_layout Standard
 Our philosophy is to minimize the communication to the server and to aspire
- the stand alone working peer-to-peer system.
+ the standalone working peer-to-peer system.
  However this may not be at the expense of the network reliability.
  Our network uses server for several purposes.
 \end_layout

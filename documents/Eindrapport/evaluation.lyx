@@ -95,7 +95,7 @@ After setting up our development environment we noticed that testing in
 \begin_layout Standard
 We solved this by daisychaining several processes.
  First we found a modified CoffeeScript to JavaScript compiler that also
- adds code-coverage information to the code as explained in
+ adds code-coverage information to the code as explained in 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:JS-Coverage"
@@ -111,7 +111,7 @@ ge and Jasmine would create the report about failing and succeeding tests.
 \end_layout
 
 \begin_layout Standard
-As pointed out in
+As pointed out in 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:JS-Coverage"
@@ -156,7 +156,7 @@ Scrum
 
 \begin_layout Standard
 The most of us haven't experienced scrum in business environment.
- After some reading in and assigning roles to ourselfs, we were ready to
+ After some reading in and assigning roles to ourselves, we were ready to
  go.
  What we did not expect in the first couple of weeks is that gaining more
  insight in WebRTC technology or gaining more insight in node topology does
@@ -171,7 +171,7 @@ An interesting detail is also that because of the vacation period, we have
  had a second scrum product owner who first had to get in to the project.
  It succeeded very well and he brought new insights with him.
  It was good experience because falling out of the scrum team also happens
- in real work environment
+ in real work environment.
 \end_layout
 
 \begin_layout Subsubsection
