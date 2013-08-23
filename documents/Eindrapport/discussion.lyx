@@ -191,14 +191,14 @@ Another problem is the integrity of the games state.
 \end_layout
 
 \begin_layout Standard
-We cannot expect this package to be correct though, because in our networklibrar
-y we use UDP to transfer our data, which is unreliable.
+We cannot expect this package to be correct though, because WebRTC has two
+ different options to create a data channel: a reliable variant and an unreliabl
+e variant.
+ Unfortunately Google Chrome currently only supports the unreliable variant.
  A way to do this better is to only send updates when it is absolutely mandatory.
  Combined with only sending state changes instead of full updates, transmitting
- these new packets via a reliable channel, for example TCP, should reduce
- the bandwidth substantially and reduces the risk of out-of-sync players.
- These reliable channels in Google Chrome's WebRTC implementation do not
- exist yet, though.
+ these new packets via a reliable data channel, should reduce the bandwidth
+ substantially and reduces the risk of out-of-sync players.
 \end_layout
 
 \begin_layout Subsubsection
@@ -211,7 +211,7 @@ Apart from the ability to easily overload the network there are more issues
  The biggest problem we are facing is the total lack of sanity checks on
  received packets.
  First of all we expect all packets to be in a specific format and if a
- packet arrives that does not fit in this format, the resulting behavior
+ packet arrives that does not fit in this format, the resulting behaviour
  will be unpredictable.
  Depending on where the packet contains malformed information, the entire
  game might stop working, the connection to the network drops or nothing
@@ -232,8 +232,8 @@ Another flaw arising from the lack of sanity checks is the ability to inject
 \end_layout
 
 \begin_layout Standard
-To counter these issues, the networkinglibrary has to first check if a packet
- fits the defined format.
+To counter these issues, the networking library has to first check if a
+ packet fits the defined format.
  It also has to include a reliable way of finding out who really sent a
  specific packet.
  If it turns out that the claimed sender and actual sender don't match up,
@@ -248,7 +248,8 @@ The game then does not receive corrupt or wrong data but the problem of
  If someone else tries to modify an entity that he or she does not own,
  it should just get ignored.
  To prevent players from creating more bullets than allowed or teleporting
- themselves, all players should check if all other players obey the gamerules.
+ themselves, all players should check if all other players obey the game
+ rules.
  If this is not the case (this could also happen if two users play on two
  different versions) the game should drop the connection to the malfunctioning
  node because otherwise these two clients would just ignore each others

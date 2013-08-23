@@ -288,7 +288,7 @@ name "sub:Network-Topology"
 
 \begin_layout Standard
 In this section the whole network topology is being explained.
- As discussed in
+ As discussed in 
 \begin_inset CommandInset ref
 LatexCommand formatted
 reference "sub:Peer-to-Peer"

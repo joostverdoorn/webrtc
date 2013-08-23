@@ -61,7 +61,7 @@
 
 \begin_layout Standard
 The following text is the raw Dutch feedback received by Eric Bouwers (e.bouwers@
-sig.eu) from the Software Improvement Group.
+sig.eu) from the Software Improvement Group on August 15, 2013.
 \begin_inset VSpace defskip
 \end_inset
 
@@ -76,7 +76,6 @@ Vanwege de gebruikte technologie, Coffeescript, is het op dit moment helaas
  uit dat de codebase relatief klein is.
  Daarnaast maakt de aanwezigheid van tests het makkelijker om aanpassingen
  te doen zonder de huidige functionaliteit te breken.
-
 \end_layout
 
 \begin_layout Standard
@@ -128,7 +127,6 @@ Als laatste de opmerking dat niet alle code meegestuurd lijkt te zijn.
  geladen welke niet aanwezig is in de aanlevering.
  Mocht deze geschreven zijn voor dit project dan ontvangen wij deze code
  ook graag in de tweede aanlevering.
-
 \end_layout
 
 \begin_layout Standard
@@ -138,7 +136,6 @@ Over het algemeen lijkt de onderhoudbaarheid van de code bovengemiddeld
  De aanwezigheid van test-code is in ieder geval veelbelovend, hopelijk
  zal het volume van de test-code ook groeien op het moment dat er nieuwe
  functionaliteit toegevoegd wordt.
-
 \end_layout
 
 \end_body

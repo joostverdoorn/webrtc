@@ -255,8 +255,9 @@ Sublime
 \end_layout
 
 \begin_layout Standard
-The text-editor Sublime helped us slightly in keeping the code clean by
- automatically removing unnecessary whitespace at line endings.
+The text-editor Sublime helped us slightly by keeping the code clean by
+ automatically removing unnecessary whitespace at line endings and having
+ good syntax highlighting options for CoffeeScript available.
 \end_layout
 
 \begin_layout Subsection
@@ -264,14 +265,14 @@ SIG
 \end_layout
 
 \begin_layout Standard
-The Software Improvement Group tries to evaluate the quality of code by
- automatic and manual analysis.
+The Software Improvement Group evaluates the quality of code by automatic
+ and manual analysis.
  For this project we are required to send our code to SIG twice.
  Once halfway of the project and the second time at the end of the project.
  After sending it in the first time we are expected to read the comments
  carefully and adjust the code accordingly so the second feedback points
  out less issues.
- Our first review can be found in Appendix
+ Our first feedback of the SIG can be found in Appendix 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Software-Improvement-Group-Review-1"
