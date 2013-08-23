@@ -80,7 +80,7 @@ is wel handig denk ik
 \end_layout
 
 \begin_layout Subsubsection
-Testing
+Unit Testing
 \end_layout
 
 \begin_layout Standard
@@ -126,6 +126,24 @@ reference "sub:JS-Coverage"
  with the same functionality.
  Technically this is possible but would require too much time to do during
  our project.
+\end_layout
+
+\begin_layout Subsubsection
+Game Testing
+\end_layout
+
+\begin_layout Standard
+Testing the game was a challenge as well.
+ We did make this easier for ourselves by creating bots that join the game
+ and randomly fly around and fire projectiles.
+ These bots help a lot for looking network errors and performance problems
+ but running multiple bots (10+) on the same computer is hardly doable because
+ of the high amount of calculations that need to be done.
+ This can be solved by sharing parts of the bots memory with other bots
+ so calculations for collision detections is only done once per frame instead
+ of once per frame per bot.
+ To overcome this problem we added more computers to simulate bots because
+ adding the shared state would cost too much time to be useful.
 \end_layout
 
 \begin_layout Subsection
