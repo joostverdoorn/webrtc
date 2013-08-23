@@ -60,8 +60,73 @@
 
 \begin_body
 
-\begin_layout Subsection
+\begin_layout Standard
+This document is the final rapport of the bachelor end project which is
+ performed under course TI3800 of Delft University of Technology that took
+ place in the summer of 2013 at TNO.
+ The goal of the project is to perform a software product development track
+ in a real company.
+ Over the course of the project we gathered knowledge on WebRTC, node topology
+ and online games.
+ We used that knowledge to do some research on these subjects and then to
+ deliver a library for WebRTC communication, an structured network topology
+ library and we demonstrate how it works in a browser based arcade game.
+ This document describes the project form the very beginning by formulating
+ the assignment and ends with our conclusions of the project and discussion
+ of the subject.
+\end_layout
 
+\begin_layout Standard
+We are very proud of the results of this project and are very glad we got
+ the possibility to work on it at TNO this summer.
+ We want to thank all people who contributed to the project:
+\end_layout
+
+\begin_layout Itemize
+
+\noun on
+Victor Klos 
+\noun default
+for being our coach and motivating us to get more out of the project.
+\end_layout
+
+\begin_layout Itemize
+
+\noun on
+Eelco Kramer 
+\noun default
+for sharing his expertise with us and giving an excellent technical feedback.
+\end_layout
+
+\begin_layout Itemize
+
+\noun on
+Harrie van de Vlag
+\noun default
+ for managing us as a group and helping us with Scrum in hard times.
+\end_layout
+
+\begin_layout Itemize
+
+\noun on
+Jan Hidders, 
+\noun default
+our mentor from the university.
+\end_layout
+
+\begin_layout Itemize
+
+\noun on
+Felienne Hermans,
+\noun default
+ our bachelor project coordinator.
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace 1cm
+\end_inset
+
+Jasper Abbink, Karens Grigorjancs, Joost Verdoorn
 \end_layout
 
 \end_body

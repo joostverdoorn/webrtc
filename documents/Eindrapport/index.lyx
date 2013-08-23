@@ -309,24 +309,6 @@ filename "conclusions.lyx"
 \end_layout
 
 \begin_layout Section
-Evaluation
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand input
-filename "evaluation.lyx"
-
-\end_inset
-
-
-\begin_inset Newpage pagebreak
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
 Discussion
 \end_layout
 
@@ -334,6 +316,27 @@ Discussion
 \begin_inset CommandInset include
 LatexCommand input
 filename "discussion.lyx"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Evaluation
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand input
+filename "evaluation.lyx"
 
 \end_inset
 
