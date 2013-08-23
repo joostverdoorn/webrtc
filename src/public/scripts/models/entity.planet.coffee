@@ -26,13 +26,13 @@ define [
 
 		fragmentShaderAtmosphere: "
 			uniform vec3 glowColor;
+			uniform float glowOpacity;
 			varying float intensity;
 			void main()
 			{
 				vec3 glow = glowColor * intensity;
-			    gl_FragColor = vec4( glow, 1.0 );
+			    gl_FragColor = vec4( glow, glowOpacity );
 			}"
-
 
 		# Is called from the baseclass' constructor. Will set up player specific
 		# properties for the entity
@@ -63,16 +63,20 @@ define [
 					@trigger('loaded')
 
 		update: ( dt ) ->
-			if App.camera.position.length() > 400
-				@atmosphere?.material.uniforms.c.value = .8
-			else if App.camera.position.length() < 300
-				@atmosphere?.material.uniforms.c.value = 0
-			else
-				@atmosphere?.material.uniforms.c.value = (App.camera.position.length() - 300) / 100 * .8
-				#@atmosphere?.material.uniforms.c.value = (App.camera.position.length() - 400) / 400
-			#console.log @atmosphere?.material.uniforms.c.value
-			#@atmosphere?.material.uniforms.viewVector.value = new THREE.Vector3().subVectors(App.camera.position, @atmosphere.position)
-			@atmosphere?.material.uniforms.viewVector.value = new THREE.Vector3().subVectors(App.camera.position, @atmosphere.position)
+			# Gruadually decrease inner atmosphere density.
+			if App.player?
+				if App.player.position.length() > 500
+				 	opacity = 0
+				else if App.player.position.length() < 300
+					opacity = 1
+				else
+					opacity = Math.pow(1 - (App.player.position.length() - 300) / 200, 2)
+
+				@innerAtmosphere?.material.uniforms.glowOpacity.value = opacity
+
+			# Set the correct camera position for the atmosphere.
+			@innerAtmosphere?.material.uniforms.viewVector.value = App.camera.position
+			@outerAtmosphere?.material.uniforms.viewVector.value = App.camera.position
 
 		_onLoaded: ( ) =>
 			@loaded = true
@@ -80,12 +84,14 @@ define [
 			@mesh = Planet.Model.Mesh.clone()
 			@scene.add(@mesh)
 
-			atmosphereGeometry = new Three.SphereGeometry(400, 40, 40)
+			# Create outer atmosphere visible from a greater distance to the planet.
+			atmosphereGeometry = new Three.SphereGeometry(500, 40, 40)
 			atmosphereMaterial = new THREE.ShaderMaterial
 				uniforms:
 					c:   { type: "f", value: .8 },
 					p:   { type: "f", value: 3 },
 					glowColor: { type: "c", value: new THREE.Color(0x444fff) },
+					glowOpacity: { type: "f", value: 1}
 					viewVector: { type: "v3", value: App.camera.position }
 				vertexShader:   @vertexShaderAtmosphere
 				fragmentShader: @fragmentShaderAtmosphere
@@ -93,23 +99,23 @@ define [
 				blending: THREE.AdditiveBlending,
 				transparent: true
 
-			@atmosphere = new Three.Mesh(atmosphereGeometry, atmosphereMaterial)
-			@scene.add(@atmosphere)
-			########################3
+			@outerAtmosphere = new Three.Mesh(atmosphereGeometry, atmosphereMaterial)
+			@scene.add(@outerAtmosphere)
 
+			# Create inner atmosphere to simulate blue skies when close to the planet.
+			atmosphereGeometry = new Three.SphereGeometry(500, 40, 40)
+			atmosphereMaterial = new THREE.ShaderMaterial
+				uniforms:
+					c:   { type: "f", value: .1 },
+					p:   { type: "f", value: .5 },
+					glowColor: { type: "c", value: new THREE.Color(0x444fff) },
+					glowOpacity: { type: "f", value: 0}
+					viewVector: { type: "v3", value: App.camera.position }
+				vertexShader:   @vertexShaderAtmosphere
+				fragmentShader: @fragmentShaderAtmosphere
+				side: THREE.BackSide,
+				blending: THREE.AdditiveBlending,
+				transparent: true
 
-			# atmosphereGeometry = new Three.SphereGeometry(400, 40, 40)
-			# atmosphereMaterial = new THREE.ShaderMaterial
-			# 	uniforms:
-			# 		c:   { type: "f", value: 0 },
-			# 		p:   { type: "f", value: 6 },
-			# 		glowColor: { type: "c", value: new THREE.Color(0x444fff) },
-			# 		viewVector: { type: "v3", value: App.camera.position }
-			# 	vertexShader:   @vertexShaderAtmosphere
-			# 	fragmentShader: @fragmentShaderAtmosphere
-			# 	side: THREE.BackSide,
-			# 	blending: THREE.AdditiveBlending,
-			# 	transparent: true
-
-			# @atmosphere2 = new Three.Mesh(atmosphereGeometry, atmosphereMaterial)
-			# @scene.add(@atmosphere2)
+			@innerAtmosphere = new Three.Mesh(atmosphereGeometry, atmosphereMaterial)
+			@scene.add(@innerAtmosphere)

@@ -55,6 +55,13 @@ require [
 	'three'
 	'stats'
 
+	'postprocessing/EffectComposer'
+	'postprocessing/RenderPass'
+	'postprocessing/ShaderPass'
+	'postprocessing/MaskPass'
+	'shaders/CopyShader'
+	'shaders/AdditiveBlendShader'
+
 	], ( App, GameModel, DesktopController, MobileController, Overlay, Three, Stats ) ->
 
 	# This game class implements the node structure created in the library.
@@ -92,26 +99,20 @@ require [
 				fragmentShader: shader.fragmentShader
 				vertexShader: 	shader.vertexShader
 				uniforms: 		shader.uniforms
-				depthWrite: 	false
 				side: 			Three.BackSide
 
 			@sky = new Three.Mesh( skyGeometry, skyMaterial )
 			@scene.add( @sky )
 
-
-
+			# Create game.
 			@game = new GameModel(@scene)
+			@game.on
+				'stats.change', ( stats ) => @overlay.setStats(stats)
+				'player.died', @_onPlayerDied
 
-			# Create overlay screen.
+			# Create overlay/
 			@overlay = new Overlay()
-
-			@game.on('stats.change', ( stats ) =>
-				@overlay.setStats(stats)
-			)
-
 			@overlay.on('controller.select', @_onControllerSelect)
-
-			@game.on('player.died', @_onPlayerDied)
 
 			# Create the container and add it to the document.
 			@container = document.createElement 'div'
@@ -141,9 +142,6 @@ require [
 			# renderPass = new Three.RenderPass(@scene, @camera)
 			# renderPass.renderToScreen = true
 			# @composer.addPass(renderPass)
-
-			# if @game.world.planet.loaded then @addAtmosphere
-			# else @game.world.planet.on('loaded', @addAtmosphere)
 
 			# Create stats display.
 			@stats = new Stats()
@@ -214,9 +212,6 @@ require [
 				# towards the player
 				@camera.up.set(@camera.position.x, @camera.position.y, @camera.position.z)
 				@camera.lookAt(@player.position)
-
-			# @atmosphere.material.uniforms.c.value = (@camera.position.length() - 300) / 300
-			# @game.world.planet.atmosphere?.material.uniforms.viewVector.value = new THREE.Vector3().subVectors(@camera.position, @game.world.planet.atmosphere.position)
 
 			# Update sky position
 			@sky.position = @camera.position.clone()
