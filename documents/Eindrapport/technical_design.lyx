@@ -83,6 +83,26 @@ reference "sub:Network-Topology"
  Also, individual peer-to-peer connections, such as the connection between
  the game and the mobile controller, are easily established using unstructured
  nodes.
+ In this section we will discuss the design and inner workings of the unstructur
+ed network.
+\end_layout
+
+\begin_layout Subsubsection
+Server technology
+\end_layout
+
+\begin_layout Standard
+The choice of which technology to use for the bootstrapping process of peers
+ is a relatively easy one.
+ We require the server to know which nodes are present in the network, and
+ ideally without the use of relatively slow databases.
+ Node.js seems to be an obvious choice, where the server thread is persistent
+ and a node list can be maintained in memory instead of on disk.
+ WebSockets seemed to be the best technology for our purposes as it provides
+ a convenient and reliable way for exchanging data, and this choice was
+ backed up by numerous sources on the internet where the use of WebSockets
+ as signalling channel was ubiquitous among WebRTC applications.
+ 
 \end_layout
 
 \begin_layout Subsubsection
@@ -110,20 +130,8 @@ y is provided by a mixin.
  where they are transparently handled.
  This enables peers to execute complex procedures by triggering a sequence
  of events on their peers.
- 
-\end_layout
-
-\begin_layout Subsubsection
-Messages
-\end_layout
-
-\begin_layout Standard
-Events are packed into Message objects that, beside the event, contains
- the event parameters, the sender and intended receiver, the travelled route
- and the maximum number of hops the message may take.
- Message objects can be serialized and deserialized for network transfer,
- and also provide functionality for splitting and reassembling messages
- that are too large.
+ Node.js is ideal for an event-driven application, as it is built with an
+ event-driven approach in mind.
 \end_layout
 
 \begin_layout Subsubsection
@@ -145,10 +153,10 @@ Remotes
 
 \begin_layout Standard
 All remote communicating entities - a peer, a server or a client - are represent
-ed by a Remote sub class.
+ed by a Remote object.
  The Remote base class provides a common transparent API for all communication,
- whether this communication is implemented by WebSockets or WebRTC.
- Remotes are handled by the controller, as displayed in figure 
+ regardless of how this communication is implemented in the Remote sub class.
+ Remotes are owned by the controller, as displayed in figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Communication-between-server-and-nodes"
@@ -156,7 +164,8 @@ reference "fig:Communication-between-server-and-nodes"
 \end_inset
 
 .
- When a Remote object receives a message, it checks if the message is intended
+ Remotes offer functionality to either emit an event or query their When
+ a Remote object receives a message, it checks if the message is intended
  for its controller.
  If it is, it triggers the event packed in the message.
  If not, the message is relayed to reach its intended receiver.
@@ -204,35 +213,39 @@ Communication between server and nodes
 \end_layout
 
 \begin_layout Subsubsection
-Initialization
+Messages
 \end_layout
 
 \begin_layout Standard
-As discussed in the section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:Establishing-a-peer"
+Events to be sent to a remote are packed into Message objects that, beside
+ the event, contains the event parameters, the sender and intended receiver,
+ the travelled route and the maximum number of hops the message may take.
+ Message objects can be serialized and deserialised for network transfer,
+ and also provide functionality for splitting and reassembling messages
+ that are too large.
+\end_layout
 
-\end_inset
+\begin_layout Subsubsection
+Initialisation
+\end_layout
 
-, we route the connection negotiation between two peers via the server using
- WebSockets.
+\begin_layout Standard
+As discussed in the section earlier, we route the connection negotiation
+ between two peers via the server using WebSockets.
  The server, as other controllers, relays any message where the message
  indicates the controller is not the intended receiver.
- 
-\end_layout
-
-\begin_layout Standard
-Let Alice and Bob be two nodes.
- Alice wants to connect to Bob.
- See figure 
+ This has the advantage that the connection negotiation process is transparent
+ and that when there's already a WebRTC connection between two peers and
+ they have to renegotiate their connection, this connection can be used.
+ Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Initialisation-of-the"
 
 \end_inset
 
-.
+ demonstrates the initialisation process of the connection between peers
+ Alice and Bob.
 \end_layout
 
 \begin_layout Standard

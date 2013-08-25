@@ -72,20 +72,12 @@ name "sub:WebRTC"
 \end_layout
 
 \begin_layout Standard
-As WebRTC is an integral part of the project, a lot of early research has
- gone into reading the official W3C WebRTC specifications 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "w3cwebrtcspec"
-
-\end_inset
-
- and producing prototypes that demonstrate the uses of the technology.
+As WebRTC is an integral part of the project, a lot of time has gone into
+ reading the official W3C WebRTC specifications and producing prototypes
+ that demonstrate the uses of the technology.
  In this research phase of the project we've experimented with different
  techniques for establishing connections, methods of sending and receiving
  data and developing a useful application structure.
- We will detail our findings on WebRTC below, and provide some insight on
- the inner workings of WebRTC.
 \end_layout
 
 \begin_layout Subsubsection
@@ -93,22 +85,23 @@ API differences
 \end_layout
 
 \begin_layout Standard
-In an early phase we discovered that even though the Firefox and Chrome
- web browsers are able to communicate to each other through WebRTC, they
- don't yet use the same JavaScript API for their connections.
- Comparing their respective API's with the official WebRTC specifications
+We discovered early on that even though the Firefox and Chrome web browsers
+ are able to communicate to each other through WebRTC media streams, their
+ ways of handling events and setting up connections are incompatible, and
+ their data channels are not able to communicate with one another as well,
+ regardless of the use of the adapter.js library mentioned before.
+ Comparing their respective APIs with the official WebRTC specifications
  we found that Chrome's implementation came closest, and keeping in mind
- that we were merely conducting research on WebRTC and not building a consumer
+ that we were merely conducting research on WebRTC and not building an end-user
  product, we decided to drop support for Firefox.
  We had our hopes that Firefox would fix their implementation but as of
- this writing this has yet to happen.
- We do expect that Mozilla, Firefox's developer, will eventually bow to
- the official specifications and that our library will work on Firefox as
- well.
+ this writing that has yet to happen.
+ We do expect that Mozilla, Firefox's producer, will eventually bow to the
+ official specifications and that our library will work on Firefox as well.
 \end_layout
 
 \begin_layout Subsubsection
-Establishing a peer connection
+Bootstrapping
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Establishing-a-peer"
@@ -119,105 +112,35 @@ name "sub:Establishing-a-peer"
 \end_layout
 
 \begin_layout Standard
-Reliably establishing a peer-to-peer connection between two consumer devices
- is not a trivial matter.
- While web servers are usually designed around accepting connections and
- have their own external IP-address, consumer devices are often protected
- by firewalls and located behind a Network Address Translation service (NAT).
- WebRTC utilizes several technologies to enable peers to connect through
- environments that limit the connectivity of the peers.
-\end_layout
-
-\begin_layout Standard
-ICE, Interactive Connectivity Establishment 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "ietficespec"
-
-\end_inset
-
-, is a technique for NAT-traversal for UDP-based media streams, although
- in practice ICE isn't limited to UDP alone and can also be applied to TCP.
- ICE makes use of the offer/answer model, where party A sends a connection
- offer to party B including its preferred connection terms and aspects -
- such as bandwidth and protocol version - and party B responds to party
- A with the terms it agrees to.
- These offers and answers are in a format defined by the Session Description
- Protocol, which is a standard created back in 1998 to assist in setting
- up streaming media connections such as Bluetooth headsets streaming audio
- to and from mobile phones and video conferencing where both video and audio
- are streamed between a multitude of entities.
-\end_layout
-
-\begin_layout Subsubsection*
-STUN and TURN
-\end_layout
-
-\begin_layout Standard
-ICE heavily relies on STUN, Session Traversal Utilities for NAT 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "ietfstunspec"
-
-\end_inset
-
-, to discover whether or not the application is located behind a NAT.
- STUN does this by calling a so-called STUN-server and query the server
- to retrieve the IP-address and port of the requesting party.
- If this IP-address doesn't match the locally known IP-address (link address),
- the application is located behind a NAT.
- The discovered external IP-address and port are then included in the connection
- offer or answer by encoding them into the SDP packet.
-\end_layout
-
-\begin_layout Standard
-TURN, Traversal Using Relay NAT 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "ietfturnspec"
-
-\end_inset
-
-, is an extension on STUN.
- It allows ICE connections to be relayed by a TURN-server, which means that
- even when the user is behind an aggressive firewall or problematic NAT,
- ICE connections can be established by having the TURN-server relay all
- packets.
- In contrast to STUN-servers, which are freely provided for public use by
- a number of entities, TURN-servers are usually not free and have to be
- self hosted or rented from a third party.
-\end_layout
-
-\begin_layout Subsubsection*
-Signalling channels
-\end_layout
-
-\begin_layout Standard
-Before a peer connection is established, the peers have to exchange the
- connectivity information in the form of SDP packets.
- Since there's no connection between these peers yet, these packets have
- to be routed through a third party that can communicate with either node,
- also called a signalling channel.
- The official W3C WebRTC specifications do not provide a detailed description
- on what form this signalling channel should take on and instead leave it
- to the developer to guide the exchange of SDP packets.
- We identified several possible manners to achieve this initialization.
+Peer discovery and bootstrapping is an important aspect of any peer-to-peer
+ network and is not a trivial matter.
+ It's not normally known among peers attempting to enter the network which
+ peers are present and are able to provide an entry point into the network.
+ Even if it is known to a peer whom to connect to, actually establishing
+ a connection to that peer using WebRTC requires some external mechanism
+ (the signalling channel) to coordinate the initial set up.
+ We identify several different manners of going about this bootstrapping
+ process.
 \end_layout
 
 \begin_layout Itemize
-Using a web server, one can use AJAX requests which in turn routes information
- from one peer to the other, but this has the disadvantage that any peer
- has to be aware that the other peer is requesting a connection, or that
- the use of continuous AJAX polling, continuously requesting the server
- for an update, is required.
+Using a web server, one can use AJAX requests to a web server which in turn
+ routes information from one peer to the other, but this has the disadvantage
+ that any peer has to be aware that the other peer is requesting a connection,
+ or that the use of continuous AJAX polling, continuously requesting the
+ server for an update, is required.
+ The web server can maintain a list of nodes that can be used as entry point
+ and pass this information on to new peers.
 \end_layout
 
 \begin_layout Itemize
 Another way to establish the connection is to have all peers connected to
- a web server using a WebSocket, a technology which provides full continuous
+ a web server using WebSockets, a technology which provides full continuous
  communication between the browser and a web server, and is always available
  and open for sending and receiving data.
- SDPs can then be easily routed through this web server.
+ Session descriptions can then be easily routed through this web server.
+ This manner would require server technology that can handle persistent
+ WebSocket connections, such as Node.js.
 \end_layout
 
 \begin_layout Itemize
@@ -229,76 +152,41 @@ s such as Apple's Bonjour to detect WebRTC nodes on the local network, but
 \begin_layout Itemize
 Aside from using a web server or non-existent technology, it would also
  be possible, although cumbersome, to exchange the information in manually,
- like using QR-encoding to encode the SDP into an image which can be scanned
- by another machine.
-\end_layout
-
-\begin_layout Subsubsection*
-WebSockets
-\end_layout
-
-\begin_layout Standard
-The choice of which technology to use for the signalling channel was a relativel
-y easy one: WebSockets seemed to be the best technology for our purposes
- as it has very few downsides and provides a reliable way for exchanging
- data, and this choice was backed up by numerous sources on the internet
- where the use of WebSockets as signalling channel was ubiquitous among
- WebRTC applications.
- This choice, however, requires a more advanced web server than the well-known
- Apache-PHP-MySQL setup which runs a better part of the internet.
-\end_layout
-
-\begin_layout Standard
-Among the possibilities, which also included a custom Java server or Ruby-on-Rai
-ls, we found that a Node.js server best fit our needs, not the least because
- Node.js, like web browsers, runs JavaScript.
- This means that both client and server are able to run the same code, which
- has the advantages of slimming down the code base by avoiding the duplication
- of functionality and make the whole application less error prone because
- the shared functionality has to be tested only once instead of twice.
- Node.js is perfectly capable of opening and maintaining numerous WebSocket
- connections to provide the signalling functionality we require.
+ like copying and pasting the session description or using QR-encoding to
+ encode the session description into an image which can be scanned by another
+ machine.
 \end_layout
 
 \begin_layout Subsubsection
-Exchanging data
-\end_layout
-
-\begin_layout Standard
-Once a connection has been established, exchanging data is trivial.
- Data channels, for sending raw data, and media streams can be added quite
- easily, although then the connection terms have to be renegotiated.
- This means that that whole offer/answer process has to be repeated, except
- when a data channel is already open the SDP packets don't have to be routed
- through the server but can be sent to the peer directly.
- To avoid renegotiation, one can also add a data channel or media stream
- to the connection prior to generating the offer, so that these are included
- in the initial SDP.
+Data channels
 \end_layout
 
 \begin_layout Standard
 In our prototypes, we found that data channels are by default rate limited
  to 30 kilobits per second, and if one attempted to send data faster, WebRTC
- would throw mysterious and in-descriptive error messages.
- After some research we discovered that the (automatically generated) SDP
- packet generated at initialization can be simply edited to increase the
- data rate, although this method is very unintuitive and feels a bit awkward.
+ would throw mysterious and indescriptive error messages.
+ After some research we discovered that the session description generated
+ at initialization can be simply altered to increase the data rate by doing
+ a regular expression replacement of the string flag that indicates the
+ bandwidth, although this method is very unintuitive and feels a bit awkward.
  For now, however, this seems to be the only way to achieve a useful rate
  of data flow for the channel.
 \end_layout
 
 \begin_layout Standard
-Another peculiar detail of the data channel implementation in Chrome is
- that the SDP packet to instantiate the WebRTC connection is too large to
- send through a WebRTC data channel.
+Another peculiar detail of the data channel implementation in Chrome, and
+ one that makes it appear that data channels are treated as a second-class
+ citizen by WebRTC developers, is that the session description packet to
+ instantiate the WebRTC connection is too large to send through a WebRTC
+ data channel.
  This has the implication that, without intervening, peers cannot renegotiate
  their own connections.
  This we found of course to be unacceptable and led to devising a way to
  split up packets before transmitting them, and reassembling them on the
  other side.
- Looking back this is a must-have feature regardless of the size of the
- SDP packet, as this means that we can make any packet arbitrarily large
- without any problems.
+ In hindsight this is a must-have feature regardless of the size of the
+ session description packet, as this means that we can make any packet arbitrari
+ly (though realistically) large without encountering any problems.
 \end_layout
 
 \begin_layout Subsection

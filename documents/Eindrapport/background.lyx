@@ -64,11 +64,22 @@
 WebRTC
 \end_layout
 
+\begin_layout Subsubsection
+Introduction
+\end_layout
+
 \begin_layout Standard
-WebRTC, or Web Real-Time Communication, is an API definition that enables
- the web browser to directly communicate with other web browsers.
+WebRTC, or Web Real-Time Communication, is an API definition
+\begin_inset CommandInset citation
+LatexCommand cite
+key "w3cwebrtcspec"
+
+\end_inset
+
+ and a set if protocols that enables the web browser to directly communicate
+ with other web browsers.
  At the time of writing, the API is still being drafted by the World Wide
- Web Consortium (W3C), the main standards organization for the World Wide
+ Web Consortium (W3C), the main standards organisation for the World Wide
  Web.
  WebRTC first saw the light of day when Google open-sourced an early version
  of the API in May 2011, and has evolved to the point that there are now
@@ -77,13 +88,169 @@ WebRTC, or Web Real-Time Communication, is an API definition that enables
  that simply run in the browser without any third party software.
  With the advent of WebRTC, a myriad of completely new web applications
  are being developed that take advantage of the new possibilities it provides,
- for example torrent clients, voice-over-IP applications and customer service
- applications that allow customer clients to share their screens with customer
- service representatives.
+ for example BitTorrent clients for file sharing, voice-over-IP applications
+ and customer service applications that allow customer clients to share
+ their screens with customer service representatives.
  WebRTC is yet another omen of a future where more and more applications
  move from the desktop to the browser, and where consumers never have to
  download and install a piece of software on their operating system ever
  again.
+\end_layout
+
+\begin_layout Subsubsection
+The API
+\end_layout
+
+\begin_layout Standard
+Through the WebRTC API the W3C aims to deliver a simple yet powerful interface
+ to connect browsers through a peer connection, and has been process of
+ drafting the API since 2011.
+ Even though the specifications are still in development, Chrome and Firefox
+ have implementations of WebRTC in their stable releases.
+ However, they both do not yet fully implement the official API and are
+ code written for one can not run on the other.
+ There is an ongoing effort to make them compatible with each other through
+ a small JavaScript library called adapter.js, which equalises most of the
+ API, although some inconsistencies remain.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+The protocols
+\end_layout
+
+\begin_layout Standard
+Reliably establishing a peer-to-peer connection between two consumer devices
+ is not a trivial matter.
+ While web servers are usually designed around accepting connections and
+ have their own external IP-address, consumer devices are often protected
+ by firewalls and located behind a Network Address Translation service (NAT).
+ WebRTC utilizes several technologies to enable peers to connect through
+ environments that limit the connectivity of those peers.
+ The protocols that are used for WebRTC have been developed by the Internet
+ Engineering Task Force (IETF).
+ Most of these protocols have been defined before WebRTC was developed and
+ have implementations in other areas than just the web browser.
+ We detail the most important protocols below.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Interactive Connectivity Establishment (ICE)
+\series default
+, is a technique for NAT-traversal for UDP-based media streams
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ietficespec"
+
+\end_inset
+
+, although in practice ICE isn't limited to UDP alone and can also be applied
+ to TCP.
+ ICE makes use of the offer/answer model, where party A sends a connection
+ offer to party B including its preferred connection terms and aspects -
+ such as bandwidth and protocol version - and party B responds to party
+ A with the terms it agrees to.
+ ICE generates a multitude of so-called ICE candidates, which define different
+ manners for the other party to establish a connection.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Session Description Protocol (SDP)
+\series default
+ is a standard created back in 1998 (and updated in 2006
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ietfsdpspec"
+
+\end_inset
+
+) to assist in setting up streaming media connections such as Bluetooth
+ headsets streaming audio to and from mobile phones and video conferencing
+ where both video and audio are streamed between a multitude of entities.
+ It's used by ICE in the offer/answer process, where it encodes connectivity
+ information into a Session Description packet.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Session Traversal Utilities for NAT (STUN)
+\series default
+ is a technique to discover whether or not the application is located behind
+ a NAT
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ietfstunspec"
+
+\end_inset
+
+, and is for this reason heavily used by ICE.
+ STUN does this by calling a so-called STUN-server and query the server
+ to retrieve the IP-address and port of the requesting party.
+ If this IP-address doesn't match the locally known IP-address (link address),
+ the application is located behind a NAT.
+ The discovered external IP-address and port are then included in the connection
+ offer or answer by encoding them into the Session Description and ICE candidate
+s.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Traversal Using Relay NAT (TURN)
+\series default
+ is an extension on STUN
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ietfstunspec"
+
+\end_inset
+
+.
+ It allows ICE connections to be relayed by a TURN-server, which means that
+ even when the user is behind an aggressive firewall or problematic NAT,
+ ICE connections can be established by having the TURN-server relay all
+ packets.
+ In contrast to STUN-servers, which are freely provided for public use by
+ a number of entities, TURN-servers are usually not free and have to be
+ self hosted or rented from a third party.
+\end_layout
+
+\begin_layout Subsubsection
+Bootstrapping
+\end_layout
+
+\begin_layout Standard
+Before a peer connection can be established, two peers have to exchange
+ connectivity information in the form of session descriptions and ICE candidates.
+ Since there's no connection between the peers yet, these packets have to
+ be routed through a third party that can communicate with either node,
+ also called a signalling channel.
+ The W3C WebRTC specifications do not specify a particular form this signalling
+ channel should take on and instead leave it to the developer to coordinate
+ the exchange of session descriptions and ICE candidates.
+\end_layout
+
+\begin_layout Subsubsection
+Streams and channels
+\end_layout
+
+\begin_layout Standard
+Once a connection has been established, exchanging data is trivial.
+ Media streams and data channels for sending raw data can be added quite
+ easily, although the connection terms have to be renegotiated when one
+ adds a stream or channel after the connection has been established.
+ This means that that whole offer/answer process has to be repeated, with
+ the upside that when a data channel is already open the session descriptions
+ don't have to be routed through the server but can be sent to the peer
+ directly.
+ To avoid renegotiation, one can also add a data channel or media stream
+ to the connection prior to generating the offer, so that these are included
+ in the initial session description.
 \end_layout
 
 \begin_layout Subsection
