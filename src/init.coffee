@@ -10,6 +10,9 @@ requirejs.config
 		'underscore':
 			exports: '_'
 
+	paths:
+		'library': './public/library'
+
 requirejs [
 	'server'
 	], ( Server ) ->
