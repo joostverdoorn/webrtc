@@ -466,12 +466,14 @@ In order to keep the game playable with a decent amount of players (around
  50) we need to make sure the game does not use too much bandwidth.
  Currently the game sends five packets per second about the players location
  and velocity.
- Every projectile results in one more packet.
+ Every projectile results in one more packet emitted once.
  Bandwidth monitoring showed us that for every additional player in the
  game the total bandwidth usage increased with an average of 5 kilobyte/second
  (up- and download together).
  50 people playing together therefore results in an average bandwidth usage
  of 250 kilobyte/second, which is by any terms acceptable.
+ A player can fire two projectiles per second at most which results in only
+ a tiny increase in network utilisation.
 \end_layout
 
 \begin_layout Subsubsection

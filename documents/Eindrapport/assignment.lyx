@@ -99,22 +99,21 @@ name "sub:Problem-description"
 \end_layout
 
 \begin_layout Standard
-TNO always keeps up with new advancements in technology.
- This is necessary so they can advise their own customers about these technologi
-es.
+TNO helps their customers understand, use and often develop advancements
+ in technology.
+ One interesting new technology in the field of Media Networking is WebRTC.
+ Currently being standardised by W3C, it allows for serverless browser-to-browse
+r communication.
+ Some even foresee WebRTC to be pivotal in shaping web communication in
+ the next decade.
 \end_layout
 
 \begin_layout Standard
-Recently the department of Multimedia Network Systems saw an increase in
- the demand of information about the usability of WebRTC.
- TNO wants to know about the applicability and use-cases of this new technology.
-\end_layout
-
-\begin_layout Standard
-At this moment rudimentary knowledge about WebRTC is available within TNO.
- Therefore a basic demonstration of WebRTC is not what TNO is looking for.
- Instead they are looking for high-level use-cases that explore the boundaries
- of this technology.
+Having a thorough understanding of a technology encompasses having a feeling
+ for its boundaries and limitations.
+ To that end, a WebRTC project proposal was written in which students were
+ invited to come up with an interesting use case that in some way explores
+ the boundaries of the technology.
 \end_layout
 
 \begin_layout Subsection
@@ -122,16 +121,7 @@ Goal
 \end_layout
 
 \begin_layout Standard
-As described in 
-\begin_inset CommandInset ref
-LatexCommand formatted
-reference "sub:Problem-description"
-
-\end_inset
-
- TNO's first goal is to explore the boundaries of what is possible with
- WebRTC.
- There are several subjects to think of when trying to reach this goal.
+There are several subjects to think of when trying to reach this goal.
  You can think about number of simultaneous users, different media sources
  for streaming, media synchronization, limitation of bandwidth and cross-browser
  compatibility.
@@ -200,7 +190,7 @@ After learning about the different aspects of WebRTC, trying out some experiment
 s and encountering our own problems with it, we decided to focus our project
  on the scalability of WebRTC-networks.
  We chose this because WebRTC makes it possible to connect multiple users
- with each other without a central server relaying all traffic.
+ with each other without a central server that relays all traffic.
  Properly designed a system could then construct a large global peer-to-peer
  network.
 \end_layout
