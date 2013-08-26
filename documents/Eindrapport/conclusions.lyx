@@ -92,6 +92,49 @@ name "sub:network_tasks"
 
 \end_layout
 
+\begin_layout Standard
+In 
+\begin_inset CommandInset ref
+LatexCommand nameref
+reference "sub:Supernode-topologies-and"
+
+\end_inset
+
+ we identified the tasks that have to be performed to maintain the network:
+ ensuring the network connectivity and handling data flow for unconnected
+ nodes.
+ We saw that we can assign supernodes to carry out these tasks.
+ They ensure the network connectivity by maintaining a connection to all
+ other supernodes, where it is the child node's own responsibility to maintain
+ a connection to a supernode, and they route data flow between unconnected
+ nodes when a full connection between them is not deemed necessary or when
+ they attempt to establish this connection.
+ To make sure supernodes are elected when necessary and to spread them out
+ evenly throughout the network, we identified PoPCorn as a suitable technique
+ to accomplish this.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Scalability
+\end_layout
+
+\begin_layout Standard
+Scalability is currently still an issue.
+ This is a direct result of all supernodes trying to stay connected to all
+ other supernodes.
+ Eventually some of these connections have to be dropped to allow an expansion
+ of the entire network.
+ More about this future process is explained in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Routing-tables"
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 How can the impact of unpredictable circumstances be reduced?
 \end_layout

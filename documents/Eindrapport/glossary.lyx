@@ -60,56 +60,151 @@
 
 \begin_body
 
+\begin_layout Subsubsection*
+AJAX
+\end_layout
+
 \begin_layout Standard
+Asynchronous Java And XML is a group of techniques that allow for asynchronous
+ applications on the web, and is usually used for asynchronous data retrieval
+ from a server.
+\end_layout
+
+\begin_layout Subsubsection*
 API
 \end_layout
 
 \begin_layout Standard
-W3C
+An Application Programming Interface specifies a way for components to interact
+ with other components.
 \end_layout
 
-\begin_layout Standard
-P2P
-\end_layout
-
-\begin_layout Standard
-SDP
-\end_layout
-
-\begin_layout Standard
+\begin_layout Subsubsection*
 DNS
 \end_layout
 
 \begin_layout Standard
-WebSocket
+Domain Name System is a naming system for devices in a network.
+\end_layout
+
+\begin_layout Subsubsection*
+W3C
 \end_layout
 
 \begin_layout Standard
-NodeJS
+The World Wide Web Consortium is a standards organisation tasked with developing
+ and maintaining Web standards, such as HTML5 or CSS3.
+\end_layout
+
+\begin_layout Subsubsection*
+ICE
 \end_layout
 
 \begin_layout Standard
+Interactive Connectivity Establishment is a technique for NAT-traversal
+ for UDP-based media streams.
+\end_layout
+
+\begin_layout Subsubsection*
+IETF
+\end_layout
+
+\begin_layout Standard
+The Internet Engineering Task Force is a standards organisation tasked with
+ developing and maintaining Internet standards and protocols.
+\end_layout
+
+\begin_layout Subsubsection*
+Latency
+\end_layout
+
+\begin_layout Standard
+Also known as ping or two-way round-trip-time, latency is the time it takes
+ for a packet to reach a remote party plus the time it takes for an acknowledgem
+ent to arrive.
+\end_layout
+
+\begin_layout Subsubsection*
+Library
+\end_layout
+
+\begin_layout Standard
+A drop-in piece of software with some specific functionality accessible
+ to developers.
+ 
+\end_layout
+
+\begin_layout Subsubsection*
 NAT
 \end_layout
 
 \begin_layout Standard
-UDP
+Network Address Translation is a technique that maps internal network addresses
+ to external network addresses.
+\end_layout
+
+\begin_layout Subsubsection*
+Overlay networks
 \end_layout
 
 \begin_layout Standard
+An overlay network is a network built on top of another network, usually
+ using the old network to implement new functionality.
+\end_layout
+
+\begin_layout Subsubsection*
+P2P
+\end_layout
+
+\begin_layout Standard
+Peer-to-peer is a method of connecting two entities directly, without interventi
+on of a server.
+\end_layout
+
+\begin_layout Subsubsection*
+SDP
+\end_layout
+
+\begin_layout Standard
+Session Description Protocol is a standard to assist in setting up streaming
+ media connections.
+\end_layout
+
+\begin_layout Subsubsection*
 TCP
 \end_layout
 
 \begin_layout Standard
-OpenGL
+Transmission Control Protocol is a protocol for sending data reliably across
+ a network.
 \end_layout
 
-\begin_layout Subsection
-p2p
+\begin_layout Subsubsection*
+STUN
 \end_layout
 
 \begin_layout Standard
-overlay networks
+Session Traversal Utilities for NAT is a technique to discover whether or
+ not the application is located behind a NAT and to discover the external
+ network address of the application.
+\end_layout
+
+\begin_layout Subsubsection*
+TURN
+\end_layout
+
+\begin_layout Standard
+Traversal Using Relay NAT is an extension on STUN to allow ICE connections
+ to be relayed by a TURN-server.
+\end_layout
+
+\begin_layout Subsubsection*
+UDP
+\end_layout
+
+\begin_layout Standard
+User Datagram Protocol is a protocol for sending data unreliably but quickly
+ across a network.
 \end_layout
 
 \end_body
