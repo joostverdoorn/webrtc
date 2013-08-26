@@ -1,5 +1,5 @@
 requirejs.config
-	baseUrl: '../'
+	baseUrl: '../../'
 
 	shim:
 		'kinetic':
@@ -11,7 +11,8 @@ requirejs.config
 	# code-sharing reasons. Now it doesn't
 	# matter from where we require a module.
 	paths:
-		'public': './'
+		'library': './library'
+		'game': './game'
 
 		'underscore': 'vendor/scripts/underscore'
 		'kinetic': 'vendor/scripts/kinetic.min'
@@ -19,7 +20,7 @@ requirejs.config
 		'kinetic.multitouch': 'vendor/scripts/kinetic.multitouch'
 
 require [
-	'scripts/app._'
+	'game/scripts/app._'
 	'library/node'
 
 	'kinetic'

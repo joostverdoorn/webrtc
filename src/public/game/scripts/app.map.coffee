@@ -1,5 +1,5 @@
 requirejs.config
-	baseUrl: '../'
+	baseUrl: '../../'
 
 	shim:
 		'underscore':
@@ -23,7 +23,8 @@ requirejs.config
 	# code-sharing reasons. Now it doesn't
 	# matter from where we require a module.
 	paths:
-		'public': './'
+		'library': './library'
+		'game': './game'
 
 		'underscore': 'vendor/scripts/underscore'
 		'jquery': 'vendor/scripts/jquery'
@@ -33,7 +34,7 @@ requirejs.config
 		'orbitControls': 'vendor/scripts/orbitControls'
 
 require [
-	'scripts/app._'
+	'game/scripts/app._'
 	'library/node.structured'
 
 	'three'
@@ -90,7 +91,7 @@ require [
 
 			# Add planet
 			@_loader = new Three.JSONLoader()
-			@_loader.load('/meshes/planet.js', ( geometry, material ) =>
+			@_loader.load('/game/meshes/planet.js', ( geometry, material ) =>
 				planet = new Three.Mesh(geometry, new Three.MeshFaceMaterial(material))
 				@scene.add(planet)
 			)

@@ -1,6 +1,6 @@
 define [
-	'public/library/helpers/mixable'
-	'public/library/helpers/mixin.eventbindings'
+	'library/helpers/mixable'
+	'library/helpers/mixin.eventbindings'
 
 	'jquery'
 	'qrcode'
@@ -18,7 +18,7 @@ define [
 			@stats = {}
 			@_statsVisible = false
 
-			$('head').append('<link rel="stylesheet" type="text/css" href="/stylesheets/overlay.css">')
+			$('head').append('<link rel="stylesheet" type="text/css" href="/game/stylesheets/overlay.css">')
 
 			@container = $('<div id="overlay"></div>')
 			$('body').append(@container)
@@ -39,7 +39,7 @@ define [
 				view = $('<div class="view"></div>')
 				view.attr('id', "view-#{name}")
 				view.on('hide', onHide) if onHide?
-				view.load("/views/#{name}.html", => onShow?())
+				view.load("/game/views/#{name}.html", => onShow?())
 				@container.append(view)
 
 			else

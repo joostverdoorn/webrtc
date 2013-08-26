@@ -15,17 +15,17 @@ requirejs.config
 		'socket.io': 'socket.io/socket.io'
 
 define [
-	'public/library/helpers/mixable'
-	'public/library/helpers/mixin.eventbindings'
+	'library/helpers/mixable'
+	'library/helpers/mixin.eventbindings'
 
-	'public/library/node'
-	'public//library/models/remote.server'
-	'public//library/models/remote.peer'
-	'public/library/models/message'
-	'public/library/models/token'
+	'library/node'
+	'library/models/remote.server'
+	'library/models/remote.peer'
+	'library/models/message'
+	'library/models/token'
 
-	'public/library/models/collection'
-	'public/library/models/vector'
+	'library/models/collection'
+	'library/models/vector'
 
 	'underscore'
 

@@ -1,5 +1,5 @@
 requirejs.config
-	baseUrl: '../'
+	baseUrl: '../../'
 
 	shim:
 		'jquery':
@@ -26,7 +26,8 @@ requirejs.config
 	# code-sharing reasons. Now it doesn't
 	# matter from where we require a module.
 	paths:
-		'public': './'
+		'library': './library'
+		'game': './game'
 
 		'underscore': 'vendor/scripts/underscore'
 		'jquery': 'vendor/scripts/jquery'
@@ -43,14 +44,14 @@ requirejs.config
 		'shaders/AdditiveBlendShader': 'vendor/scripts/shaders/AdditiveBlendShader'
 
 require [
-	'public/scripts/app._'
+	'game/scripts/app._'
 
-	'public/scripts/models/game'
+	'game/scripts/models/game'
 
-	'public/scripts/models/controller.desktop'
-	'public/scripts/models/controller.mobile'
+	'game/scripts/models/controller.desktop'
+	'game/scripts/models/controller.mobile'
 
-	'public/scripts/views/overlay'
+	'game/scripts/views/overlay'
 
 	'three'
 	'stats'
@@ -82,7 +83,7 @@ require [
 			@scene.fog = new Three.FogExp2( 0x444fff, 0.0025 )
 
 			# Create sky dome.
-			imagePrefix = "images/nebula-"
+			imagePrefix = "game/images/nebula-"
 			directions  = ["xpos", "xneg", "ypos", "yneg", "zpos", "zneg"]
 			imageSuffix = ".png"
 			skyGeometry = new Three.CubeGeometry( 20000, 20000, 20000 )

@@ -1,8 +1,8 @@
 define [
-	'public/library/helpers/mixable'
-	'public/library/helpers/mixin.eventbindings'
+	'library/helpers/mixable'
+	'library/helpers/mixin.eventbindings'
 
-	'public/library/models/message'
+	'library/models/message'
 
 	'underscore'
 

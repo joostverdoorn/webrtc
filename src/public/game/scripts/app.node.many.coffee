@@ -1,5 +1,5 @@
 requirejs.config
-	baseUrl: '../'
+	baseUrl: '../../'
 
 	shim:
 		'jquery':
@@ -12,13 +12,14 @@ requirejs.config
 	# code-sharing reasons. Now it doesn't
 	# matter from where we require a module.
 	paths:
-		'public': './'
+		'library': './library'
+		'game': './game'
 
 		'jquery': 'vendor/scripts/jquery'
 		'bootstrap': 'vendor/scripts/bootstrap'
 
 require [
-	'scripts/app._'
+	'game/scripts/app._'
 	'library/node.structured'
 	'jquery'
 	], ( App, Node, $ ) ->

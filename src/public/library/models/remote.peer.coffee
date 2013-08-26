@@ -1,6 +1,6 @@
 define [
-	'public/library/models/remote._'
-	'public/library/models/message'
+	'library/models/remote._'
+	'library/models/message'
 
 	'underscore'
 	'adapter'

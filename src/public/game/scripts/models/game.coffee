@@ -1,14 +1,14 @@
 define [
-	'public/scripts/helpers/mixable'
-	'public/scripts/helpers/mixin.eventbindings'
+	'game/scripts/helpers/mixable'
+	'game/scripts/helpers/mixin.eventbindings'
 
-	'public/library/node.structured'
+	'library/node.structured'
 
-	'public/scripts/models/controller._'
+	'game/scripts/models/controller._'
 
-	'public/scripts/models/world'
-	'public/scripts/models/entity.player'
-	'public/scripts/models/stats'
+	'game/scripts/models/world'
+	'game/scripts/models/entity.player'
+	'game/scripts/models/stats'
 
 	'three'
 	], ( Mixable, EventBindings, Node, Controller, World, Player, Stats, Three ) ->

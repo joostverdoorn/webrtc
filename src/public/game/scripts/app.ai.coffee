@@ -1,5 +1,5 @@
 requirejs.config
-	baseUrl: '../'
+	baseUrl: '../../'
 
 	shim:
 		'jquery':
@@ -16,7 +16,8 @@ requirejs.config
 	# code-sharing reasons. Now it doesn't
 	# matter from where we require a module.
 	paths:
-		'public': './'
+		'library': './library'
+		'game': './game'
 
 		'underscore': 'vendor/scripts/underscore'
 		'jquery': 'vendor/scripts/jquery'
@@ -25,9 +26,9 @@ requirejs.config
 		'qrcode': 'vendor/scripts/qrcode.min'
 
 require [
-	'public/scripts/app._'
-	'public/scripts/models/game'
-	'public/scripts/models/controller.random'
+	'game/scripts/app._'
+	'game/scripts/models/game'
+	'game/scripts/models/controller.random'
 	'three'
 	], ( App, GameModel, RandomController, Three ) ->
 

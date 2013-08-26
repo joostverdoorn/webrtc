@@ -1,6 +1,6 @@
 define [
-	'public/scripts/models/controller._'
-	'public/library/node'
+	'game/scripts/models/controller._'
+	'library/node'
 	], ( Controller, Node ) ->
 
 	class Controller.Mobile extends Controller

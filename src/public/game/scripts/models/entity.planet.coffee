@@ -1,7 +1,7 @@
 define [
-	'public/scripts/models/entity._'
-	'public/scripts/models/entity.cannon'
-	'public/scripts/models/entity.projectile'
+	'game/scripts/models/entity._'
+	'game/scripts/models/entity.cannon'
+	'game/scripts/models/entity.projectile'
 
 	'three'
 	], ( Entity, Cannon, Projectile, Three ) ->
@@ -48,7 +48,7 @@ define [
 
 			if Planet.Model? then @trigger('loaded')
 			else
-				Entity.Loader.load '/meshes/planet.js', ( geometry, material ) =>
+				Entity.Loader.load '/game/meshes/planet.js', ( geometry, material ) =>
 					Planet.Model = {}
 
 					Planet.Model.Geometry = geometry

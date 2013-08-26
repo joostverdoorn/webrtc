@@ -1,11 +1,11 @@
 define [
-	'public/scripts/helpers/mixable'
-	'public/scripts/helpers/mixin.eventbindings'
+	'game/scripts/helpers/mixable'
+	'game/scripts/helpers/mixin.eventbindings'
 
-	'public/scripts/models/entity.planet'
-	'public/scripts/models/entity.player'
-	'public/scripts/models/entity.projectile'
-	'public/scripts/models/collection'
+	'game/scripts/models/entity.planet'
+	'game/scripts/models/entity.player'
+	'game/scripts/models/entity.projectile'
+	'game/scripts/models/collection'
 
 	'underscore'
 	'three'

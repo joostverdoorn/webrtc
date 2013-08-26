@@ -1,7 +1,7 @@
 define [
-	'public/scripts/helpers/mixable'
-	'public/scripts/helpers/mixin.eventbindings'
-	'public/scripts/helpers/mixin.dynamicproperties'
+	'game/scripts/helpers/mixable'
+	'game/scripts/helpers/mixin.eventbindings'
+	'game/scripts/helpers/mixin.dynamicproperties'
 	], ( Mixable, EventBindings, DynamicProperties ) ->
 
 	class Controller extends Mixable

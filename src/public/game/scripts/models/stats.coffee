@@ -1,6 +1,6 @@
 define [
-	'public/scripts/helpers/mixable'
-	'public/scripts/helpers/mixin.eventbindings'
+	'game/scripts/helpers/mixable'
+	'game/scripts/helpers/mixin.eventbindings'
 	], ( Mixable, EventBindings ) ->
 
 	class Stats extends Mixable

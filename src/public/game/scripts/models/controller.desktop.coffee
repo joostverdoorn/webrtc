@@ -1,5 +1,5 @@
 define [
-	'public/scripts/models/controller._'
+	'game/scripts/models/controller._'
 
 	'underscore'
 	], ( Controller, _ ) ->

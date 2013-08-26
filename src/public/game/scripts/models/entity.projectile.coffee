@@ -1,5 +1,5 @@
 define [
-	'public/scripts/models/entity._'
+	'game/scripts/models/entity._'
 
 	'three'
 	'underscore'

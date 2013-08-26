@@ -1,8 +1,8 @@
 define [
-	'public/scripts/models/entity._'
-	'public/scripts/models/entity.cannon'
-	'public/scripts/models/entity.projectile'
-	'public/scripts/models/stats'
+	'game/scripts/models/entity._'
+	'game/scripts/models/entity.cannon'
+	'game/scripts/models/entity.projectile'
+	'game/scripts/models/stats'
 
 	'three'
 	], ( Entity, Cannon, Projectile, Stats, Three ) ->
@@ -49,7 +49,7 @@ define [
 			# Load meshes.
 			if Player.Model? then @trigger('loaded')
 			else
-				Entity.Loader.load '/meshes/ufo.js', ( geometry, material ) =>
+				Entity.Loader.load '/game/meshes/ufo.js', ( geometry, material ) =>
 					Player.Model = {}
 
 					# Setup geometry.
@@ -66,7 +66,7 @@ define [
 					Player.Model.Mesh.receiveShadow = true
 
 					# Setup base.
-					Entity.Loader.load '/meshes/ufoBase.js', ( geometry, material ) =>
+					Entity.Loader.load '/game/meshes/ufoBase.js', ( geometry, material ) =>
 						Player.Model.Base = {}
 
 						Player.Model.Base.Geometry = geometry

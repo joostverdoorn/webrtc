@@ -1,6 +1,6 @@
 define [
-	'public/scripts/models/entity._'
-	'public/scripts/models/entity.projectile'
+	'game/scripts/models/entity._'
+	'game/scripts/models/entity.projectile'
 
 	'three'
 	], ( Entity, Projectile, Three ) ->
@@ -34,7 +34,7 @@ define [
 
 			if Cannon.Model? then @trigger('loaded')
 			else
-				Entity.Loader.load '/meshes/cannon.js', ( geometry, material )=>
+				Entity.Loader.load '/game/meshes/cannon.js', ( geometry, material )=>
 					Cannon.Model = {}
 
 					Cannon.Model.Geometry = geometry
@@ -45,7 +45,7 @@ define [
 					Cannon.Model.Mesh = new Three.Mesh(Cannon.Model.Geometry, Cannon.Model.Material)
 					Cannon.Model.Mesh.receiveShadow = true
 
-					Entity.Loader.load '/meshes/cannonBase.js', ( geometry, material ) =>
+					Entity.Loader.load '/game/meshes/cannonBase.js', ( geometry, material ) =>
 						Cannon.Model.Base = {}
 
 						Cannon.Model.Base.Geometry = geometry
