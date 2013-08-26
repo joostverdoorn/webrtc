@@ -135,7 +135,7 @@ require [
 			# Create camera.
 			@aspectRatio = width / height
 			@camera = new Three.PerspectiveCamera(@viewAngle, @aspectRatio, @nearClip, @farClip)
-			@camera.position = new Three.Vector3(-300, 600, 0)
+			@camera.position = new Three.Vector3(650, 350, 0)
 			@camera.lookAt(new Three.Vector3(0, 300, 0))
 
 			# # Composing.

@@ -38,7 +38,7 @@ define [
 
 			# Add lights to the scene.
 			directionalLight = new Three.DirectionalLight(0xffffff, 2)
-			directionalLight.position.set(0, 1, 1).normalize()
+			directionalLight.position.set(-1, 0, 0).normalize()
 			directionalLight.castShadow = true
 			directionalLight.shadowDarkness = .5
 			@scene.add(directionalLight)

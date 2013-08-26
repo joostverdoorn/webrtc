@@ -108,7 +108,6 @@ define [
 					side: THREE.BackSide,
 					blending: THREE.AdditiveBlending,
 					transparent: true
-					depthWrite: false
 
 				@outerAtmosphere = new Three.Mesh(atmosphereGeometry, atmosphereMaterial)
 				@mesh.add(@outerAtmosphere)
@@ -127,7 +126,6 @@ define [
 					side: THREE.BackSide,
 					blending: THREE.AdditiveBlending,
 					transparent: true
-					depthWrite: false
 
 				@innerAtmosphere = new Three.Mesh(atmosphereGeometry, atmosphereMaterial)
 				@mesh.add(@innerAtmosphere)
