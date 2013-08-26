@@ -310,12 +310,12 @@ reference "sub:Peer-to-Peer"
 
 \end_inset
 
-, we chose for PoPCorn as supernode election algorithm.
+, we choose PoPCorn as supernode election algorithm.
  In this section we will explain how we implemented it.
  PoPCorn uses Vivaldi coordinate system and therefore we will discuss it
  too.
  We will discuss it in this section because the implementation of PoPCorn
- and Vivaldi differs from the implementation we discussed in 
+ and Vivaldi differs from the implementation discussed in 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "vivaldi,PoPCorn"
@@ -370,11 +370,11 @@ name "sub:Vivaldi"
 When a node joins the network, it sets its 3-dimensional coordinates to
  a random vector with values between [-2, 2] to ensure diversity in the
  coordinates.
- With regular intervals a node asks its peers to for their respective positions
- and computes the latencies.
- From this information the node can calculate its own position as follows:
- for each peer, the node tries to set its distance to that peer equal to
- the latency to that peer, like a spring system.
+ With an interval of 2 seconds a node asks its peers to for their respective
+ positions and computes the latencies.
+ This information is used to calculate its own position as follows: for
+ each peer, the node tries to set its distance to that peer equal to the
+ latency to that peer, like a spring system.
  This process happens quickly at first, with a node changing its position
  very rapidly as it attempts to find its optimal position within the network.
  Later on it slows down, to avoid oscillations when latency varies 

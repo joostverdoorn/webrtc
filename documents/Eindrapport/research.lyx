@@ -203,6 +203,15 @@ name "sub:Peer-to-Peer"
 \begin_layout Standard
 This chapter describes the first choices we made in our research track and
  explains the road to the desired algorithm.
+ The chosen algorithm is discussed very briefly and will fully be explained
+ in 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "sub:Network-Topology"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsubsection
@@ -211,8 +220,9 @@ Structuring the network
 
 \begin_layout Standard
 WebRTC is a new technology and first we decided to run some tests of how
- the WebRTC unstructured overlay network will perform, so if all nodes will
- be connected to all other nodes and send a significant amount data through.
+ the WebRTC unstructured overlay network will perform.
+ So if all nodes will be connected to all other nodes and send a significant
+ amount data through.
  Already after 15 nodes the network started to display connection errors
  and sometimes failed to successfully send a message.
  Of course, we can quickly see that unstructured networks will perform weakly,
@@ -228,12 +238,12 @@ reference "sub:Supernode-topologies-and"
 \end_inset
 
  we discussed different supernode election approaches, at this moment we
- choose one of the approaches to start our research on the best fittable
+ choose one of the approaches to start our research on the best fitting
  topology.
  We choose the group based algorithms as the most suitable for our purposes
  because of the decentralized approach of supernode selection.
  However the rule sets of the adaptive algorithms can also be very valuable
- during the implementation of the group base algorithm.
+ during the implementation of the group based algorithm.
 \end_layout
 
 \begin_layout Subsubsection
@@ -253,17 +263,17 @@ key "sacha2009exploiting"
 \end_layout
 
 \begin_layout Enumerate
-Location-based systems are organized by their physical location, defined
+Location based systems are organised by their physical location, defined
  for example by communication latency between two nodes.
 \end_layout
 
 \begin_layout Enumerate
-Semantic based systems are organized by their semantics.
+Semantic based systems are organised by their semantics.
  For example it could be a node position in the game world.
 \end_layout
 
 \begin_layout Enumerate
-Grid based systems are organized by an administrative domain.
+Grid based systems are organised by an administrative domain.
  The large-scale grid consists of small-scale grids what are actually a
  network themselves.
 \end_layout
@@ -274,7 +284,7 @@ The choice of structuring the nodes is a tough one.
  while semantic based systems can implement the structure for specific purposes.
  For example in our game, you would not send any data to a player who can
  not interact with you.
- We choose to implement a location-based structure to keep our library useful
+ We choose to implement a location based structure to keep our library useful
  for the different purposes.
  However during the implementation we should make it easy to switch to different
  organizations.
@@ -285,7 +295,7 @@ Location based systems
 \end_layout
 
 \begin_layout Standard
-Now we made a choice which type of algorithm we are going to use, we started
+Now we made a choice which type of algorithm we are going to use, we start
  to discover the available systems.
  Below four proposed systems are described.
 \end_layout
@@ -325,11 +335,12 @@ key "conf/saint/KwonR03"
 
 \end_inset
 
-, like the name says is designed for sharing files.
- The approach is similar to crown by grouping the nodes by latency.
+ is like the name says designed for sharing files.
+ The approach is similar to Crown by grouping the nodes by latency.
  An interesting idea here is that PASS introduces a strong single node that
  handles all communication between separate groups.
- Also in PASS a supernode keeps track a backup supernode for case it leaves.
+ Also in PASS, a supernode keeps track of a backup supernode for case it
+ leaves.
 \end_layout
 
 \begin_layout Enumerate
@@ -345,13 +356,13 @@ key "PoPCorn"
 \end_inset
 
  relies upon an external algorithm like Vivaldi to structure the network
- in n-dimensional space.
+ in a n-dimensional space.
  First, the network distributes a token to a random node, after which this
  node negotiates with other token holders in the network.
  He advertises his token and calculates the combined repulsion force of
  all other tokens in the network.
  If the force is lower than a certain threshold for a certain number of
- time steps, a node may keep it and becomes a supernode.
+ time steps, a node may keep the token and becomes a supernode.
  This approach does not describe how a token generation works in a real
  time scenario.
 \end_layout
@@ -383,10 +394,10 @@ key "wolf"
 \end_layout
 
 \begin_layout Standard
-We choose PoPCorn algorithm because the organization of nodes based on latency
+We choose PoPCorn algorithm because the organisation of nodes based on latency
  aims to reach the fastest communication in the network.
  The token distribution principle seems reliable to dynamically elect the
- supernodes dependent of the real time coordinates.
+ supernodes dependent on the real time coordinates.
  However a lot of implementation details are missing which offers an opportunity
  to edit PoPCorn to our own needs.
  For example 

@@ -360,7 +360,7 @@ name "sub:Node-heterogeneity"
 \begin_layout Standard
 Our goal is to create a stable and fast performing network with WebRTC technolog
 y.
- It is important to realize that every node which wants to connect to the
+ It is important to realise that every node which wants to connect to the
  network is different, and thus will not perform the same way.
  According to Jan Sacha 
 \begin_inset CommandInset citation
@@ -370,13 +370,13 @@ key "sacha2009exploiting"
 \end_inset
 
 , a node has many characteristics to consider.
- We will sum them up.
+ We will sum them up:
 \end_layout
 
 \begin_layout Itemize
-A node has a session duration defined by the amount of time a node is in
- the network or expected to stay in the network.
- In our case, an arcade action game, a player will join for a period between
+A node has a session duration defined by the amount of time a node spends
+ in the network or expected to stay in the network.
+ In our case of an arcade action game, a player will join for a period between
  1 minute and 1 hour.
  A small session duration will make the stability of network vulnerable.
 \end_layout
@@ -399,7 +399,7 @@ Availability of the node is the next property, defined by a fraction of
 A more important characteristic of a node is bandwidth.
  Our application should be able to send a huge amount of data to all connected
  nodes.
- This could be a bottleneck for network heavy applications.
+ This could be a bottleneck for network-heavy applications.
  Therefore by structuring a network, this can be an important factor.
 \end_layout
 
@@ -422,7 +422,7 @@ reference "sub:WebRTC"
 
 \end_inset
 
- ), can communicate to all others.
+), can communicate to all others.
  Therefore, we have to provide a path that allows every node to reach every
  other node.
  This connectivity is one of our key properties that allows our players
@@ -484,7 +484,7 @@ key "Leitão_onthe"
 
 \end_inset
 
- summarized a couple of guidelines that introduce some degree of structure
+ summarised a couple of guidelines that introduce some degree of structure
  in randomly overlay networks.
 \end_layout
 
@@ -521,8 +521,8 @@ These best practices should be taken in mind while researching the different
  implementation of the overlay networks.
  Especially guideline 4 is very important for our game application.
  Each player should always be aware of all other players participating in
- the game and he or she should always have a route to communicate with him
- or her with as little delay as possible.
+ the game and they should always have a route to communicate with each other
+ with as little as possible delay.
  This will be our base by investigating the peer-to-peer network topologies.
 \end_layout
 
@@ -543,7 +543,7 @@ A supernode handles data flow and connections for other nodes, it is like
  A supernode also acts as an equal to other supernodes - a sibling relationship.
  These connected supernodes form a supernode overlay network which handles
  the core functionality of the network.
- Network topologies that implement an supernode structure make use of the
+ Network topologies that implement a supernode structure make use of the
  heterogeneity of the nodes.
  There is a lot of research done on supernode topologies.
  The key question in here is: How many supernodes are desired and which
@@ -587,7 +587,7 @@ Group based
  The grouped are usually split by peer properties like network proximity.
  Group based algorithms have the advantage that a global supernode election
  problem can be decomposed in local group-level supernode selection problem.
- As disadvantage are that these groups hard to create and manage.
+ As disadvantage are these groups hard to create and to manage.
 \end_layout
 
 \begin_layout Enumerate
@@ -629,7 +629,7 @@ reference "sub:Peer-to-Peer"
 
 \end_inset
 
- and will focus on that approach
+ and will focus on that approach.
 \end_layout
 
 \begin_layout Subsection
