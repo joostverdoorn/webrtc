@@ -248,12 +248,15 @@ After this first review we followed up on most of the suggestions given
  We did move the game to its own directory so files of the library and the
  game are no longer in the same directory.
  We also refactored long functions to consist of multiple smaller functions.
+ Additionally we added method and class documentation to now have 100% of
+ the codebase (excluding tests) textually annotated.
  We did not remove the code duplication between the network library and
  the game because eventually these two components will be split up in two
  repositories where the game can only use the public interface of the library
  and the library should never even know about the game.
  Therefore the shared code in these two deliverables cannot be placed in
  a common directory.
+ 
 \end_layout
 
 \end_body
