@@ -154,6 +154,11 @@ define [
 			projectile = new Projectile(@, info.ownerID, false, null, null, info)
 			@addEntity(projectile)
 
+		# Tries to find the planets first surface area beneath a given point
+		#
+		# @param position [Three.Vector3] the point to check from
+		# @return [Intersection] The intersection beneath the point or null if none exists
+		#
 		getSurface: ( position = new Three.Vector3(0, 1, 0)) ->
 			radius = @planet.geometry.boundingSphere.radius
 			pos = position.clone().normalize().multiplyScalar(radius)
