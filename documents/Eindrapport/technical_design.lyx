@@ -320,10 +320,9 @@ Server communication
 \end_layout
 
 \begin_layout Standard
-Our philosophy is to minimize the communication to the server and to aspire
- the standalone working peer-to-peer system.
- However this may not be at the expense of the network reliability.
- Our network uses server for several purposes.
+Our philosophy is to minimise the communication to the server.
+ However, this may not be at the expense of the network reliability.
+ Our network uses a server for several purposes, as detailed below.
 \end_layout
 
 \begin_layout Enumerate
@@ -332,8 +331,8 @@ When going to the game URL, a server distributes the needed files which
 \end_layout
 
 \begin_layout Enumerate
-When entering network a new node receives a list of existing supernodes
- to chose from and guides the first connection.
+When entering the network a new node receives a list of existing supernodes
+ to choose from and coordinates the first connection.
 \end_layout
 
 \begin_layout Enumerate
@@ -351,17 +350,17 @@ Vivaldi
 \end_layout
 
 \begin_layout Standard
-When a node joins the network, it sets its 3-dimensional coordinates between
- [-2, 2] to ensure the diversity in the coordinates.
- Every 2 seconds a node pings its peers and gets all theirs positions and
- latencies.
- When all peers answered own position is being calculated.
- For each peer, a node tries to to equalize the latency and the distance
- between two nodes by changing his own position.
- When a node joins the network this process executes fast but after a after
- a couple of steps, approximate position is assumed to be found.
- After that, a position is changing slowly to prevent the oscillating of
- the node 
+When a node joins the network, it sets its 3-dimensional coordinates to
+ a random vector with values between [-2, 2] to ensure diversity in the
+ coordinates.
+ With regular intervals a node asks its peers to for their respective positions
+ and computes the latencies.
+ From this information the node can calculate its own position as follows:
+ for each peer, the node tries to set its distance to that peer equal to
+ the latency to that peer, like a spring system.
+ This process happens quickly at first, with a node changing its position
+ very rapidly as it attempts to find its optimal position within the network.
+ Later on it slows down, to avoid oscillations when latency varies
 \begin_inset CommandInset citation
 LatexCommand cite
 key "vivaldi"

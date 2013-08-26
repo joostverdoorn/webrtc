@@ -206,7 +206,7 @@ This chapter describes the first choices we made in our research track and
 \end_layout
 
 \begin_layout Subsubsection
-Structuring network
+Structuring the network
 \end_layout
 
 \begin_layout Standard
@@ -295,7 +295,7 @@ Now we made a choice which type of algorithm we are going to use, we started
 \series bold
 Crown
 \series default
- is organizes the network by the prefix of the IP of the user.
+ organises the network by the prefix of the IP of the user.
  The users with the same prefix are likely to have low latency and high
  bandwidth.
  Nodes in the same group elect a supernode with criteria of high bandwidth,
@@ -338,10 +338,10 @@ key "conf/saint/KwonR03"
 \series bold
 PoPCorn
 \series default
- uses an external algorithm like Vivaldi to structure the network in n-dimension
-al space.
- First a token is given to a random node, after he decides to negotiate
- with his peers if he may keep it.
+ relies upon an external algorithm like Vivaldi to structure the network
+ in n-dimensional space.
+ First, the network distributes a token to a random node, after which this
+ node negotiates with other token holders in the network.
  He advertises his token and calculates the combined repulsion force of
  all other tokens in the network.
  If the force is lower than a certain threshold for a certain number of
@@ -362,7 +362,7 @@ key "PoPCorn"
 \series bold
 Wolf and Merz
 \series default
- heuristic evolutionary algorithm tries to minimize the distance between
+ heuristic evolutionary algorithm tries to minimise the distance between
  the supernodes and their clients and the distance between the supernodes.
  This algorithm uses the local search principle to hopefully find a suitable
  solution 
