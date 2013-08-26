@@ -171,6 +171,8 @@ define [
 		#
 		# @param interval [Integer] the player broadcast interval to cancel.
 		#
+		# @private
+		#
 		_onPlayerDied: ( interval ) =>
 			clearInterval(interval)
 			@trigger('player.died')

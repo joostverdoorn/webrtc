@@ -55,6 +55,8 @@ define [
 
 		position : new Vector((Math.random()-0.5)*4, (Math.random()-0.5)*4, (Math.random()-0.5)*4)
 
+		# Initializes Vivaldi and Popcorn on top of the unstructured node
+		#
 		initialize: () ->
 
 			window.onbeforeunload = () =>
@@ -348,6 +350,7 @@ define [
 		# disconnect in the appropriate manner.
 		#
 		# @param peer [Peer] the peer that disconnected.
+		# @private
 		#
 		_onPeerDisconnect: ( peer ) =>
 			if peer is @_parent
@@ -364,6 +367,7 @@ define [
 		#
 		# @param id [String] the string id the of the peer
 		# @param superNode [Boolean] the new supernode status of the peer
+		# @private
 		#
 		_onPeerSetSuperNode: ( id, superNode ) =>
 			unless peer = @getPeer(id)
@@ -380,6 +384,7 @@ define [
 
 		# Attempts to enter the network by requesting a list of supernodes
 		# and selecting and connecting to a parent from the list.
+		# @private
 		#
 		_enterNetwork: ( ) =>
 
@@ -450,6 +455,7 @@ define [
 
 		# Selects the supernode with the lowest latency and attempts to connect.
 		# If this fails, try the next lowest latency.
+		# @private
 		#
 		_selectParent: ( ) ->
 
@@ -479,6 +485,7 @@ define [
 		# Ensures that the foundation of this node remains valid. Will do  this
 		# by connecting to supernodes when required, or setting a parent when we
 		# don't have one.
+		# @private
 		#
 		_ensureNetworkIntegrity: () =>
 			@_checkForInconsistencies()
@@ -556,6 +563,7 @@ define [
 				)
 
 		# Check for inconsistencies in the network such as broken relationships
+		# @private
 		#
 		_checkForInconsistencies: () =>
 
@@ -592,8 +600,9 @@ define [
 				for child in @getChildren()
 					@removeChild(child)
 
-
-
+		# Updates all peers positions to be able to determine the nearest peers
+		#
+		# @private
 		_updatePosition: ( ) =>
 			i = 0
 			for peer in @getPeers()
@@ -614,8 +623,8 @@ define [
 
 		# Computes our position in the network from the positions of our neighbours
 		# and the latency to them. This implements the vivaldi network coordinates:
-		# http://en.wikipedia.org/wiki/Vivaldi_coordinates
-		#
+		# @see http://en.wikipedia.org/wiki/Vivaldi_coordinates
+		# @private
 		_computePosition: ( ) ->
 			for peer in @getPeers()
 				direction = peer.position.subtract(@position)				# Vector to peer
@@ -636,7 +645,7 @@ define [
 		# the child. We can include ourselves or not when we want to get rid of all our children.
 		#
 		# @param includeSelf [Boolean] wether or not to include ourselves in the recommendation.
-		#
+		# @private
 		_recommendParent: ( includeSelf = true ) =>
 
 			siblings = @getSiblings()
@@ -662,7 +671,7 @@ define [
 		# set the other supernode as parent.
 		#
 		# @param id [String] the string identifier of the recommended parent.
-		#
+		# @private
 		_onPeerRecommendParent: ( id ) =>
 
 			if @isSuperNode
@@ -708,7 +717,7 @@ define [
 			return groupedTokens
 
 		# Creates a new token and passes it on to a random child.
-		#
+		# @private
 		_distributeToken: ( ) =>
 			groupedTokens = @groupTokens()
 			children = _(@getChildren()).filter( ( child ) => not groupedTokens[child.id])
@@ -725,7 +734,7 @@ define [
 		# process.
 		#
 		# @param tokenString [String] a string representation of the received token.
-		#
+		# @private
 		_onTokenReceived: ( tokenString, message ) =>
 			if @token?
 				@broadcast('token.die', tokenString)
@@ -748,7 +757,7 @@ define [
 		#
 		# @param tokenString [String] a string representation of the token.
 		# @param instantiate [Boolean] wether or not to respond.
-		#
+		# @private
 		_onTokenInfo: ( tokenString, instantiate, message ) =>
 
 			token = Token.deserialize(tokenString)
@@ -762,7 +771,7 @@ define [
 		# on the token.
 		#
 		# @param tokenString [String] a string representation of the token.
-		#
+		# @private
 		_onTokenDied: ( tokenString, message ) =>
 			token = Token.deserialize(tokenString)
 			#console.log "Received dead token from node #{message.from} with id ", token.id
@@ -770,7 +779,7 @@ define [
 
 		# Computes the desired position of the token from the positions of other tokens,
 		# and requests candidates closer to this desired position then ourselves.
-		#
+		# @private
 		_computeTokenTargetPosition: ( ) ->
 			unless @token?
 				return
@@ -805,7 +814,7 @@ define [
 		# to the target position of the token.
 		#
 		# @param tokenString [String] a string representation of the token.
-		#
+		# @private
 		_onTokenRequestCandidate: ( tokenString ) =>
 			unless @isSuperNode
 				return
@@ -833,7 +842,7 @@ define [
 		#
 		# @param id [String] the string identifier of the candidate
 		# @param distance [Float] the distance to our token's target position
-		#
+		# @private
 		_onTokenCandidate: ( id, distance ) =>
 			unless @token?
 				return
@@ -846,7 +855,7 @@ define [
 
 		# Selects the best candidate from all token candidates and passes our
 		# token to this candidate.
-		#
+		# @private
 		_selectTokenOwner: ( ) =>
 			unless @token?
 				return
@@ -874,6 +883,8 @@ define [
 				@token.candidates = []
 				@setSuperNode(true)
 
+		# Remove all previously set intervals to prevent errors when an object is destroyed
+		#
 		clearIntervals: () ->
 			for timer in @timers
 				clearTimeout(timer)

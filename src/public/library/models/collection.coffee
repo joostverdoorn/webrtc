@@ -9,7 +9,6 @@ define [
 	# The value of this class is in that it is easy to add and remove items, but mainly
 	# in that it is possible to listen to all members of the collection at once.
 	#
-
 	class Collection extends Array
 
 		_.extend(@, Mixable)

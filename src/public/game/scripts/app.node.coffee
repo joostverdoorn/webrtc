@@ -24,12 +24,11 @@ require [
 	'jquery'
 	], ( App, Node, $ ) ->
 
-	# Master app class
+	# A single app with a single node
 	#
+	class App.Node extends App
 
-	class App.Master extends App
-
-		# This method will be called from the baseclass when it has been constructed.
+		# Initializes a node and sets up listeners to update the UI
 		#
 		initialize: ( ) ->
 			@node = new Node()
@@ -63,6 +62,8 @@ require [
 				@remoteStream = stream
 			)
 
+		# Add an audio stream to the connections
+		#
 		addStream: ( ) ->
 			getUserMedia({audio:true}, (stream) =>
 				@stream = stream
@@ -151,8 +152,10 @@ require [
 
 			return row
 
+		# Update information about the nodes token
+		#
 		updateTokenInfo: () ->
 			$('.self-row .token').text(@node.token?)
 			@tokens = @node.groupTokens()
 
-	window.App = new App.Master
+	window.App = new App.Node

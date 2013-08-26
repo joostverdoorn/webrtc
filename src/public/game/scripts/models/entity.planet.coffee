@@ -62,6 +62,10 @@ define [
 
 					@trigger('loaded')
 
+		# Update the planets atmospheric properties
+		#
+		# @param dt [Float] the time that has elapsed since last update
+		#
 		update: ( dt ) ->
 			if App?.camera?
 				# Gruadually decrease inner atmosphere density.
@@ -79,6 +83,10 @@ define [
 				@innerAtmosphere?.material.uniforms.viewVector.value = App.camera.position
 				@outerAtmosphere?.material.uniforms.viewVector.value = App.camera.position
 
+		# Triggers when the Planet Mesh is fully loaded
+		#
+		# @private
+		#
 		_onLoaded: ( ) =>
 			@loaded = true
 

@@ -385,7 +385,7 @@ define [
 
 		# Is called when the server connects. Will ping the server and compute
 		# the network time based on the server time and latency.
-		#
+		# @private
 		_onServerConnect: ( id ) =>
 			@id = id
 			@server.ping( ( latency, serverTime ) =>
@@ -396,7 +396,7 @@ define [
 		# accept this request by establishing a connection.
 		#
 		# @param id [String] the id of the peer
-		#
+		# @private
 		_onPeerConnectionRequest: ( id ) =>
 			@connect(id, null, false)
 
@@ -404,7 +404,7 @@ define [
 		#
 		# @param id [String] the id string of the peer
 		# @param data [Object] a plain object representation of an RTCSessionDescription
-		#
+		# @private
 		_onPeerSetRemoteDescription: ( id, data ) =>
 			description = new RTCSessionDescription(data)
 			@getPeer(id, null, true)?.setRemoteDescription(description)

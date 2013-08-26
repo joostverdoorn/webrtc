@@ -6,6 +6,7 @@ define [
 	'adapter'
 	], ( Remote, Message, _ ) ->
 
+	# All other p2p peers as seen from an ordinary peer
 	class Remote.Peer extends Remote
 
 		@Role:
@@ -108,7 +109,7 @@ define [
 		# Sends a predefined message to the remote.
 		#
 		# @param message [Message] the message to send
-		#
+		# @private
 		_send: ( message, retries = 0 ) ->
 			maxRetries = 5
 
@@ -135,7 +136,7 @@ define [
 		# Adds a new data channel, and adds event bindings to it.
 		#
 		# @param channel [RTCDataChannel] the channel to be added
-		#
+		# @private
 		_addChannel: ( channel ) ->
 			@_channel = channel
 
@@ -165,7 +166,7 @@ define [
 		# Ups bandwidth limit on SDP. Meant to be called during offer/answer.
 		#
 		# @param sdp [RTCSessionDescription] the sdp to increase the bandwidth of
-		#
+		# @private
 		_higherBandwidthSDP: ( sdp ) ->
 			# AS stands for Application-Specific Maximum.
 			# Bandwidth number is in kilobits / sec.
@@ -180,7 +181,7 @@ define [
 		# by creating an RTCSessionDescription and sending it to the remote,
 		# and expects the remote's RTCSessionDescription as answer. Does the
 		# same for ice candidates.
-		#
+		# @private
 		_startNegotiation: ( ) =>
 			@_connection.createOffer( ( description ) =>
 				description.sdp = @_higherBandwidthSDP(description.sdp)
@@ -225,7 +226,7 @@ define [
 		# call candidate.add on the remote to add it.
 		#
 		# @param event [Event] the event thrown
-		#
+		# @private
 		_onIceCandidate: ( event ) =>
 			if event.candidate?
 				@iceCandidates.push(event.candidate)
@@ -243,7 +244,7 @@ define [
 		# Is called when the ice connection state changed.
 		#
 		# @param event [Event] the connection change event
-		#
+		# @private
 		_onIceConnectionStateChange: ( event ) =>
 			connectionState = @_connection.iceConnectionState
 
@@ -256,21 +257,21 @@ define [
 		# Is called when a data channel is added to the connection.
 		#
 		# @param event [Event] the data channel event
-		#
+		# @private
 		_onDataChannel: ( event ) =>
 			@_addChannel(event.channel)
 
 		# Is called when an audio or video stream is added to the connection.
 		#
 		# @param event [Event] the stream event
-		#
+		# @private
 		_onAddStream: ( event ) =>
 			@trigger('stream.added', event.stream)
 
 		# Is called when a message was received on channel.
 		#
 		# @param messageEvent [MessageEvent] an RTC message event
-		#
+		# @private
 		_onChannelMessage: ( messageEvent ) =>
 			message = Message.deserialize(messageEvent.data)
 			@trigger('message', message)
@@ -278,33 +279,33 @@ define [
 		# Is called when the data channel is opened.
 		#
 		# @param event [Event] the channel open event
-		#
+		# @private
 		_onChannelOpen: ( event ) =>
 			@trigger('channel.opened', @, event)
 
 		# Is called when the data channel is closed.
 		#
 		# @param event [Event] the channel close event
-		#
+		# @private
 		_onChannelClose: ( event ) =>
 			@trigger('channel.closed', @, event)
 
 		# Is called when a connection has been established.
-		#
+		# @private
 		_onConnect: ( ) ->
 			console.log "connected to node #{@id}"
 
 		# Is called when a connection has been broken.
-		#
+		# @private
 		_onDisconnect: ( ) ->
 			console.log "disconnected from node #{@id}"
 
 		# Is called when the channel has opened.
-		#
+		# @private
 		_onChannelOpened: ( ) ->
 			console.log "channel opened to node #{@id}"
 
 		# Is called when the channel has closed.
-		#
+		# @private
 		_onChannelClosed: ( ) ->
 			console.log "channel closed to node #{@id}"

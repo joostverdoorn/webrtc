@@ -4,6 +4,7 @@ define [
 	'game/scripts/helpers/mixin.dynamicproperties'
 	], ( Mixable, EventBindings, DynamicProperties ) ->
 
+	# Base class for the game controllers. Replaced by implementations in Controller.Desktop, Controller.Mobile and Controller.Random
 	class Controller extends Mixable
 		@concern EventBindings
 		@concern DynamicProperties
@@ -23,6 +24,8 @@ define [
 			RotateCannonUpward: 0
 			RotateCannonDownward: 0
 
+		# Creates an empty controller with all listen variables set but without setters
+		#
 		constructor: ( args... ) ->
 			getters = []
 			setters = []

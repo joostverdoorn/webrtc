@@ -3,8 +3,11 @@ define [
 	'library/node'
 	], ( Controller, Node ) ->
 
+	# Implementation of a controller using a WebRTC connected mobile phone
 	class Controller.Mobile extends Controller
 
+		# Tries to connect to a mobile phone and then listen for the phone events to set the controller values for the game
+		#
 		initialize: ( ) ->
 			@node = new Node()
 

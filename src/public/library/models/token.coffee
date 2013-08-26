@@ -4,6 +4,7 @@ define [
 	'underscore'
 	], ( Vector, _ ) ->
 
+	# A token in the network distribution algorithm
 	class Token
 
 		nodeId = null

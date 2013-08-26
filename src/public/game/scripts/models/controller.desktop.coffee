@@ -4,6 +4,7 @@ define [
 	'underscore'
 	], ( Controller, _ ) ->
 
+	# Implementation for a controller with the use of Mouse and Keyboard
 	class Controller.Desktop extends Controller
 
 		@Keys:
@@ -40,8 +41,7 @@ define [
 		_mouseMoveScale: 1/40
 		_mouseStopDelay: 50
 
-		# Is called by the baseclass when it has been constructed. This will
-		# set up the appropriate listeners.
+		# Sets the appropriate setters for the Controller making sure the values are correct for keyboard/mouse use
 		#
 		initialize: ( ) ->
 			# Key events.
@@ -87,7 +87,7 @@ define [
 		# specific event.
 		#
 		# @param e [Event] the event fired
-		#
+		# @private
 		_onKeyEvent: ( e ) =>
 			 key = _(Controller.Desktop.Keys).invert()[e.keyCode]
 			 @trigger(key, e.type is 'keydown') if key?
@@ -96,7 +96,7 @@ define [
 		# a specific event for different mouse events.
 		#
 		# @param e [Event] the event fired
-		#
+		# @private
 		_onMouseEvent: ( e ) =>
 			if e.type in ['mousedown', 'mouseup']
 				@trigger('MOUSE', e.type is 'mousedown')
@@ -117,7 +117,7 @@ define [
 		# have pointer lock or not and fire the appropriate events.
 		#
 		# @param e [Event] the event fired
-		#
+		# @private
 		_onPointerLockChange: ( e ) =>
 			if document.pointerLockElement is App.container ||
 					document.mozPointerLockElement is App.container ||
@@ -132,7 +132,7 @@ define [
 		# event.
 		#
 		# @param e [Event] the event fired
-		#
+		# @private
 		_onPointerLockError: ( e ) =>
 			console.log 'error', e
 			@trigger('controller.pointerlock.error', e)

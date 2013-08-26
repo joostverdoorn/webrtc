@@ -45,17 +45,17 @@ require [
 	'orbitControls'
 	], ( App, Node, Three, Stats, $, _ ) ->
 
-	# Inspector app class. This will create and draw a 3d scene
-	# containing all nodes and their connections.
+	# Map app class. This will create and draw a 3d scene
+	# containing the world with all players
 	#
-	class App.Inspector extends App
+	class App.Map extends App
 
 		type: 'inspector'
 		serverAddress: ':8080/'
 
 		nodes: []
 
-		# Constructs a new inspector app.
+		# Constructs a new map app.
 		#
 		constructor: ( ) ->
 			viewAngle = 45
@@ -207,8 +207,13 @@ require [
 			@_lastUpdateTime = timestamp
 			window.requestAnimationFrame(@update)
 
+	# Mock Player class to display small green dots on the map
+	#
 	class Player
-
+		# Adds a new player into the world with a socket.IO id
+		#
+		# @param app [App.Map] the app
+		# @param id [String] the Socket.IO connection ID of a player
 		constructor: ( @app, @id ) ->
 			@targetPosition = new Three.Vector3()
 
@@ -217,13 +222,22 @@ require [
 			@mesh = new Three.Mesh(geometry, material)
 			@app.scene.add(@mesh)
 
+		# Smoothly updates the position of a player
+		#
+		# @param dt [Float] Time since last update
+		#
 		update: ( dt ) ->
 			@mesh.position.lerp(@targetPosition, dt * 2)
 
+		# Removes a player from the map
+		#
 		die: ( ) ->
 			@app.scene.remove(@mesh)
 
+		# Updates the information of a player
+		#
+		# @param info [Object] Object with all new information
 		applyInfo: ( info ) ->
 			@targetPosition.fromArray(info.position)
 
-	window.App = new App.Inspector()
+	window.App = new App.Map()

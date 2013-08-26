@@ -32,12 +32,11 @@ require [
 	'three'
 	], ( App, GameModel, RandomController, Three ) ->
 
-	# Application base class
+	# App that spawns 10 randomly controlled bots into the game
 	#
-
 	class AIApp extends App
-		# Is called when the app has been constructed. Should be overridden by
-		# subclasses.
+
+		# Start a loop that adds bots and controls them
 		#
 		initialize: ( ) ->
 			@bots = []
@@ -47,6 +46,8 @@ require [
 
 			window.requestAnimationFrame(@update)
 
+		# Create a new bot, if there are not yet 10, schedule another bot creation in 5 seconds
+		#
 		newBot: ( ) =>
 			console.log 'CREATING'
 
@@ -64,6 +65,8 @@ require [
 			if @bots.length < 10
 				setTimeout(@newBot, 5000)
 
+		# Update all bots
+		#
 		update: ( timestamp ) =>
 			for game in @bots
 				game.player?.mesh?.updateMatrixWorld()

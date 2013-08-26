@@ -2,7 +2,6 @@ define ->
 
 	# Mixable class. Will aid in multiple inheritance by applying mixins.
 	# Based on code originally written by Derk-Jan Karrenbeld. Licensed MIT.
-
 	class Mixable
 
 		@ModuleKeyWords : [ 'extended', 'included' ]

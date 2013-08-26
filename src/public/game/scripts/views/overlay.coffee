@@ -5,6 +5,7 @@ define [
 	'jquery'
 	'qrcode'
 	], ( Mixable, EventBindings, $, QRCode ) ->
+	# Informational overlays for over the game
 	class Overlay extends Mixable
 
 		@concern EventBindings
@@ -107,6 +108,11 @@ define [
 		showPlayerDiedScreen: ( ) =>
 			@display('player_died')
 
+		# Sorts all stats by kill/death ratio
+		#
+		# @param stats [Object] Stats from game
+		# @return [Array<Object>] Sorted stats
+		# @private
 		_sortStats: ( stats ) ->
 			sortedStats = []
 
@@ -124,6 +130,10 @@ define [
 
 			return sortedStats
 
+		# Update the contents of the stats table on the overlay
+		#
+		# @param sortedStats [Array<Object>] sorted stats from _sortStats
+		# @private
 		_updateStatTable: ( sortedStats ) ->
 			statRows = $('#statRows')
 			statRows.empty()
@@ -131,6 +141,7 @@ define [
 			for stat in sortedStats
 				statRows.append("<tr><td>#{rank++}</td><td>#{stat[0]}</td><td>#{stat[1]}</td><td>#{stat[2]}</td><td>#{stat[3]}</td></tr>")
 
+		# Display stats to the user
 		showStats: ( stats = @stats ) ->
 			@_statsVisible = true
 
@@ -142,6 +153,7 @@ define [
 				@_statsVisible = false
 			)
 
+		# Set the stats to be shown on the next update
 		setStats: ( @stats ) =>
 			if @_statsVisible
 				sortedStats = @_sortStats(@stats)

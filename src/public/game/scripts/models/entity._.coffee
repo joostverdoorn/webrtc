@@ -53,13 +53,15 @@ define [
 
 			@initialize?.apply(@, args)
 
-		# Removes the mesh from the scene.
+		# Removes the mesh from the scene and stops simulation
 		#
 		die: ( ) ->
 			@_dead = true
 			@scene.remove(@mesh)
 			@trigger('die', @position.clone(), @velocity.clone())
 
+		# Revives an object by re-adding it to the scene and making sure the gameloop includes it again in sumulations
+		#
 		revive: ( ) ->
 			@_dead = false
 			@scene.add(@mesh)
@@ -79,6 +81,11 @@ define [
 			@_angularForces.push(vector)
 
 		# Given a time difference since the last update this will update the position of the entity
+		#
+		# @param dt [Float] the time since the last calculation
+		# @param owner [Boolean] are we the owner of this entity
+		# @private
+		#
 		_updatePosition: ( dt, owner ) ->
 			# Calculate our new position from the velocity.
 			deltaPosition = @velocity.clone().multiplyScalar(dt)
@@ -121,6 +128,10 @@ define [
 			@velocity.add(dragForce.divideScalar(@mass))
 
 		# Given a time difference since the last update this will update the rotation of the entity
+		#
+		# @param dt [Float] the time since the last calculation
+		# @private
+		#
 		_updateRotation: ( dt ) ->
 			# Calculate the change of rotation for this time step ...
 			angularDelta = @angularVelocity.clone()
@@ -338,6 +349,10 @@ define [
 				else
 					return @isInside(point)
 
+		# Determines if a point is inside this object
+		#
+		# @param point [Three.Vector3] the point to check
+		# @return [Collision] Returns a fake ThreeJS collision object if the point is inside; null otherwise
 		isInside: ( point ) ->
 			radius = @mesh.geometry.boundingSphere.radius
 			distance = @position.distanceTo(point)

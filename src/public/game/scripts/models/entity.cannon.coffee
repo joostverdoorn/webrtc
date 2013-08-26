@@ -91,6 +91,7 @@ define [
 		# Updates visuals that have nothing to do with physics, such as lowering
 		# the cannon.
 		#
+		# @private
 		_updateVisuals: ( dt ) =>
 			# Retract or extend the cannon
 			if @extended
@@ -108,6 +109,9 @@ define [
 				@_fauxProjectile.position.y -= dt * 7
 			else @_fauxProjectile.position.y = -1.1
 
+		# Triggers when the model is fully loaded
+		#
+		# @private
 		_onLoaded: ( ) =>
 			@loaded = true
 
@@ -130,6 +134,7 @@ define [
 		# Is called when the player fires a projectile. This will reset the position
 		# of the faux projectile so it can be lowered into the cannon.
 		#
+		# @private
 		_onFire: ( ) =>
 			@_fauxProjectile.mesh.visible = false
 			setTimeout( =>

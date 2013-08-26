@@ -6,6 +6,7 @@ define [
 	'underscore'
 	], ( Remote, Message, io, _ ) ->
 
+	# The central server, as seen from a p2p node
 	class Remote.Server extends Remote
 
 		id: 'server'
@@ -43,11 +44,11 @@ define [
 		# Sends a predefined message to the remote.
 		#
 		# @param message [Message] the message to send
-		#
+		# @private
 		_send: ( message ) ->
 			@_connection.emit('message', message.serialize())
 
 		# Is called when a connection is made. We emit our type to the server.
-		#
+		# @private
 		_onConnect: ( ) =>
 			console.log 'connected to server'

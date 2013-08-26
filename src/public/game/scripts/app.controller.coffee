@@ -32,7 +32,7 @@ require [
 	#
 	class App.Controller extends App
 
-		# This method will be called from the baseclass when it has been constructed.
+		# Initialize the mobile controller to create a new connection to the network and rendder everything
 		#
 		initialize: ( ) ->
 			peerID = @getURLParameter('nodeID')
@@ -70,6 +70,7 @@ require [
 
 		# Sets up the listener for the device's orientation.
 		#
+		# @private
 		_setupOrientationControl: ( ) ->
 			window.addEventListener('deviceorientation', ( event ) =>
 				roll = Math.round(event.beta)
@@ -96,6 +97,7 @@ require [
 
 		# Draws the fire button and the logic behind it.
 		#
+		# @private
 		_setupFireButton: ( layer ) ->
 			button = new Kinetic.Circle
 				radius: 40
@@ -118,6 +120,7 @@ require [
 
 		# Draws the throttle control and the logic behind it.
 		#
+		# @private
 		_setupThrottle: ( layer ) ->
 			defaults =
 				width: 80
@@ -192,6 +195,7 @@ require [
 
 		# Draws the analog stick and the logic behind it.
 		#
+		# @private
 		_setupAnalogStick: ( layer ) ->
 			defaults =
 				x: @width * 3 / 4

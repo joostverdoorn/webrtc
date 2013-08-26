@@ -3,6 +3,7 @@ define [
 	'game/scripts/helpers/mixin.eventbindings'
 	], ( Mixable, EventBindings ) ->
 
+	# Object to save persistent data about peers in memory
 	class Stats extends Mixable
 		@concern EventBindings
 
@@ -73,5 +74,8 @@ define [
 
 			return @stats[statName]
 
+		# Trigger a change event on this object, only used in case we want to do this in a different way later on to prevent multiple code changes then
+		#
+		# @private
 		_triggerChange: ( ) ->
 			@trigger('change', @stats)

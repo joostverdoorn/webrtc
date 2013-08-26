@@ -6,7 +6,9 @@ define [
 	# was a strong internal struggle to either use those or the ones provided by
 	# node.js's events.EventEmitter. If in the future those prove better, I have no
 	# problem switching. - Joost Verdoorn
-
+	#
+	# @mixin
+	#
 	EventBindings =
 
 		ClassMethods: {}

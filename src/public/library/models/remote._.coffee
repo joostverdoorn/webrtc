@@ -8,6 +8,7 @@ define [
 
 	], ( Mixable, EventBindings, Message, _ ) ->
 
+	# A generic object that represents a remote communication partner
 	class Remote extends Mixable
 
 		@concern EventBindings
@@ -39,7 +40,7 @@ define [
 		# duplicate messages.
 		#
 		# @param message [String] the unparsed message
-		#
+		# @private
 		_onMessage: ( message ) =>
 			if message.isStored(@_controller.messageStorage) or message.from is @_controller.id
 				return
@@ -65,7 +66,7 @@ define [
 		# so the message is handled as usual.
 		#
 		# @param part [Object] the message part
-		#
+		# @private
 		_assemble: ( part ) =>
 			if message = Message.assemble(part, @_controller.partialMessages)
 				@trigger('message', message)
@@ -74,7 +75,7 @@ define [
 		#
 		# @param message [Message] the message to disassemble
 		# @param maxLength [Integer] the maximum size of the pieces
-		#
+		# @private
 		_disassemble: ( message, maxLength = 300 ) =>
 			for part in message.disassemble(maxLength)
 				@emit('partial', part)
@@ -183,7 +184,7 @@ define [
 		# @param request [String] the request string identifier
 		# @param queryID [String] the query identifier used to respond to the query
 		# @param args... [Any] any other arguments to be passed along with the query
-		#
+		# @private
 		_onQuery: ( request, queryID, args..., message ) =>
 			callback = ( argms... ) =>
 				@_controller.emitTo
@@ -199,7 +200,7 @@ define [
 		#
 		# @param messageString [String] a serialized version of the message to be relayed
 		# @param msg [Message] the message containing the relay request
-		#
+		# @private
 		_onRelay: ( messageString, msg ) ->
 			message = Message.deserialize(messageString)
 			message.route = message.route.concat(msg.route)
@@ -229,7 +230,7 @@ define [
 		# Abstract function to be implemented by another class
 		#
 		# @param message [Message] the message to send
-		#
+		# @private
 		_send: ( message ) ->
 			throw new Error("Not implemented")
 

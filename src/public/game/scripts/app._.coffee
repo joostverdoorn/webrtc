@@ -2,7 +2,6 @@ define [], ( ) ->
 
 	# Application base class
 	#
-
 	class App
 
 		# Constructs a new app.

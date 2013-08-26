@@ -237,7 +237,7 @@ require [
 		# set up listeners for type specific controller events.
 		#
 		# @param type [String] the type of controller (desktop or mobile)
-		#
+		# @private
 		_onControllerSelect: ( type ) =>
 			if type is 'desktop'
 				@controller = new DesktopController()
@@ -281,6 +281,7 @@ require [
 		# Is called when the player dies. Will cancel timed updates that are
 		# broadcasted into the network.
 		#
+		# @private
 		_onPlayerDied: ( ) =>
 			@overlay.showStats()
 			@waitPlayerSpawn()

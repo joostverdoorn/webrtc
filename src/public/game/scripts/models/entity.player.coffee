@@ -78,6 +78,9 @@ define [
 		# Check if the player is within landing range of the planet. If she is,
 		# retract the cannon, extend the landing gear, and set the ufo to attract
 		# to a level position with relation to the normal of the surface below it.
+		#
+		# @private
+		#
 		_checkLanding: ( dt ) ->
 			if intersect = @world.planet.getIntersect(@position, 1, 3)
 				if intersect.distance < 2
@@ -104,6 +107,9 @@ define [
 		# The normal is determined in the previous step: when the player's close to
 		# the surface, the normal will be calculated from the surface normal. Else,
 		# the normal will be perpendicular to the planet sphere.
+		#
+		# @private
+		#
 		_normalizeRotation: ( rotationQuaternion, surfaceNormal ) ->
 			levelRotation = @calculateLevelRotation(surfaceNormal)
 			levelRotationQuaternion = new Three.Quaternion().setFromEuler(levelRotation)
@@ -114,6 +120,9 @@ define [
 
 		# Add thrust straight downward from the player. If the player's boosting,
 		# the thrust will be significantly higher than then she's not.
+		#
+		# @private
+		#
 		_addThrust: ( rotationQuaternion, dt ) ->
 			thrustVector = new Three.Vector3(0, 1, 0).applyQuaternion(rotationQuaternion)
 			thrustVector.multiplyScalar(@mass * (3 + @boost * 16) * dt)
@@ -153,6 +162,8 @@ define [
 
 		# Updates visuals that have nothing to do with physics, such as lowering
 		# the base and updating the animation.
+		#
+		# @private
 		#
 		_updateVisuals: ( dt ) =>
 			# Make the ufo bounce upward a bit when landed.
@@ -207,6 +218,9 @@ define [
 			levelRotation = new Three.Euler().setFromRotationMatrix(rotationMatrix, 'YXZ')
 			return levelRotation
 
+		# Triggers when the Player Mesh is fully loaded
+		#
+		# @private
 		_onLoaded: ( ) =>
 			@loaded = true
 
@@ -243,6 +257,8 @@ define [
 		#
 		# @param position [Three.Vector3] the position of the player at the moment of impact
 		# @param velocity [Three.Vector3] the velocity of the player at the moment of impact
+		#
+		# @private
 		#
 		_onImpactWorld: ( position, velocity ) ->
 			downVelocity = velocity.projectOnVector(position)

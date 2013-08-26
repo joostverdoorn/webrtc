@@ -75,5 +75,7 @@ define [
 		# @param position [Three.Vector3] the position of the projectile at the moment of impact
 		# @param velocity [Three.Vector3] the velocity of the projectile at the moment of impact
 		#
+		# @private
+		#
 		_onImpactWorld: ( position, velocity ) =>
 			@die()

@@ -24,12 +24,11 @@ require [
 	'jquery'
 	], ( App, Node, $ ) ->
 
-	# Master app class
+	# Comparable to App.Node but with 10 nodes without any visual representation
 	#
+	class App.Node.Many extends App
 
-	class App.Master extends App
-
-		# This method will be called from the baseclass when it has been constructed.
+		# Start app and loop to create 10 nodes
 		#
 		initialize: ( ) ->
 			@bots = []
@@ -38,6 +37,8 @@ require [
 			@newNode()
 			@update()
 
+		# add a new node and if there are less than 10, schedule another one
+		#
 		newNode: ( ) =>
 			console.log 'CREATING'
 
@@ -48,10 +49,12 @@ require [
 			if @bots.length < 10
 				setTimeout(@newNode, 5000)
 
+		# Send about 100 bytes of data 5 times a second for all nodes
+		#
 		update: ( timestamp ) =>
 			for node in @bots
 				node.broadcast('0', '0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000')
 
 			setTimeout(@update, 200)
 
-	window.App = new App.Master
+	window.App = new App.Node.Many
