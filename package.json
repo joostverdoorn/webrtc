@@ -16,7 +16,8 @@
 		"adapter": "*",
 		"wrench": "*",
 		"coffee-coverage": "*",
-		"coffeelint": "*"
+		"coffeelint": "*",
+		"codo": "*"
 	}
 
 }

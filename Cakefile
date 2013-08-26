@@ -45,7 +45,7 @@ task 'lint', ->
 # Generates documentation
 #
 task 'doc', ->
-	startProcess('codo')
+	startProcess('node_modules/codo/bin/codo')
 
 # Starts a new process by executing the execString, and
 # logs all stdout and stderr output.
