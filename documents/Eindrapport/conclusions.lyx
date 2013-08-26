@@ -68,7 +68,7 @@ reference "sub:Assignment-formulation"
 
 \end_inset
 
- we defined our research question : 
+ we defined our research question: 
 \begin_inset Quotes eld
 \end_inset
 
@@ -87,8 +87,65 @@ How can one distribute essential network tasks over all peers?
 \end_layout
 
 \begin_layout Subsection
-How can the impact of unpredictable circumstances (peers suddenly leaving
- the network) be reduced?
+How can the impact of unpredictable circumstances be reduced?
+\end_layout
+
+\begin_layout Standard
+Asynchronous requests make a dynamically changing network vulnerable for
+ errors.
+ We attempted to ensure the network stability by different methods:
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Prevention methods:
+\end_layout
+
+\begin_layout Itemize
+Every change in the state of the node is propagated to the involved nodes.
+ For example: getting a token or becoming a supernode.
+ A supernode state is also propagated to the server.
+\end_layout
+
+\begin_layout Itemize
+Once in a while each supernode get a list of all supernodes from the server
+ and ensures it is connected to all other supernodes.
+\end_layout
+
+\begin_layout Itemize
+Once in a while a not supernode gets a list with supernodes from its parent
+ to ensure it is always connected to three supernodes.
+\end_layout
+
+\begin_layout Itemize
+When a node leaves the network, it handles its leave by sending a message
+ to all neighbours and in case of supernode choose a new parent for its
+ children.
+ WebRTC has functionality to automatically detect when a node peer leaves
+ but it takes about three seconds what is unacceptably long.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Recovery methods
+\end_layout
+
+\begin_layout Itemize
+Once in a while all broken relationships are being fixed with the new informatio
+n from server.
+\end_layout
+
+\begin_layout Itemize
+Once in a while all, eventually unused, token information about other nodes
+ is being deleted.
+\end_layout
+
+\begin_layout Standard
+For reliability purposes we still use the server to keep the track of current
+ supernodes.
+ Fortunately it does not absorb a lot of bandwidth.
 \end_layout
 
 \begin_layout Subsection

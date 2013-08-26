@@ -439,6 +439,8 @@ As just said, asynchronous requests make the network vulnerable for errors.
  errors.
  Checking for inconsistencies is an important part of the network to ensure
  the network keeps running.
+ Also before a node leaves the network it informs all connected nodes with
+ its departure.
 \end_layout
 
 \begin_layout Subsubsection
