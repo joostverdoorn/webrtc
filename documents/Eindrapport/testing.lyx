@@ -122,6 +122,7 @@ name "sub:Node-Inspector"
 We made our own Node Inspector in WebGL that shows all nodes in a 3-dimensional
  space.
  This tool has been very handy during debugging Vivaldi and PoPCorn.
+ 
 \begin_inset CommandInset ref
 LatexCommand formatted
 reference "fig:Node-Inspector"
@@ -129,47 +130,6 @@ reference "fig:Node-Inspector"
 \end_inset
 
  illustrates an example network configuration.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename images/inspector.PNG
-	lyxscale 20
-	scale 50
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption
-
-\begin_layout Plain Layout
-Node Inspector
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:Node-Inspector"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Subsubsection

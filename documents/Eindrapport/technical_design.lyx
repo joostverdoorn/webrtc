@@ -442,6 +442,84 @@ As just said, asynchronous requests make the network vulnerable for errors.
  the network keeps running.
 \end_layout
 
+\begin_layout Subsubsection
+Illustration
+\end_layout
+
+\begin_layout Standard
+We would like to illustrate our technology with an example shown in 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "fig:Node-Inspector"
+
+\end_inset
+
+.
+ Legenda is as follows:
+\end_layout
+
+\begin_layout Itemize
+Red bullets illustrate supernodes.
+\end_layout
+
+\begin_layout Itemize
+Green bullets illustrate normal nodes.
+\end_layout
+
+\begin_layout Itemize
+Yellow bullets illustrate normal nodes with a token.
+\end_layout
+
+\begin_layout Itemize
+Violet edges illustrate a parent-child or sibling connection.
+ Random connections to other nodes are not shown.
+\end_layout
+
+\begin_layout Itemize
+Yellow edges illustrate a token force.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/inspector.PNG
+	lyxscale 20
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Network topology
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Node-Inspector"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 Game
 \end_layout
