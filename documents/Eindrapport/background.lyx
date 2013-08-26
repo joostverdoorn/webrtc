@@ -358,7 +358,8 @@ name "sub:Node-heterogeneity"
 \end_layout
 
 \begin_layout Standard
-Our goal is to create a stable, fast performing network with WebRTC technology.
+Our goal is to create a stable and fast performing network with WebRTC technolog
+y.
  It is important to realize that every node which wants to connect to the
  network is different, and thus will not perform the same way.
  According to Jan Sacha 
@@ -368,28 +369,28 @@ key "sacha2009exploiting"
 
 \end_inset
 
-, a node has many of characteristics to consider.
+, a node has many characteristics to consider.
  We will sum them up.
 \end_layout
 
 \begin_layout Itemize
 A node has a session duration defined by the amount of time a node is in
  the network or expected to stay in the network.
- In our case of an arcade action game, a player will join for a period between
+ In our case, an arcade action game, a player will join for a period between
  1 minute and 1 hour.
  A small session duration will make the stability of network vulnerable.
 \end_layout
 
 \begin_layout Itemize
 Availability of the node is the next property, defined by a fraction of
- time a node spends in the network within longer period of time.
+ time a node spends in the network within longer periods of time.
  This is important for availability of files for file sharing purposes.
- The files that should be distributed through the network are the library
- files - to make connection to peers and the game files - to actually play
- the game.
+ The files that should be distributed through the network are the network
+ library files which allow the creation of P2P network, and the game files,
+ which allow actually playing the game.
  Availability plays a role if the game files are being delivered through
  different peers.
- Longer availability means more peers in network what means a more stable
+ Longer availability means more peers in network which means a more stable
  network and better delivery.
  However this property is less important.
 \end_layout
@@ -404,15 +405,15 @@ A more important characteristic of a node is bandwidth.
 
 \begin_layout Itemize
 Sending a large amount of data leads to processing a large amount of data.
- That is why memory, CPU, GPU and disk space can be important not only for
- the game experience but also for the network.
+ That is why memory, CPU, GPU and disk space can be important; not only
+ for the game experience but also for the network.
  Also the problems processing a game can lead to slower processing of the
  network functionality.
 \end_layout
 
 \begin_layout Itemize
-Some of the nodes can be located behind firewalls and be only able to connect
- to a limited amount of nodes.
+Some of the nodes can be located behind firewalls and might only be able
+ to connect to a limited amount of nodes.
  It is our goal to ensure that everyone who is able to make a WebRTC connection
  to at least one of the nodes (and that is not so hard, see 
 \begin_inset CommandInset ref
@@ -446,7 +447,19 @@ key "Agarwal:2009:MOG:1594977.1592605"
 , one of the most important properties for online peer-to-peer games is
  the latency.
  Reaction speed is essential for the real-time arcade action games.
- A small delay can be experienced as laggy by users.
+ A small delay can be experienced as 
+\emph on
+
+\begin_inset Quotes eld
+\end_inset
+
+laggy
+\begin_inset Quotes erd
+\end_inset
+
+
+\emph default
+ by users.
  Therefore, latency will be one of the key node properties, we should consider
  while implementing our network.
 \end_layout
@@ -456,15 +469,15 @@ Structuring the network
 \end_layout
 
 \begin_layout Standard
-Now we know that there are differences between nodes, we should pick a network
- topology which fits the best for our network technology - WebRTC and our
- goal application - arcade action game.
+Now that we know that there are differences between nodes, we should pick
+ a network topology which fits the best for our network technology and arcade
+ action game.
  A lot of research is done in this field, so we decided to check the existent
  topologies and not to try to come up with our own.
 \end_layout
 
 \begin_layout Standard
-Leitao 
+Leitão 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Leitão_onthe"
@@ -476,7 +489,7 @@ key "Leitão_onthe"
 \end_layout
 
 \begin_layout Enumerate
-So should every adaptation of the system involve a limited number of nodes.
+Every adaptation of the system should involve a limited number of nodes.
 \end_layout
 
 \begin_layout Enumerate
@@ -508,8 +521,8 @@ These best practices should be taken in mind while researching the different
  implementation of the overlay networks.
  Especially guideline 4 is very important for our game application.
  Each player should always be aware of all other players participating in
- the game and he should always have a route to communicate with him with
- as little as possible delay.
+ the game and he or she should always have a route to communicate with him
+ or her with as little delay as possible.
  This will be our base by investigating the peer-to-peer network topologies.
 \end_layout
 
@@ -572,9 +585,9 @@ Group based
  algorithms split a node population in different groups and elect a supernode
  independently.
  The grouped are usually split by peer properties like network proximity.
- Group based algorithms have as advantage that a global supernode election
+ Group based algorithms have the advantage that a global supernode election
  problem can be decomposed in local group-level supernode selection problem.
- As disadvantage are these groups hard to create and manage
+ As disadvantage are that these groups hard to create and manage.
 \end_layout
 
 \begin_layout Enumerate
@@ -604,7 +617,7 @@ reference "sub:Node-heterogeneity"
 \series bold
 Adaptive algorithms
 \series default
- elect supernodes based on pre defined rules, for example: the maximum number
+ elect supernodes based on pre-defined rules, for example: the maximum number
  of clients a supernode can have.
 \end_layout
 
