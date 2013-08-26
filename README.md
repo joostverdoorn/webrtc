@@ -1,10 +1,12 @@
 # Browser-based multiplayer gaming using WebRTC
 
-# Notes for SIG
+# Notes for SIG v2
 Wij ontwikkelen een library die het mogelijk maakt om meerdere gebruikers dmv. WebRTC met elkaar te verbinden.
 Daarnaast ontwikkelen wij als demo-implementatie een spel die deze library gebruikt. Dit spel bevat een aantal classes die (bijna) exact hetzelfde zijn dan in de library. Dit is, omdat wij het spel niet afhankelijk willen maken van code uit de library en de library alleen en vaste interface heeft die andere programma's aan mogen roepen. Daarom wordt deze code niet direct gedeeld.
 
 Verder zijn de twee bestanden app.inspector.coffee en app.map.coffee voor interne testdoeleindenen (visualisatie van de netwerktopologie en visualisatie van alle spelers in de spelwereld) die in het finale product niet aanwezig zullen zijn.
+
+Na uw eerste feedback is het spel en de library verder gescheiden in aparte directories. Verder zijn langere functies opgesplitst in kortere subfuncties. Er is duidelijkere klasses en methode documentatie toegevoegd. We hebben de duplicerende code niet in een common/ map gestopt omdat de library en game uiteindelijk in twee verschillende repositories gepubliceerd zullen worden en het spel alleen de publieke interface van de library mag gebruiken en de library niet van het bestaan van het spel af mag weten.
 
 # Build
 ## Requirements
