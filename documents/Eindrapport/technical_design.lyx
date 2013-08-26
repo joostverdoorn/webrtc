@@ -301,7 +301,8 @@ name "sub:Network-Topology"
 \end_layout
 
 \begin_layout Standard
-In this section the whole network topology is being explained.
+In this section the whole network topology that we implemented is being
+ explained.
  As discussed in 
 \begin_inset CommandInset ref
 LatexCommand formatted
@@ -313,6 +314,15 @@ reference "sub:Peer-to-Peer"
  In this section we will explain how we implemented it.
  PoPCorn uses Vivaldi coordinate system and therefore we will discuss it
  too.
+ We will discuss it in this section because the implementation of PoPCorn
+ and Vivaldi differs from the implementation we discussed in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "vivaldi,PoPCorn"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsubsection
@@ -347,6 +357,13 @@ Once in a while a supernode updates its supernode list from the server to
 
 \begin_layout Subsubsection
 Vivaldi
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Vivaldi"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -360,7 +377,7 @@ When a node joins the network, it sets its 3-dimensional coordinates to
  the latency to that peer, like a spring system.
  This process happens quickly at first, with a node changing its position
  very rapidly as it attempts to find its optimal position within the network.
- Later on it slows down, to avoid oscillations when latency varies
+ Later on it slows down, to avoid oscillations when latency varies 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "vivaldi"

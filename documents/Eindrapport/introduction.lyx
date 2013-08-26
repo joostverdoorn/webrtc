@@ -68,9 +68,10 @@ This document is the final rapport of the bachelor end project which is
  in a real company.
  Over the course of the project we gathered knowledge on WebRTC, node topology
  and online games.
- We used that knowledge to do some research on these subjects and then to
- deliver a library for WebRTC communication, an structured network topology
- library and we demonstrate how it works in a browser based arcade game.
+ We used that knowledge to do some research on these subjects.
+ After the research part we delivered a library for WebRTC communication,
+ an structured network topology library and we demonstrated how it works
+ in a browser based arcade game.
  This document describes the project form the very beginning by formulating
  the assignment and ends with our conclusions of the project and discussion
  of the subject.
@@ -93,7 +94,7 @@ for being our coach and motivating us to get more out of the project.
 \begin_layout Itemize
 
 \noun on
-Eelco Kramer 
+Eelco Cramer 
 \noun default
 for sharing his expertise with us and giving an excellent technical feedback.
 \end_layout

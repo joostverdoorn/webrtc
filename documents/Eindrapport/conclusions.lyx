@@ -78,12 +78,31 @@ How is it possible to create a dynamic peer-to-peer multiplayer-game-network
  that scales with the amount of users participating by only using WebRTC?
 \emph default
 ".
- In this section we would like to answer this question on the basis of our
- sub questions.
+ We answer this question through answering the sub-questions.
 \end_layout
 
 \begin_layout Subsection
 How can one distribute essential network tasks over all peers?
+\end_layout
+
+\begin_layout Subsubsection
+Scalability
+\end_layout
+
+\begin_layout Standard
+Scalability is currently still an issue.
+ This is a direct result of all supernodes trying to stay connected to all
+ other supernodes.
+ Eventually some of these connections have to be dropped to allow an expansion
+ of the entire network.
+ More about this future process is explained in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Routing-tables"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
@@ -96,7 +115,7 @@ Asynchronous requests make a dynamically changing network vulnerable for
  We attempted to ensure the network stability by different methods:
 \end_layout
 
-\begin_layout Standard
+\begin_layout Paragraph
 
 \series bold
 Prevention methods:
@@ -126,10 +145,10 @@ When a node leaves the network, it handles its leave by sending a message
  but it takes about three seconds what is unacceptably long.
 \end_layout
 
-\begin_layout Standard
+\begin_layout Paragraph
 
 \series bold
-Recovery methods
+Recovery methods:
 \end_layout
 
 \begin_layout Itemize
@@ -152,24 +171,48 @@ For reliability purposes we still use the server to keep the track of current
 How can all data reach all peers in a bandwidth-efficient way?
 \end_layout
 
+\begin_layout Standard
+There are two aspects to discuss about bandwidth and latency efficiency:
+ making a graph of nodes and finding a route between the nodes.
+ Also the transmitting technology self is discussed.
+\end_layout
+
 \begin_layout Subsubsection
-Scalability
+Coordinate system
 \end_layout
 
 \begin_layout Standard
-Scalability is currently still an issue.
- This is a direct result of all supernodes trying to stay connected to all
- other supernodes.
- Eventually some of these connections have to be dropped to allow an expansion
- of the entire network.
- More about this future process is explained in section 
+As in 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:Routing-tables"
+reference "sub:Vivaldi"
 
 \end_inset
 
-.
+ discussed we use Vivaldi to organise out network by latency.
+ With help of with PoPCorn defined supernodes, the nodes that are close
+ to each other in a n-dimensional space are most likely to connect to each
+ other.
+ Vivaldi ensures that all edges in the node graph represent the current
+ latency between the peers.
+\end_layout
+
+\begin_layout Subsubsection
+Routing
+\end_layout
+
+\begin_layout Standard
+After the network is structured we can send messages through the network.
+ At this moment if the node is not connected to the receiver a message is
+ sent to the parent which ensures that all supernodes
+\end_layout
+
+\begin_layout Subsubsection
+WebRTC
+\end_layout
+
+\begin_layout Standard
+asd
 \end_layout
 
 \begin_layout Subsubsection

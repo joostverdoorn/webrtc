@@ -334,7 +334,7 @@ reference "sub:Assignment-formulation"
 
  we already define that the type of peer-to-peer application will be a browser
  based game.
- Our exploration on peer-to-peer networks will consequently be related on
+ Our exploration on peer-to-peer networks will consequently elaborate on
  our choice.
 \end_layout
 
@@ -360,7 +360,7 @@ key "sacha2009exploiting"
 
 \end_inset
 
-, a node has a lot of characteristics to consider.
+, a node has many of characteristics to consider.
  We will sum them up.
 \end_layout
 
@@ -517,8 +517,8 @@ name "sub:Supernode-topologies-and"
 \end_layout
 
 \begin_layout Standard
-A supernode is a node which acts like a server to a group of clients, we
- can compare it to parent-child relationship.
+A supernode handles data flow and connections for other nodes, it is like
+ parent-child relationship.
  A supernode also acts as an equal to other supernodes - a sibling relationship.
  These connected supernodes form a supernode overlay network which handles
  the core functionality of the network.

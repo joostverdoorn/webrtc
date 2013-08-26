@@ -293,20 +293,20 @@ Now we made a choice which type of algorithm we are going to use, we started
 \begin_layout Enumerate
 
 \series bold
-Crown
+Crown 
 \series default
- organises the network by the prefix of the IP of the user.
- The users with the same prefix are likely to have low latency and high
- bandwidth.
- Nodes in the same group elect a supernode with criteria of high bandwidth,
- high availability, large computational power and a low load 
+
 \begin_inset CommandInset citation
 LatexCommand cite
 key "conf/euc/WangTL04"
 
 \end_inset
 
-.
+ organises the network by the prefix of the IP of the user.
+ The users with the same prefix are likely to have low latency and high
+ bandwidth.
+ Nodes in the same group elect a supernode with criteria of high bandwidth,
+ high availability, large computational power and a low load.
  This approach looks very simple and sorting the nodes by IP can be very
  unreliable.
  Also no situation is described when there are too much nodes in the same
@@ -318,11 +318,6 @@ key "conf/euc/WangTL04"
 \series bold
 Peer-to-peer Asymmetric file Sharing System (PASS)
 \series default
-, like the name says is designed for sharing files.
- The approach is similar to crown by grouping the nodes by latency.
- An interesting idea here is that PASS introduces a strong single node that
- handles all communication between separate groups.
- Also in PASS a supernode keeps track a backup supernode for case it leaves
  
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -330,14 +325,25 @@ key "conf/saint/KwonR03"
 
 \end_inset
 
-.
+, like the name says is designed for sharing files.
+ The approach is similar to crown by grouping the nodes by latency.
+ An interesting idea here is that PASS introduces a strong single node that
+ handles all communication between separate groups.
+ Also in PASS a supernode keeps track a backup supernode for case it leaves.
 \end_layout
 
 \begin_layout Enumerate
 
 \series bold
-PoPCorn
+PoPCorn 
 \series default
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "PoPCorn"
+
+\end_inset
+
  relies upon an external algorithm like Vivaldi to structure the network
  in n-dimensional space.
  First, the network distributes a token to a random node, after which this
@@ -347,32 +353,25 @@ PoPCorn
  If the force is lower than a certain threshold for a certain number of
  time steps, a node may keep it and becomes a supernode.
  This approach does not describe how a token generation works in a real
- time scenario 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "PoPCorn"
-
-\end_inset
-
-.
+ time scenario.
 \end_layout
 
 \begin_layout Enumerate
 
 \series bold
-Wolf and Merz
+Wolf and Merz 
 \series default
- heuristic evolutionary algorithm tries to minimise the distance between
- the supernodes and their clients and the distance between the supernodes.
- This algorithm uses the local search principle to hopefully find a suitable
- solution 
+
 \begin_inset CommandInset citation
 LatexCommand cite
 key "wolf"
 
 \end_inset
 
-.
+ heuristic evolutionary algorithm tries to minimise the distance between
+ the supernodes and their clients and the distance between the supernodes.
+ This algorithm uses the local search principle to hopefully find a suitable
+ solution.
  An interesting fact is that 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -384,8 +383,8 @@ key "wolf"
 \end_layout
 
 \begin_layout Standard
-We choose for the PoPCorn algorithm because the organization of nodes based
- on latency aims to reach the fastest communication in the network.
+We choose PoPCorn algorithm because the organization of nodes based on latency
+ aims to reach the fastest communication in the network.
  The token distribution principle seems reliable to dynamically elect the
  supernodes dependent of the real time coordinates.
  However a lot of implementation details are missing which offers an opportunity
@@ -398,7 +397,7 @@ key "PoPCorn"
 \end_inset
 
  only describes how the supernode selection works if all nodes are already
- in the network connected.
+ in the network.
  In 
 \begin_inset CommandInset ref
 LatexCommand formatted
