@@ -60,7 +60,42 @@
 
 \begin_body
 
+\begin_layout Standard
+In 
+\begin_inset CommandInset ref
+LatexCommand nameref
+reference "sub:Assignment-formulation"
+
+\end_inset
+
+ we defined our research question : 
+\begin_inset Quotes eld
+\end_inset
+
+
+\emph on
+How is it possible to create a dynamic peer-to-peer multiplayer-game-network
+ that scales with the amount of users participating by only using WebRTC?
+\emph default
+".
+ In this section we would like to answer this question on the basis of our
+ sub questions.
+\end_layout
+
 \begin_layout Subsection
+How can we distribute essential network tasks over all peers?
+\end_layout
+
+\begin_layout Subsection
+How can the impact of unpredictable circumstances (peers suddenly leaving
+ the network) be reduced?
+\end_layout
+
+\begin_layout Subsection
+How can all data reach all peers in a bandwidth-efficient way?
+\end_layout
+
+\begin_layout Subsubsection
 Scalability
 \end_layout
 
@@ -80,7 +115,7 @@ reference "sub:Routing-tables"
 .
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 Speed
 \end_layout
 
@@ -90,10 +125,6 @@ The network library hardly has any overhead for the network at all and almost
  In the case of Orbit Impossible, which is not optimised at all, this still
  results in quite a pleasant player experience with only 5 kilobyte/second
  bandwidth usage with 50 active players.
-\end_layout
-
-\begin_layout Subsection
-Testresults
 \end_layout
 
 \end_body

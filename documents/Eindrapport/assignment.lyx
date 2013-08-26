@@ -218,11 +218,15 @@ Distributed networks
  where computer resources are not easily given to a script requesting it,
  we thought it would be very interesting to focus on scalability.
  From here we constructed this main research question: 
+\emph on
+
 \begin_inset Quotes eld
 \end_inset
 
 How is it possible to create a dynamic peer-to-peer multiplayer-game-network
  that scales with the amount of users participating by only using WebRTC?
+\emph default
+
 \begin_inset Quotes erd
 \end_inset
 
