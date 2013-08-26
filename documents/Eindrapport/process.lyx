@@ -67,7 +67,7 @@ Methodology
 \begin_layout Standard
 In this chapter we will explain how we decided to execute this project.
  First we will tell about our software development methodology and after
- that we will continue with software development technique.
+ that we will continue with our software development technique.
 \end_layout
 
 \begin_layout Subsubsection
@@ -147,8 +147,8 @@ To deliver a fully tested library we decided to use Behaviour-Driven Development
  Just like with TDD, tests in BDD are written before the actual unit is
  being implemented.
  After writing all (at that moment failing) tests, the developer will try
- to get test after test asto pass by implementing the least amount of code
- possible for this.
+ to get test after test to pass by implementing the least amount of code
+ necessary for this.
 \end_layout
 
 \begin_layout Standard
@@ -181,7 +181,7 @@ As version control system we used git hosted on GitHub with web interface.
 \end_layout
 
 \begin_layout Standard
-Our repository is accessible here: 
+Our repository is accessible via 
 \begin_inset Flex URL
 status collapsed
 
@@ -192,7 +192,7 @@ https://github.com/joostverdoorn/webrtc/
 
 \end_inset
 
-
+.
 \end_layout
 
 \begin_layout Subsubsection
@@ -200,7 +200,7 @@ Cake
 \end_layout
 
 \begin_layout Standard
-Cake is a tool that with we use to distribute our project.
+Cake is a tool that executes buildscripts for CoffeeScript.
  Our so called Cakefile has the following features:
 \end_layout
 
@@ -233,8 +233,9 @@ cake build
 
 \end_inset
 
-Compiles all coffee files and stores them in a the compiled folder.
- Also copies all not coffee files to the compiled folder.
+Compiles all *.coffee files and stores them in a the compiled folder.
+ After that it copies all non *.coffee files to the compiled directory as
+ well.
 \end_layout
 
 \begin_layout Itemize
@@ -249,7 +250,7 @@ cake clean
 
 \end_inset
 
-Removes all not source files
+Removes everything but the source files.
 \end_layout
 
 \begin_layout Itemize
@@ -265,7 +266,7 @@ cake watch
 \end_inset
 
 Watches the file system and if needed compiles and copies the edited files.
- This is an continuous process until aborted.
+ This is an continuous process until the user aborts it.
 \end_layout
 
 \begin_layout Itemize
@@ -280,7 +281,8 @@ cake test
 
 \end_inset
 
-Runs all tests for the library and starts a server up with the results
+Runs all tests for the library and starts a server up with the codecoverage
+ results.
 \end_layout
 
 \begin_layout Itemize
@@ -295,7 +297,7 @@ cake lint
 
 \end_inset
 
-Tests all coffee files on coding style
+Tests all coffee files on coding style.
 \end_layout
 
 \begin_layout Itemize
@@ -333,6 +335,8 @@ Generates documentation based on the code and comments.
  The documentation can be opened in 
 \emph on
 doc/index.html
+\emph default
+.
 \end_layout
 
 \begin_layout Subsection
@@ -342,7 +346,7 @@ Planning Tools
 \begin_layout Standard
 In this chapter we will explain which tools we used to gain insights about
  the amount of work to be done.
- These tools also helped our mentors to keep track of what we are doing.
+ These tools also helps our mentors to keep track of what we are doing.
 \end_layout
 
 \begin_layout Subsubsection
@@ -357,11 +361,15 @@ reference "sub:GitHub"
 
 \end_inset
 
-, we used GitHub for version control.
+, we use GitHub for version control.
  A very handy GitHub feature available is the Issues.
- A new issue created ends up in the backlog.
+ A new issue  ends up in the backlog.
  When the issue is chosen for the sprint, it gets a tag of the sprint, or
- so called milestones.
+ so called 
+\emph on
+milestone
+\emph default
+.
  That way we could easily filter the sprint log from all other issues.
  In 
 \begin_inset CommandInset ref
@@ -374,7 +382,7 @@ reference "fig:Github-issues-image"
 \end_layout
 
 \begin_layout Standard
-We also used labelling of the issues.
+We also use labelling of the issues.
  Some issues clearly belong to each other.
  For example in 
 \begin_inset CommandInset ref
@@ -391,8 +399,9 @@ login" and
 \begin_inset Quotes eld
 \end_inset
 
-controllers" are used to get overview of what kind of work has to be done.
- We also used some default semantic issues like: bug, enhancement, duplicate,
+controllers" are used to get an overview of what kind of work has to be
+ done.
+ We also use some default semantic issues like: bug, enhancement, duplicate,
  invalid etc.
  when needed.
 \end_layout
@@ -406,7 +415,7 @@ To prevent the same issue from being worked on by different persons at once,
 \end_layout
 
 \begin_layout Standard
-Our GitHub issues overview is accessible here: 
+Our GitHub issues overview is accessible via 
 \begin_inset Flex URL
 status collapsed
 
@@ -417,7 +426,7 @@ https://github.com/joostverdoorn/webrtc/issues
 
 \end_inset
 
-
+.
 \end_layout
 
 \begin_layout Standard
@@ -462,11 +471,11 @@ HUboard
 \end_layout
 
 \begin_layout Standard
-HUboard is an instant project management tool for GitHub which helped us
+HUboard is an instant project management tool for GitHub which helps us
  with an overview of the sprint log.
- HUboard makes also use of labels, in our case: To do, In progress, Testing
+ HUboard also makes use of labels, in our case: To do, In progress, Testing
  and Done.
- When an issue changes of status, you can drag it to other column.
+ When the status of an issue changes, you can drag it to other column.
  We also benefit of the prioritization possibilities in the To do category
  to order the issues the way the the Scrum product owner wanted it.
  See 
@@ -480,7 +489,7 @@ reference "fig:HUboard"
 \end_layout
 
 \begin_layout Standard
-HUboard is accessible here: 
+HUboard is accessible via 
 \begin_inset Flex URL
 status collapsed
 
@@ -491,7 +500,7 @@ http://huboard.com/joostverdoorn/webrtc
 
 \end_inset
 
-
+.
 \end_layout
 
 \begin_layout Standard

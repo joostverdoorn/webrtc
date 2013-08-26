@@ -107,8 +107,8 @@ Through the WebRTC API the W3C aims to deliver a simple yet powerful interface
  drafting the API since 2011.
  Even though the specifications are still in development, Chrome and Firefox
  have implementations of WebRTC in their stable releases.
- However, they both do not yet fully implement the official API and are
- code written for one can not run on the other.
+ However, they both do not yet fully implement the official API and code
+ written for one cannot always run on the other.
  There is an ongoing effort to make them compatible with each other through
  a small JavaScript library called adapter.js, which equalises most of the
  API, although some inconsistencies remain.
@@ -124,7 +124,7 @@ Reliably establishing a peer-to-peer connection between two consumer devices
  is not a trivial matter.
  While web servers are usually designed around accepting connections and
  have their own external IP-address, consumer devices are often protected
- by firewalls and located behind a Network Address Translation service (NAT).
+ by firewalls and located behind a Network Address Translation (NAT) service.
  WebRTC utilizes several technologies to enable peers to connect through
  environments that limit the connectivity of those peers.
  The protocols that are used for WebRTC have been developed by the Internet
@@ -230,9 +230,9 @@ Before a peer connection can be established, two peers have to exchange
  Since there's no connection between the peers yet, these packets have to
  be routed through a third party that can communicate with either node,
  also called a signalling channel.
- The W3C WebRTC specifications do not specify a particular form this signalling
- channel should take on and instead leave it to the developer to coordinate
- the exchange of session descriptions and ICE candidates.
+ The W3C WebRTC specifications do not specify a way to set up this signalling
+ channel and instead leave it to the developer to coordinate the exchange
+ of session descriptions and ICE candidates.
 \end_layout
 
 \begin_layout Subsubsection
@@ -265,7 +265,7 @@ Introduction
 A peer-to-peer network is a decentralized distributed network architecture.
  The nodes in the network can communicate with each other without any interactio
 n with the central server which keeps a track of all nodes.
- A node usually does not have a full knowledge of the network but instead
+ A node usually does not have full knowledge of the network but instead
  has a limited awareness of the peer it communicates with - it's neighbours.
 \end_layout
 
@@ -285,10 +285,18 @@ There are countless applications where peer-to-peer technology is used.
  The most known application is definitely file sharing.
  The communication between peers does not proceed through the server and
  therefore peer-to-peer file sharing applications scale better for a huge
- amount of data is being sent through the network and benefit of high bandwidth.
+ amount of data sent through the network and benefit of high bandwidth.
  Some instant messaging software also relies on peer-to-peer networks.
- Beside traffic savings, instant messaging software also profits from the
- ensured privacy because the messages are not stored on some server on Internet.
+ Beside saving traffic, instant messaging software also profits from the
+ increased privacy because the messages are not stored on 
+\emph on
+some
+\emph default
+ 
+\emph on
+server
+\emph default
+ on Internet.
  Peer-to-peer is also used in many other applications for media streaming
  or content distribution purposes.
 \end_layout
@@ -323,8 +331,8 @@ reference "sub:Peer-to-Peer"
 \end_inset
 
 .
- The most of them are hybrid what means that a central server is still needed
- for some functions for example when a node enters network.
+ The most of them are hybrid, which means that a central server is still
+ needed for some functions for example when a node enters network.
  In 
 \begin_inset CommandInset ref
 LatexCommand nameref

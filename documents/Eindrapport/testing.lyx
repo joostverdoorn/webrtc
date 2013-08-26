@@ -251,7 +251,7 @@ cake
 
 \begin_layout Standard
 With cake it is possible to create buildscripts that run on every computer
- independant from settings and operating system.
+ independent from settings and operating system.
  This helped us a lot in building the project on regular basis and automatically
  run all tests to ensure the codes quality.
 \end_layout

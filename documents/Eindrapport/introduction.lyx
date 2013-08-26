@@ -68,13 +68,13 @@ This document is the final rapport of the bachelor end project which is
  in a real company.
  Over the course of the project we gathered knowledge on WebRTC, node topology
  and online games.
- We used that knowledge to do some research on these subjects.
- After the research part we delivered a library for WebRTC communication,
- an structured network topology library and we demonstrated how it works
- in a browser based arcade game.
+ We used that knowledge to do research on these subjects.
+ After the research we delivered a library for WebRTC communication, a structure
+d network topology overlay library and a demonstration in with a browser-based
+ arcade game.
  This document describes the project form the very beginning by formulating
  the assignment and ends with our conclusions of the project and discussion
- of the subject.
+ on the subject.
 \end_layout
 
 \begin_layout Standard
