@@ -144,7 +144,63 @@ name "sub:Map"
 \end_layout
 
 \begin_layout Standard
-map
+Another tool we developed helps us in determining the locations of all players
+ in the game world.
+ It is comparable to the Node Inspector but instead of showing all nodes
+ it shows the planet and as green dots around it all players.
+ A screenshot of this can be seen in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Screenshot-of-the"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/map.png
+	width 100line%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Screenshot of the 3d Map; the green dot on the right of the planet is a
+ player
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Screenshot-of-the"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
