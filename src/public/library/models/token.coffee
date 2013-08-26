@@ -1,9 +1,10 @@
 define [
-	'public/library/models/vector'
+	'library/models/vector'
 
 	'underscore'
 	], ( Vector, _ ) ->
 
+	# A token in the network distribution algorithm
 	class Token
 
 		nodeId = null

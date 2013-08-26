@@ -6,7 +6,9 @@ define [
 	# was a strong internal struggle to either use those or the ones provided by
 	# node.js's events.EventEmitter. If in the future those prove better, I have no
 	# problem switching. - Joost Verdoorn
-
+	#
+	# @mixin
+	#
 	EventBindings =
 
 		ClassMethods: {}
@@ -59,6 +61,7 @@ define [
 
 				names = if name then [ name ] else _.keys(@_events)
 				for name in names
+					unless @_events[name]? then return
 					for event in @_events[name]
 						if ( not callback? or callback is event.callback ) and
 								( not context? or context is event.context )

@@ -15,17 +15,17 @@ requirejs.config
 		'socket.io': 'socket.io/socket.io'
 
 define [
-	'public/library/helpers/mixable'
-	'public/library/helpers/mixin.eventbindings'
+	'library/helpers/mixable'
+	'library/helpers/mixin.eventbindings'
 
-	'public/library/node'
-	'public//library/models/remote.server'
-	'public//library/models/remote.peer'
-	'public/library/models/message'
-	'public/library/models/token'
+	'library/node'
+	'library/models/remote.server'
+	'library/models/remote.peer'
+	'library/models/message'
+	'library/models/token'
 
-	'public/library/models/collection'
-	'public/library/models/vector'
+	'library/models/collection'
+	'library/models/vector'
 
 	'underscore'
 
@@ -37,57 +37,62 @@ define [
 
 		type: 'node.structured'
 
-		_updatePositionInterval : 4000
-		_updateFoundationNodesInterval : 10000
+		_updatePositionInterval : 2000
+		_ensureNetworkIntegrityInterval : 10000
 		_recommendParentInterval: 10000
 		_demotionTimeout: 11000
 		_tokenInfoTimeout: 3000
-
 		_pingCandidateTimeout : 1000
-		_coordinateDelta : 1
-		_maxChildren : 4
-		_foundationNodes : 5
-		_superNodeSwitchThreshold : 0.7
-		_tokenMoveThreshold : 1
+
+		_coordinateDelta : 1			# while updating coordinates
+		_maxChildren : 4				# maximum amount of children, changing dynamically
+		_foundationNodes : 3			# a minimum amount of supernodes to connect
+		_superNodeSwitchThreshold : 0.7 # while recommending a better superNode
+		_tokenSwitchThreshold : 0.7 	# while selecting a better token
+		_tokenMoveThreshold : 4			# while requesting a token candidate
+		_superNodeFoundation: 3			# a minimum amound of superNodes
 
 
-		position : new Vector(Math.random()-0.5, Math.random()-0.5, Math.random()-0.5)
+		position : new Vector((Math.random()-0.5)*4, (Math.random()-0.5)*4, (Math.random()-0.5)*4)
 
+		# Initializes Vivaldi and Popcorn on top of the unstructured node
+		#
 		initialize: () ->
 
+			window.onbeforeunload = () =>
+				@exitNetwork()
+				return undefined
 
 			@timers = []
-			setInterval(@_updatePosition, @_updatePositionInterval)
-			setInterval(@_updateFoundationNodes, @_updateFoundationNodesInterval)
-			setInterval(@_recommendParent, @_recommendParentInterval)
+			@timers.push(setInterval(@_updatePosition, @_updatePositionInterval))
+			@timers.push(setInterval(@_ensureNetworkIntegrity, @_ensureNetworkIntegrityInterval))
+			@timers.push(setInterval(@_recommendParent, @_recommendParentInterval))
 
-
-			@_parent = null
 			@isSuperNode = false
+			@_parent = null
 
 			@token = null
 			@_tokens = new Collection()
 
 			@server.on('connect', @_enterNetwork)
 			@_peers.on
-				'channel.opened': (peer) =>
+				'channel.opened': ( peer ) =>
 					peer.query('isSuperNode', ( superNode ) =>
-						if superNode?
-							peer.isSuperNode = superNode
+						if superNode? then peer.isSuperNode = superNode
 					)
 				'disconnect': @_onPeerDisconnect
 
 			@onReceive
-				'peer.abandonParent': (id) =>
+				'peer.abandonParent': ( id ) =>
 					if child = @getChild(id)
 						@removeChild(child)
-				'peer.abandonChild': (id) =>
+				'peer.abandonChild': ( id ) =>
 					if @_parent?.id is id
 						@removeParent()
-				'peer.addSibling': (id) =>
+				'peer.addSibling': ( id ) =>
 					if peer = @getPeer(id)
 						@addSibling(peer, false)
-				'peer.removeSibling': (id) =>
+				'peer.removeSibling': ( id ) =>
 					if sibling = @getSibling(id)
 						@removeSibling(sibling)
 				'peer.setSuperNode': @_onPeerSetSuperNode
@@ -99,32 +104,24 @@ define [
 				'token.candidate': @_onTokenCandidate
 				'token.die': @_onTokenDied
 
-		# Responds to a request
-		#
-		# @param request [String] the string identifier of the request
-		# @param args... [Any] any arguments that may be accompanied with the request
-		# @param callback [Function] the callback to call with the response
-		#
-		query: ( request, args..., callback ) =>
-			switch request
-				when 'ping'
-					callback 'pong', @position.serialize(), @token?.serialize()
-				when 'position'
+			@onQuery
+				'ping': ( callback ) =>
+					callback 'pong', @position.serialize(), @isSuperNode, @token?.serialize()
+				'position': ( callback ) =>
 					callback @position.serialize()
-				when 'isSuperNode'
+				'isSuperNode': ( callback ) =>
 					callback @isSuperNode
-				when 'siblings'
+				'siblings': ( callback ) =>
 					callback @getSiblings().map( ( peer ) ->
 						id: peer.id
 					)
-				when 'peer.requestAdoption'
-					id = args[0]
+				'peer.requestAdoption': ( callback, id ) =>
 					if @isSuperNode and child = @getPeer(id)
 						@addChild(child)
 						callback true
 					else
 						callback false
-				when 'info'
+				'info': ( callback ) =>
 					info =
 						id: @id
 						type: @type
@@ -137,8 +134,6 @@ define [
 						)
 
 					callback info
-				else
-					super
 
 		# Relays a message to other nodes. If the intended receiver is not a direct
 		# neighbor, we route the message through other nodes in an attempt to reach
@@ -147,16 +142,28 @@ define [
 		# @param message [Message] the message to relay.
 		#
 		relay: ( message ) ->
+			# If the message is a broadcast, send it to all connected peers.
 			if message.to is '*'
-				peer.send(message) for peer in @getSiblings().concat(@getChildren()).concat(@getParent()) when peer?
-			else if peer = @getChild(message.to) or peer = @getSibling(message.to)
+				peer.send(message) for peer in @getPeers() when peer.id not in message.route and peer.role isnt Peer.Role.None
+
+			# If the message is intended for the server, send it there.
+			else if message.to is 'server'
+				@server.send(message)
+
+			# If we are connected to the intended receiver, send it there.
+			else if peer = @getPeer(message.to)
 				peer.send(message)
+
+			# Try and route the message via our parent.
 			else if parent = @getParent()
 				parent.send(message)
+
+			# When we're supernode, route the message via our peers.
 			else if @isSuperNode
-				sibling.send(message) for sibling in @getSiblings() when sibling.id isnt message.from
-			else
-				@server.send(message)
+				sibling.send(message) for sibling in @getSiblings() when sibling.id not in message.route
+
+			# If all else fails, route the message via the server.
+			else @server.send(message)
 
 		# Sets a peer as the parent node of this node.
 		#
@@ -168,13 +175,11 @@ define [
 				callback?(false)
 				return
 
-			console.log 'sending parent request to ' + peer.id
 			peer.query('peer.requestAdoption', @id, ( accepted ) =>
 				unless accepted
 					callback?(false)
 
 				if accepted and not @isSuperNode
-					console.log 'parent request accepted'
 					if @_parent?
 						@removeParent()
 
@@ -182,7 +187,6 @@ define [
 					@_parent = peer
 					callback?(true)
 				else
-					console.log 'parent request denied'
 					peer.emit('peer.abandonParent', @id)
 					peer.role = Peer.Role.None
 					callback?(false)
@@ -231,11 +235,6 @@ define [
 			if peer.role is Peer.Role.Child
 				peer.role = Peer.Role.None
 				peer.emit('peer.abandonChild', @id)
-
-			if @getChildren().length is 0
-				@_demotionTimer = setTimeout( () =>
-					@setSuperNode(false)
-				, @_demotionTimeout)
 
 		# Returns a child specified by an id
 		#
@@ -300,11 +299,11 @@ define [
 		#
 		# @param superNode [Boolean] wether or not to become supernode.
 		#
-		setSuperNode: (superNode) ->
+		setSuperNode: (superNode, exit = false) ->
 			if @isSuperNode is superNode
 				return
 
-			console.log "Supernode: #{superNode} and having token", @token?
+			console.log "Supernode: #{superNode}, having token #{@token?} and children #{@getChildren().length}"
 			@isSuperNode = superNode
 
 			@server.emit('setSuperNode', superNode)
@@ -343,13 +342,15 @@ define [
 				for child in @getChildren()
 					@removeChild(child)
 
-				# Select a new parent.
-				@_selectParent()
+				# Select a new parent if not exiting
+				if not exit
+					@_selectParent()
 
 		# Is called when a peer disconnects. Will make sure we handle this
 		# disconnect in the appropriate manner.
 		#
 		# @param peer [Peer] the peer that disconnected.
+		# @private
 		#
 		_onPeerDisconnect: ( peer ) =>
 			if peer is @_parent
@@ -366,18 +367,24 @@ define [
 		#
 		# @param id [String] the string id the of the peer
 		# @param superNode [Boolean] the new supernode status of the peer
+		# @private
 		#
 		_onPeerSetSuperNode: ( id, superNode ) =>
 			unless peer = @getPeer(id)
 				if superNode and @isSuperNode
 					peer = @connect(id, ( success ) =>
 						if success
+							peer.isSuperNode = superNode
 							@addSibling(peer)
 					)
-			else peer.isSuperNode = superNode
+			else
+				peer.isSuperNode = superNode
+				if @isSuperNode and superNode
+					@addSibling(peer)
 
 		# Attempts to enter the network by requesting a list of supernodes
 		# and selecting and connecting to a parent from the list.
+		# @private
 		#
 		_enterNetwork: ( ) =>
 
@@ -429,8 +436,26 @@ define [
 					connectParent(superNodes)
 			)
 
+		# Safely exit network
+		#
+		exitNetwork: () =>
+
+			@clearIntervals()
+
+			# Break all relationships
+			if @isSuperNode
+			 	@setSuperNode(false, true)
+
+			@server.disconnect()
+
+
+			# Disconnect from all peers
+			for peer in @getPeers()
+				@removePeer(peer)
+
 		# Selects the supernode with the lowest latency and attempts to connect.
 		# If this fails, try the next lowest latency.
+		# @private
 		#
 		_selectParent: ( ) ->
 
@@ -460,21 +485,41 @@ define [
 		# Ensures that the foundation of this node remains valid. Will do  this
 		# by connecting to supernodes when required, or setting a parent when we
 		# don't have one.
+		# @private
 		#
-		_updateFoundationNodes: () =>
-			# Make sure we have a parent when we need one.
+		_ensureNetworkIntegrity: () =>
+			@_checkForInconsistencies()
+
 			if not @isSuperNode and not @_parent?
-				@_selectParent()
 				return
 
 			# Request all nodes from the server and set all supernodes as siblings.
 			if @isSuperNode
+
 				@server.query('nodes', 'node.structured', ( nodes ) =>
+					nodes = _(nodes).filter( ( node ) => node.id isnt @id)
 					superNodes = _(nodes).filter( ( node ) -> node.isSuperNode)
-					superNodes = _(superNodes).filter( ( node ) => node.id isnt @id)
+
+					if superNodes.length > @_superNodeFoundation
+						@_maxChildren = 8
+					else
+						@_maxChildren = 4
+
+					# Ensure there are always 3 superNodes available
+					if @getSiblings().length < 2
+						siblingsNeeded = Math.min(@_superNodeFoundation - 1 - @getSiblings().length , nodes.length)
+						while siblingsNeeded isnt 0
+							@_distributeToken()
+							siblingsNeeded--
 
 					if superNodes.length is 0
 						return
+
+					# If a node has no children, start a timer to become a normal node
+					if @getChildren().length is 0 and superNodes.length >= @_superNodeFoundation
+						@_demotionTimer = setTimeout( () =>
+							@setSuperNode(false)
+						, @_demotionTimeout)
 
 					for superNode in superNodes
 						( ( superNode ) =>
@@ -484,14 +529,21 @@ define [
 								peer = @connect(superNode.id, ( success ) =>
 									if success
 										@addSibling(peer)
+									else
+										console.warn "can not connect to ", peer.id
 								)
 						) (superNode)
+
+
 				)
 
 			# Ensure we are connected to enough supernodes to aid us in finding
 			# our correct position in the network and to catch our fall we we
 			# lose our parent.
 			else
+				for peer in @getPeers()
+					unless peer.isSuperNode then @removePeer(peer)
+
 				current = _(@getPeers()).filter( (peer) -> peer.isSuperNode).length
 				needed = @_foundationNodes - current
 				if needed <= 0
@@ -510,18 +562,59 @@ define [
 					@connect(superNode.id) for superNode in superNodes
 				)
 
-		# Updates our position by requesting latencies and positions
-		# of all connected nodes, and computing our position from that.
+		# Check for inconsistencies in the network such as broken relationships
+		# @private
 		#
+		_checkForInconsistencies: () =>
+
+			if @isSuperNode
+				# Ensure all siblings are superNodes and vice versa
+				for sibling in @getSiblings()
+					if !sibling.isSuperNode
+						@removeSibling(sibling)
+
+				superNodes = _(@getPeers()).filter( ( node ) -> node.isSuperNode)
+				for superNode in superNodes
+					unless @getSibling(superNode.id)?
+						@addSibling(superNode)
+
+				# Children automatically checked by siblings guarante
+
+				# Ensure we have no parent
+				if @_parent?
+					@removeParent()
+
+				if not @token?
+					@setSuperNode(false)
+
+			else
+				# Make sure we have a parent when we need one.
+				if not @_parent?
+					@_selectParent()
+
+				# Make sure we have no siblings
+				for sibling in @getSiblings()
+					@removeSibling(sibling)
+
+				# Make sure we have no children
+				for child in @getChildren()
+					@removeChild(child)
+
+		# Updates all peers positions to be able to determine the nearest peers
+		#
+		# @private
 		_updatePosition: ( ) =>
 			i = 0
 			for peer in @getPeers()
 				( ( peer ) =>
-					peer.ping( ( latency, position, tokenString ) =>
+					peer.ping( ( latency, position, isSuperNode, tokenString ) =>
 						peer.position = Vector.deserialize(position)
+						peer.isSuperNode = isSuperNode
+
 						if tokenString?
 							token = Token.deserialize(tokenString)
 							@addToken(token)
+
 						i++
 						if i is @getPeers().length
 							@_computePosition()
@@ -530,8 +623,8 @@ define [
 
 		# Computes our position in the network from the positions of our neighbours
 		# and the latency to them. This implements the vivaldi network coordinates:
-		# http://en.wikipedia.org/wiki/Vivaldi_coordinates
-		#
+		# @see http://en.wikipedia.org/wiki/Vivaldi_coordinates
+		# @private
 		_computePosition: ( ) ->
 			for peer in @getPeers()
 				direction = peer.position.subtract(@position)				# Vector to peer
@@ -552,7 +645,7 @@ define [
 		# the child. We can include ourselves or not when we want to get rid of all our children.
 		#
 		# @param includeSelf [Boolean] wether or not to include ourselves in the recommendation.
-		#
+		# @private
 		_recommendParent: ( includeSelf = true ) =>
 
 			siblings = @getSiblings()
@@ -578,7 +671,7 @@ define [
 		# set the other supernode as parent.
 		#
 		# @param id [String] the string identifier of the recommended parent.
-		#
+		# @private
 		_onPeerRecommendParent: ( id ) =>
 
 			if @isSuperNode
@@ -611,11 +704,28 @@ define [
 			if oldToken = _(@_tokens).find( ( t ) -> token.id is t.id)
 				@_tokens.remove(oldToken)
 
-		# Creates a new token and passes it on to a random child.
+
+		# Groups tokens by Node id
 		#
+		groupTokens: () ->
+			groupedTokens = {}
+			for token in @_tokens
+				if groupedTokens[token.nodeId]?
+					groupedTokens[token.nodeId]++
+				else
+					groupedTokens[token.nodeId] = 1
+			return groupedTokens
+
+		# Creates a new token and passes it on to a random child.
+		# @private
 		_distributeToken: ( ) =>
+			groupedTokens = @groupTokens()
+			children = _(@getChildren()).filter( ( child ) => not groupedTokens[child.id])
+
+			if children.length is 0
+				return
+
 			token = new Token()
-			children = @getChildren()
 			randomChild = children[_.random(0,children.length-1)]
 			randomChild.emit('token.receive', token.serialize())
 			console.log  randomChild.id +  " received a token with id", token.id
@@ -624,8 +734,8 @@ define [
 		# process.
 		#
 		# @param tokenString [String] a string representation of the received token.
-		#
-		_onTokenReceived: ( tokenString, timestamp, message ) =>
+		# @private
+		_onTokenReceived: ( tokenString, message ) =>
 			if @token?
 				@broadcast('token.die', tokenString)
 				return
@@ -647,11 +757,11 @@ define [
 		#
 		# @param tokenString [String] a string representation of the token.
 		# @param instantiate [Boolean] wether or not to respond.
-		#
-		_onTokenInfo: ( tokenString, instantiate, timestamp,  message ) =>
+		# @private
+		_onTokenInfo: ( tokenString, instantiate, message ) =>
 
 			token = Token.deserialize(tokenString)
-			console.log "received info from node #{message.from} about token with id ", token.id
+			#console.log "received info from node #{message.from} about token with id ", token.id
 			@addToken(token)
 
 			if @token? and instantiate
@@ -661,29 +771,37 @@ define [
 		# on the token.
 		#
 		# @param tokenString [String] a string representation of the token.
-		#
-		_onTokenDied: ( tokenString, timestamp, message ) =>
+		# @private
+		_onTokenDied: ( tokenString, message ) =>
 			token = Token.deserialize(tokenString)
-			console.log "Received dead token from node #{message.from} with id ", token.id
+			#console.log "Received dead token from node #{message.from} with id ", token.id
 			@removeToken(token)
 
 		# Computes the desired position of the token from the positions of other tokens,
 		# and requests candidates closer to this desired position then ourselves.
-		#
+		# @private
 		_computeTokenTargetPosition: ( ) ->
 			unless @token?
 				return
 
 			force = Vector.createZeroVector(@position.length)
+			directions = []
 			for token in @_tokens
 				direction = @position.subtract(token.position)		# Difference between self and other Token
-				direction.scale(1 / direction.getLength())
-				force = force.add(direction)								# Sum all token differences
+				directions.push(direction)
+				force = force.add(direction)						# Sum all token differences
+
+			if force.getLength() isnt 0
+				directions = _(directions).sortBy( (direction) -> direction.getLength())
+				modalDirection = Math.floor(directions.length / 2)
+				scaledModalDirectionLength = directions[modalDirection].getLength() / 2
+				force = force.scale(scaledModalDirectionLength / force.getLength())
 
 			@token.targetPosition = @token.position.add(force)
-
 			magnitude = @position.getDistance(@token.targetPosition)
+
 			if magnitude > @_tokenMoveThreshold and not @isSuperNode
+				@token.candidates = []
 				@broadcast('token.requestCandidate', @token.serialize())
 
 				setTimeout( ( ) =>
@@ -696,17 +814,21 @@ define [
 		# to the target position of the token.
 		#
 		# @param tokenString [String] a string representation of the token.
-		#
+		# @private
 		_onTokenRequestCandidate: ( tokenString ) =>
 			unless @isSuperNode
 				return
 
 			token = Token.deserialize(tokenString)
+			@addToken(token)
 
 			closestChild = null
 			closestDistance = Infinity
 
-			for child in @getChildren() when child.position?
+			groupedTokens = @groupTokens()
+			children = _(@getChildren()).filter( ( child ) => not groupedTokens[child.id])
+
+			for child in children when child.position?
 				distance = child.position.getDistance(token.targetPosition)
 				if distance < closestDistance
 					closestDistance = distance
@@ -720,7 +842,7 @@ define [
 		#
 		# @param id [String] the string identifier of the candidate
 		# @param distance [Float] the distance to our token's target position
-		#
+		# @private
 		_onTokenCandidate: ( id, distance ) =>
 			unless @token?
 				return
@@ -733,7 +855,7 @@ define [
 
 		# Selects the best candidate from all token candidates and passes our
 		# token to this candidate.
-		#
+		# @private
 		_selectTokenOwner: ( ) =>
 			unless @token?
 				return
@@ -742,13 +864,15 @@ define [
 			closestDistance = Infinity
 
 			for candidate in @token.candidates
-				if candidate.distance < closestDistance
+				if candidate.distance < closestDistance * @_tokenSwitchThreshold
 					closestDistance = candidate.distance
 					closestCandidate = candidate.id
-
 			@token.candidates = []
-			if closestCandidate? and closestCandidate isnt @id
+
+			ownDistance = @position.getDistance(@token.targetPosition)
+			if closestCandidate? and closestCandidate isnt @id and ownDistance > closestDistance
 				console.log "best candidate is #{closestCandidate}, distance is #{closestDistance}"
+				@token.candidates = []
 				@emitTo(closestCandidate, 'token.receive', @token.serialize())
 
 				@token = null
@@ -758,3 +882,9 @@ define [
 			else
 				@token.candidates = []
 				@setSuperNode(true)
+
+		# Remove all previously set intervals to prevent errors when an object is destroyed
+		#
+		clearIntervals: () ->
+			for timer in @timers
+				clearTimeout(timer)

@@ -15,23 +15,23 @@ requirejs.config
 		'socket.io': 'socket.io/socket.io'
 
 define [
-	'public/library/helpers/mixable'
-	'public/library/helpers/mixin.eventbindings'
+	'library/helpers/mixable'
+	'library/helpers/mixin.eventbindings'
 
-	'public/library/models/remote.server'
-	'public/library/models/remote.peer'
-	'public/library/models/message'
 
-	'public/library/models/collection'
+	'library/models/remote.server'
+	'library/models/remote.peer'
+	'library/models/message'
+
+	'library/models/collection'
+	'library/helpers/listener'
 
 	'underscore'
-
-	], ( Mixable, EventBindings, Server, Peer, Message, Collection, _ ) ->
+	], ( Mixable, EventBindings, Server, Peer, Message, Collection, Listener, _ ) ->
 
 	# Constructs a new unstructured node.
 	#
 	class Node extends Mixable
-
 		@concern EventBindings
 
 		id: null
@@ -39,27 +39,70 @@ define [
 		serverAddress: ':8080/'
 
 		_timeDelta: 0
+		queryTimeout: 2500
 
 		# Constructs a new node. Calls initialize on any subclass.
 		#
 		# @param serverAddress [String] the uri address of the server
 		#
 		constructor: ( @serverAddress = @serverAddress ) ->
+			# console._log = console.log
+
+			# console.log = ( args... ) =>
+			# 	timestamp = '[' + @time() + '] '
+			# 	args = [timestamp].concat(args)
+			# 	console._log.apply(console, args)
+
 			@messageStorage = []
+			@partialMessages = {}
+
+			@queries = new Listener()
 
 			@server = new Server(@, @serverAddress)
 			@server.on
 				'connect': @_onServerConnect
-				'peer.connectionRequest': @_onPeerConnectionRequest
-				'peer.setRemoteDescription': @_onPeerSetRemoteDescription
-				'peer.addIceCandidate': @_onPeerAddIceCandidate
 
 			@_peers = new Collection()
 			@_peers.on
 				'disconnect': ( peer ) => @removePeer(peer)
 				'timeout': ( peer ) => @removePeer(peer)
+				'failed': ( peer ) => @removePeer(peer)
 
-			@initialize?.apply(@)
+			@onQuery
+				'ping': ( callback ) =>
+					callback 'pong', @time()
+
+				'type': ( callback ) =>
+					callback @type
+
+				'requestConnection': ( callback, id ) =>
+					@connect(id, null, false)
+					callback true
+
+				'remoteDescription': ( callback, id, data ) =>
+					if peer = @getPeer(id, null, true)
+						peer.setRemoteDescription(data)
+						peer.createAnswer(callback)
+					else callback null
+
+				'iceCandidates': ( callback, id, arr ) =>
+					if peer = @getPeer(id, null, true)
+						peer.addIceCandidates(arr)
+						callback peer.iceCandidates
+					else callback null
+
+				'info': ( callback ) =>
+					info =
+						id: @id
+						type: @type
+						peers: @getPeers().map( ( peer ) ->
+							id: peer.id
+							role: peer.role
+						)
+
+					callback info
+
+			@initialize?()
 
 		# Attempts to connect to a peer. Calls the callback function
 		# with argument true when the connection was fully established,
@@ -70,14 +113,19 @@ define [
 		# @param instantiate [Boolean] whether to instantiate the connection
 		#
 		connect: ( id, callback, instantiate = true ) ->
-			if peer = @getPeer(id)
-				callback?(true)
-				return
+			if peer = @getPeer(id, null, true)
+				if peer.isConnected()
+					callback?(true)
+					return peer
+
+				@removePeer(peer)
+				return @connect(id, callback, instantiate)
 
 			peer = new Peer(@, id, instantiate)
 			peer.once
 				'channel.opened': ( ) => callback?(true)
 				'timeout': ( ) => callback?(false)
+				'failed': ( ) => callback?(false)
 
 			@addPeer(peer)
 			return peer
@@ -94,8 +142,9 @@ define [
 		# @param peer [Peer] the peer to add
 		#
 		addPeer: ( peer ) ->
-			@_peers.add(peer)
-			@trigger('peer.added', peer)
+			if not p = @getPeer(peer.id)
+				@_peers.add(peer)
+				@trigger('peer.added', peer)
 
 		# Removes a peer from the peer list
 		#
@@ -127,15 +176,16 @@ define [
 
 			return @_peers.filter(fn)
 
-		# Public method to bind a callback on to a peer event
+		# Public method to bind a callback on to a peer event.
 		#
-		# @overload onReceive(event, callback, context = @)
-		#	 Binds a single event
+		# @overload onReceive( event, callback, context = @ )
+		#	 Binds a single event.
 		# 	 @param event [String] the string identifier of the event
 		# 	 @param callback [Function] the function to call
 		# 	 @param context [Object] the context on which to apply the callback
 		#
 		# @overload onReceive(bindings)
+		#	 Binds multiple events.
 		#	 @param bindings [Object] an object mapping events to callbacks
 		#
 		onReceive: ( ) ->
@@ -145,7 +195,7 @@ define [
 				context = arguments[2] || @
 
 				@_peers.on(event, ( peer, args..., message ) =>
-					args = args.concat(message.timestamp, message)
+					args = args.concat(message)
 					callback.apply(context, args)
 				)
 
@@ -155,28 +205,154 @@ define [
 				for event, callback of bindings
 					@onReceive(event, callback)
 
-		# Attempts to emit to a peer by id. Unreliable.
+		# Binds a query.
 		#
-		# @param to [String] the id of the peer to pass the message to
-		# @param event [String] the event to pass to the peer
-		# @param args... [Any] any other arguments to pass along
+		# @overload on( name, callback, context = null )
+		#	 Binds a single event.
+		# 	 @param name [String] the event name to bind
+		# 	 @param callback [Function] the callback to call
+		# 	 @param context [Object] the context of the binding
 		#
-		emitTo: ( to, event, args... ) ->
-			message = new Message(to, @id, event, args, @time())
+		# @overload on(bindings)
+		#	 Binds multiple events.
+		#	 @param bindings [Object] an object mapping event names to functions
+		#
+		onQuery: ( ) ->
+			if typeof arguments[0] is 'string'
+				name = arguments[0]
+				callback = arguments[1]
+				context = arguments[2] || null
+
+				@queries.off(name)
+				@queries.on(name, callback, context)
+
+			else if typeof arguments[0] is 'object'
+				bindings = arguments[0]
+
+				for name, callback of bindings
+					@onQuery(name, callback)
+
+			return @
+
+		# Attempts to emit to a peer by id.
+		#
+		# @overload emitTo( to, event, args... )
+		# 	 Convenient way to send a message to a peer by id.
+		# 	 @param to [String] the id of the peer to pass the message to
+		#	 @param event [String] the event to pass to the peer
+		# 	 @param args... [Any] any other arguments to pass along
+		#
+		# @overload emitTo( params )
+		# 	 More advanced way that allows for specifying ttl and route.
+		#	 @param params [Object] an object containing params
+		#	 @option params to [String] the id of the peer to pass the message to
+		#	 @option params event [String] the event to pass to the peer
+		# 	 @option params args [Array<Any>] any other arguments to pass along
+		#	 @option params path [Array] the route the message should take
+		# 	 @option params ttl [Integer] the number of hops the message may take
+		#
+		emitTo: ( ) ->
+			params = {}
+
+			if typeof arguments[0] is 'string'
+				to 	  = arguments[0]
+				event = arguments[1]
+				args  = Array::slice.call(arguments, 2)
+
+			else if typeof arguments[0] is 'object'
+				to 		= arguments[0].to
+				event 	= arguments[0].event
+				args 	= arguments[0].args ? []
+
+				params.path = arguments[0].path
+				params.ttl  = arguments[0].ttl
+
+			message = new Message(to, @id, @time(), event, args, params)
 			@relay(message)
 
-		# Attempts to query a peer by id. Unreliable.
+		# Attempts to query a peer by id.
 		#
-		# @param to [String] the id of the peer to query
-		# @param request [String] the request string identifier
-		# @param callback [Function] the function to call when a response has arrived
-		# @param args... [Any] any other arguments to be passed along with the query
+		# @overload queryTo( to, request, args..., callback )
+		# 	 Convenient way to query a peer by id.
+		# 	 @param to [String] the id of the peer to query
+		# 	 @param request [String] the request string identifier
+		# 	 @param args... [Any] any other arguments to be passed along with the query
+		# 	 @param callback [Function] the function to call when a response has arrived
 		#
-		queryTo: ( to, request, callback, args... ) ->
+		# @overload queryTo( params )
+		# 	 More advanced way that allows for specifying ttl and route.
+		#	 @param params [Object] an object containing params
+		#	 @option params to [String] the id of the peer to pass the message to
+		#	 @option params request [String] the request string identifier
+		# 	 @option params args [Array<Any>] any other arguments to be passed along with the quer
+		# 	 @option params callback [Function] the function to call when a response has arrived
+		#	 @option params path [Array] the route the message should take
+		# 	 @option params ttl [Integer] the number of hops the message may take
+		#
+		queryTo: ( ) ->
+			if typeof arguments[0] is 'string'
+				to 		 = arguments[0]
+				request  = arguments[1]
+				args 	 = Array::slice.call(arguments, 2, arguments.length - 1)
+				callback = arguments[arguments.length - 1]
+				retries  = 0
+
+			else if typeof arguments[0] is 'object'
+				to 		 = arguments[0].to
+				request  = arguments[0].request
+				args 	 = arguments[0].args ? []
+				callback = arguments[0].callback
+
+				path 	 = arguments[0].path
+				ttl  	 = arguments[0].ttl
+				retries  = arguments[0].retries ? 0
+
+			# Setup callbacks and timeout.
 			queryID = _.uniqueId('query')
-			args = [to, 'query', request, queryID].concat(args)
-			@_peers.once(queryID, callback)
-			@emitTo.apply(@, args)
+			timer = setTimeout( ( ) =>
+
+				@_peers.off(queryID)
+				@server.off(queryID)
+
+				unless retries < 1
+					callback(null)
+					return
+
+				params =
+					to: to
+					request: request
+					args: args
+					callback: callback
+					path: ['server'].concat(path ? [])
+					ttĺ: ttl
+					retries: ++retries ? 0
+
+				@queryTo(params)
+
+			, @queryTimeout)
+
+			peerCallback = ( peer, argms... ) =>
+				@server.off(queryID)
+				callback.apply(@, argms)
+				clearTimeout(timer)
+
+			serverCallback = ( argms... ) =>
+				@_peers.off(queryID)
+				callback.apply(@, argms)
+				clearTimeout(timer)
+
+			@_peers.once(queryID, peerCallback)
+			@server.once(queryID, serverCallback)
+
+			# Emit the message.
+			params =
+				to:    to
+				event: 'query'
+				args:  [request, queryID].concat(args)
+				path:  path ? []
+				ttl:   ttl  ? Infinity
+
+			@emitTo(params)
 
 		# Broadcasts a message to all peers in network.
 		#
@@ -184,8 +360,10 @@ define [
 		# @param args... [Any] any other arguments to pass along
 		#
 		broadcast: ( event, args... ) ->
-			args = ['*', event].concat(args)
-			@emitTo.apply(@, args)
+			@emitTo
+				to: '*'
+				event: event
+				args: args
 
 		# Relays a message to other nodes. If the intended receiver is not a direct
 		# neighbor, we route the message through other nodes in an attempt to reach
@@ -194,39 +372,20 @@ define [
 		# @param message [Message] the message to relay.
 		#
 		relay: ( message ) ->
-			if message.to is '*'
-				peer.send(message) for peer in @getPeers()
+			if message.to is 'server'
+				@server.send(message)
+
+			else if message.to is '*'
+				peer.send(message) for peer in @getPeers() when peer not in message.route
+
 			else if peer = @getPeer(message.to)
 				peer.send(message)
 
-		# Responds to a request.
-		#
-		# @param request [String] the string identifier of the request
-		# @param args... [Any] any arguments that may be accompanied with the request
-		# @param callback [Function] the callback to call with the response
-		#
-		query: ( request, args..., callback ) ->
-			switch request
-				when 'ping'
-					callback 'pong', @time()
-				when 'type'
-					callback @type
-				when 'info'
-					info =
-						id: @id
-						type: @type
-						peers: @getPeers().map( ( peer ) ->
-							id: peer.id
-							role: peer.role
-						)
-
-					callback info
-				else
-					callback null
+			else @server.send(message)
 
 		# Is called when the server connects. Will ping the server and compute
 		# the network time based on the server time and latency.
-		#
+		# @private
 		_onServerConnect: ( id ) =>
 			@id = id
 			@server.ping( ( latency, serverTime ) =>
@@ -237,7 +396,7 @@ define [
 		# accept this request by establishing a connection.
 		#
 		# @param id [String] the id of the peer
-		#
+		# @private
 		_onPeerConnectionRequest: ( id ) =>
 			@connect(id, null, false)
 
@@ -245,7 +404,7 @@ define [
 		#
 		# @param id [String] the id string of the peer
 		# @param data [Object] a plain object representation of an RTCSessionDescription
-		#
+		# @private
 		_onPeerSetRemoteDescription: ( id, data ) =>
 			description = new RTCSessionDescription(data)
 			@getPeer(id, null, true)?.setRemoteDescription(description)

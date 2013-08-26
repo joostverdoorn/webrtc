@@ -1,4 +1,4 @@
-exec = require('child_process').exec;
+exec = require('child_process').exec
 spawn = require('child_process').spawn
 os = require('os')
 fs = require('fs')
@@ -42,7 +42,12 @@ task 'test', ->
 task 'lint', ->
 	lint()
 
-# Starts a new process by executing the execString, and 
+# Generates documentation
+#
+task 'doc', ->
+	startProcess('node ./node_modules/codo/bin/codo src/public')
+
+# Starts a new process by executing the execString, and
 # logs all stdout and stderr output.
 #
 # @param processString [String] the string to execute
@@ -71,7 +76,7 @@ deploy = ( ) ->
 		unless err
 			build()
 	)
-	
+
 
 # Builds application
 #
@@ -113,15 +118,15 @@ watch = ( ) ->
 
 		startProcess("coffee -mwco ./#{targetDir} ./#{sourceDir}")
 		buildOthers()
-		
+
 		watchTree(sourceDir, ( event ) ->
 			retries = 0
 			file = event.name
-			
+
 			split = file.split('.')
 			if split[split.length - 1] is 'coffee'
 				return
-				
+
 			target = file.replace(sourceDir, targetDir)
 			if event.isDelete()
 				fs.remove(target, ( err ) ->
@@ -129,7 +134,7 @@ watch = ( ) ->
 						log "removed #{target}"
 				)
 
-			else 
+			else
 				if not event.isDirectory()
 					copy(file, target)
 

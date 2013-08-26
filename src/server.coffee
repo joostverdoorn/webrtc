@@ -1,13 +1,15 @@
 define [
 	'public/library/models/remote.client'
-	'public/library/models/collection'
+
 	'public/library/models/message'
+	'public/library/models/collection'
+	'public/library/helpers/listener'
 
 	'express'
 	'http'
 	'socket.io'
 	'underscore'
-	], ( Node, Collection, Message, express, http, io, _ ) ->
+	], ( Node, Message, Collection, Listener, express, http, io, _ ) ->
 
 
 	# Server class. This is run on the server and maintains connections to
@@ -17,13 +19,37 @@ define [
 
 		id: 'server'
 
+		queryTimeout: 5000
+
 		# Constructs a new server.
 		#
 		constructor: ( dir ) ->
 			@_initTime = Date.now()
 
+			@queries = new Listener()
 			@_nodes = new Collection()
 			@_nodes.on('disconnect', ( node ) => @removeNode(node))
+
+			@onQuery
+				'ping': ( callback ) =>
+					callback 'pong', @time()
+				'nodes': ( callback, type, extensive = false ) =>
+					unless extensive
+						nodes = (node.serialize() for node in @getNodes(type))
+						callback nodes
+					else
+						nodes = @getNodes(type)
+						nodesInfo = []
+						i = 0
+						for node in nodes
+							( ( node ) ->
+								node.query('info', ( info ) =>
+									if info?
+										nodesInfo.push(info)
+									if ++i is nodes.length
+										callback(nodesInfo)
+								)
+							) ( node )
 
 			@_app = express()
 			@_server = http.createServer(@_app)
@@ -35,12 +61,13 @@ define [
 				@_app.use(express.static("#{dir}/public"))
 
 			# Redirect a controller url for lees typing
-			@_app.get('/controller/:nodeId', ( req, res ) =>
-				res.redirect('/controller.html?nodeId=' + req.params.nodeId)
+			@_app.get('/controller/:nodeID', ( req, res ) =>
+				res.redirect('/controller.html?nodeID=' + req.params.nodeID)
 				res.end()
 			)
 
 			@messageStorage = []
+			@partialMessages = {}
 
 			@_server.listen(8080)
 
@@ -87,14 +114,55 @@ define [
 			else
 				return @_nodes
 
-		# Sends a message to a certain node.
+		# Binds a query.
 		#
-		# @param to [String] the id of the node to pass the message to
-		# @param event [String] the event to pass to the node
-		# @param args... [Any] any arguments to pass along
+		# @overload on(name, callback, context = null)
+		#	 Binds a single event.
+		# 	 @param name [String] the event name to bind
+		# 	 @param callback [Function] the callback to call
+		# 	 @param context [Object] the context of the binding
 		#
-		emitTo: ( to, event, args... ) ->
-			message = new Message(to, null, event, args)
+		# @overload on(bindings)
+		#	 Binds multiple events.
+		#	 @param bindings [Object] an object mapping event names to functions
+		#
+		onQuery: ( args... ) ->
+			@queries.on.apply(@queries, args)
+
+		# Attempts to emit a message to a node by id.
+		#
+		# @overload emitTo( to, event, args... )
+		# 	 Convenient way to send a message to a peer by id.
+		# 	 @param to [String] the id of the peer to pass the message to
+		#	 @param event [String] the event to pass to the peer
+		# 	 @param args... [Any] any other arguments to pass along
+		#
+		# @overload emitTo( params )
+		# 	 More advanced way that allows for specifying ttl and route.
+		#	 @param params [Object] an object containing params
+		#	 @option params to [String] the id of the peer to pass the message to
+		#	 @option params event [String] the event to pass to the peer
+		# 	 @option params args [Array<Any>] any other arguments to pass along
+		#	 @option params path [Array] the route the message should take
+		# 	 @option params ttl [Integer] the number of hops the message may take
+		#
+		emitTo: ( ) ->
+			params = {}
+
+			if typeof arguments[0] is 'string'
+				to 	  = arguments[0]
+				event = arguments[1]
+				args  = Array::slice.call(arguments, 2)
+
+			else if typeof arguments[0] is 'object'
+				to 		= arguments[0].to
+				event 	= arguments[0].event
+				args 	= arguments[0].args ? []
+
+				params.path = arguments[0].path
+				params.ttl  = arguments[0].ttl
+
+			message = new Message(to, @id, @time(), event, args, params)
 			@relay(message)
 
 		# Relays a composed message to a certain node.
@@ -104,37 +172,6 @@ define [
 		relay: ( message ) ->
 			if node = @getNode(message.to)
 				node.send(message)
-
-		# Responds to a request
-		#
-		# @param request [String] the string identifier of the request
-		# @param args... [Any] any arguments that may be accompanied with the request
-		# @param callback [Function] the callback to call with the response
-		#
-		query: ( request, args..., callback ) ->
-			switch request
-				when 'ping'
-					callback 'pong', @time()
-				when 'nodes'
-					type = args[0]
-					extensive = args[1]
-
-					unless extensive?
-						nodes = (node.serialize() for node in @getNodes(type))
-						callback nodes
-					else
-						nodes = @getNodes(type)
-						nodesInfo = []
-						for node in nodes
-							( ( node ) ->
-								node.query('info', ( info ) =>
-									nodesInfo.push(info)
-									if nodesInfo.length is nodes.length
-										callback(nodesInfo)
-								)
-							) ( node )
-				else
-					callback null
 
 		# Returns the time that has passed since the starting of the server.
 		#

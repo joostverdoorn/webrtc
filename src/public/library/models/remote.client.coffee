@@ -1,9 +1,11 @@
 define [
-	'public/library/models/remote._'
+	'library/models/remote._'
+	'library/models/message'
 
 	'underscore'
-	], ( Remote, _ ) ->
+	], ( Remote, Message, _ ) ->
 
+	# All peers in the network as seen from the central server
 	class Remote.Client extends Remote
 
 		# Initializes this class. Accepts a socket connection and binds to events.
@@ -14,7 +16,7 @@ define [
 		initialize: ( @_connection ) ->
 			@id = @_connection.id
 
-			@_connection.on('message', ( message ) => @trigger('message', message))
+			@_connection.on('message', ( message ) => @trigger('message', Message.deserialize(message)))
 			@_connection.on('disconnect', ( ) => @trigger('disconnect'))
 
 			@on('setSuperNode', @_onSetSuperNode)
@@ -37,14 +39,14 @@ define [
 		# Sends a predefined message to the remote.
 		#
 		# @param message [Message] the message to send
-		#
+		# @private
 		_send: ( message ) ->
 			@_connection.emit('message', message.serialize())
 
 		# Is called when a SuperNode state is changed
 		#
 		# @param name [String] the event that's unbound
-		#
+		# @private
 		_onSetSuperNode: (isSuperNode) =>
 			@isSuperNode = isSuperNode
 

@@ -1,10 +1,12 @@
 define [
-	'public/library/models/remote._'
+	'library/models/remote._'
+	'library/models/message'
 
 	'socket.io'
 	'underscore'
-	], ( Remote, io, _ ) ->
+	], ( Remote, Message, io, _ ) ->
 
+	# The central server, as seen from a p2p node
 	class Remote.Server extends Remote
 
 		id: 'server'
@@ -23,7 +25,7 @@ define [
 		connect: ( ) ->
 			@_connection = io.connect(@_address, {'force new connection': true})
 
-			@_connection.on('message', ( message ) => @trigger('message', message))
+			@_connection.on('message', ( message ) => @trigger('message', Message.deserialize(message)))
 			@_connection.on('connect', ( ) => @trigger('connect', @_connection.socket.sessionid))
 			@_connection.on('disconnect', ( ) => @trigger('disconnect'))
 
@@ -42,11 +44,11 @@ define [
 		# Sends a predefined message to the remote.
 		#
 		# @param message [Message] the message to send
-		#
+		# @private
 		_send: ( message ) ->
 			@_connection.emit('message', message.serialize())
 
 		# Is called when a connection is made. We emit our type to the server.
-		#
+		# @private
 		_onConnect: ( ) =>
 			console.log 'connected to server'
