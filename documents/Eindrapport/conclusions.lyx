@@ -115,26 +115,6 @@ reference "sub:Supernode-topologies-and"
  
 \end_layout
 
-\begin_layout Subsubsection
-Scalability
-\end_layout
-
-\begin_layout Standard
-Scalability is currently still an issue.
- This is a direct result of all supernodes trying to stay connected to all
- other supernodes.
- Eventually some of these connections have to be dropped to allow an expansion
- of the entire network.
- More about this future process is explained in section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:Routing-tables"
-
-\end_inset
-
-
-\end_layout
-
 \begin_layout Subsection
 How can the impact of unpredictable circumstances be reduced?
 \end_layout
@@ -171,8 +151,7 @@ Once in a while a not supernode gets a list with supernodes from its parent
 When a node leaves the network, it handles its leave by sending a message
  to all neighbours and in case of supernode choose a new parent for its
  children.
- WebRTC has functionality to automatically detect when a node peer leaves
- but it takes about three seconds what is unacceptably long.
+ 
 \end_layout
 
 \begin_layout Paragraph
@@ -182,19 +161,14 @@ Recovery methods:
 \end_layout
 
 \begin_layout Itemize
-Once in a while all broken relationships are being fixed with the new informatio
-n from server.
+Once in a while all broken relationships are fixed with the new information
+ from server.
 \end_layout
 
 \begin_layout Itemize
 Once in a while all, eventually unused, token information about other nodes
- is being deleted.
-\end_layout
-
-\begin_layout Standard
-For reliability purposes we still use the server to keep the track of current
- supernodes.
- Fortunately it does not absorb a lot of bandwidth.
+ is deleted.
+ 
 \end_layout
 
 \begin_layout Subsection
@@ -249,18 +223,17 @@ reference "sub:network_tasks"
  we will use supernodes for this purpose.
  The supernodes have an important role to provide for communication between
  all nodes.
- At this moment if a child node wants to send a message to a random node,
- it sends it to it's parent.
- If the receiver does not have the same parent, the parent sends a package
- to all siblings and one of them will hopefully deliver the message to it's
- children.
- All supernodes are connected with each other what makes the network less
- scalable.
+ At this moment if a child node wants to send a message to a some other
+ node, it sends it to its parent.
+ If the intended receiver is not a child of the same parent, the parent
+ relays the packet to all its siblings to reach the intended receiver.
+ All supernodes are connected with each other what makes the network somewhat
+ less scalable.
 \end_layout
 
 \begin_layout Standard
 Scalability is currently still an issue.
- This is a direct result of all supernodes trying to stay connected to all
+ This is a direct result of all supernodes having to stay connected to all
  other supernodes.
  Eventually some of these connections have to be dropped to allow an expansion
  of the entire network.
@@ -282,8 +255,8 @@ WebRTC
 The underlying WebRTC technology is also a factor that is important for
  data transmission.
  WebRTC offers a reliability flag.
- Unfortunately Chrome only supports unreliable WebRTC communication.
- We hope that it will be implemented in the nearest future.
+ Unfortunately Chrome only supports unreliable WebRTC data channels.
+ We hope that it will be implemented in the near future.
 \end_layout
 
 \begin_layout Subsubsection
