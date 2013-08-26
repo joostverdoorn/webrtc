@@ -75,20 +75,10 @@ define [
 
 						@trigger('loaded')
 
-		# Updates the physics state of the player. Adds forces to simulate gravity and
-		# the propulsion system. Calls baseclass' update after.
-		#
-		# @param dt [Float] the time that has elapsed since last update was called.
-		#
-		update: ( dt, ownPlayer ) ->
-			unless @loaded
-				return
-
-			rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
-
-			# Check if the player is within landing range of the planet. If she is,
-			# retract the cannon, extend the landing gear, and set the ufo to attract
-			# to a level position with relation to the normal of the surface below it.
+		# Check if the player is within landing range of the planet. If she is,
+		# retract the cannon, extend the landing gear, and set the ufo to attract
+		# to a level position with relation to the normal of the surface below it.
+		_checkLanding: ( dt ) ->
 			if intersect = @world.planet.getIntersect(@position, 1, 3)
 				if intersect.distance < 2
 					@cannon.extended = false
@@ -108,10 +98,13 @@ define [
 				@addAngularForce(new Three.Euler(-30 * @flyLeft * dt, 0, 0, 'YXZ'))
 				@addAngularForce(new Three.Euler(30 * @flyRight * dt, 0, 0, 'YXZ'))
 
-			# Attract player to a straight position with relation to the planet surface.
-			# The normal is determined in the previous step: when the player's close to
-			# the surface, the normal will be calculated from the surface normal. Else,
-			# the normal will be perpendicular to the planet sphere.
+			return surfaceNormal
+
+		# Attract player to a straight position with relation to the planet surface.
+		# The normal is determined in the previous step: when the player's close to
+		# the surface, the normal will be calculated from the surface normal. Else,
+		# the normal will be perpendicular to the planet sphere.
+		_normalizeRotation: ( rotationQuaternion, surfaceNormal ) ->
 			levelRotation = @calculateLevelRotation(surfaceNormal)
 			levelRotationQuaternion = new Three.Quaternion().setFromEuler(levelRotation)
 
@@ -119,8 +112,9 @@ define [
 			force = new Three.Euler().setFromQuaternion(forceQuaternion)
 			@addAngularForce(force)
 
-			# Add thrust straight downward from the player. If the player's boosting,
-			# the thrust will be significantly higher than then she's not.
+		# Add thrust straight downward from the player. If the player's boosting,
+		# the thrust will be significantly higher than then she's not.
+		_addThrust: ( rotationQuaternion, dt ) ->
 			thrustVector = new Three.Vector3(0, 1, 0).applyQuaternion(rotationQuaternion)
 			thrustVector.multiplyScalar(@mass * (3 + @boost * 16) * dt)
 
@@ -128,6 +122,23 @@ define [
 				thrustVector.divideScalar(@position.length() - 1000)
 
 			@addForce(thrustVector)
+
+		# Updates the physics state of the player. Adds forces to simulate gravity and
+		# the propulsion system. Calls baseclass' update after.
+		#
+		# @param dt [Float] the time that has elapsed since last update was called.
+		#
+		update: ( dt, ownPlayer ) ->
+			unless @loaded
+				return
+
+			surfaceNormal = @_checkLanding(dt)
+
+			rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
+
+			@_normalizeRotation(rotationQuaternion, surfaceNormal)
+
+			@_addThrust(rotationQuaternion, dt)
 
 			if @boost then @landed = false
 

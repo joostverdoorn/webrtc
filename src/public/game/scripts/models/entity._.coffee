@@ -78,6 +78,90 @@ define [
 		addAngularForce: ( vector ) ->
 			@_angularForces.push(vector)
 
+		# Given a time difference since the last update this will update the position of the entity
+		_updatePosition: ( dt, owner ) ->
+			# Calculate our new position from the velocity.
+			deltaPosition = @velocity.clone().multiplyScalar(dt)
+			@position.add(deltaPosition)
+
+			# Apply dead reckoning of position.
+			if @_targetPosition and not owner
+				@_targetPosition.add(deltaPosition)
+
+				if @position.distanceTo(@_targetPosition) > 20
+					@position = @_targetPosition.clone()
+				else
+					@position.lerp(@_targetPosition, dt)
+
+			triggerImpact = ( intersect ) =>
+				@trigger('impact.world', @position.clone(), @velocity.clone())
+
+				@position = intersect.point
+				@velocity = new Three.Vector3()
+
+			# Check if the player intersects with the planet.
+			if intersect = @world.planet.isInside(@position)
+				@die()
+			if owner
+				if intersect = @world.planet.getIntersect(@position, 4, 0)
+					triggerImpact(intersect)
+
+			# Loop through all forces and calculate the acceleration.
+			acceleration = new Three.Vector3(0, 0, 0)
+			while force = @_forces.pop()
+				acceleration.add(force.clone().divideScalar(@mass))
+
+			# Add the acceleration to the velocity.
+			@velocity.add(acceleration)
+
+			# Calculate the drag force. We assume a fluid density of 1.2 (air at 20 degrees C)
+			# and a cross-sectional area of 1. Any larger or smaller area will have to be
+			# compensated by a larger or smaller @drag.
+			dragForce = @velocity.clone().normalize().negate().multiplyScalar(.5 * 1.2 * @drag * @velocity.lengthSq())
+			@velocity.add(dragForce.divideScalar(@mass))
+
+		# Given a time difference since the last update this will update the rotation of the entity
+		_updateRotation: ( dt ) ->
+			# Calculate the change of rotation for this time step ...
+			angularDelta = @angularVelocity.clone()
+
+			angularDelta.x *= dt
+			angularDelta.y *= dt
+			angularDelta.z *= dt
+
+			angularDeltaQuaternion = new Three.Quaternion().setFromEuler(angularDelta)
+
+			# ... and multiply this delta with the current rotation to get the new rotation.
+			rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
+			rotationQuaternion.multiply(angularDeltaQuaternion)
+
+			# Apply dead reckoning of rotation.
+			if @_targetRotation and not owner
+				targetRotationQuaternion = new Three.Quaternion().setFromEuler(@_targetRotation)
+				targetRotationQuaternion.multiply(angularDeltaQuaternion)
+				rotationQuaternion.slerp(targetRotationQuaternion, dt)
+
+			@rotation.setFromQuaternion(rotationQuaternion)
+
+			# Loop through all angular forces and calculate the angular acceleration.
+			angularAccelerationQuaternion = new Three.Quaternion()
+			while force = @_angularForces.pop()
+				forceQuaternion = new Three.Quaternion().setFromEuler(force)
+				angularAccelerationQuaternion.multiply(forceQuaternion)
+
+			angularAcceleration = new Three.Euler().setFromQuaternion(angularAccelerationQuaternion, 'YXZ')
+
+			# Apply the acceleration to the angular velocity
+			@angularVelocity.x += angularAcceleration.x
+			@angularVelocity.y += angularAcceleration.y
+			@angularVelocity.z += angularAcceleration.z
+
+			# Apply drag force to the angular velocity. This way of doing it is pretty
+			# basic, but should be sufficient.
+			@angularVelocity.x *= 1 - @angularDrag * dt
+			@angularVelocity.y *= 1 - @angularDrag * dt
+			@angularVelocity.z *= 1 - @angularDrag * dt
+
 		# Updates the entity by applying forces, calculating the resulting velocity
 		# and setting the entity's position and rotation.
 		#
@@ -99,93 +183,15 @@ define [
 				gravityForce = gravityDirection.multiplyScalar(9.81 * @mass * dt)
 				@addForce(gravityForce)
 
-			# Apply forces ...
+			# Update position if requested
 			if updatePosition
+				@_updatePosition(dt, owner)
 
-				# Calculate our new position from the velocity.
-				deltaPosition = @velocity.clone().multiplyScalar(dt)
-				@position.add(deltaPosition)
-
-				# Apply dead reckoning of position.
-				if @_targetPosition and not owner
-					@_targetPosition.add(deltaPosition)
-
-					if @position.distanceTo(@_targetPosition) > 20
-						@position = @_targetPosition.clone()
-					else
-						@position.lerp(@_targetPosition, dt)
-
-				triggerImpact = ( intersect ) =>
-					@trigger('impact.world', @position.clone(), @velocity.clone())
-
-					@position = intersect.point
-					@velocity = new Three.Vector3()
-
-				# Check if the player intersects with the planet.
-				if intersect = @world.planet.isInside(@position)
-					@die()
-				if owner
-					if intersect = @world.planet.getIntersect(@position, 4, 0)
-						triggerImpact(intersect)
-
-				# Loop through all forces and calculate the acceleration.
-				acceleration = new Three.Vector3(0, 0, 0)
-				while force = @_forces.pop()
-					acceleration.add(force.clone().divideScalar(@mass))
-
-				# Add the acceleration to the velocity.
-				@velocity.add(acceleration)
-
-				# Calculate the drag force. We assume a fluid density of 1.2 (air at 20 degrees C)
-				# and a cross-sectional area of 1. Any larger or smaller area will have to be
-				# compensated by a larger or smaller @drag.
-				dragForce = @velocity.clone().normalize().negate().multiplyScalar(.5 * 1.2 * @drag * @velocity.lengthSq())
-				@velocity.add(dragForce.divideScalar(@mass))
-
-			# ... and apply rotational forces. The method of applying rotational forces and
+			# ... and update rotation by applying rotational forces. The method of applying rotational forces and
 			# mainly for using angular velocity may look a bit strange, but this does really
 			# seem to be the best way of doing it.
 			if updateRotation
-
-				# Calculate the change of rotation for this time step ...
-				angularDelta = @angularVelocity.clone()
-
-				angularDelta.x *= dt
-				angularDelta.y *= dt
-				angularDelta.z *= dt
-
-				angularDeltaQuaternion = new Three.Quaternion().setFromEuler(angularDelta)
-
-				# ... and multiply this delta with the current rotation to get the new rotation.
-				rotationQuaternion = new Three.Quaternion().setFromEuler(@rotation)
-				rotationQuaternion.multiply(angularDeltaQuaternion)
-
-				# Apply dead reckoning of rotation.
-				if @_targetRotation and not owner
-					targetRotationQuaternion = new Three.Quaternion().setFromEuler(@_targetRotation)
-					targetRotationQuaternion.multiply(angularDeltaQuaternion)
-					rotationQuaternion.slerp(targetRotationQuaternion, dt)
-
-				@rotation.setFromQuaternion(rotationQuaternion)
-
-				# Loop through all angular forces and calculate the angular acceleration.
-				angularAccelerationQuaternion = new Three.Quaternion()
-				while force = @_angularForces.pop()
-					forceQuaternion = new Three.Quaternion().setFromEuler(force)
-					angularAccelerationQuaternion.multiply(forceQuaternion)
-
-				angularAcceleration = new Three.Euler().setFromQuaternion(angularAccelerationQuaternion, 'YXZ')
-
-				# Apply the acceleration to the angular velocity
-				@angularVelocity.x += angularAcceleration.x
-				@angularVelocity.y += angularAcceleration.y
-				@angularVelocity.z += angularAcceleration.z
-
-				# Apply drag force to the angular velocity. This way of doing it is pretty
-				# basic, but should be sufficient.
-				@angularVelocity.x *= 1 - @angularDrag * dt
-				@angularVelocity.y *= 1 - @angularDrag * dt
-				@angularVelocity.z *= 1 - @angularDrag * dt
+				@_updateRotation(dt)
 
 			# Reset force queues
 			@_forces = []
