@@ -68,6 +68,14 @@ Technology
 WebSockets
 \end_layout
 
+\begin_layout Standard
+WebSockets allow a client - server application to create a full-duplex communica
+tion channel on a single TCP connection.
+ This helps us to get near-realtime communication between our central server
+ and all other peers and it is used to exchange the data needed to bootstrap
+ the WebRTC connections between peers.
+\end_layout
+
 \begin_layout Subsubsection
 WebGL
 \end_layout
