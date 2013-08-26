@@ -270,7 +270,14 @@ n with the central server which keeps a track of all nodes.
 \end_layout
 
 \begin_layout Paragraph
-Infrastructure
+Applications
+\begin_inset CommandInset label
+LatexCommand label
+name "par:Applications"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard

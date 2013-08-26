@@ -67,7 +67,7 @@ Network topology
 \begin_layout Standard
 At this moment we have implemented an advanced network topology and we are
  still improving it.
- In this section, we would like to discuss a couple of possible improvements
+ In this section, we would like to discuss a couple of possible improvements.
 \end_layout
 
 \begin_layout Subsubsection
@@ -95,7 +95,7 @@ reference "sub:Supernode-topologies-and"
  offer a solution to connect the supernodes if the latency is smaller than
  a threshold.
  More research is needed to determine if the network stays reliable after
- this change
+ this change.
 \end_layout
 
 \begin_layout Subsubsection
@@ -116,6 +116,26 @@ At this moment all supernodes receive a message when a message has to be
  message is delivered.
  This is one of the examples of the optimizations we can implement for routing
  of messages.
+\end_layout
+
+\begin_layout Subsubsection
+Comparing network topologies
+\end_layout
+
+\begin_layout Standard
+In the beginning of the project we made a decision to implement PoPCorn
+ as a network topology for the game.
+ We are sure that PoPCorn is a suitable choice that with our additions fully
+ fits our needs.
+ If we had more time we would like to look at adaptive algorithms for supernode
+ selection and compare it with our current PoPCorn implementation.
+\end_layout
+
+\begin_layout Standard
+It is also interesting to use the game coordinates instead Vivalidi coordinates
+ for organisation of the network.
+ The functionality is already available but unfortunately we had no time
+ any more to run the proper tests.
 \end_layout
 
 \begin_layout Subsection
@@ -151,7 +171,7 @@ Overloading the network or server
 
 \begin_layout Standard
 Currently all nodes in the network connect to a central server.
- This is done to track all nodes so new nodes can easily find an entrypoint
+ This is done to track all nodes so new nodes can easily find an entry point
  to the network.
  The WebRTC connection initialization is also sent via this central server.
  Once the first WebRTC connection is established, this connection will get
@@ -357,7 +377,7 @@ In our network topology implementation we used a central server to help
 Zero-configuration networking (zeroconf).
 
 \series default
- There are numerous implementations of this protocol like Apple's Boncjour
+ There are numerous implementations of this protocol like Apple's Bonjour
  and Avahi for Linux.
  Microsoft has also an implementation of this protocol.
  Unfortunately these technologies are still not supported by Chrome.
@@ -366,6 +386,58 @@ Zero-configuration networking (zeroconf).
 
 \begin_layout Subsection
 WebRTC impact
+\end_layout
+
+\begin_layout Standard
+During this project we have gained a lot of knowledge on WebRTC and researched
+ it on several fronts.
+ For the duration of the project and even before, we followed the latest
+ developments of it.
+ Three months ago, there were several demo's of WebRTC whereof the most
+ were the video conference applications.
+ At this moment the internet is rich with tutorials, demo's, libraries and
+ different types of applications you can use WebRTC for.
+ Take for example a CDN service built with WebRTC.
+ A website can delegate the distribution of website files to the visitors
+ of the websites by practically just adding a JavaScript file to the page.
+\end_layout
+
+\begin_layout Standard
+We totally believe that WebRTC will make in the rapidly evoluting Web society.
+ The success of WebRTC benefits a lot from the success of JavaScript web-applica
+tions that run JavaScript both client and serverside.
+ A four year old Node.js server started the revolution.
+\end_layout
+
+\begin_layout Standard
+The battle for Internet browser market share is still not ended.
+ Every month some new features are being introduced to the world.
+ As result a modern browser can take over the roles of all other desktop
+ application.
+ We believe that WebRTC will play an important role in this take-over.
+ In 
+\begin_inset CommandInset ref
+LatexCommand nameref
+reference "par:Applications"
+
+\end_inset
+
+ discussed application of peer-to-peer can now easily evolve to the browser.
+ Combined with the rest of technologies the browser already offers and the
+ ease of programming of the web application, it should be a matter of time
+ these new applications will attract users.
+\end_layout
+
+\begin_layout Standard
+Unfortunately at this moment Internet Explorer does not support WebRTC and
+ as discussed earlier not all browsers support the newest implementation
+ of WebRTC.
+ This will definitely slow the adoption of WebRTC by developers.
+ At some point users will desire the upcoming browser applications based
+ on WebRTC and that will the moment all browser producers will implement
+ the technology.
+ It will not happen at once but like gradually like the adoption of HTML5.
+ Lets hope this adoption takes big steps.
 \end_layout
 
 \end_body
