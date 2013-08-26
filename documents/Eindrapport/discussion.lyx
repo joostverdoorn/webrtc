@@ -75,15 +75,14 @@ Supernode overlay network
 \end_layout
 
 \begin_layout Standard
-The supernodes have a important role to provide for communication between
- all nodes.
- At this moment if a child node wants to send a message to a random node,
- it sends it to it's parent.
- If the receiver does not have the same parent, the parent sends a package
- to all siblings and one of them will hopefully deliver the message to it's
- children.
- All supernodes are connected with each other what makes the network less
- scalable.
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "sub:Routing"
+
+\end_inset
+
+ already describes the routing method.
+ At this moment is far from ideal.
  A lot of research is done in field of managing supernode connections.
  Adaptive algorithms discussed in
 \begin_inset CommandInset ref

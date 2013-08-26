@@ -74,8 +74,8 @@ reference "sub:Assignment-formulation"
 
 
 \emph on
-How is it possible to create a dynamic peer-to-peer multiplayer-game-network
- that scales with the amount of users participating by only using WebRTC?
+In what way can one create a dynamic peer-to-peer multiplayer-game-network-topol
+ogy that scales with the amount of users participating by only using WebRTC?
 \emph default
 ".
  We answer this question through answering the sub-questions.
@@ -83,26 +83,13 @@ How is it possible to create a dynamic peer-to-peer multiplayer-game-network
 
 \begin_layout Subsection
 How can one distribute essential network tasks over all peers?
-\end_layout
-
-\begin_layout Subsubsection
-Scalability
-\end_layout
-
-\begin_layout Standard
-Scalability is currently still an issue.
- This is a direct result of all supernodes trying to stay connected to all
- other supernodes.
- Eventually some of these connections have to be dropped to allow an expansion
- of the entire network.
- More about this future process is explained in section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:Routing-tables"
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:network_tasks"
 
 \end_inset
 
-.
+
 \end_layout
 
 \begin_layout Subsection
@@ -189,22 +176,59 @@ reference "sub:Vivaldi"
 
 \end_inset
 
- discussed we use Vivaldi to organise out network by latency.
- With help of with PoPCorn defined supernodes, the nodes that are close
- to each other in a n-dimensional space are most likely to connect to each
- other.
+ discussed we use Vivaldi to organise our network by latency.
+ Here, the nodes that are close to each other in a n-dimensional space are
+ most likely to connect to each other.
  Vivaldi ensures that all edges in the node graph represent the current
  latency between the peers.
 \end_layout
 
 \begin_layout Subsubsection
 Routing
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Routing"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
 After the network is structured we can send messages through the network.
- At this moment if the node is not connected to the receiver a message is
- sent to the parent which ensures that all supernodes
+ As in 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "sub:network_tasks"
+
+\end_inset
+
+ we will use supernodes for this purpose.
+ The supernodes have an important role to provide for communication between
+ all nodes.
+ At this moment if a child node wants to send a message to a random node,
+ it sends it to it's parent.
+ If the receiver does not have the same parent, the parent sends a package
+ to all siblings and one of them will hopefully deliver the message to it's
+ children.
+ All supernodes are connected with each other what makes the network less
+ scalable.
+\end_layout
+
+\begin_layout Standard
+Scalability is currently still an issue.
+ This is a direct result of all supernodes trying to stay connected to all
+ other supernodes.
+ Eventually some of these connections have to be dropped to allow an expansion
+ of the entire network.
+ More about this future process is explained in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Routing-tables"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsubsection
@@ -212,7 +236,11 @@ WebRTC
 \end_layout
 
 \begin_layout Standard
-asd
+The underlying WebRTC technology is also a factor that is important for
+ data transmission.
+ WebRTC offers a reliability flag.
+ Unfortunately Chrome only supports unreliable WebRTC communication.
+ We hope that it will be implemented in the nearest future.
 \end_layout
 
 \begin_layout Subsubsection
@@ -222,9 +250,13 @@ Speed
 \begin_layout Standard
 The network library hardly has any overhead for the network at all and almost
  all traffic results from data the application using the library sends.
- In the case of Orbit Impossible, which is not optimised at all, this still
- results in quite a pleasant player experience with only 5 kilobyte/second
- bandwidth usage with 50 active players.
+ In the case of 
+\noun on
+Orbit Impossible
+\noun default
+, which is not optimised at all, this still results in quite a pleasant
+ player experience with only 250 kilobyte/second bandwidth usage with 50
+ active players.
 \end_layout
 
 \end_body

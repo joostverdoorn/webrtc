@@ -224,8 +224,8 @@ Distributed networks
 \begin_inset Quotes eld
 \end_inset
 
-How is it possible to create a dynamic peer-to-peer multiplayer-game-network
- that scales with the amount of users participating by only using WebRTC?
+In what way can one create a dynamic peer-to-peer multiplayer-game-network-topol
+ogy that scales with the amount of users participating by only using WebRTC?
 \emph default
 
 \begin_inset Quotes erd
