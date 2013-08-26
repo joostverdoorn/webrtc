@@ -415,53 +415,46 @@ MMOG
 \end_layout
 
 \begin_layout Standard
-The game is our second deliverable with the only purpose to demonstrate
+The game is our second deliverable and has the main purpose to demonstrate
  the functionality of our networking library in a fun way.
- Therefore we did not properly design a game and just brainstormed about
- game ideas until we found something we all liked.
+ To demonstrate the library in the best way, the goal is to have the game
+ push the library to its limits, either bandwidth limits, latency limits
+ or scalability limits.
 \end_layout
 
 \begin_layout Standard
-For a game we had two different options.
- We would either make a fast-paced action game where low latency is essential
- or a role-playing-game where a low latency was not absolutely necessary.
+As high raw data throughput usually isn't an essential element for games,
+ we have two options left: we can try to connect relatively few peers with
+ a very low latency, which is great for a fast-paced action game, or a larger
+ number of peers with a higher latency, which is great for role-playing-games
+ where the action isn't as quick and a high number of players is essential
+ to the game play.
 \end_layout
 
 \begin_layout Standard
-Because WebRTC offers low-latency data channels we picked the first option.
- We did not want to create a generic first-person shooter though because
- that did not interest anyone in our group.
+As testing with a very large number of players can be hard to arrange, and
+ because WebRTC offers low-latency data channels we picked the first option.
+ 
 \end_layout
 
 \begin_layout Standard
-We did pick a 3D dog fighting game around a planet with little 
-\begin_inset Quotes eld
-\end_inset
-
-alien
-\begin_inset Quotes erd
-\end_inset
-
--spaceships.
+The game we decided to create is a 3D dog fighting game around a planet
+ with little alien spaceships.
  Every player controls a single spaceship in 3rd person view.
- When the player descends to quickly he or she will crash into the planet
- and die.
- Players can also fire small projectiles that kill other players on hit
- as well.
- To further demonstrate synchronization in the network, the game contains
+ Players can fire small projectiles at other players to damage their spaceship.
+ When the player descends to quickly she will crash into the planet and
+ die.
+ To further demonstrate synchronisation in the network, the game contains
  a leader board showing all accumulated kills and deaths of active players.
 \end_layout
 
 \begin_layout Standard
-We also picked this game idea because initially we wanted to create an applicati
-on or game that would make extensive use of orientation sensors in the users
- smartphone.
- This quickly changed to be a desktop game but we still liked the idea of
- being able to control the game with a smartphone.
-\end_layout
-
-\begin_layout Standard
-Therefore the ability to fly the spaceship by tilting the phone is included
+Another reason we went for this concept is because initially we wanted to
+ create an application or game that would make extensive use of orientation
+ sensors in the user's smartphone.
+ This quickly changed to be a fully networked desktop game but we still
+ liked the idea of being able to control the game with a smartphone.
+ Therefore the ability to fly the spaceship by tilting the phone is included
  in this game.
 \end_layout
 
@@ -476,10 +469,26 @@ In order to keep the game playable with a decent amount of players (around
  and velocity.
  Every projectile results in one more packet.
  Bandwidth monitoring showed us that for every additional player in the
- game the total bandwidth usage increased with an average of 0.1 kilobyte/second
+ game the total bandwidth usage increased with an average of 5 kilobyte/second
  (up- and download together).
  50 people playing together therefore results in an average bandwidth usage
- of 5 kilobyte/second, which is by any terms acceptable.
+ of 250 kilobyte/second, which is by any terms acceptable.
+\end_layout
+
+\begin_layout Subsubsection
+Graphics Engine
+\end_layout
+
+\begin_layout Standard
+For the graphics of the game we have various options, amongst which HTML5
+ Canvas, inline SVG and WebGL, although only WegGL offers the raw graphics
+ power we require for a 3D game.
+ As WebGL itself is rather complex, there are various abstraction libraries
+ for WebGL that wrap its functionality into a nice API, but none offer the
+ level of sophistication that Three.js offers.
+ Three.js is a fully-fledged 3D graphics engine that also includes functionality
+ for - amongst others - importing textured models and shaders.
+ 
 \end_layout
 
 \end_body

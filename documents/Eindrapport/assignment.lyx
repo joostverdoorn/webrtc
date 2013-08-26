@@ -154,29 +154,33 @@ Philosophy
 \end_layout
 
 \begin_layout Standard
-Nowadays people have access to very fast and relatively cheap internet connectio
-ns.
- In countries like the Netherlands the available bandwidth often extremely
- exceeds the actual use of the average customer.
+More and more developers turn to the Web as their main platform.
+ It offers a far wider reach than any other platform, and the possibilities
+ it offers increases every day.
+ Aside from that, the last decade has also seen a dramatic increase of bandwidth
+ available to the average consumer.
+ This bandwidth often exceeds the actual use of the average person.
 \end_layout
 
 \begin_layout Standard
-This makes peer-to-peer networks easier to implement because users are no
- longer very limited in the ability to up- and download huge amounts of
- data.
- Advantages of peer-to-peer networks are the lack of a central authority
- or when a central authority is used to bootstrap the network, this entity
- can easily be replaced by other parties that do not trust the original
- party.
- Another advantage compared to a centralised system is the ability to store
- the complete application offline and prevent unwillingly sharing personal
- information.
- Direct connections to other peers also stimulate the performance by offering
- a lower latency in the connection because the middleman is cut out.
- These direct connections also make it harder to track users and transferred
- data, offering a higher degree of privacy for its users.
- This added privacy and lack of a central authority in decentralised networks
- make it nearly impossible to take down a peer-to-peer network.
+Developers, on the other hand, have to hire expensive servers to serve a
+ very demanding user base, who expect a high quality of service and fast
+ loading times.
+ Where these server costs can easily be borne by the Googles and Facebooks
+ of this world, its a heavy burden on individuals and small businesses,
+ and undoes some of the democratising impact the Internet has had on the
+ world.
+\end_layout
+
+\begin_layout Standard
+In peer-to-peer networks the burden of bandwidth is borne by the individuals
+ that make up the network, and this gives developers the opportunity to
+ create a rich user experience without having the downsides of maintaining
+ expensive servers.
+ With WebRTC, peer-to-peer networks come to the browser, and we want to
+ help developers make the best use of it.
+ We aim to keep server utilisation to a minimum, and to maximise the use
+ of the possibilities WebRTC offers.
 \end_layout
 
 \begin_layout Subsection

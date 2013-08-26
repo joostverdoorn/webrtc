@@ -342,8 +342,8 @@ When a node becomes supernode and vice versa, a message is sent to the server
 \end_layout
 
 \begin_layout Enumerate
-Once in a while a supernode updates it's supernode list from the server
- to be 100% sure the list is up to date.
+Once in a while a supernode updates its supernode list from the server to
+ be 100% sure the list is up to date.
 \end_layout
 
 \begin_layout Subsubsection
@@ -351,9 +351,9 @@ Vivaldi
 \end_layout
 
 \begin_layout Standard
-When a node joins the network, it sets it's 3-dimensional coordinates between
+When a node joins the network, it sets its 3-dimensional coordinates between
  [-2, 2] to ensure the diversity in the coordinates.
- Every 2 seconds a node pings it's peers and gets all theirs positions and
+ Every 2 seconds a node pings its peers and gets all theirs positions and
  latencies.
  When all peers answered own position is being calculated.
  For each peer, a node tries to to equalize the latency and the distance
@@ -411,18 +411,18 @@ Vivaldi and PoPCorn describe the basic idea of how the network topology
 \end_layout
 
 \begin_layout Standard
-Vivaldi performs weak if a node has only one connection to it's parent.
+Vivaldi performs weak if a node has only one connection to its parent.
  A stable foundation is needed to find a place in the space.
  That's why every node has connection to at least three supernodes.
  Not only for position purposes but also for backup when a parent leaves.
  The first three nodes which join the network automatically become a supernode.
  New nodes joining the network receive a list of existing supernodes from
  the server and choose a random supernode as parent.
- When a node has settled it gets a recommendation from it's parent with
- the closest supernode.
+ When a node has settled it gets a recommendation from its parent with the
+ closest supernode.
  If it is worth it, the node switches from parent.
- After switching, we check if a node has children then it can lose it's
- supernode status.
+ After switching, we check if a node has children then it can lose its supernode
+ status.
  So is the amount of supernodes dynamically adjusts to the size of the network.
 \end_layout
 

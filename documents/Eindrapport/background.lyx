@@ -206,7 +206,7 @@ Traversal Using Relay NAT (TURN)
  is an extension on STUN
 \begin_inset CommandInset citation
 LatexCommand cite
-key "ietfstunspec"
+key "ietfturnspec"
 
 \end_inset
 
