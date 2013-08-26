@@ -85,7 +85,7 @@ define [
 			@scene.add(@mesh)
 
 			# Create outer atmosphere visible from a greater distance to the planet.
-			atmosphereGeometry = new Three.SphereGeometry(500, 40, 40)
+			atmosphereGeometry = new Three.SphereGeometry(510, 32, 32)
 			atmosphereMaterial = new THREE.ShaderMaterial
 				uniforms:
 					c:   { type: "f", value: .8 },
@@ -98,12 +98,13 @@ define [
 				side: THREE.BackSide,
 				blending: THREE.AdditiveBlending,
 				transparent: true
+				depthWrite: false
 
 			@outerAtmosphere = new Three.Mesh(atmosphereGeometry, atmosphereMaterial)
-			@scene.add(@outerAtmosphere)
+			@mesh.add(@outerAtmosphere)
 
 			# Create inner atmosphere to simulate blue skies when close to the planet.
-			atmosphereGeometry = new Three.SphereGeometry(500, 40, 40)
+			atmosphereGeometry = new Three.SphereGeometry(500, 32, 32)
 			atmosphereMaterial = new THREE.ShaderMaterial
 				uniforms:
 					c:   { type: "f", value: .1 },
@@ -116,6 +117,7 @@ define [
 				side: THREE.BackSide,
 				blending: THREE.AdditiveBlending,
 				transparent: true
+				depthWrite: false
 
 			@innerAtmosphere = new Three.Mesh(atmosphereGeometry, atmosphereMaterial)
-			@scene.add(@innerAtmosphere)
+			@mesh.add(@innerAtmosphere)

@@ -85,7 +85,7 @@ require [
 			imagePrefix = "images/nebula-"
 			directions  = ["xpos", "xneg", "ypos", "yneg", "zpos", "zneg"]
 			imageSuffix = ".png"
-			skyGeometry = new Three.CubeGeometry( 5000, 5000, 5000 )
+			skyGeometry = new Three.CubeGeometry( 20000, 20000, 20000 )
 
 			imageURLs = []
 			for i in [0...6]
@@ -107,8 +107,8 @@ require [
 			# Create game.
 			@game = new GameModel(@scene)
 			@game.on
-				'stats.change', ( stats ) => @overlay.setStats(stats)
-				'player.died', @_onPlayerDied
+				'stats.change': ( stats ) => @overlay.setStats(stats)
+				'player.died': @_onPlayerDied
 
 			# Create overlay/
 			@overlay = new Overlay()
