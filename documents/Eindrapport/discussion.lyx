@@ -341,5 +341,32 @@ name "fig:Marketshare-of-browsers"
 Peer discovery
 \end_layout
 
+\begin_layout Standard
+In our network topology implementation we used a central server to help
+ a new incoming node to connect to the rest of the network.
+ The server provides a new node with a list of the available nodes and supports
+ the WebRTC connection process.
+ At this moment is it unfortunately not possible to find other nodes online
+ without a central server but it is possible to find the nodes in your local
+ network.
+ In our game we use a mobile device as a controller for the game.
+ The server is still helping to set up this connection.
+ It should be a great improvement to get the server out of this process.
+ There is hope: 
+\series bold
+Zero-configuration networking (zeroconf).
+
+\series default
+ There are numerous implementations of this protocol like Apple's Boncjour
+ and Avahi for Linux.
+ Microsoft has also an implementation of this protocol.
+ Unfortunately these technologies are still not supported by Chrome.
+ It should be nice to implement it in the future.
+\end_layout
+
+\begin_layout Subsection
+WebRTC impact
+\end_layout
+
 \end_body
 \end_document
