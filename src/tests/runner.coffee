@@ -1,3 +1,7 @@
+#
+# Copyright (c) 2013, TNO, J. Abbink, K. Grigorjancs, J.P. Verdoorn
+# All rights reserved.
+#
 jasmine = require 'jasmine-node'
 
 jsc = require './tools/jscoverage-reporter/src/jasmine.jscoverage_reporter.js'
