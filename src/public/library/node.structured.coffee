@@ -1,3 +1,7 @@
+#
+# Copyright (c) 2013, TNO
+# All rights reserved.
+#
 requirejs.config
 	shim:
 		'underscore':
