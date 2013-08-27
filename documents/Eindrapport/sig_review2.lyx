@@ -1,0 +1,131 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language british
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+The following text is the raw Dutch feedback received by Dennis Bijlsma
+ (dbijlsma@sig.eu) from the Software Improvement Group on August 27, 2013.
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In de tweede upload zien we dat het codevolume met ongeveer 20% is gegroeid.
+ Een score voor onderhoudbaarheid kunnen we helaas niet berekenen, omdat
+ onze tooling hiervoor CoffeeScript (nog) niet kan analyseren.
+\end_layout
+
+\begin_layout Standard
+Het eerste dat opvalt is dat jullie de directorystructuur hebben aangepast.
+ De library is nu duidelijker gescheiden van de code die de library gebruikt,
+ waardoor de directorystructuur nu overeen komt met de door jullie bedachte
+ architectuur.
+\end_layout
+
+\begin_layout Standard
+Een aantal lange methodes is inmiddels opgesplitst, wat de leesbaarheid
+ en testbaarheid ten goede komt.
+ Er zijn nog steeds een aantal methodes die aan de lange kant zijn (bijvoorbeeld
+ Entity.Player.onLoaded, node.queryTo, de constructor in server.coffee).
+ Probeer de meerderheid van de methodes 20 regels of kleiner te houden.
+ Het is prima als je daar af en toe overheen gaat, maar nu gebeurd het echt
+ te vaak.
+\end_layout
+
+\begin_layout Standard
+Over de duplicatie zeggen jullie in het readme-bestand het volgende:
+\end_layout
+
+\begin_layout Standard
+"We hebben de duplicerende code niet in een common/ map gestopt omdat de
+ library en game uiteindelijk in twee verschillende repositories gepubliceerd
+ zullen worden en het spel alleen de publieke interface van de library mag
+ gebruiken en de library niet van het bestaan van het spel af mag weten."
+\end_layout
+
+\begin_layout Standard
+Ik begrijp jullie redenering, maar dit is niet de beste manier om met libraries
+ om te gaan.
+ De bestanden van de library naar de directory van het project copy/pasten
+ is een vrij primitieve vorm van dependency management.
+ Er zitten ook risico's voor de onderhoudbaarheid aan: je weet niet meer
+ zeker welke versie van de library je gebruikt, en er is een kans dat iemand
+ per ongeluk de code van de library aanpast.
+ Er bestaan voor de meeste technologieën tools om met zo'n situatie om te
+ gaan, zoals Maven voor Java en Gems voor Ruby.
+ Ik weet eerlijk gezegd niet of er iets soortgelijks voor CoffeeScript bestaat,
+ maar je zou eens kunnen kijken.
+\end_layout
+
+\begin_layout Standard
+Tot slot is het goed om te zien dat er naast productiecode ook veel testcode
+ is toegevoegd.
+\end_layout
+
+\begin_layout Standard
+Uit deze observaties kunnen we concluderen dat de aanbevelingen van de vorige
+ evaluatie zijn meegenomen in het ontwikkeltraject.
+ 
+\end_layout
+
+\end_body
+\end_document

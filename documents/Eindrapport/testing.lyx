@@ -312,7 +312,17 @@ After this first review we followed up on most of the suggestions given
  and the library should never even know about the game.
  Therefore the shared code in these two deliverables cannot be placed in
  a common directory.
- 
+\end_layout
+
+\begin_layout Standard
+The second review by SIG can be found in Appendix 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Software-Improvement-Group"
+
+\end_inset
+
+.
 \end_layout
 
 \end_body

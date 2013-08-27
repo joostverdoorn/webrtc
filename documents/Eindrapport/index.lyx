@@ -445,6 +445,31 @@ filename "sig_review1.lyx"
 \end_inset
 
 
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Software Improvement Group Review 2
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Software-Improvement-Group"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand input
+filename "sig_review2.lyx"
+
+\end_inset
+
+
 \end_layout
 
 \end_body
