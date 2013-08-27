@@ -93,6 +93,28 @@ Joost Verdoorn
 \end_layout
 
 \begin_layout Standard
+\begin_inset Float figure
+placement bp
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/logos.png
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \begin_inset ERT
 status open
 
@@ -106,9 +128,24 @@ thispagestyle{empty}
 \end_inset
 
 
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Abstract
 \end_layout
 
 \begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand input
+filename "abstract.lyx"
+
+\end_inset
+
+
 \begin_inset Newpage pagebreak
 \end_inset
 
