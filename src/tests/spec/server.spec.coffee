@@ -52,16 +52,16 @@ require [
 									}
 
 							callArgs = server._app.get.mostRecentCall.args
-							expect(callArgs[0]).toEqual('/controller/:nodeId')
+							expect(callArgs[0]).toEqual('/controller/:nodeID')
 							callArgs[1]({
 									params: {
-										nodeId: '123'
+										nodeID: '123'
 									}
 								}, fakeRes)
 							expect(fakeRes.writeHead).not.toHaveBeenCalled()
 							expect(fakeRes.write).not.toHaveBeenCalled()
 							expect(fakeRes.redirect.mostRecentCall.args).toEqual([
-									'/controller.html?nodeId=123'
+									'/controller.html?nodeID=123'
 								])
 							expect(fakeRes.end).toHaveBeenCalled()
 
@@ -120,7 +120,7 @@ require [
 							])
 
 				describe 'when emitting', ->
-					it 'should create a new message without a sender and relay it', ->
+					it 'should create a new message with a "server" as sender and relay it', ->
 						spyOn(server, 'relay')
 
 						server.emitTo('1', 'event', 1, 2, 3)
@@ -129,7 +129,7 @@ require [
 
 						message = server.relay.mostRecentCall.args[0]
 						expect(message.to).toBe('1')
-						expect(message.from).toBe(null)
+						expect(message.from).toBe('server')
 						expect(message.event).toBe('event')
 						expect(message.args).toEqual([
 								1
@@ -237,89 +237,6 @@ require [
 							])
 						allNodes = server.getNodes()
 						expect(allNodes.length).toEqual(3)
-
-				describe 'when queried', ->
-					fakeNode1 = null
-					fakeNode2 = null
-					beforeEach ->
-						fakeNode1 = {
-							a: 1
-							b: 2
-							id: '1'
-							serialize: ->
-								return '[1]'
-							query: ( name, fn ) ->
-								fn('[[3],[4]]')
-						}
-						fakeNode2 = {
-							c: 3
-							d: 4
-							id: '2'
-							serialize: ->
-								return '[2]'
-							query: ( name, fn ) ->
-								fn('[[5],[6]]')
-						}
-
-					it 'should reply "pong" to a "ping" query', ->
-						callback = jasmine.createSpy('callback').andCallFake(( result ) ->
-							expect(result).toBe('pong')
-						)
-
-						result = server.query('ping', callback)
-
-						waitsFor(->
-							return callback.wasCalled
-						)
-
-					it 'should reply all serialized nodes on a non-extensive "nodes" query', ->
-
-						callback = jasmine.createSpy('callback').andCallFake(( result ) ->
-							expect(result).toEqual([
-								'[1]'
-								'[2]'
-							])
-						)
-
-						server.addNode(fakeNode1)
-						server.addNode(fakeNode2)
-
-						result = server.query('nodes', callback)
-
-						waitsFor(->
-							return callback.wasCalled
-						)
-
-					it 'should reply all queried serialized nodes on a extensive "nodes" query', ->
-						callback = jasmine.createSpy('callback').andCallFake(( result ) ->
-							expect(result).toEqual([
-								'[[3],[4]]'
-								'[[5],[6]]'
-							])
-						)
-
-						server.addNode(fakeNode1)
-						server.addNode(fakeNode2)
-
-						result = server.query('nodes', undefined, true, callback)
-
-						waitsFor(->
-							return callback.wasCalled
-						)
-
-					it 'should reply null when something unknown is queried', ->
-						callback = jasmine.createSpy('callback').andCallFake(( result ) ->
-							expect(result).toEqual(null)
-						)
-
-						server.addNode(fakeNode1)
-						server.addNode(fakeNode2)
-
-						result = server.query('asfsdg', callback)
-
-						waitsFor(->
-							return callback.wasCalled
-						)
 
 				describe 'when timed', ->
 					it 'should give precise incremental numbers representing the time', ->

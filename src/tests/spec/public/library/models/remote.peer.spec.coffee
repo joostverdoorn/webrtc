@@ -110,10 +110,6 @@ require [
 				expect(peer.connect).not.toHaveBeenCalled()
 
 		describe 'when connecting', ->
-			it 'should be a "connector"', ->
-				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
-				expect(peer._isConnector).toBe(true)
-
 			it 'should route the connection query via the controller', ->
 				spyOn(fakeController, 'queryTo')
 				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
@@ -208,40 +204,6 @@ require [
 				expect(result.indexOf('b=AS:102400')).toBeGreaterThan(-1)
 				expect(result.indexOf('b=AS:30')).toBe(-1)
 
-		describe 'when setting a remote description', ->
-			it 'should set the remote description for RTC connection', ->
-				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
-				spyOn(peer._connection, 'setRemoteDescription')
-
-				peer.setRemoteDescription('a')
-
-				expect(peer._connection.setRemoteDescription).toHaveBeenCalled()
-				callArgs = peer._connection.setRemoteDescription.mostRecentCall.args
-				expect(callArgs).toEqual([
-						'a'
-					])
-
-			it 'should create an answer if we are not the connector', ->
-				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
-				spyOn(peer._connection, 'createAnswer')
-				peer._isConnector = true
-
-				peer.setRemoteDescription('a')
-
-				expect(peer._connection.createAnswer).not.toHaveBeenCalled()
-
-				peer._isConnector = false
-
-				peer.setRemoteDescription('a')
-
-				expect(peer._connection.createAnswer).toHaveBeenCalled()
-				callArgs = peer._connection.createAnswer.mostRecentCall.args
-				expect(callArgs).toEqual([
-						peer._onLocalDescription
-						null
-						{}
-					])
-
 		describe 'when receiving an ICE candidate', ->
 			it 'should ignore it if there is not actally no candidate', ->
 				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
@@ -250,38 +212,6 @@ require [
 				peer._onIceCandidate({})
 
 				expect(fakeController.server.emitTo).not.toHaveBeenCalled()
-
-			it 'should send valid candidates to the central server', ->
-				fakeCandidate = 'asghlbasv8og348iwb viosu'
-
-				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
-				spyOn(fakeController.server, 'emitTo')
-
-				peer._onIceCandidate({
-						candidate: fakeCandidate
-					})
-
-				expect(fakeController.server.emitTo).toHaveBeenCalled()
-				callArgs = fakeController.server.emitTo.mostRecentCall.args
-				expect(callArgs).toEqual([
-						'1'
-						'peer.addIceCandidate'
-						fakeController.id
-						fakeCandidate
-					])
-
-		describe 'when adding an ICE candidate', ->
-			it 'should relay the candidate to the RTC connection', ->
-				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
-				spyOn(peer._connection, 'addIceCandidate')
-
-				peer.addIceCandidate('a')
-
-				expect(peer._connection.addIceCandidate).toHaveBeenCalled()
-				callArgs = peer._connection.addIceCandidate.mostRecentCall.args
-				expect(callArgs).toEqual([
-						'a'
-					])
 
 		describe 'when the ICE connection state changes', ->
 			it 'should trigger a connect event when connected', ->
@@ -366,16 +296,6 @@ require [
 					, 1000)
 
 		describe 'when the channel is opened', ->
-			it 'should send queries for benchmark, system and isSuperNode', ->
-				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)
-				called = []
-				spyOn(peer, 'query').andCallFake( ( query, fn ) ->
-						called.push query
-					)
-				peer._onChannelOpen()
-				expect(called).toEqual([
-						'isSuperNode'
-					])
 
 			it 'should trigger the channel.opened event', ->
 				peer = new Peer(fakeController, '1', true, FakeRTCPeerConnection)

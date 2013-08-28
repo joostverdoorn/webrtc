@@ -21,13 +21,6 @@ require [
 				node = new Node()
 
 			describe 'when created', ->
-				it 'should create a new Remote.Server and register several callbacks on it', ->
-					expect(node.server._mockTriggers.splice(-4, 4)).toEqual([
-							'connect'
-							'peer.connectionRequest'
-							'peer.setRemoteDescription'
-							'peer.addIceCandidate'
-						])
 				it 'should create a new _peers Collection', ->
 					expect(node._peers.length).toBe(0)
 					spyOn(node, 'removePeer')
@@ -161,7 +154,8 @@ require [
 						expect(args).toEqual([
 								'2'
 								'4'
-								'3'
+								timestamp:
+									'3'
 							])
 
 					node.onReceive('test', callback)
@@ -218,15 +212,6 @@ require [
 						}))		# JSON.stringify used because of weirdness with Jasmine
 
 			describe 'when querying', ->
-				it 'should start a listener on _peers for the query result', ->
-					spyOn(node._peers, 'once')
-
-					callback = ->
-					node.queryTo('1', '2', callback, '3', '4')
-
-					callArgs = node._peers.once.mostRecentCall.args
-					expect(callArgs[1]).toEqual(callback)
-
 				it 'should emit the query', ->
 					spyOn(node, 'emitTo')
 					spyOn(node._peers, 'once')
@@ -237,12 +222,18 @@ require [
 					callArgs = node._peers.once.mostRecentCall.args
 					#expect(callArgs[1]).toEqual(callback)
 					expect(node.emitTo.mostRecentCall.args).toEqual([
-							'1'
-							'query'
-							'2'
-							callArgs[0]
-							'3'
-							'4'
+							to:
+								'1'
+							event:
+								'query'
+							args: [
+								'2'
+								callArgs[0]
+								callback
+								'3'
+							]
+							path: []
+							ttl: Math.Infinity
 						])
 
 			describe 'when broadcasting', ->
@@ -301,51 +292,6 @@ require [
 					node.getPeer.andReturn(null)
 					expect(node.relay(fakeMessage)).toBe(undefined)
 
-			describe 'when receiving a query', ->
-				it 'should handle ping requests', ->
-					spyOn(node, 'time').andReturn(123)
-
-					callback = ( event, time ) ->
-						expect(event).toBe('pong')
-						expect(time).toBe(123)
-
-					node.query('ping', callback)
-
-				it 'should handle type requests', ->
-					callback = ( type ) ->
-						expect(type).toBe(node.type)
-
-					node.query('type', callback)
-
-				it 'should handle info requests', ->
-					peers = [
-							{
-								id: '1'
-								role: '2'
-							}
-							{
-								id: '3'
-								role: '4'
-							}
-						]
-					spyOn(node, 'getPeers').andReturn(peers)
-					callback = ( info ) ->
-						expect(info).toEqual({
-								id: node.id
-								type: node.type
-								peers: peers
-							})
-
-					node.query('info', callback)
-
-				it 'should handle random requests', ->
-					callback = ( data... ) ->
-						expect(data).toEqual([
-								null
-							])
-
-					node.query(undefined, callback)
-
 			describe 'when a peer wants to connect', ->
 				it 'should connect to that peer', ->
 					spyOn(node, 'connect')
@@ -354,6 +300,7 @@ require [
 
 					expect(node.connect.mostRecentCall.args).toEqual([
 							'1'
+							null
 							false
 						])
 

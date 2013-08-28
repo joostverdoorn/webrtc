@@ -33,7 +33,7 @@ define [
 				id: @id
 				nodeId: @nodeId
 				timestamp: @timestamp
-				position: @position.serialize()
+				position: position
 				targetPosition: @targetPosition.serialize()
 
 			return JSON.stringify(object)

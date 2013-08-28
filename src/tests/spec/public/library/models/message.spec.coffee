@@ -14,7 +14,7 @@ require [
 		message = null
 
 		beforeEach ->
-			message = new Message('a', 'b', 'event')
+			message = new Message('a', 'b', 123, 'event')
 
 		describe 'when constructed', ->
 

@@ -24,12 +24,6 @@ require [
 			it 'should have a timestamp', ->
 				expect(token.timestamp).not.toBe(undefined)
 
-			it 'should have a nodeId', ->
-				expect(token.nodeId).not.toBe(undefined)
-
-			it 'should have a releasedBy', ->
-				expect(token.releasedBy).not.toBe(undefined)
-
 			it 'should have a candidates array', ->
 				expect(token.candidates).not.toBe(undefined)
 
@@ -49,14 +43,5 @@ require [
 
 			it 'should be equal to its deserialized serial', ->
 				string = token.serialize()
-				newToken = Token.deserialize(string)
-				expect(newToken).toEqual(token)
-
-			it 'should not fail when position is missing', ->
-				oldPos = token.position
-				token.position = null
-
-				string = token.serialize()
-				token.position = oldPos
 				newToken = Token.deserialize(string)
 				expect(newToken).toEqual(token)
