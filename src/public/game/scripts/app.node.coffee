@@ -23,14 +23,13 @@ requirejs.config
 		'bootstrap': 'vendor/scripts/bootstrap'
 
 require [
-	'game/scripts/app._'
 	'library/node.structured'
 	'jquery'
-	], ( App, Node, $ ) ->
+	], ( Node, $ ) ->
 
 	# A single app with a single node
 	#
-	class App.Node extends App
+	class AppNode
 
 		# Initializes a node and sets up listeners to update the UI
 		#
@@ -162,4 +161,4 @@ require [
 			$('.self-row .token').text(@node.token?)
 			@tokens = @node.groupTokens()
 
-	window.App = new App.Node
+	window.App = new AppNode

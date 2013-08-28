@@ -498,7 +498,7 @@ Each adaptation should also use limited information to reduce communication
 \end_layout
 
 \begin_layout Enumerate
-The adoption mechanisms should not break the network if a node functions
+The adaptation mechanisms should not break the network if a node functions
  with a limited or incorrect information.
  This can be expected in large networks.
 \end_layout
@@ -509,7 +509,7 @@ A network should strive to keep an up-to-date track of all nodes connected
 \end_layout
 
 \begin_layout Enumerate
-The adoption mechanisms should dynamically improve the network stability.
+The adaptation mechanisms should dynamically improve the network stability.
 \end_layout
 
 \begin_layout Enumerate
