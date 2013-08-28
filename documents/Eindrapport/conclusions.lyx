@@ -151,7 +151,6 @@ Once in a while a not supernode gets a list with supernodes from its parent
 When a node leaves the network, it handles its leave by sending a message
  to all neighbours and in case of supernode choose a new parent for its
  children.
- 
 \end_layout
 
 \begin_layout Paragraph
