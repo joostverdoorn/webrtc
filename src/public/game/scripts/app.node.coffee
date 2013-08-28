@@ -33,7 +33,7 @@ require [
 
 		# Initializes a node and sets up listeners to update the UI
 		#
-		initialize: ( ) ->
+		constructor: ( ) ->
 			@node = new Node()
 			@tokens = {}
 

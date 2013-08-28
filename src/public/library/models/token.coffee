@@ -3,7 +3,7 @@
 # All rights reserved.
 #
 define [
-	'library/models/vector'
+	'library/helpers/vector'
 
 	'underscore'
 	], ( Vector, _ ) ->
@@ -27,7 +27,7 @@ define [
 		# @return [String] the JSON string representing this token
 		#
 		serialize: ( ) ->
-			position = @position?.serialize() || null
+			position = @position?.serialize() or null
 
 			object =
 				id: @id

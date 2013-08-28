@@ -19,9 +19,6 @@ requirejs.config
 		'socket.io': 'socket.io/socket.io'
 
 define [
-	'library/helpers/mixable'
-	'library/helpers/mixin.eventbindings'
-
 	'library/node'
 	'library/models/remote.server'
 	'library/models/remote.peer'
@@ -29,11 +26,11 @@ define [
 	'library/models/token'
 
 	'library/helpers/collection'
-	'library/models/vector'
+	'library/helpers/vector'
 
 	'underscore'
 
-	], ( Mixable, EventBindings, Node, Server, Peer, Message, Token, Collection, Vector, _ ) ->
+	], ( Node, Server, Peer, Message, Token, Collection, Vector, _ ) ->
 
 	# Constructs a new structured node.
 	#
