@@ -31,6 +31,9 @@ define [
 		# @param stats [Object] The new stats
 		#
 		@mergeStats: ( players, stats ) ->
+			unless stats
+				return
+
 			for player in players
 				if player.id? and stats[player.id]?
 					player.stats.mergeStats(stats[player.id])
