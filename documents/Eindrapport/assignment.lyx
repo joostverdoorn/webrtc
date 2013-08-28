@@ -84,7 +84,18 @@ Client
 The client and supervisor of this BSc project is the same organization:
  TNO.
  TNO is a non-profit research organization that focuses on applied sciences.
- More information about TNO can be found at http://www.tno.nl/.
+ More information about TNO can be found at 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.tno.nl/
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection

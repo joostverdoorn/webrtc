@@ -331,8 +331,8 @@ status open
 \begin_inset Caption
 
 \begin_layout Plain Layout
-Marketshare of browsers on August 21, 2013; http://gs.statcounter.com/#browser-ww-
-daily-20130821-20130821-bar
+Market share of browsers on August 21, 2013; http://gs.statcounter.com/#browser-ww
+-daily-20130821-20130821-bar
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:Marketshare-of-browsers"
@@ -371,7 +371,10 @@ In our network topology implementation we used a central server to help
  In our game we use a mobile device as a controller for the game.
  The server is still helping to set up this connection.
  It should be a great improvement to get the server out of this process.
- There is hope: 
+\end_layout
+
+\begin_layout Standard
+There is hope: 
 \series bold
 Zero-configuration networking (zeroconf).
 
