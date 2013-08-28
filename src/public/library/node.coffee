@@ -74,7 +74,7 @@ define [
 				'iceCandidates': ( callback, id, arr ) =>
 					if peer = @getPeer(id, null, true)
 						peer.addIceCandidates(arr)
-						callback peer.iceCandidates
+						callback peer.localIceCandidates
 					else callback null
 
 				'info': ( callback ) =>
@@ -232,7 +232,6 @@ define [
 			# Setup callbacks and timeout.
 			queryID = _.uniqueId('query')
 			timer = setTimeout( ( ) =>
-
 				@_peers.off(queryID)
 				@server.off(queryID)
 

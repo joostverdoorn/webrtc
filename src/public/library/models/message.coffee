@@ -2,7 +2,9 @@
 # Copyright (c) 2013, TNO, J. Abbink, K. Grigorjancs, J.P. Verdoorn
 # All rights reserved.
 #
-define [], ( ) ->
+define [
+	'underscore'
+	], ( _ ) ->
 
 	# Message class. This provides the core messaging functionality of the network.
 	#
@@ -69,9 +71,23 @@ define [], ( ) ->
 		# @param storage [Array<Integer>] an array of message hashes
 		#
 		storeHash: ( storage ) ->
-			storage.push(@_hash)
-			unless storage.length < 1000
-				storage.splice(0, 200)
+			unless storage[0]?
+				storage[0] = []
+			list = storage[0]
+
+			if list.length is 1024
+
+				unless storage[1]?
+					storage[1] = []
+				list = storage[1]
+
+				if list.length is 1024
+					storage[0] = storage[1]
+					storage[1] = []
+					list = storage[1]
+
+			i = _(list).sortedIndex(@_hash)
+			list.splice(i, 0, @_hash)
 
 		# Returns true if and only if this message was already hashed and stored
 		#
@@ -79,7 +95,19 @@ define [], ( ) ->
 		# @return [Boolean] wether or this message was already stored
 		#
 		isStored: ( storage ) ->
-			return @_hash in storage
+			unless storage[0]?
+				return false
+
+			if _(storage[0]).indexOf(@_hash, true) > -1
+				return true
+
+			unless storage[1]?
+				return false
+
+			if _(storage[1]).indexOf(@_hash, true) > -1
+				return true
+
+			return false
 
 		# Disassembles a message into parts of a specified length, to be
 		# reassembled at a later stage.
@@ -120,12 +148,13 @@ define [], ( ) ->
 				return null
 
 			messageString = ""
-			for part in storage[part.hash]
-				unless part? then return null
-				messageString += part
+			for data in storage[part.hash]
+				unless data? then return null
+				messageString += data
+
+			message = @deserialize(messageString)
 
 			delete storage[part.hash]
-			message = @deserialize(messageString)
 			return message
 
 		# Serializes this message to a JSON string
@@ -135,15 +164,15 @@ define [], ( ) ->
 		#
 		serialize: ( includeMeta = true ) ->
 			object =
-				to: @to
-				from: @from
-				timestamp: @timestamp
-				event: @event
-				args: @args
+				t: @to
+				f: @from
+				ts: @timestamp
+				e: @event
+				a: @args
 
 			if includeMeta
 				object.ttl = @ttl
-				object.route = @route
+				object.r = @route
 
 			return JSON.stringify(object)
 
@@ -155,8 +184,7 @@ define [], ( ) ->
 		@deserialize: ( messageString ) ->
 			object = JSON.parse(messageString)
 
-			return new Message(object.to, object.from, object.timestamp, object.event, object.args,
+			return new Message(object.t, object.f, object.ts, object.e, object.a,
 				ttl: object.ttl
-				route: object.route
+				route: object.r
 			)
-

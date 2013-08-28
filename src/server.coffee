@@ -7,7 +7,7 @@ define [
 	'library/models/remote.client'
 
 	'library/models/message'
-	'library/models/collection'
+	'library/helpers/collection'
 
 	'express'
 	'http'

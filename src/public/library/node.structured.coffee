@@ -53,9 +53,6 @@ define [
 		_tokenMoveThreshold : 4			# while requesting a token candidate
 		_superNodeFoundation: 3			# a minimum amound of superNodes
 
-
-		position : new Vector((Math.random()-0.5)*4, (Math.random()-0.5)*4, (Math.random()-0.5)*4)
-
 		# Initializes Vivaldi and Popcorn on top of the unstructured node
 		#
 		initialize: ( args... ) ->
@@ -71,6 +68,7 @@ define [
 			@timers.push(setInterval(@_ensureNetworkIntegrity, @_ensureNetworkIntegrityInterval))
 			@timers.push(setInterval(@_recommendParent, @_recommendParentInterval))
 
+			@position = new Vector((Math.random()-0.5)*4, (Math.random()-0.5)*4, (Math.random()-0.5)*4)
 			@isSuperNode = false
 			@_parent = null
 
@@ -306,7 +304,7 @@ define [
 			if @isSuperNode is superNode
 				return
 
-			console.log "Supernode: #{superNode}, having token #{@token?} and children #{@getChildren().length}"
+			#console.log "Supernode: #{superNode}, having token #{@token?} and children #{@getChildren().length}"
 			@isSuperNode = superNode
 
 			@server.emit('setSuperNode', superNode)

@@ -48,6 +48,8 @@ define [
 				OfferToReceiveAudio: true
 				OfferToReceiveVideo: true
 
+		_connectionTimeout: 10000
+
 		# Initializes this class. Will attempt to connect to a remote peer through WebRTC.
 		# Is called from the baseclass' constructor.
 		#
@@ -55,10 +57,10 @@ define [
 		# @param instantiate [Booelean] wether to instantiate the connection or wait for the remote
 		#
 		initialize: ( @id, instantiate = true, PeerConnection = RTCPeerConnection ) ->
-			@iceCandidates = []
+			@localIceCandidates = []
+			@_remoteIceCandidates = []
 
 			@_connection = new PeerConnection(@_serverConfiguration, @_connectionConfiguration)
-			@_connection.onnegotiationneeded = @_startNegotiation
 			@_connection.onicecandidate = @_onIceCandidate
 			@_connection.oniceconnectionstatechange = @_onIceConnectionStateChange
 			@_connection.ondatachannel = @_onDataChannel
@@ -83,17 +85,25 @@ define [
 			channel = @_connection.createDataChannel('a', @_channelConfiguration)
 			@_addChannel(channel)
 
+			timer = setTimeout(=>
+				@trigger('timeout')
+			, @_connectionTimeout)
+			@once('connected', -> clearTimeout(timer))
+
 			@_controller.queryTo(@id, 'requestConnection', @_controller.id, ( accepted ) =>
-				console.timeStamp()
-				console.log "connection request #{accepted} to node #{@id}"
+				clearTimeout(timer)
 
 				unless accepted
 					@trigger('failed')
+					return
+
+				@_startNegotiation()
 			)
 
 		# Disconnects from the peer.
 		#
 		disconnect: ( ) ->
+			@_channel.close()
 			@_connection.close()
 
 		# Returns wether or not this peer is connected.
@@ -157,6 +167,7 @@ define [
 		#
 		addStream: ( stream ) ->
 			@_connection.addStream(stream)
+			@_startNegotiation()
 
 		# Removes a video and/or audio stream from the connection. The rtc
 		# connection will fire a negotiationneeded event, which in turn will call
@@ -166,6 +177,7 @@ define [
 		#
 		removeStream: ( stream ) ->
 			@_connection.removeStream(stream)
+			@_startNegotiation()
 
 		# Ups bandwidth limit on SDP. Meant to be called during offer/answer.
 		#
@@ -213,6 +225,10 @@ define [
 			description = new RTCSessionDescription(data)
 			@_connection.setRemoteDescription(description)
 
+			if @_remoteIceCandidates.length > 0
+				@addIceCandidates(@_remoteIceCandidates)
+				@_remoteIceCandidates = []
+
 		# Creates an answer RTCSessionDescription to be sent to the remote, and
 		# passes it on to the callback.
 		#
@@ -233,14 +249,18 @@ define [
 		# @private
 		_onIceCandidate: ( event ) =>
 			if event.candidate?
-				@iceCandidates.push(event.candidate)
-			else @trigger('candidates.done', @iceCandidates)
+				@localIceCandidates.push(event.candidate)
+			else @trigger('candidates.done', @localIceCandidates)
 
 		# Is called when the remote wants to add an ice candidate.
 		#
 		# @param arr [Array] an array of basic objects representing ice candidates
 		#
 		addIceCandidates: ( arr ) =>
+			unless @_connection.remoteDescription?
+				@_remoteIceCandidates = arr
+				return
+
 			for data in arr
 				candidate = new RTCIceCandidate(data)
 				@_connection.addIceCandidate(candidate)
