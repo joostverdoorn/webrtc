@@ -2,12 +2,12 @@
 # Copyright (c) 2013, TNO, J. Abbink, K. Grigorjancs, J.P. Verdoorn
 # All rights reserved.
 #
-require.config
-	baseUrl: '../../../../../'
+#require.config
+#	baseUrl: '../../../../../'
 
 require [
-	'public//library/models/remote.client'
-	'public/library/models/message'
+	'library//models/remote.client'
+	'library/models/message'
 
 	], ( Client, Message ) ->
 

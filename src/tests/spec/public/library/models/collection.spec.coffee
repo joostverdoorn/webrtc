@@ -2,13 +2,13 @@
 # Copyright (c) 2013, TNO, J. Abbink, K. Grigorjancs, J.P. Verdoorn
 # All rights reserved.
 #
-require.config
-	baseUrl: '../../../../../'
+#require.config
+#	baseUrl: '../../../../../public/'
 
 require [
-	'public/library/models/collection'
-	'public/library/helpers/mixable'
-	'public/library/helpers/mixin.eventbindings'
+	'library/models/collection'
+	'library/helpers/mixable'
+	'library/helpers/mixin.eventbindings'
 	], ( Collection, Mixable, EventBindings ) ->
 
 	describe 'Collection', ->

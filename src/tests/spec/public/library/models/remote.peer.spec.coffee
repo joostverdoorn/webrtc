@@ -2,12 +2,12 @@
 # Copyright (c) 2013, TNO, J. Abbink, K. Grigorjancs, J.P. Verdoorn
 # All rights reserved.
 #
-require.config
-	baseUrl: '../../../../../'
+#require.config
+#	baseUrl: '../../../../../'
 
 require [
-	'public//library/models/remote.peer'
-	'public/library/models/message'
+	'library//models/remote.peer'
+	'library/models/message'
 	], ( Peer, Message ) ->
 
 	describe 'Remote.Peer', ->

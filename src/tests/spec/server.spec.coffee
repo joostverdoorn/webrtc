@@ -3,17 +3,17 @@
 # All rights reserved.
 #
 require.config
-	baseUrl: '../../',
+#	baseUrl: '../../',
 	paths:
-		'public/library/models/remote.server': 'tests/mock/remote.server.mock'
-		'public/library/models/remote.peer': 'tests/mock/remote.peer.mock'
-		'public/library/models/remote.client': 'tests/mock/remote.client.mock'
-		'express': 'tests/mock/express.mock'
-		'http': 'tests/mock/http.mock'
+		'library/models/remote.server': '../tests/mock/remote.server.mock'
+		'library/models/remote.peer': '../tests/mock/remote.peer.mock'
+		'library/models/remote.client': '../tests/mock/remote.client.mock'
+		'express': '../tests/mock/express.mock'
+		'http': '../tests/mock/http.mock'
 
 require [
-	'server'
-	'public/library/models/remote.client'
+	'../server'
+	'library/models/remote.client'
 	'express'
 	'http'
 	], ( Server, Client, express, http ) ->

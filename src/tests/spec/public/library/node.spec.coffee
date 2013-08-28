@@ -3,15 +3,15 @@
 # All rights reserved.
 #
 require.config
-	baseUrl: '../../../../'
+#	baseUrl: '../../../../'
 	paths:
-		'public/library/models/remote.server': 'tests/mock/remote.server.mock'
-		'public/library/models/remote.peer': 'tests/mock/remote.peer.mock'
+		'library/models/remote.server': '../tests/mock/remote.server.mock'
+		'library/models/remote.peer': '../tests/mock/remote.peer.mock'
 
 require [
-	'public//library/node'
-	'public//library/models/collection'
-	'public/library/models/remote.peer'
+	'library//node'
+	'library//models/collection'
+	'library/models/remote.peer'
 	], ( Node, Collection, Peer ) ->
 		describe 'Node', ->
 			node = null

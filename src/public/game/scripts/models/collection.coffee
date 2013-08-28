@@ -3,8 +3,8 @@
 # All rights reserved.
 #
 define [
-	'library/helpers/mixable'
-	'library/helpers/mixin.eventbindings'
+	'game/scripts/helpers/mixable'
+	'game/scripts/helpers/mixin.eventbindings'
 
 	'underscore'
 	], ( Mixable, EventBindings, _ ) ->

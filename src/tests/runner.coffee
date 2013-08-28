@@ -12,7 +12,7 @@ jasmine.executeSpecsInFolder
 	specFolders: [__dirname + '/spec']
 	isVerbose: true
 	showColors: true
-	useRequireJs: true
+	useRequireJs: 'lib/tests/requirejs-setup.js'
 	done: ( runner, log ) ->
 		jasmineEnv.execute()
 		if runner.results().failedCount == 0

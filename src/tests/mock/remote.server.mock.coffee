@@ -4,10 +4,10 @@
 #
 define [
 
-	'public/library//models/remote.server'
-	'public/library/node.structured'
+	'library//models/remote.server'
+	'library/node.structured'
 
-	'public/library//models/collection'
+	'library//models/collection'
 
 	], (RemoteServer, Node, Collection ) ->
 

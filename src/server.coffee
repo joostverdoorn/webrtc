@@ -3,11 +3,11 @@
 # All rights reserved.
 #
 define [
-	'public/library/models/remote.client'
+	'library/models/remote.client'
 
-	'public/library/models/message'
-	'public/library/models/collection'
-	'public/library/helpers/listener'
+	'library/models/message'
+	'library/models/collection'
+	'library/helpers/listener'
 
 	'express'
 	'http'

@@ -3,10 +3,10 @@
 # All rights reserved.
 #
 define [
-	'public/library//models/remote.peer'
+	'library//models/remote.peer'
 
-	'public/library/models/vector'
-	'public/library/models/collection'
+	'library/models/vector'
+	'library/models/collection'
 	], (RemotePeer, Vector, Collection ) ->
 
 	class Peer extends RemotePeer

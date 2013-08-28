@@ -3,13 +3,13 @@
 # All rights reserved.
 #
 require.config
-	baseUrl: '../../../../../'
+#	baseUrl: '../../../../../'
 	paths:
-		'socket.io': 'tests/mock/socket.io.mock'
+		'socket.io': '../tests/mock/socket.io.mock'
 
 require [
-	'public//library/models/remote.server'
-	'public/library/models/message'
+	'library//models/remote.server'
+	'library/models/message'
 	'socket.io'
 
 	], ( Server, Message, io ) ->
