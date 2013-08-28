@@ -90,13 +90,13 @@ define [
 		# @param owner [Boolean] are we the owner of this entity
 		# @private
 		#
-		_updatePosition: ( dt, owner ) ->
+		_updatePosition: ( dt ) ->
 			# Calculate our new position from the velocity.
 			deltaPosition = @velocity.clone().multiplyScalar(dt)
 			@position.add(deltaPosition)
 
 			# Apply dead reckoning of position.
-			if @_targetPosition and not owner
+			if @_targetPosition and not @owner
 				@_targetPosition.add(deltaPosition)
 
 				if @position.distanceTo(@_targetPosition) > 20
@@ -113,7 +113,7 @@ define [
 			# Check if the player intersects with the planet.
 			if intersect = @world.planet.isInside(@position)
 				@die()
-			if owner
+			if @owner
 				if intersect = @world.planet.getIntersect(@position, 4, 0)
 					triggerImpact(intersect)
 
@@ -151,7 +151,7 @@ define [
 			rotationQuaternion.multiply(angularDeltaQuaternion)
 
 			# Apply dead reckoning of rotation.
-			if @_targetRotation and not owner
+			if @_targetRotation and not @owner
 				targetRotationQuaternion = new Three.Quaternion().setFromEuler(@_targetRotation)
 				targetRotationQuaternion.multiply(angularDeltaQuaternion)
 				rotationQuaternion.slerp(targetRotationQuaternion, dt)
@@ -183,8 +183,6 @@ define [
 		# @param dt [Float] the time that has elapsed since last update
 		#
 		update: ( dt, ownPlayer, updatePosition = true, updateRotation = true ) ->
-			owner = @owner
-
 			# Don't update unless we're completely done loading
 			unless @loaded
 				return
@@ -200,7 +198,7 @@ define [
 
 			# Update position if requested
 			if updatePosition
-				@_updatePosition(dt, owner)
+				@_updatePosition(dt)
 
 			# ... and update rotation by applying rotational forces. The method of applying rotational forces and
 			# mainly for using angular velocity may look a bit strange, but this does really
@@ -213,7 +211,7 @@ define [
 			@_angularForces = []
 
 			# History
-			unless owner
+			unless @owner
 				@_updates[App.time()] =
 					position: @position
 					rotation: @rotation

@@ -28,7 +28,7 @@ define [
 	'library/models/message'
 	'library/models/token'
 
-	'library/models/collection'
+	'library/helpers/collection'
 	'library/models/vector'
 
 	'underscore'
@@ -61,7 +61,9 @@ define [
 
 		# Initializes Vivaldi and Popcorn on top of the unstructured node
 		#
-		initialize: () ->
+		initialize: ( args... ) ->
+
+			super(args)
 
 			window.onbeforeunload = () =>
 				@exitNetwork()
