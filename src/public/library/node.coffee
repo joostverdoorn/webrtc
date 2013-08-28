@@ -100,10 +100,13 @@ define [
 			if peer = @getPeer(id, null, true)
 				if peer.isConnected()
 					callback?(true)
-					return peer
 
-				@removePeer(peer)
-				return @connect(id, callback, instantiate)
+				else peer.once
+						'channel.opened': ( ) => callback?(true)
+						'timeout': ( ) => callback?(false)
+						'failed': ( ) => callback?(false)
+
+				return peer
 
 			peer = new Peer(@, id, instantiate)
 			peer.once
