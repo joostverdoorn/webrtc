@@ -25,6 +25,7 @@ requirejs.config
 		'postprocessing/MaskPass': [ 'three' ]
 		'shaders/CopyShader': [ 'three' ]
 		'shaders/AdditiveBlendShader': [ 'three' ]
+		'shaders/VignetteShader': [ 'three' ]
 
 	# We want the following paths for
 	# code-sharing reasons. Now it doesn't
@@ -33,19 +34,20 @@ requirejs.config
 		'library': './library'
 		'game': './game'
 
-		'underscore': 'vendor/scripts/underscore'
-		'jquery': 'vendor/scripts/jquery'
-		'bootstrap': 'vendor/scripts/bootstrap'
-		'three': 'vendor/scripts/three'
-		'qrcode': 'vendor/scripts/qrcode.min'
-		'stats': 'vendor/scripts/stats.min'
+		'underscore': 'game/vendor/scripts/underscore'
+		'jquery': 'game/vendor/scripts/jquery'
+		'bootstrap': 'game/vendor/scripts/bootstrap'
+		'three': 'game/vendor/scripts/three'
+		'qrcode': 'game/vendor/scripts/qrcode.min'
+		'stats': 'game/vendor/scripts/stats.min'
 
-		'postprocessing/EffectComposer': 'vendor/scripts/postprocessing/EffectComposer'
-		'postprocessing/RenderPass': 'vendor/scripts/postprocessing/RenderPass'
-		'postprocessing/ShaderPass': 'vendor/scripts/postprocessing/ShaderPass'
-		'postprocessing/MaskPass': 'vendor/scripts/postprocessing/MaskPass'
-		'shaders/CopyShader': 'vendor/scripts/shaders/CopyShader'
-		'shaders/AdditiveBlendShader': 'vendor/scripts/shaders/AdditiveBlendShader'
+		'postprocessing/EffectComposer': 'game/vendor/scripts/postprocessing/EffectComposer'
+		'postprocessing/RenderPass': 'game/vendor/scripts/postprocessing/RenderPass'
+		'postprocessing/ShaderPass': 'game/vendor/scripts/postprocessing/ShaderPass'
+		'postprocessing/MaskPass': 'game/vendor/scripts/postprocessing/MaskPass'
+		'shaders/CopyShader': 'game/vendor/scripts/shaders/CopyShader'
+		'shaders/AdditiveBlendShader': 'game/vendor/scripts/shaders/AdditiveBlendShader'
+		'shaders/VignetteShader': 'game/vendor/scripts/shaders/VignetteShader'
 
 require [
 	'game/scripts/app._'
@@ -66,6 +68,7 @@ require [
 	'postprocessing/MaskPass'
 	'shaders/CopyShader'
 	'shaders/AdditiveBlendShader'
+	'shaders/VignetteShader'
 
 	], ( App, GameModel, DesktopController, MobileController, Overlay, Three, Stats ) ->
 
@@ -83,7 +86,6 @@ require [
 		initialize: ( ) ->
 			# Create scene.
 			@scene = new Three.Scene()
-			@scene.add(@camera)
 			@scene.fog = new Three.FogExp2( 0x444fff, 0.0025 )
 
 			# Create sky dome.
@@ -141,12 +143,21 @@ require [
 			@camera = new Three.PerspectiveCamera(@viewAngle, @aspectRatio, @nearClip, @farClip)
 			@camera.position = new Three.Vector3(650, 350, 0)
 			@camera.lookAt(new Three.Vector3(0, 300, 0))
+			@scene.add(@camera)
 
-			# # Composing.
+			# Composing.
 			# @composer = new Three.EffectComposer(@renderer)
+
 			# renderPass = new Three.RenderPass(@scene, @camera)
-			# renderPass.renderToScreen = true
 			# @composer.addPass(renderPass)
+
+			# vignettePass = new Three.ShaderPass(Three.VignetteShader)
+			# vignettePass.uniforms[ "darkness" ].value = 1.2;
+			# @composer.addPass(vignettePass)
+
+			# copyPass = new Three.ShaderPass(Three.CopyShader)
+			# copyPass.renderToScreen = true
+			# @composer.addPass(copyPass)
 
 			# Create stats display.
 			@stats = new Stats()

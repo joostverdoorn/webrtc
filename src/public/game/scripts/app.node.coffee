@@ -19,8 +19,8 @@ requirejs.config
 		'library': './library'
 		'game': './game'
 
-		'jquery': 'vendor/scripts/jquery'
-		'bootstrap': 'vendor/scripts/bootstrap'
+		'jquery': 'game/vendor/scripts/jquery'
+		'bootstrap': 'game/vendor/scripts/bootstrap'
 
 require [
 	'library/node.structured'

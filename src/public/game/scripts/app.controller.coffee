@@ -18,10 +18,10 @@ requirejs.config
 		'library': './library'
 		'game': './game'
 
-		'underscore': 'vendor/scripts/underscore'
-		'kinetic': 'vendor/scripts/kinetic.min'
-		'touchy': 'vendor/scripts/touchy'
-		'kinetic.multitouch': 'vendor/scripts/kinetic.multitouch'
+		'underscore': 'game/vendor/scripts/underscore'
+		'kinetic': 'game/vendor/scripts/kinetic.min'
+		'touchy': 'game/vendor/scripts/touchy'
+		'kinetic.multitouch': 'game/vendor/scripts/kinetic.multitouch'
 
 require [
 	'game/scripts/app._'

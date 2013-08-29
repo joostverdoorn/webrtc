@@ -23,11 +23,11 @@ requirejs.config
 		'library': './library'
 		'game': './game'
 
-		'underscore': 'vendor/scripts/underscore'
-		'jquery': 'vendor/scripts/jquery'
-		'bootstrap': 'vendor/scripts/bootstrap'
-		'three': 'vendor/scripts/three'
-		'qrcode': 'vendor/scripts/qrcode.min'
+		'underscore': 'game/vendor/scripts/underscore'
+		'jquery': 'game/vendor/scripts/jquery'
+		'bootstrap': 'game/vendor/scripts/bootstrap'
+		'three': 'game/vendor/scripts/three'
+		'qrcode': 'game/vendor/scripts/qrcode.min'
 
 require [
 	'game/scripts/app._'

@@ -30,12 +30,11 @@ requirejs.config
 		'library': './library'
 		'game': './game'
 
-		'underscore': 'vendor/scripts/underscore'
-		'jquery': 'vendor/scripts/jquery'
-		'three': 'vendor/scripts/three'
-		'stats': 'vendor/scripts/stats.min'
-		'socket.io': 'socket.io/socket.io'
-		'orbitControls': 'vendor/scripts/orbitControls'
+		'underscore': 'game/vendor/scripts/underscore'
+		'jquery': 'game/vendor/scripts/jquery'
+		'three': 'game/vendor/scripts/three'
+		'stats': 'game/vendor/scripts/stats.min'
+		'orbitControls': 'game/vendor/scripts/orbitControls'
 
 require [
 	'game/scripts/app._'

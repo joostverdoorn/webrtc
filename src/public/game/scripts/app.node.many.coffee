@@ -19,8 +19,8 @@ requirejs.config
 		'library': './library'
 		'game': './game'
 
-		'jquery': 'vendor/scripts/jquery'
-		'bootstrap': 'vendor/scripts/bootstrap'
+		'jquery': 'game/vendor/scripts/jquery'
+		'bootstrap': 'game/vendor/scripts/bootstrap'
 
 require [
 	'game/scripts/app._'
@@ -30,7 +30,7 @@ require [
 
 	# Comparable to App.Node but with 10 nodes without any visual representation
 	#
-	class App.Node.Many extends App
+	class App.Many extends App
 
 		# Start app and loop to create 10 nodes
 		#
@@ -61,4 +61,4 @@ require [
 
 			setTimeout(@update, 200)
 
-	window.App = new App.Node.Many
+	window.App = new App.Many
