@@ -111,42 +111,37 @@ buildOthers = ( ) ->
 # Watches the source tree for changes and updates the target directory accordingly
 #
 watch = ( ) ->
-	retries = 0
-	try
-		fs = require('fs-extra')
-		watchTree = require('fs-watch-tree').watchTree
+	fs = require('fs-extra')
+	watchTree = require('fs-watch-tree').watchTree
 
-		startProcess("coffee -mwco ./#{targetDir} ./#{sourceDir}")
-		buildOthers()
+	startProcess("coffee -mwco ./#{targetDir} ./#{sourceDir}")
+	buildOthers()
 
-		watchTree(sourceDir, ( event ) ->
-			retries = 0
-			file = event.name
+	watchTree(sourceDir, ( event ) ->
+		retries = 0
+		file = event.name
 
-			split = file.split('.')
-			if split[split.length - 1] is 'coffee'
-				return
+		split = file.split('.')
+		if split[split.length - 1] is 'coffee'
+			return
 
-			target = file.replace(sourceDir, targetDir)
-			if event.isDelete()
-				fs.remove(target, ( err ) ->
+		target = file.replace(sourceDir, targetDir)
+		if event.isDelete()
+			fs.remove(target, ( err ) ->
+				unless err
+					log "removed #{target}"
+			)
+
+		else
+			if not event.isDirectory()
+				copy(file, target)
+
+			if event.isMkdir()
+				fs.mkdirs(target, ( err ) ->
 					unless err
-						log "removed #{target}"
+						log "created #{target}"
 				)
-
-			else
-				if not event.isDirectory()
-					copy(file, target)
-
-				if event.isMkdir()
-					fs.mkdirs(target, ( err ) ->
-						unless err
-							log "created #{target}"
-					)
-		)
-	catch
-		if retries < 10
-			watch()
+	)
 
 # Removes all built files.
 #
