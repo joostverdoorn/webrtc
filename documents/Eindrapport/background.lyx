@@ -266,7 +266,7 @@ A peer-to-peer network is a decentralized distributed network architecture.
  The nodes in the network can communicate with each other without any interactio
 n with the central server which keeps a track of all nodes.
  A node usually does not have full knowledge of the network but instead
- has a limited awareness of the peer it communicates with - it's neighbours.
+ has a limited awareness of the peers it communicates with - its neighbours.
 \end_layout
 
 \begin_layout Paragraph
