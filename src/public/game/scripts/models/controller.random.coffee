@@ -35,18 +35,18 @@ define [
 			forwardBackward = Math.cos(time * Math.PI / 10)
 
 			if leftRight > 0
-				@FlyRight = leftRight
+				#@FlyRight = leftRight
 				@FlyLeft = 0
 			else
 				@FlyRight = 0
-				@FlyLeft = -leftRight
+				#@FlyLeft = -leftRight
 
 			if forwardBackward > 0
 				@FlyForward = forwardBackward
-				@FlyBackward = 0
+				#@FlyBackward = 0
 			else
 				@FlyForward = 0
-				@FlyBackward = -forwardBackward
+				#@FlyBackward = -forwardBackward
 
 		# Updates the left/right/up/down gunrotation
 		#

@@ -66,7 +66,7 @@ require [
 					game.startGame()
 			@bots.push(game)
 
-			if @bots.length < 10
+			if @bots.length < 1
 				setTimeout(@newBot, 5000)
 
 		# Update all bots
